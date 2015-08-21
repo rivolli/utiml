@@ -1,10 +1,23 @@
-getResultPrediction <- function (bipartition, ranking) {
-  res <- list(bipartition = bipartition, ranking = ranking)
+getResultPrediction <- function (bipartition = NULL, probability = NULL) {
+  emptyBipartition <- is.null(bipartition)
+  emptyProbability <- is.null(probability)
+  if (emptyBipartition && emptyProbability)
+    stop("Bipartion and probability results are NULL")
+  else if (emptyProbability)
+    probability <- bipartition
+  else {
+    bipartition <- probability
+    active <- bipartition >= 0.5
+    bipartition[active] <- 1
+    bipartition[!active] <- 0
+  }
+  res <- list(bipartition = bipartition, probability = probability)
   class(res) <- "mlresult"
 
   res
 }
 
+#SVM classifier
 mltrain.SVM <- function (dataset, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
     traindata <- dataset$data[, -ncol(dataset$data)]
@@ -28,29 +41,23 @@ mlpredict.SVM <- function (model, newdata, ...) {
   getResultPrediction(result, pscore)
 }
 
-# getMultilabelModel <- function (dataset, ...) UseMethod("getMultilabelModel")
-#
-# getMultilabelModel.default <- function (dataset, ...) {
-#   stop(paste("The method 'getModel.", class(dataset), "(dataset, ...)' is dataset$data[, dataset$labelname]not implemented", sep=''))
-# }
-#
-# getMultilabelModel.br.SVM <- function (dataset, ...) {
-#   #TODO is not possible use kernlab package if e1071 are installed (review this in next reviews)
-#   if (requireNamespace("e1071", quietly = TRUE))
-#     model <- e1071::svm(dataset$data[, -ncol(dataset$data)], dataset$data[, dataset$labelname], ...)
-#   else if (requireNamespace("kernlab", quietly = TRUE))
-#     model <- kernlab::ksvm(as.matrix(dataset$data[, -ncol(dataset$data)]), dataset$data[, dataset$labelname], ...)
-#   else
-#     stop('There are no installed package (e1071 or kernlab) to use SVM as base method')
-#
-#   model
-# }
-#
-# getMultilabelModel.br.NB <- function (dataset, ...) {
-#   if (requireNamespace("e1071", quietly = TRUE))
-#     model <- naiveBayes(dataset[,-ncol(dataset)], dataset$data[, dataset$labelname], ...)
-#   else
-#     stop('There are no installed package (e1071) to use Naive Bayes as base method')
-#
-#   model
-# }
+#J48 classifier
+mltrain.J48 <- function (dataset, ...) {
+  if (requireNamespace("RWeka", quietly = TRUE)) {
+    classname <- colnames(dataset$data)[ncol(dataset$data)]
+    formula <- as.formula(paste("`", classname, "` ~ .", sep=""))
+    model <- RWeka::J48(formula, dataset$data)
+  } else
+    stop('There are no installed package (e1071) to use SVM as base method')
+
+  model
+}
+
+mlpredict.J48 <- function (model, newdata, ...) {
+  if (requireNamespace("RWeka", quietly = TRUE)) {
+    result <- predict(model, newdata, "probability")
+  } else
+    stop('There are no installed package (e1071) to use SVM as base method')
+
+  getResultPrediction(probability = result[,2])
+}

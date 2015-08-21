@@ -81,7 +81,7 @@ br <- function (mdata,
 predict.BRmodel <- function (object,
                              newdata,
                              ...,
-                             ranking = TRUE,
+                             probability = TRUE,
                              specific.params = list(),
                              CORES = 1
                              ) {
@@ -115,8 +115,8 @@ predict.BRmodel <- function (object,
   else
     parallel::mclapply(object$models, predict_model, ..., mc.cores=CORES) #min(CORES, length(datasets))
 
-  result <- if (ranking)
-      sapply(predictions, function (lblres) as.numeric(as.character(lblres$ranking)))
+  result <- if (probability)
+      sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
     else
       sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
   rownames(result) <- names(predictions[[1]]$bipartition)
