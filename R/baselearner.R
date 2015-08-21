@@ -13,18 +13,17 @@ getResultPrediction <- function (bipartition = NULL, probability = NULL) {
   }
   res <- list(bipartition = bipartition, probability = probability)
   class(res) <- "mlresult"
-
   res
 }
 
-#SVM classifier
+#Suport Vector Machines
 mltrain.SVM <- function (dataset, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
     traindata <- dataset$data[, -ncol(dataset$data)]
     labeldata <- dataset$data[, dataset$labelname]
     model <- e1071::svm(traindata, labeldata, probability = TRUE, ...)
   } else
-    stop('There are no installed package (e1071) to use SVM as base method')
+    stop('There are no installed package "e1071" to use SVM classifier as base method')
 
   model
 }
@@ -33,7 +32,7 @@ mlpredict.SVM <- function (model, newdata, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
     result <- predict(model, newdata, probability = TRUE, ...)
   } else
-    stop('There are no installed package (e1071) to use SVM as base method')
+    stop('There are no installed package "e1071" to use SVM classifier as base method')
 
   pscore <- attr(result, "probabilities")[,"1"]
   attr(result, "probabilities") <- NULL
@@ -41,14 +40,14 @@ mlpredict.SVM <- function (model, newdata, ...) {
   getResultPrediction(result, pscore)
 }
 
-#J48 classifier
+#Decision Tree - J48
 mltrain.J48 <- function (dataset, ...) {
   if (requireNamespace("RWeka", quietly = TRUE)) {
     classname <- colnames(dataset$data)[ncol(dataset$data)]
     formula <- as.formula(paste("`", classname, "` ~ .", sep=""))
     model <- RWeka::J48(formula, dataset$data)
   } else
-    stop('There are no installed package (e1071) to use SVM as base method')
+    stop('There are no installed package "RWeka" to use J48 classifier as base method')
 
   model
 }
@@ -57,7 +56,49 @@ mlpredict.J48 <- function (model, newdata, ...) {
   if (requireNamespace("RWeka", quietly = TRUE)) {
     result <- predict(model, newdata, "probability")
   } else
-    stop('There are no installed package (e1071) to use SVM as base method')
+    stop('There are no installed package "RWeka" to use J48 classifier as base method')
 
-  getResultPrediction(probability = result[,2])
+  getResultPrediction(probability = result[,"1"])
+}
+
+#Decision Tress - C5.0
+mltrain.C5.0 <- function (dataset, ...) {
+  if (requireNamespace("C50", quietly = TRUE)) {
+    traindata <- dataset$data[, -ncol(dataset$data)]
+    labeldata <- dataset$data[, dataset$labelname]
+    model <- C50::C5.0(traindata, labeldata, ...)
+  } else
+    stop('There are no installed package "C50" to use C5.0 classifier as base method')
+
+  model
+}
+
+mlpredict.C5.0 <- function (model, newdata, ...) {
+  if (requireNamespace("C50", quietly = TRUE)) {
+    result <- predict(model, newdata, type = "prob", ...)
+  } else
+    stop('There are no installed package "C50" to use C5.0 classifier as base method')
+
+  getResultPrediction(probability = result[,"1"])
+}
+
+#Naive Bayes
+mltrain.NB <- function (dataset, ...) {
+  if (requireNamespace("e1071", quietly = TRUE)) {
+    traindata <- dataset$data[, -ncol(dataset$data)]
+    labeldata <- dataset$data[, dataset$labelname]
+    model <- e1071::naiveBayes(traindata, labeldata, type="raw", ...)
+  } else
+    stop('There are no installed package "e1071" to use naiveBayes classifier as base method')
+
+  model
+}
+
+mlpredict.NB <- function (model, newdata, ...) {
+  if (requireNamespace("e1071", quietly = TRUE)) {
+    result <- predict(model, newdata, type = "raw", ...)
+  } else
+    stop('There are no installed package "e1071" to use naiveBayes classifier as base method')
+
+  getResultPrediction(probability = result[,"1"])
 }
