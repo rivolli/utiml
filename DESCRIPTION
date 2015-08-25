@@ -9,6 +9,6 @@ Description: Multi-label learning transformation methods and others
   utilities to work with multi-label classification on R
 URL: https://github.com/rivolli/utiml
 Depends: R (>= 3.0.0), mldr
-Suggests: parallel, e1071
+Suggests: parallel, e1071, C50, RWeka, class, randomForest, rpart
 License: GPL
 LazyData: TRUE
