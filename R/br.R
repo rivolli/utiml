@@ -106,10 +106,9 @@ br <- function (mdata,
 
     #Convert the class column as factor
     dataset[,label] <- as.factor(dataset[,label])
-    dataset$data[, label]
 
     #Create data
-    dataset <- list(data = dataset, labelname = label, methodname = base.method[label])
+    dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method[label])
     class(dataset) <- c("mldBR", paste("base", base.method[label], sep=''), "mltransformation")
 
     #Set specific parameters
