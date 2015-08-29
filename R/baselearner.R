@@ -310,3 +310,7 @@ mlpredict.baseKNN <- function (model, newdata, ...) {
   names(result) <- rownames(newdata)
   as.resultPrediction(result)
 }
+
+summary.mltransformation <- function (x, ...) {
+  summary(x$data)
+}

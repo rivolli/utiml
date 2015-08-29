@@ -20,21 +20,21 @@ dataset (provided by \pkg{mldr} package).}
 
   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \href{https://github.com/rivolli/utiml}{online documentation}. (default:
-   \code{'SVM'}).}
+  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
+   \code{'SVM'})}
 
 \item{...}{Others arguments passed to the base method for all subproblems
 (recommended only when the same base method is used for all labels).}
 
 \item{specific.params}{A named list to pass parameters for a specific model
-(the name of the list define wich model will use the arguments) (default:
-\code{list()}).}
+(the name of the list define wich model will use the arguments). (default:
+\code{list()})}
 
 \item{save.datasets}{Logical indicating whether the binary datasets must be
-saved in the model or not (default: FALSE).}
+saved in the model or not. (default: FALSE)}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
-  than 1 require the \pkg{parallel} package (default: 1).}
+  than 1 require the \pkg{parallel} package. (default: 1)}
 }
 \value{
 An object of class \code{BRmodel} containing the set of fitted
@@ -87,5 +87,8 @@ pred <- predict(model, testdata)
 \references{
 Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
    multi-label scene classification. Pattern Recognition, 37(9), 1757–1771.
+}
+\seealso{
+Other Transformation.methods: \code{\link{cc}}
 }
 

@@ -1,4 +1,5 @@
 #' @title Binary Relevance for multi-label Classification
+#' @family Transformation methods
 #' @description Create a Binary Relevance model for multilabel classification.
 #'
 #'   Binary Relevance is a simple and effective transformation method to predict
@@ -16,17 +17,17 @@
 #'
 #'   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
 #'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-#'   \href{https://github.com/rivolli/utiml}{online documentation}. (default:
-#'    \code{'SVM'}).
+#'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
+#'    \code{'SVM'})
 #' @param ... Others arguments passed to the base method for all subproblems
 #'   (recommended only when the same base method is used for all labels).
 #' @param specific.params A named list to pass parameters for a specific model
-#'   (the name of the list define wich model will use the arguments) (default:
-#'   \code{list()}).
+#'   (the name of the list define wich model will use the arguments). (default:
+#'   \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
-#'   saved in the model or not (default: FALSE).
+#'   saved in the model or not. (default: FALSE)
 #' @param CORES The number of cores to parallelize the training. Values higher
-#'   than 1 require the \pkg{parallel} package (default: 1).
+#'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
 #' @return An object of class \code{BRmodel} containing the set of fitted
 #'   models, including: \describe{ \item{labels}{A vector with the label names}
@@ -131,8 +132,8 @@ br <- function (mdata,
 
     #Call dynamic multilabel model with merged parameters
     model <- do.call(mltrain, params)
-    attr(model, "BRlabel") <- dataset$labelname
-    attr(model, "BRmethod") <- dataset$methodname
+    attr(model, "labelname") <- dataset$labelname
+    attr(model, "methodname") <- dataset$methodname
 
     model
   }
@@ -152,7 +153,7 @@ br <- function (mdata,
 #' @title Predict Method for Binary Relevance
 #' @description This function predicts values based upon a model trained by \code{br}.
 #'
-#' @param object Object of class "\code{BRmodel}", created by \code{br}.
+#' @param object Object of class "\code{BRmodel}", created by \code{\link{br}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data.
 #' @param ... Others arguments passed to the base method prediction for all
@@ -206,7 +207,7 @@ predict.BRmodel <- function (object,
     stop('Cores must be a positive value')
 
   predict_model <- function (model, ...) {
-    label <- attr(model, "BRlabel")
+    label <- attr(model, "labelname")
 
     params <- c(list(model = model, newdata = newdata), ...)
     for (pname in names(specific.params[[label]])) {
@@ -246,8 +247,3 @@ print.mldBR <- function (x, ...) {
   cat(" ", nrow(x$data), "Examples\n")
   cat("  ", round((sum(x$data[,ncol(x$data)] == 1) / nrow(x$data)) * 100, 1), "% of positive examples\n", sep="")
 }
-
-summary.mldBR <- function (x, ...) {
-  summary(x$data)
-}
-
