@@ -8,22 +8,14 @@
 #'
 #' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label train
 #'   dataset (provided by \pkg{mldr} package).
-#' @param base.method A string or a named vector with the base method(s)
-#'   name(s). If a single value is passed the same base method will be used for
-#'   train all subproblems. If a named vector is passed then each subproblem can
-#'   be trained by a specific base method. When a named vector is used the size
-#'   and the name of its elements must have exactly the number and name of the
-#'   labels.
+#' @param base.method A string with the name of base method. The same base method
+#'   will be used for train all subproblems.
 #'
 #'   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
 #'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
 #'    \code{'SVM'})
 #' @param ... Others arguments passed to the base method for all subproblems
-#'   (recommended only when the same base method is used for all labels).
-#' @param specific.params A named list to pass parameters for a specific model
-#'   (the name of the list define wich model will use the arguments). (default:
-#'   \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: FALSE)
 #' @param CORES The number of cores to parallelize the training. Values higher
@@ -62,21 +54,9 @@
 #' # Set a parameters for all subproblems
 #' model <- br(emotions, "KNN", k=5)
 #' pred <- predict(model, testdata)
-#'
-#' # Use differents base classifers for different labels and running in parallel
-#' methods <- c("SVM", "RF", "CART", "C5.0", "KNN", "RF")
-#' names(methods) <- rownames(emotions$labels)
-#' model <- br(emotions, methods, CORES=6)
-#' pred <- predict(model, testdata, CORES=6)
-#'
-#' # Change SVM kernel for label 'happy-pleased'
-#' extra <- list('happy-pleased' = list("kernel" = "linear"))
-#' model <- br(emotions, specific.params=extra)
-#' pred <- predict(model, testdata)
 br <- function (mdata,
                 base.method = "SVM",
                 ...,
-                specific.params = list(),
                 save.datasets = FALSE,
                 CORES = 1
               ) {
@@ -84,22 +64,12 @@ br <- function (mdata,
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
 
-  if (length(base.method) != 1 && length(base.method) != mdata$measures$num.labels)
-    stop('Invalid number of base methods (use only one for all labels or one for each label)')
-
   if (CORES < 1)
     stop('Cores must be a positive value')
 
   #BR Model class
   brmodel <- list()
   brmodel$labels = rownames(mdata$labels)
-
-  #Relating Base methods with labels
-  if (length(base.method) != mdata$measures$num.labels) {
-    base.method <- rep(base.method, mdata$measures$num.labels)
-    names(base.method) <- brmodel$labels
-  } else if (!all(names(base.method) %in% brmodel$labels))
-    stop("The names(base.method) must contain the name of all labels")
 
   #Transformation
   datasets <- lapply(mldr_transform(mdata), function (dataset) {
@@ -109,11 +79,8 @@ br <- function (mdata,
     dataset[,label] <- as.factor(dataset[,label])
 
     #Create data
-    dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method[label])
-    class(dataset) <- c("mldBR", paste("base", base.method[label], sep=''), "mltransformation")
-
-    #Set specific parameters
-    dataset$specific.params <- if (!is.null(specific.params[[label]])) specific.params[[label]]
+    dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
+    class(dataset) <- c("mldBR", paste("base", base.method, sep=''), "mltransformation")
 
     dataset
   })
@@ -124,11 +91,7 @@ br <- function (mdata,
 
   #Create Dynamically the model
   create_model <- function (dataset, ...) {
-    #Merge defaul parameter with specific parameters
     params <- c(list(dataset=dataset), ...)
-    for (pname in names(dataset$specific.params)) {
-      params[[pname]] <- dataset$specific.param[[pname]]
-    }
 
     #Call dynamic multilabel model with merged parameters
     model <- do.call(mltrain, params)
@@ -160,8 +123,6 @@ br <- function (mdata,
 #'   subproblems (recommended only when the same base method is used for all labels).
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
-#' @param specific.params A named list to pass parameters for a specific model (the name
-#'   of the list define wich model will use the arguments) (default: \code{list()}).
 #' @param CORES The number of cores to parallelize the prediction. Values higher
 #'   than 1 require the \pkg{parallel} package (default: 1).
 #'
@@ -196,7 +157,6 @@ predict.BRmodel <- function (object,
                              newdata,
                              ...,
                              probability = TRUE,
-                             specific.params = list(),
                              CORES = 1
                              ) {
   #Validations
@@ -208,12 +168,7 @@ predict.BRmodel <- function (object,
 
   predict_model <- function (model, ...) {
     label <- attr(model, "labelname")
-
     params <- c(list(model = model, newdata = newdata), ...)
-    for (pname in names(specific.params[[label]])) {
-      params[[pname]] <- specific.params[[label]][[pname]]
-    }
-
     do.call(mlpredict, params)
   }
 

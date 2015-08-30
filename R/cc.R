@@ -10,31 +10,21 @@
 #'
 #' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label train
 #'   dataset (provided by \pkg{mldr} package).
-#' @param base.method A string or a named vector with the base method(s)
-#'   name(s). If a single value is passed the same base method will be used for
-#'   train all subproblems. If a named vector is passed then each subproblem can
-#'   be trained by a specific base method. When a named vector is used the size
-#'   and the name of its elements must have exactly the number and name of the
-#'   labels.
+#' @param base.method A string with the name of base method. The same base method
+#'   will be used for train all subproblems.
 #'
 #'   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
 #'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-#'   \code{'SVM'})
+#'    \code{'SVM'})
 #' @param chain A vector with the label names to define the chain order. If
 #'   empty the chain is the default label sequence of the dataset. (default:
 #'   \code{list()})
 #' @param ... Others arguments passed to the base method for all subproblems
 #'   (recommended only when the same base method is used for all labels).
-#' @param specific.params A named list to pass parameters for a specific model
-#'   (the name of the list define wich model will use the arguments). (default:
-#'   \code{list()})
 #' @param predict.params A list of default arguments passed to the predict
 #'  method (recommended only when the same base method is used for all labels).
 #'  (default: \code{list()})
-#' @param predict.specific.params A named list to pass parameters for a
-#'  specific predict method. (the name of the list define wich predict method
-#'  will use the arguments). (default: \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: FALSE)
 #'
@@ -72,17 +62,12 @@ cc <- function (mdata,
                 base.method = "SVM",
                 chain = c(),
                 ...,
-                specific.params = list(),
                 predict.params = list(),
-                predict.specific.params = list(),
                 save.datasets = FALSE
               ) {
   #Validations
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
-
-  if (length(base.method) != 1 && length(base.method) != mdata$measures$num.labels)
-    stop('Invalid number of base methods (use only one for all labels or one for each label)')
 
   if (length(chain) == 0)
     chain <- rownames(mdata$labels)
@@ -103,13 +88,6 @@ cc <- function (mdata,
     ccmodel$datasets <- list()
   }
 
-  #Relating Base methods with labels
-  if (length(base.method) != mdata$measures$num.labels) {
-    base.method <- rep(base.method, mdata$measures$num.labels)
-    names(base.method) <- ccmodel$chain
-  } else if (!all(names(base.method) %in% ccmodel$chain))
-    stop("The names(base.method) must contain the name of all labels")
-
   basedata <- mdata$dataset[mdata$attributesIndexes]
   newattrs <- matrix(nrow=mdata$measures$num.instances, ncol=0)
   for (label in chain) {
@@ -120,25 +98,17 @@ cc <- function (mdata,
     dataset[,label] <- as.factor(dataset[,label])
 
     #Create data
-    mldCC <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method[label])
-    class(mldCC) <- c("mldCC", paste("base", base.method[label], sep=''), "mltransformation")
+    mldCC <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
+    class(mldCC) <- c("mldCC", paste("base", base.method, sep=''), "mltransformation")
 
-    #Merge defaul parameter with specific parameters
     params <- c(list(dataset=mldCC), ...)
-    for (pname in names(specific.params[[label]])) {
-      params[[pname]] <- specific.params[[label]][[pname]]
-    }
 
     #Call dynamic multilabel model with merged parameters
     model <- do.call(mltrain, params)
     attr(model, "labelname") <- label
     attr(model, "methodname") <- dataset$methodname
 
-    extra <- predict.params
-    for (arg in names(predict.specific.params[[label]])) {
-      extra[[arg]] <- predict.specific.params[[label]][[arg]]
-    }
-    result <- do.call(mlpredict, c(list(model = model, newdata = basedata), extra))
+    result <- do.call(mlpredict, c(list(model = model, newdata = basedata), predict.params))
     basedata <- cbind(basedata, result$bipartition)
     names(basedata)[ncol(basedata)] <- label
 
@@ -164,8 +134,6 @@ cc <- function (mdata,
 #'   subproblems (recommended only when the same base method is used for all labels).
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
-#' @param specific.params A named list to pass parameters for a specific model (the name
-#'   of the list define wich model will use the arguments) (default: \code{list()}).
 #'
 #' @return A matrix containing the probabilistic values or just predictions (only when
 #'   \code{probability = FALSE}). The rows indicate the predicted object and the
@@ -193,8 +161,7 @@ cc <- function (mdata,
 predict.CCmodel <- function (object,
                              newdata,
                              ...,
-                             probability = TRUE,
-                             specific.params = list()
+                             probability = TRUE
                             ) {
   #Validations
   if(class(object) != 'CCmodel')
@@ -203,10 +170,6 @@ predict.CCmodel <- function (object,
   predictions <- list()
   for (label in object$chain) {
     params <- c(list(model = object$models[[label]], newdata = newdata), ...)
-    for (pname in names(specific.params[[label]])) {
-      params[[pname]] <- specific.params[[label]][[pname]]
-    }
-
     predictions[[label]] <- do.call(mlpredict, params)
     newdata <- cbind(newdata, predictions[[label]]$bipartition)
     names(newdata)[ncol(newdata)] <- label
