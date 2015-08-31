@@ -4,8 +4,7 @@
 \alias{predict.CCmodel}
 \title{Predict Method for Classifier Chains}
 \usage{
-\method{predict}{CCmodel}(object, newdata, ..., probability = TRUE,
-  specific.params = list())
+\method{predict}{CCmodel}(object, newdata, ..., probability = TRUE)
 }
 \arguments{
 \item{object}{Object of class "\code{CCmodel}", created by \code{\link{cc}} method.}
@@ -17,10 +16,7 @@ data.frame object containing the same size of training data.}
 subproblems (recommended only when the same base method is used for all labels).}
 
 \item{probability}{Logical indicating whether class probabilities should be returned.
-(default: \code{TRUE})}
-
-\item{specific.params}{A named list to pass parameters for a specific model (the name
-  of the list define wich model will use the arguments) (default: \code{list()}).}
+  (default: \code{TRUE})}
 }
 \value{
 A matrix containing the probabilistic values or just predictions (only when

@@ -4,25 +4,20 @@
 \alias{cc}
 \title{Classifier Chains for multi-label Classification}
 \usage{
-cc(mdata, base.method = "SVM", chain = c(), ..., specific.params = list(),
-  predict.params = list(), predict.specific.params = list(),
+cc(mdata, base.method = "SVM", chain = c(), ..., predict.params = list(),
   save.datasets = FALSE)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
 dataset (provided by \pkg{mldr} package).}
 
-\item{base.method}{A string or a named vector with the base method(s)
-  name(s). If a single value is passed the same base method will be used for
-  train all subproblems. If a named vector is passed then each subproblem can
-  be trained by a specific base method. When a named vector is used the size
-  and the name of its elements must have exactly the number and name of the
-  labels.
+\item{base.method}{A string with the name of base method. The same base method
+  will be used for train all subproblems.
 
   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-  \code{'SVM'})}
+   \code{'SVM'})}
 
 \item{chain}{A vector with the label names to define the chain order. If
 empty the chain is the default label sequence of the dataset. (default:
@@ -31,17 +26,9 @@ empty the chain is the default label sequence of the dataset. (default:
 \item{...}{Others arguments passed to the base method for all subproblems
 (recommended only when the same base method is used for all labels).}
 
-\item{specific.params}{A named list to pass parameters for a specific model
-(the name of the list define wich model will use the arguments). (default:
-\code{list()})}
-
 \item{predict.params}{A list of default arguments passed to the predict
 method (recommended only when the same base method is used for all labels).
 (default: \code{list()})}
-
-\item{predict.specific.params}{A named list to pass parameters for a
-specific predict method. (the name of the list define wich predict method
-will use the arguments). (default: \code{list()})}
 
 \item{save.datasets}{Logical indicating whether the binary datasets must be
   saved in the model or not. (default: FALSE)}
@@ -49,8 +36,8 @@ will use the arguments). (default: \code{list()})}
 \value{
 An object of class \code{CCmodel} containing the set of fitted
   models, including: \describe{ \item{chain}{A vector with the chain order}
-  \item{models}{A list of models named by the label names. The model type is
-  defined by the base method used to train each subproblem} \item{datasets}{A
+  \item{labels}{A vector with the label names in expected order}
+  \item{models}{A list of models named by the label names.} \item{datasets}{A
   list of \code{mldCC} named by the label names. Only when the
   \code{save.datasets = TRUE}.} }
 }

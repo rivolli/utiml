@@ -68,7 +68,7 @@ br <- function (mdata,
 
   #BR Model class
   brmodel <- list()
-  brmodel$labels = rownames(mdata$labels)
+  brmodel$labels <- rownames(mdata$labels)
 
   #Transformation
   datasets <- lapply(mldr_transform(mdata), function (dataset) {

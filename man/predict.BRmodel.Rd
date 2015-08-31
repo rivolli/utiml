@@ -5,7 +5,7 @@
 \title{Predict Method for Binary Relevance}
 \usage{
 \method{predict}{BRmodel}(object, newdata, ..., probability = TRUE,
-  specific.params = list(), CORES = 1)
+  CORES = 1)
 }
 \arguments{
 \item{object}{Object of class "\code{BRmodel}", created by \code{\link{br}} method.}
@@ -18,9 +18,6 @@ subproblems (recommended only when the same base method is used for all labels).
 
 \item{probability}{Logical indicating whether class probabilities should be returned.
 (default: \code{TRUE})}
-
-\item{specific.params}{A named list to pass parameters for a specific model (the name
-of the list define wich model will use the arguments) (default: \code{list()}).}
 
 \item{CORES}{The number of cores to parallelize the prediction. Values higher
   than 1 require the \pkg{parallel} package (default: 1).}

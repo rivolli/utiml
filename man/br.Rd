@@ -4,31 +4,21 @@
 \alias{br}
 \title{Binary Relevance for multi-label Classification}
 \usage{
-br(mdata, base.method = "SVM", ..., specific.params = list(),
-  save.datasets = FALSE, CORES = 1)
+br(mdata, base.method = "SVM", ..., save.datasets = FALSE, CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
 dataset (provided by \pkg{mldr} package).}
 
-\item{base.method}{A string or a named vector with the base method(s)
-  name(s). If a single value is passed the same base method will be used for
-  train all subproblems. If a named vector is passed then each subproblem can
-  be trained by a specific base method. When a named vector is used the size
-  and the name of its elements must have exactly the number and name of the
-  labels.
+\item{base.method}{A string with the name of base method. The same base method
+  will be used for train all subproblems.
 
   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
    \code{'SVM'})}
 
-\item{...}{Others arguments passed to the base method for all subproblems
-(recommended only when the same base method is used for all labels).}
-
-\item{specific.params}{A named list to pass parameters for a specific model
-(the name of the list define wich model will use the arguments). (default:
-\code{list()})}
+\item{...}{Others arguments passed to the base method for all subproblems}
 
 \item{save.datasets}{Logical indicating whether the binary datasets must be
 saved in the model or not. (default: FALSE)}
@@ -39,8 +29,7 @@ saved in the model or not. (default: FALSE)}
 \value{
 An object of class \code{BRmodel} containing the set of fitted
   models, including: \describe{ \item{labels}{A vector with the label names}
-  \item{models}{A list of models named by the label names. The model type is
-  defined by the base method used to train each subproblem} \item{datasets}{A
+  \item{models}{A list of models named by the label names.} \item{datasets}{A
   list of \code{mldBR} named by the label names. Only when the
   \code{save.datasets = TRUE}.} }
 }
@@ -71,17 +60,6 @@ pred <- predict(model, testdata)
 
 # Set a parameters for all subproblems
 model <- br(emotions, "KNN", k=5)
-pred <- predict(model, testdata)
-
-# Use differents base classifers for different labels and running in parallel
-methods <- c("SVM", "RF", "CART", "C5.0", "KNN", "RF")
-names(methods) <- rownames(emotions$labels)
-model <- br(emotions, methods, CORES=6)
-pred <- predict(model, testdata, CORES=6)
-
-# Change SVM kernel for label 'happy-pleased'
-extra <- list('happy-pleased' = list("kernel" = "linear"))
-model <- br(emotions, specific.params=extra)
 pred <- predict(model, testdata)
 }
 \references{
