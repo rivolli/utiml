@@ -23,8 +23,7 @@
 #'
 #' @return An object of class \code{BRmodel} containing the set of fitted
 #'   models, including: \describe{ \item{labels}{A vector with the label names}
-#'   \item{models}{A list of models named by the label names. The model type is
-#'   defined by the base method used to train each subproblem} \item{datasets}{A
+#'   \item{models}{A list of models named by the label names.} \item{datasets}{A
 #'   list of \code{mldBR} named by the label names. Only when the
 #'   \code{save.datasets = TRUE}.} }
 #'

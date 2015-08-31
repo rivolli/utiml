@@ -30,8 +30,8 @@
 #'
 #' @return An object of class \code{CCmodel} containing the set of fitted
 #'   models, including: \describe{ \item{chain}{A vector with the chain order}
-#'   \item{models}{A list of models named by the label names. The model type is
-#'   defined by the base method used to train each subproblem} \item{datasets}{A
+#'   \item{labels}{A vector with the label names in expected order}
+#'   \item{models}{A list of models named by the label names.} \item{datasets}{A
 #'   list of \code{mldCC} named by the label names. Only when the
 #'   \code{save.datasets = TRUE}.} }
 #'
@@ -69,10 +69,10 @@ cc <- function (mdata,
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
 
+  labels <- rownames(mdata$labels)
   if (length(chain) == 0)
     chain <- rownames(mdata$labels)
   else {
-    labels <- rownames(mdata$labels)
     if (length(chain) != mdata$measures$num.labels ||
         length(setdiff(union(chain,labels),intersect(chain,labels))) > 0
         ) {
@@ -82,7 +82,8 @@ cc <- function (mdata,
 
   #CC Model class
   ccmodel <- list()
-  ccmodel$chain = chain
+  ccmodel$labels <- labels
+  ccmodel$chain <- chain
   ccmodel$models <- list()
   if (save.datasets) {
     ccmodel$datasets <- list()
@@ -181,7 +182,7 @@ predict.CCmodel <- function (object,
     sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
   rownames(result) <- names(predictions[[1]]$bipartition)
 
-  result
+  result[,object$labels]
 }
 
 print.CCmodel <- function (x, ...) {
