@@ -17,7 +17,7 @@
 #'    \code{'SVM'})
 #' @param ... Others arguments passed to the base method for all subproblems
 #' @param save.datasets Logical indicating whether the binary datasets must be
-#'   saved in the model or not. (default: FALSE)
+#'   saved in the model or not. (default: \code{FALSE})
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
@@ -71,18 +71,7 @@ br <- function (mdata,
   brmodel$labels <- rownames(mdata$labels)
 
   #Transformation
-  datasets <- lapply(mldr_transform(mdata), function (dataset) {
-    label <- colnames(dataset)[length(dataset)]
-
-    #Convert the class column as factor
-    dataset[,label] <- as.factor(dataset[,label])
-
-    #Create data
-    dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
-    class(dataset) <- c("mldBR", paste("base", base.method, sep=''), "mltransformation")
-
-    dataset
-  })
+  datasets <- lapply(mldr_transform(mdata), binary_transformation, classname = "mldBR", base.method = base.method)
   names(datasets) <- brmodel$labels
   if (save.datasets) {
     brmodel$datasets <- datasets
@@ -113,13 +102,14 @@ br <- function (mdata,
 }
 
 #' @title Predict Method for Binary Relevance
-#' @description This function predicts values based upon a model trained by \code{br}.
+#' @description This function predicts values based upon a model trained by
+#'  \code{\link{br}}.
 #'
 #' @param object Object of class "\code{BRmodel}", created by \code{\link{br}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data.
 #' @param ... Others arguments passed to the base method prediction for all
-#'   subproblems (recommended only when the same base method is used for all labels).
+#'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param CORES The number of cores to parallelize the prediction. Values higher

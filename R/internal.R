@@ -38,6 +38,33 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
   mldr_subset(mdata, rows, cols)
 }
 
+#' Create a Binary MultiLabel Data
+#'
+#' @param dataset A data.frame with the data (the last column must be the class column)
+#' @param classname The name of specific class of the object
+#' @param base.method The name of the base method that will process this dataset
+#'
+#' @return A list with data, labelname, labelindex and methodname.
+#'    This list has three classes: mltransformation, baseMETHODNAME and a specific name
+#' @export
+#'
+#' @examples
+#' ...
+#' tbl <- binary_transformation(dataframe, "mldBR", "SVM")
+#' ...
+binary_transformation <- function (dataset, classname, base.method) {
+  label <- colnames(dataset)[length(dataset)]
+
+  #Convert the class column as factor
+  dataset[,label] <- as.factor(dataset[,label])
+
+  #Create data
+  dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
+  class(dataset) <- c(classname, paste("base", base.method, sep=''), "mltransformation")
+
+  dataset
+}
+
 utiml_normalize <- function (data, max.val=NULL, min.val=NULL) {
   if (is.null(max.val))
     max.val <- max(data)
