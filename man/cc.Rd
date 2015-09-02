@@ -74,6 +74,6 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
 }
 \seealso{
 Other Transformation methods: \code{\link{br}};
-  \code{\link{ebr}}
+  \code{\link{ebr}}; \code{\link{ecc}}
 }
 

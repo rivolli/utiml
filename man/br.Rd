@@ -68,6 +68,6 @@ Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
 }
 \seealso{
 Other Transformation methods: \code{\link{cc}};
-  \code{\link{ebr}}
+  \code{\link{ebr}}; \code{\link{ecc}}
 }
 

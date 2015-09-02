@@ -13,7 +13,7 @@
 data.frame object containing the same size of training data.}
 
 \item{...}{Others arguments passed to the base method prediction for all
-subproblems (recommended only when the same base method is used for all labels).}
+subproblems.}
 
 \item{probability}{Logical indicating whether class probabilities should be returned.
   (default: \code{TRUE})}

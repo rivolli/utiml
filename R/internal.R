@@ -38,6 +38,83 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
   mldr_subset(mdata, rows, cols)
 }
 
+#' @title Create a predictive result object
+#'
+#' @description The transformation methods require a specific data format from base
+#'  classifiers prediDefine the way that ensemble must compute the predictions.
+#' The valid options are: \describe{
+#'  \code{'score'}{Compute the averages of probabilities},
+#'  \code{'majority'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
+#'  \code{'prop'}{Compute the proportion of votes, scale data between min and max of votes} }ction. If you implement a new base method then use this method
+#'  to return the final result of your \code{mlpredict} method.
+#'
+#' @param probability A vector with probabilities predictions or with bipartitions
+#'  prediction for a binary prediction.
+#' @param threshold A numeric value betweenpredictions[["class1"]] <- mlpredict(model1, testdata) 0 and 1 to create the bipartitions.
+#'
+#' @return An object of type "\code{mlresult}" used by problem transformation
+#'  methods that use binary classifiers. It has only two attributes:
+#'  \code{bipartition} and \code{probability}, that respectively have the
+#'  bipartition and probabilities results.
+#' @export
+#'
+#' @examples
+#' # This method is used to implement a mlpredict based method
+#' # In this example we create a random predict method
+#' mlpredicti.random <- function (model, newdata, ...) {
+#'    probs <- runif(nrow(newdata), 0, 1)
+#'    as.resultPrediction(probs)
+#' }
+#'
+#' # Define a different threshold for a specific subproblem use
+#' ...Define the way that ensemble must compute the predictions.
+#' The valid options are: \describe{
+#'  \code{'score'}{Compute the averages of probabilities},
+#'  \code{'majority'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
+#'  \code{'prop'}{Compute the proportion of votes, scale data between min and max of votes} }
+#' result <- as.resultPrediction(probs, 0.6)
+#' ...
+as.resultPrediction <- function (probability, threshold = 0.5) {
+  bipartition <- probability
+  active <- bipartition >= threshold
+  bipartition[active] <- 1
+  bipartition[!active] <- 0
+
+  res <- list(bipartition = bipartition, probability = probability)
+  class(res) <- "mlresult"
+  res
+}
+
+#' @title Create a predictive multi-label result
+#' @description This function select the correct result and organize them in a
+#'  prediction matrix where the columns are the labels and the rows are the
+#'  test examples. If probability is \code{TRUE} the values contain the labels
+#'  probabilities, otherwise the values are the predictive value "0" or "1".
+#'
+#' @param predictions The list of mlresult obtained from union of all binary
+#'  predictions.
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#'
+#' @return A matrix containing the probabilistic values or just predictions.
+#' @export
+#'
+#' @examples
+#' ...
+#' predictions <- list()
+#' predictions$class1 <- mlpredict(model1, testdata)
+#' predictions$class2 <- mlpredict(model2, testdata)
+#' as.resultMLPrediction(predictions, TRUE)
+#' ...
+as.resultMLPrediction <- function (predictions, probability) {
+  result <- if (probability)
+    sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
+  else
+    sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
+  rownames(result) <- names(predictions[[1]]$bipartition)
+  result
+}
+
 #' Create a Binary MultiLabel Data
 #'
 #' @param dataset A data.frame with the data (the last column must be the class column)
@@ -65,10 +142,83 @@ binary_transformation <- function (dataset, classname, base.method) {
   dataset
 }
 
+#' Internal Normalize data function
+#'0.1 0.2 0.3 0.4 0.5
+#' @param data a set of numbers
+#' @param max.val The maximum value to normalize. If null use the max value present in the data
+#'   (default: \code{NULL} )
+#' @param min.val The minimum value to normalize. If NULL use the min value present in the data
+#'   (default: \code{NULL})
+#'
+#' @return The normalized data
+#' @export
+#'
+#' @examples
+#' utiml_normalize(c(1,2,3,4,5))
+#' # 0 0.25 0.5 0.75 1
+#'
+#' utiml_normalize(c(1,2,3,4,5), 10, 0)
+#' # 0.1 0.2 0.3 0.4 0.5
 utiml_normalize <- function (data, max.val=NULL, min.val=NULL) {
   if (is.null(max.val))
     max.val <- max(data)
   if (is.null(min.val))
     min.val <- min(data)
   (data-min.val)/(max.val-min.val)
+}
+
+#' Select the correct method: lapply or mclaplly
+#'
+#' @param mylist a list to iterate
+#' @param myfnc The function to be applied to each element of the mylist
+#' @param cores The number of cores to use. If 1 use lapply oterwise use
+#'    mclapply
+#' @param ... Extra arguments to myfnc
+#'
+#' @return A list of the same length as X and named by X.
+#' @export
+#'
+#' @examples
+#' utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
+#' utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
+utiml_lapply <- function (mylist, myfnc, cores, ...) {
+  if (cores == 1)
+    lapply(mylist, myfnc, ...)
+  else
+    parallel::mclapply(mylist, myfnc, mc.cores=min(cores, length(mylist)), ...)
+}
+
+#' @title Compute the ensemble predictions based on some vote schema
+#'
+#' @param predictions A list of matrix predictions
+#' @param vote.schema Define the way that ensemble must compute the predictions.
+#' The valid options are: \describe{
+#'  \code{'score'}{Compute the averages of probabilities},
+#'  \code{'majority'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
+#'  \code{'prop'}{Compute the proportion of votes, scale data between min and max of votes} }
+#'
+#' @return A list of mlresult as a result obtained from a multi-label transformation method
+#' @export
+#'
+#' @examples
+#' ...
+#' predictions <- list()
+#' predictions$model1 <- prediction(brmodel1, testdata)
+#' predictions$model2 <- prediction(brmodel2, testdata)
+#' result <- utiml_compute_ensemble_predictions(predictions, "majority")
+#' ...
+utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
+  m <- length(predictions)
+  sumtable <- predictions[[1]]
+  for (i in 2:m)
+    sumtable <- sumtable + predictions[[i]]
+
+  avgtable <- if (vote.schema == "score")
+    sumtable / m
+  else if (vote.schema == "majority")
+    utiml_normalize(sumtable, m, 0)
+  else
+    utiml_normalize(sumtable) #proportionally
+
+  apply(avgtable, 2, as.resultPrediction)
 }

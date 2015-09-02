@@ -121,7 +121,7 @@ br <- function (mdata,
 #'
 #' @section Warning:
 #'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-#'    \code{'C5.0'} or \code{'CART'} instead of it
+#'    \code{'C5.0'} or \code{'CART'} instead of it.
 #'
 #' @seealso \code{\link[=br]{Binary Relevance (BR)}}
 #'
@@ -162,18 +162,8 @@ predict.BRmodel <- function (object,
   }
 
   #Create models
-  predictions <- if (CORES == 1)
-    lapply(object$models, predict_model, ...)
-  else
-    parallel::mclapply(object$models, predict_model, ..., mc.cores=CORES) #min(CORES, length(datasets))
-
-  result <- if (probability)
-      sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
-    else
-      sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
-  rownames(result) <- names(predictions[[1]]$bipartition)
-
-  result
+  predictions <- utiml_lapply(object$models, predict_model, CORES, ...)
+  as.resultMLPrediction(predictions, probability)
 }
 
 print.BRmodel <- function (x, ...) {

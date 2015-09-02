@@ -26,7 +26,7 @@
 #' @param ... Others arguments passed to the base method for all subproblems
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: \code{FALSE})
-#' @param SEED a single value, interpreted as an integer to allow obtain the
+#' @param SEED A single value, interpreted as an integer to allow obtain the
 #'   same results again. (default: \code{NULL})
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
@@ -40,7 +40,7 @@
 #'
 #' @section Warning:
 #'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-#'    \code{'C5.0'} or \code{'CART'} instead of it
+#'    \code{'C5.0'} or \code{'CART'} instead of it.
 #'
 #' @references
 #'    Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
@@ -116,9 +116,9 @@ ebr <- function (mdata,
   ebrmodel$call <- match.call()
   class(ebrmodel) <- "EBRmodel"
 
-  if (SEED > 0) {
+  if (SEED > 0)
     set.seed(NULL)
-  }
+
   ebrmodel
 }
 
@@ -187,29 +187,11 @@ predict.EBRmodel <- function (object,
     stop('Cores must be a positive value')
 
   allpreds <- lapply(model$models, function (brmodel) {
-    prob <- vote.schema[1] == "score"
-    predict(brmodel, newdata[,brmodel$attrs], ..., probability = prob, CORES = CORES)
+    predict(brmodel, newdata[,brmodel$attrs], ..., probability = vote.schema[1] == "score", CORES = CORES)
   })
 
-  sumtable <- allpreds[[1]]
-  for (i in 2:model$rounds)
-    sumtable <- sumtable + allpreds[[i]]
-
-  avgtable <- if (vote.schema[1] == "score")
-    sumtable / model$rounds
-  else if (vote.schema[1] == "majority")
-    utiml_normalize(sumtable, model$rounds, 0)
-  else
-    utiml_normalize(sumtable) #proportionally
-
-  predictions <- apply(avgtable, 2, as.resultPrediction)
-  result <- if (probability)
-    sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
-  else
-    sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
-  rownames(result) <- names(predictions[[1]]$bipartition)
-
-  result
+  predictions <- utiml_compute_ensemble_predictions(allpreds, vote.schema[1])
+  as.resultMLPrediction(predictions, probability)
 }
 
 print.EBRmodel <- function (x, ...) {

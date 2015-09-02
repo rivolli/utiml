@@ -92,22 +92,14 @@ cc <- function (mdata,
   basedata <- mdata$dataset[mdata$attributesIndexes]
   newattrs <- matrix(nrow=mdata$measures$num.instances, ncol=0)
   for (label in chain) {
-    #Transformation
-    dataset <- cbind(basedata, mdata$dataset[label])
-
-    #Convert the class column as factor
-    dataset[,label] <- as.factor(dataset[,label])
-
     #Create data
-    mldCC <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
-    class(mldCC) <- c("mldCC", paste("base", base.method, sep=''), "mltransformation")
-
+    mldCC <- binary_transformation(cbind(basedata, mdata$dataset[label]), "mldCC", base.method)
     params <- c(list(dataset=mldCC), ...)
 
     #Call dynamic multilabel model with merged parameters
     model <- do.call(mltrain, params)
     attr(model, "labelname") <- label
-    attr(model, "methodname") <- dataset$methodname
+    attr(model, "methodname") <- mldCC$methodname
 
     result <- do.call(mlpredict, c(list(model = model, newdata = basedata), predict.params))
     basedata <- cbind(basedata, result$bipartition)
@@ -132,7 +124,7 @@ cc <- function (mdata,
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data.
 #' @param ... Others arguments passed to the base method prediction for all
-#'   subproblems (recommended only when the same base method is used for all labels).
+#'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #'
@@ -176,12 +168,7 @@ predict.CCmodel <- function (object,
     names(newdata)[ncol(newdata)] <- label
   }
 
-  result <- if (probability)
-    sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
-  else
-    sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
-  rownames(result) <- names(predictions[[1]]$bipartition)
-
+  result <- as.resultMLPrediction(predictions, probability)
   result[,object$labels]
 }
 
