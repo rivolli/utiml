@@ -80,6 +80,9 @@ as.resultPrediction <- function (probability, threshold = 0.5) {
   bipartition[active] <- 1
   bipartition[!active] <- 0
 
+  #Making the prediction discriminative
+  bipartition[which.max(probability)] <- 1
+
   res <- list(bipartition = bipartition, probability = probability)
   class(res) <- "mlresult"
   res
