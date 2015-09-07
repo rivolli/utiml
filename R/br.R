@@ -90,10 +90,7 @@ br <- function (mdata,
   }
 
   #Create models
-  brmodel$models <- if (CORES == 1)
-      lapply(datasets, create_model, ...)
-    else
-      parallel::mclapply(datasets, create_model, ..., mc.cores=CORES) #min(CORES, length(datasets))
+  brmodel$models <- utiml_lapply(datasets, create_model, CORES, ...)
 
   brmodel$call <- match.call()
   class(brmodel) <- "BRmodel"
