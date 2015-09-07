@@ -73,24 +73,11 @@ br <- function (mdata,
   #Transformation
   datasets <- lapply(mldr_transform(mdata), binary_transformation, classname = "mldBR", base.method = base.method)
   names(datasets) <- brmodel$labels
-  if (save.datasets) {
+  if (save.datasets)
     brmodel$datasets <- datasets
-  }
-
-  #Create Dynamically the model
-  create_model <- function (dataset, ...) {
-    params <- c(list(dataset=dataset), ...)
-
-    #Call dynamic multilabel model with merged parameters
-    model <- do.call(mltrain, params)
-    attr(model, "labelname") <- dataset$labelname
-    attr(model, "methodname") <- dataset$methodname
-
-    model
-  }
 
   #Create models
-  brmodel$models <- utiml_lapply(datasets, create_model, CORES, ...)
+  brmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
 
   brmodel$call <- match.call()
   class(brmodel) <- "BRmodel"
@@ -152,15 +139,27 @@ predict.BRmodel <- function (object,
   if (CORES < 1)
     stop('Cores must be a positive value')
 
-  predict_model <- function (model, ...) {
-    label <- attr(model, "labelname")
-    params <- c(list(model = model, newdata = newdata), ...)
-    do.call(mlpredict, params)
-  }
-
   #Create models
-  predictions <- utiml_lapply(object$models, predict_model, CORES, ...)
+  predictions <- utiml_lapply(object$models, br.predict_model, CORES, newdata = newdata, ...)
   as.resultMLPrediction(predictions, probability)
+}
+
+#Create Dynamically the model
+br.create_model <- function (dataset, ...) {
+  params <- c(list(dataset=dataset), ...)
+
+  #Call dynamic multilabel model with merged parameters
+  model <- do.call(mltrain, params)
+  attr(model, "labelname") <- dataset$labelname
+  attr(model, "methodname") <- dataset$methodname
+
+  model
+}
+
+br.predict_model <- function (model, newdata, ...) {
+  label <- attr(model, "labelname")
+  params <- c(list(model = model, newdata = newdata), ...)
+  do.call(mlpredict, params)
 }
 
 print.BRmodel <- function (x, ...) {
