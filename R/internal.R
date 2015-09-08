@@ -33,6 +33,7 @@ as.resultMLPrediction <- function (predictions, probability) {
 #' @param dataset A data.frame with the data (the last column must be the class column)
 #' @param classname The name of specific class of the object
 #' @param base.method The name of the base method that will process this dataset
+#' @param ... Extra parameters for adding in the dataset object
 #'
 #' @return A list with data, labelname, labelindex and methodname.
 #'    This list has three classes: mltransformation, baseMETHODNAME and a specific name
@@ -42,7 +43,7 @@ as.resultMLPrediction <- function (predictions, probability) {
 #' ...
 #' tbl <- br.transformation(dataframe, "mldBR", "SVM")
 #' ...
-br.transformation <- function (dataset, classname, base.method) {
+br.transformation <- function (dataset, classname, base.method, ...) {
   label <- colnames(dataset)[length(dataset)]
 
   #Convert the class column as factor
@@ -51,6 +52,10 @@ br.transformation <- function (dataset, classname, base.method) {
   #Create data
   dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
   class(dataset) <- c(classname, paste("base", base.method, sep=''), "mltransformation")
+
+  extra <- list(...)
+  for (nextra in names(extra))
+    dataset[[nextra]] <- extra[[nextra]]
 
   dataset
 }

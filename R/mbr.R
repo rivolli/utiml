@@ -100,12 +100,12 @@ mbr <- function (mdata,
 
   #2 Iteration - Meta level
   corr <- mbrmodel$correlation <- labelsPhiCorrelationCoefficient(mdata)
-  datasets <- lapply(mbrmodel$basemodel$datasets, function (dataset) {
+  datasets <- utiml_lapply(mbrmodel$basemodel$datasets, function (dataset) {
     extracolumns <- base.preds[,colnames(corr)[corr[dataset$labelname,] > phi]]
     colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
     base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
-    br.transformation(base, "mldBR", base.method)
-  })
+    br.transformation(base, "mldMBR", base.method, new.features = colnames(extracolumns))
+  }, CORES)
   mbrmodel$metamodels <- utiml_lapply(datasets, br.create_model, CORES, ...)
 
   if (save.datasets)
@@ -198,3 +198,14 @@ print.MBRmodel <- function (x, ...) {
   )
   print(tbl)
 }
+
+print.mldMBR <- function (x, ...) {
+  cat("Meta Binary Relevance Transformation Dataset\n\n")
+  cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep="")
+  cat("Dataset info:\n")
+  cat(" ", ncol(x$data) - 1 - length(x$new.features), "Predictive attributes\n")
+  cat(" ", length(x$new.features), " meta features\n")
+  cat(" ", nrow(x$data), "Examples\n")
+  cat("  ", round((sum(x$data[,ncol(x$data)] == 1) / nrow(x$data)) * 100, 1), "% of positive examples\n", sep="")
+}
+

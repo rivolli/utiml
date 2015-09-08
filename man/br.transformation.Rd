@@ -4,7 +4,7 @@
 \alias{br.transformation}
 \title{Create a Binary MultiLabel Data}
 \usage{
-br.transformation(dataset, classname, base.method)
+br.transformation(dataset, classname, base.method, ...)
 }
 \arguments{
 \item{dataset}{A data.frame with the data (the last column must be the class column)}
@@ -12,6 +12,8 @@ br.transformation(dataset, classname, base.method)
 \item{classname}{The name of specific class of the object}
 
 \item{base.method}{The name of the base method that will process this dataset}
+
+\item{...}{Extra parameters for adding in the dataset object}
 }
 \value{
 A list with data, labelname, labelindex and methodname.
