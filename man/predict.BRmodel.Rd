@@ -31,11 +31,6 @@ A matrix containing the probabilistic values or just predictions (only when
 This function predicts values based upon a model trained by
  \code{\link{br}}.
 }
-\section{Warning}{
-
-   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it.
-}
 \examples{
 library(utiml)
 

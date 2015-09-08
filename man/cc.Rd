@@ -23,12 +23,10 @@ dataset (provided by \pkg{mldr} package).}
 empty the chain is the default label sequence of the dataset. (default:
 \code{list()})}
 
-\item{...}{Others arguments passed to the base method for all subproblems
-(recommended only when the same base method is used for all labels).}
+\item{...}{Others arguments passed to the base method for all subproblems.}
 
 \item{predict.params}{A list of default arguments passed to the predict
-method (recommended only when the same base method is used for all labels).
-(default: \code{list()})}
+method. (default: \code{list()})}
 
 \item{save.datasets}{Logical indicating whether the binary datasets must be
   saved in the model or not. (default: FALSE)}
@@ -64,8 +62,8 @@ mychain <- sample(rownames(emotions$labels))
 model <- cc(emotions, "C4.5", mychain)
 pred <- predict(model, testdata)
 
-# Set a parameters for all subproblems
-model <- cc(emotions, "KNN", k=5, predict.params=list(k=5))
+# Set a specific parameter
+model <- cc(emotions, "KNN", k=5)
 pred <- predict(model, testdata)
 }
 \references{
@@ -74,6 +72,6 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
 }
 \seealso{
 Other Transformation methods: \code{\link{br}};
-  \code{\link{ebr}}; \code{\link{ecc}}
+  \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}}
 }
 

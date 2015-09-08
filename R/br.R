@@ -71,7 +71,7 @@ br <- function (mdata,
   brmodel$labels <- rownames(mdata$labels)
 
   #Transformation
-  datasets <- lapply(mldr_transform(mdata), binary_transformation, classname = "mldBR", base.method = base.method)
+  datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
   names(datasets) <- brmodel$labels
   if (save.datasets)
     brmodel$datasets <- datasets
@@ -102,10 +102,6 @@ br <- function (mdata,
 #' @return A matrix containing the probabilistic values or just predictions (only when
 #'   \code{probability = FALSE}). The rows indicate the predicted object and the
 #'   columns indicate the labels.
-#'
-#' @section Warning:
-#'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-#'    \code{'C5.0'} or \code{'CART'} instead of it.
 #'
 #' @seealso \code{\link[=br]{Binary Relevance (BR)}}
 #'
@@ -142,24 +138,6 @@ predict.BRmodel <- function (object,
   #Create models
   predictions <- utiml_lapply(object$models, br.predict_model, CORES, newdata = newdata, ...)
   as.resultMLPrediction(predictions, probability)
-}
-
-#Create Dynamically the model
-br.create_model <- function (dataset, ...) {
-  params <- c(list(dataset=dataset), ...)
-
-  #Call dynamic multilabel model with merged parameters
-  model <- do.call(mltrain, params)
-  attr(model, "labelname") <- dataset$labelname
-  attr(model, "methodname") <- dataset$methodname
-
-  model
-}
-
-br.predict_model <- function (model, newdata, ...) {
-  label <- attr(model, "labelname")
-  params <- c(list(model = model, newdata = newdata), ...)
-  do.call(mlpredict, params)
 }
 
 print.BRmodel <- function (x, ...) {

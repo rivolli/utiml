@@ -20,11 +20,9 @@
 #' @param chain A vector with the label names to define the chain order. If
 #'   empty the chain is the default label sequence of the dataset. (default:
 #'   \code{list()})
-#' @param ... Others arguments passed to the base method for all subproblems
-#'   (recommended only when the same base method is used for all labels).
+#' @param ... Others arguments passed to the base method for all subproblems.
 #' @param predict.params A list of default arguments passed to the predict
-#'  method (recommended only when the same base method is used for all labels).
-#'  (default: \code{list()})
+#'  method. (default: \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: FALSE)
 #'
@@ -55,8 +53,8 @@
 #' model <- cc(emotions, "C4.5", mychain)
 #' pred <- predict(model, testdata)
 #'
-#' # Set a parameters for all subproblems
-#' model <- cc(emotions, "KNN", k=5, predict.params=list(k=5))
+#' # Set a specific parameter
+#' model <- cc(emotions, "KNN", k=5)
 #' pred <- predict(model, testdata)
 cc <- function (mdata,
                 base.method = "SVM",
@@ -93,7 +91,7 @@ cc <- function (mdata,
   newattrs <- matrix(nrow=mdata$measures$num.instances, ncol=0)
   for (label in chain) {
     #Create data
-    mldCC <- binary_transformation(cbind(basedata, mdata$dataset[label]), "mldCC", base.method)
+    mldCC <- br.transformation(cbind(basedata, mdata$dataset[label]), "mldCC", base.method)
     params <- c(list(dataset=mldCC), ...)
 
     #Call dynamic multilabel model with merged parameters
@@ -139,7 +137,7 @@ cc <- function (mdata,
 #' @examples
 #' library(utiml)
 #'
-#' # Emotion multi-label dataset using Binary Relevance
+#' # Emotion multi-label dataset using Classifier Chains
 #' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
 #'
 #' # Predict SVM scores

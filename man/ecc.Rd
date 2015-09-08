@@ -29,11 +29,10 @@ training instances must be used for each interation. (default: 0.75)}
 \item{attr.space}{A value between 0.1 and 1 to determine the percentage of
 attributes must be used for each interation. (default: 0.50)}
 
-\item{...}{Others arguments passed to the base method for all subproblems}
+\item{...}{Others arguments passed to the base method for all subproblems.}
 
 \item{predict.params}{A list of default arguments passed to the predict
-method (recommended only when the same base method is used for all labels).
-(default: \code{list()})}
+method. (default: \code{list()})}
 
 \item{save.datasets}{Logical indicating whether the binary datasets must be
 saved in the model or not. (default: \code{FALSE})}
@@ -100,6 +99,6 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
 Other Ensemble: \code{\link{ebr}}
 
 Other Transformation methods: \code{\link{br}};
-  \code{\link{cc}}; \code{\link{ebr}}
+  \code{\link{cc}}; \code{\link{ebr}}; \code{\link{mbr}}
 }
 
