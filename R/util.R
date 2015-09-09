@@ -130,3 +130,20 @@ labelsPhiCorrelationCoefficient <- function (mdata) {
   }
   cor
 }
+
+simple.threshold <- function (prediction, threshold = 0.5) {
+  if (length(threshold) == 1)
+    threshold <- rep(threshold, ncol(prediction))
+  else if (length(threshold) != ncol(prediction))
+    stop("The number of threshold must be the same number of labels or unique value")
+
+  #Making the prediction discriminative
+  for (row in nrow(prediction))
+    prediction[row, which.max(prediction[row,])] <- 1
+
+  result <- do.call(cbind, lapply(1:ncol(prediction), function (col) {
+    as.integer(prediction[,col] > threshold[col])
+  }))
+  dimnames(result) <- dimnames(prediction)
+  result
+}

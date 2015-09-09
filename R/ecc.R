@@ -146,8 +146,8 @@ predict.ECCmodel <- function (object,
   if(!vote.schema[1] %in% schemas)
     stop(paste("Vote schema value must be '", paste(schemas, collapse = "' or '"), "'", sep=""))
 
-    if (CORES < 1)
-      stop('Cores must be a positive value')
+  if (CORES < 1)
+    stop('Cores must be a positive value')
 
   allpreds <- utiml_lapply(model$models, function (ccmodel) {
     predict(ccmodel, newdata[,ccmodel$attrs], ..., probability = vote.schema[1] == "score")
