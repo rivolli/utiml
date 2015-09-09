@@ -71,7 +71,8 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
    for multi-label classification. Machine Learning, 85(3), 333–359.
 }
 \seealso{
-Other Transformation methods: \code{\link{br}};
-  \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}}
+Other Transformation methods: \code{\link{brplus}};
+  \code{\link{br}}; \code{\link{ebr}}; \code{\link{ecc}};
+  \code{\link{mbr}}
 }
 

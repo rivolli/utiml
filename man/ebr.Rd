@@ -89,7 +89,8 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
 \seealso{
 Other Ensemble: \code{\link{ecc}}
 
-Other Transformation methods: \code{\link{br}};
-  \code{\link{cc}}; \code{\link{ecc}}; \code{\link{mbr}}
+Other Transformation methods: \code{\link{brplus}};
+  \code{\link{br}}; \code{\link{cc}}; \code{\link{ecc}};
+  \code{\link{mbr}}
 }
 

@@ -98,7 +98,8 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
 \seealso{
 Other Ensemble: \code{\link{ebr}}
 
-Other Transformation methods: \code{\link{br}};
-  \code{\link{cc}}; \code{\link{ebr}}; \code{\link{mbr}}
+Other Transformation methods: \code{\link{brplus}};
+  \code{\link{br}}; \code{\link{cc}}; \code{\link{ebr}};
+  \code{\link{mbr}}
 }
 

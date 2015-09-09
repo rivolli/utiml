@@ -54,8 +54,8 @@ testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
 model <- br(emotions)
 pred <- predict(model, testdata)
 
-# Change the default base method
-model <- br(emotions, "C4.5")
+# Change the default base method and use 4 CORES
+model <- br(emotions, "C4.5", CORES = 4)
 pred <- predict(model, testdata)
 
 # Set a parameters for all subproblems
@@ -67,7 +67,8 @@ Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
    multi-label scene classification. Pattern Recognition, 37(9), 1757–1771.
 }
 \seealso{
-Other Transformation methods: \code{\link{cc}};
-  \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}}
+Other Transformation methods: \code{\link{brplus}};
+  \code{\link{cc}}; \code{\link{ebr}}; \code{\link{ecc}};
+  \code{\link{mbr}}
 }
 

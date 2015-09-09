@@ -39,14 +39,21 @@ saved in the model or not. (default: \code{FALSE})}
 }
 \value{
 An object of class \code{MBRmodel} containing the set of fitted
-  models, including: \describe{ \item{labels}{A vector with the label names.}
-  \item{phi}{The value of \code{phi} parameter.} \item{correlation}{The matrix
-  of label correlations used in combination with.} \code{phi}{parameter to define
-  the labels used in the second step.} \item{basemodel}{The BRModel used in the
-  first iteration.} \item{metamodels}{A list of models named by the label names
-  used in the second iteration.} \item{datasets}{A list with \code{base} and
-  \code{meta} datasets of type \code{mldBR} named by the label names. Only when the
-  \code{save.datasets = TRUE}.} }
+  models, including: \describe{
+     \item{labels}{A vector with the label names.}
+     \item{phi}{The value of \code{phi} parameter.}
+     \item{correlation}{The matrix of label correlations used in combination
+       with \code{phi} parameter to define the labels used in the second step.
+     }
+     \item{basemodel}{The BRModel used in the first iteration.}
+     \item{metamodels}{A list of models named by the label names used in the
+       second iteration.
+     }
+     \item{datasets}{A list with \code{base} and \code{meta} datasets of
+       type \code{mldBR} named by the label names. Only when the
+       \code{save.datasets = TRUE}.
+     }
+ }
 }
 \description{
 Create a Meta-BR (MBR) classifier to predic multi-label
@@ -88,7 +95,8 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
    Multi-Label Data (MLD’09) (pp. 22–30).
 }
 \seealso{
-Other Transformation methods: \code{\link{br}};
-  \code{\link{cc}}; \code{\link{ebr}}; \code{\link{ecc}}
+Other Transformation methods: \code{\link{brplus}};
+  \code{\link{br}}; \code{\link{cc}}; \code{\link{ebr}};
+  \code{\link{ecc}}
 }
 

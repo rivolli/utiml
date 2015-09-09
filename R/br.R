@@ -46,8 +46,8 @@
 #' model <- br(emotions)
 #' pred <- predict(model, testdata)
 #'
-#' # Change the default base method
-#' model <- br(emotions, "C4.5")
+#' # Change the default base method and use 4 CORES
+#' model <- br(emotions, "C4.5", CORES = 4)
 #' pred <- predict(model, testdata)
 #'
 #' # Set a parameters for all subproblems
