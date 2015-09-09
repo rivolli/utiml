@@ -26,8 +26,6 @@
 #' @param attr.space A value between 0.1 and 1 to determine the percentage of
 #'    attributes must be used for each interation. (default: 0.50)
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param predict.params A list of default arguments passed to the predict
-#'  method. (default: \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: \code{FALSE})
 #' @param SEED A single value, interpreted as an integer to allow obtain the
@@ -82,7 +80,6 @@ ecc <- function (mdata,
                  subsample = 0.75,
                  attr.space = 0.5,
                  ...,
-                 predict.params = list(),
                  save.datasets = FALSE,
                  SEED = -1,
                  CORES = 1
@@ -114,13 +111,13 @@ ecc <- function (mdata,
     set.seed(SEED)
   }
 
-  eccmodel$models <- utiml_lapply(1:m, function (iteration){
+  eccmodel$models <- lapply(1:m, function (iteration){
     ndata <- mldr_random_subset(mdata, eccmodel$nrow, eccmodel$ncol)
     chain <- sample(rownames(ndata$labels))
-    ccmodel <- cc(ndata, base.method, chain, ..., predict.params = predict.params, save.datasets = save.datasets)
+    ccmodel <- cc(ndata, base.method, chain, ..., save.datasets = save.datasets, CORES = CORES)
     ccmodel$attrs <- colnames(ndata$dataset[,ndata$attributesIndexes])
     ccmodel
-  }, CORES)
+  })
 
   eccmodel$call <- match.call()
   class(eccmodel) <- "ECCmodel"

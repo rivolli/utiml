@@ -88,13 +88,13 @@ cc <- function (mdata,
   }
 
   basedata <- mdata$dataset[mdata$attributesIndexes]
-  labeldata <- mdata$dataset[mdata$labels$index]
+  labeldata <- mdata$dataset[mdata$labels$index][chain]
   datasets <- utiml_lapply(chain, function (labelname) {
     labelIndex <- which(labelname == chain)[[1]]
     data <- cbind(basedata, labeldata[1:labelIndex])
     br.transformation(data, "mldCC", base.method, chain.order = labelIndex)
   }, CORES)
-  names(datasets) <- rownames(mdata$labels)
+  names(datasets) <- chain
   ccmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
 
   if (save.datasets)
