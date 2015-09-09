@@ -4,8 +4,8 @@
 \alias{cc}
 \title{Classifier Chains for multi-label Classification}
 \usage{
-cc(mdata, base.method = "SVM", chain = c(), ..., predict.params = list(),
-  save.datasets = FALSE)
+cc(mdata, base.method = "SVM", chain = c(), ..., save.datasets = FALSE,
+  CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -25,11 +25,11 @@ empty the chain is the default label sequence of the dataset. (default:
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{predict.params}{A list of default arguments passed to the predict
-method. (default: \code{list()})}
-
 \item{save.datasets}{Logical indicating whether the binary datasets must be
-  saved in the model or not. (default: FALSE)}
+saved in the model or not. (default: FALSE)}
+
+\item{CORES}{he number of cores to parallelize the training. Values higher
+  than 1 require the \pkg{parallel} package. (default: 1)}
 }
 \value{
 An object of class \code{CCmodel} containing the set of fitted

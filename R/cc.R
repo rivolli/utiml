@@ -21,10 +21,10 @@
 #'   empty the chain is the default label sequence of the dataset. (default:
 #'   \code{list()})
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param predict.params A list of default arguments passed to the predict
-#'  method. (default: \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: FALSE)
+#' @param CORES he number of cores to parallelize the training. Values higher
+#'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
 #' @return An object of class \code{CCmodel} containing the set of fitted
 #'   models, including: \describe{ \item{chain}{A vector with the chain order}
@@ -60,8 +60,8 @@ cc <- function (mdata,
                 base.method = "SVM",
                 chain = c(),
                 ...,
-                predict.params = list(),
-                save.datasets = FALSE
+                save.datasets = FALSE,
+                CORES = 1
               ) {
   #Validations
   if(class(mdata) != 'mldr')
@@ -88,26 +88,17 @@ cc <- function (mdata,
   }
 
   basedata <- mdata$dataset[mdata$attributesIndexes]
-  newattrs <- matrix(nrow=mdata$measures$num.instances, ncol=0)
-  for (label in chain) {
-    #Create data
-    mldCC <- br.transformation(cbind(basedata, mdata$dataset[label]), "mldCC", base.method)
-    params <- c(list(dataset=mldCC), ...)
+  labeldata <- mdata$dataset[mdata$labels$index]
+  datasets <- utiml_lapply(chain, function (labelname) {
+    labelIndex <- which(labelname == chain)[[1]]
+    data <- cbind(basedata, labeldata[1:labelIndex])
+    br.transformation(data, "mldCC", base.method, chain.order = labelIndex)
+  }, CORES)
+  names(datasets) <- rownames(mdata$labels)
+  ccmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
 
-    #Call dynamic multilabel model with merged parameters
-    model <- do.call(mltrain, params)
-    attr(model, "labelname") <- label
-    attr(model, "methodname") <- mldCC$methodname
-
-    result <- do.call(mlpredict, c(list(model = model, newdata = basedata), predict.params))
-    basedata <- cbind(basedata, result$bipartition)
-    names(basedata)[ncol(basedata)] <- label
-
-    if (save.datasets) {
-      ccmodel$datasets[[label]] <- mldCC
-    }
-    ccmodel$models[[label]] <- model
-  }
+  if (save.datasets)
+    ccmodel$datasets <- datasets
 
   ccmodel$call <- match.call()
   class(ccmodel) <- "CCmodel"
@@ -180,6 +171,7 @@ print.CCmodel <- function (x, ...) {
 print.mldCC <- function (x, ...) {
   cat("Classifier Chains Transformation Dataset\n\n")
   cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep="")
+  cat("Chain Order: ", x$chain.order, "\n\n", sep="")
   cat("Dataset info:\n")
   cat(" ", ncol(x$data) - 1, "Predictive attributes\n")
   cat(" ", nrow(x$data), "Examples\n")
