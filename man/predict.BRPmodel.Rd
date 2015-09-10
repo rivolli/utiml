@@ -85,4 +85,7 @@ Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
    dependency into the binary relevance framework for multi-label
    classification. Expert Systems with Applications, 39(2), 1647–1655.
 }
+\seealso{
+\code{\link[=brplus]{BR+}}
+}
 

@@ -43,7 +43,7 @@ Create a Binary Relevance model for multilabel classification.
 \section{Warning}{
 
    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it
+   \code{'C5.0'} or \code{'CART'} instead of it.
 }
 \examples{
 # Train and predict emotion multilabel dataset using Binary Relevance
@@ -68,7 +68,7 @@ Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
 }
 \seealso{
 Other Transformation methods: \code{\link{brplus}};
-  \code{\link{cc}}; \code{\link{ebr}}; \code{\link{ecc}};
-  \code{\link{mbr}}
+  \code{\link{cc}}; \code{\link{dbr}}; \code{\link{ebr}};
+  \code{\link{ecc}}; \code{\link{mbr}}
 }
 

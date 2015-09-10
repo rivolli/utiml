@@ -48,6 +48,11 @@ Create a Classifier Chains model for multilabel classification.
   of extended the attribute space with the 0/1 label relevances of all previous
   classifiers, forming a classifier chain.
 }
+\section{Warning}{
+
+   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
+   \code{'C5.0'} or \code{'CART'} instead of it.
+}
 \examples{
 # Train and predict emotion multilabel dataset using Classifier Chains
 library(utiml)
@@ -72,7 +77,7 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
 }
 \seealso{
 Other Transformation methods: \code{\link{brplus}};
-  \code{\link{br}}; \code{\link{ebr}}; \code{\link{ecc}};
-  \code{\link{mbr}}
+  \code{\link{br}}; \code{\link{dbr}}; \code{\link{ebr}};
+  \code{\link{ecc}}; \code{\link{mbr}}
 }
 

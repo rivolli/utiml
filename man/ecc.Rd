@@ -5,8 +5,7 @@
 \title{Ensemble of Classifier Chains for multi-label Classification}
 \usage{
 ecc(mdata, base.method = "SVM", m = 10, subsample = 0.75,
-  attr.space = 0.5, ..., predict.params = list(), save.datasets = FALSE,
-  SEED = -1, CORES = 1)
+  attr.space = 0.5, ..., save.datasets = FALSE, SEED = -1, CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -30,9 +29,6 @@ training instances must be used for each interation. (default: 0.75)}
 attributes must be used for each interation. (default: 0.50)}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
-
-\item{predict.params}{A list of default arguments passed to the predict
-method. (default: \code{list()})}
 
 \item{save.datasets}{Logical indicating whether the binary datasets must be
 saved in the model or not. (default: \code{FALSE})}
@@ -65,9 +61,6 @@ Create an Ensemble of Classifier Chains model for
 
    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
    \code{'C5.0'} or \code{'CART'} instead of it.
-
-   Although CC does not allow running in parallel mode, the ensemble does
-   to parallelize the distinct interations.
 }
 \examples{
 # Train and predict emotion multilabel dataset using Ensemble of Classifier Chains
@@ -96,10 +89,12 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
    5782, 254–269.
 }
 \seealso{
+\code{\link[=ecc]{Ensemble of classifier Chains (ECC)}}
+
 Other Ensemble: \code{\link{ebr}}
 
 Other Transformation methods: \code{\link{brplus}};
-  \code{\link{br}}; \code{\link{cc}}; \code{\link{ebr}};
-  \code{\link{mbr}}
+  \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
+  \code{\link{ebr}}; \code{\link{mbr}}
 }
 

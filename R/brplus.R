@@ -27,8 +27,8 @@
 #'
 #' @return An object of class \code{BRPmodel} containing the set of fitted
 #'   models, including: \describe{
-#'    \item{freq}{}
-#'    \item{initial}{}
+#'    \item{freq}{The label frequencies to use with the "Stat" strategy}
+#'    \item{initial}{The BR model to predict the values for the labels to initial step}
 #'    \item{models}{A list of final models named by the label names.}
 #'    \item{datasets}{A list with \code{initial} and \code{final} datasets of
 #'      type \code{mldBRP} named by the label names. Only when the
@@ -38,7 +38,7 @@
 #'
 #' @section Warning:
 #'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-#'    \code{'C5.0'} or \code{'CART'} instead of it
+#'    \code{'C5.0'} or \code{'CART'} instead of it.
 #'
 #' @references
 #'  Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
@@ -148,6 +148,7 @@ brplus <- function (mdata,
 #'    dependency into the binary relevance framework for multi-label
 #'    classification. Expert Systems with Applications, 39(2), 1647–1655.
 #'
+#' @seealso \code{\link[=brplus]{BR+}}
 #' @export
 #'
 #' @examples
@@ -229,7 +230,7 @@ predict.BRPmodel <- function (object,
 print.BRPmodel <- function (x, ...) {
   cat("Classifier BR+ (also called BRplus)\n\nCall:\n")
   print(x$call)
-  cat("\n", length(x$labels), "Models (labels):\n")
-  print(x$labels)
+  cat("\n", length(x$models), "Models (labels):\n")
+  print(names(x$models))
 }
 

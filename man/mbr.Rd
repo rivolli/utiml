@@ -69,7 +69,7 @@ Create a Meta-BR (MBR) classifier to predic multi-label
 \section{Warning}{
 
    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it
+   \code{'C5.0'} or \code{'CART'} instead of it.
 }
 \examples{
 # Train and predict emotion multilabel dataset using Meta-BR
@@ -96,7 +96,7 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
 }
 \seealso{
 Other Transformation methods: \code{\link{brplus}};
-  \code{\link{br}}; \code{\link{cc}}; \code{\link{ebr}};
-  \code{\link{ecc}}
+  \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
+  \code{\link{ebr}}; \code{\link{ecc}}
 }
 

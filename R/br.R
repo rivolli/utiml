@@ -29,7 +29,7 @@
 #'
 #' @section Warning:
 #'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-#'    \code{'C5.0'} or \code{'CART'} instead of it
+#'    \code{'C5.0'} or \code{'CART'} instead of it.
 #'
 #' @references
 #'  Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning

@@ -44,9 +44,6 @@
 #'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
 #'    \code{'C5.0'} or \code{'CART'} instead of it.
 #'
-#'    Although CC does not allow running in parallel mode, the ensemble does
-#'    to parallelize the distinct interations.
-#'
 #' @references
 #'    Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
 #'    chains for multi-label classification. Machine Learning, 85(3), 333–359.
@@ -56,6 +53,7 @@
 #'    Knowledge Discovery in Databases, Lecture Notes in Computer Science,
 #'    5782, 254–269.
 #'
+#' @seealso \code{\link[=ecc]{Ensemble of classifier Chains (ECC)}}
 #' @export
 #'
 #' @examples

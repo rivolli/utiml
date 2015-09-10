@@ -29,8 +29,8 @@ saved in the model or not. (default: FALSE)}
 \value{
 An object of class \code{BRPmodel} containing the set of fitted
   models, including: \describe{
-   \item{freq}{}
-   \item{initial}{}
+   \item{freq}{The label frequencies to use with the "Stat" strategy}
+   \item{initial}{The BR model to predict the values for the labels to initial step}
    \item{models}{A list of final models named by the label names.}
    \item{datasets}{A list with \code{initial} and \code{final} datasets of
      type \code{mldBRP} named by the label names. Only when the
@@ -52,7 +52,7 @@ Create a BR+ classifier to predic multi-label data.
 \section{Warning}{
 
    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it
+   \code{'C5.0'} or \code{'CART'} instead of it.
 }
 \examples{
 # Train and predict emotion multilabel dataset using BRPlus
@@ -74,7 +74,7 @@ Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
 }
 \seealso{
 Other Transformation methods: \code{\link{br}};
-  \code{\link{cc}}; \code{\link{ebr}}; \code{\link{ecc}};
-  \code{\link{mbr}}
+  \code{\link{cc}}; \code{\link{dbr}}; \code{\link{ebr}};
+  \code{\link{ecc}}; \code{\link{mbr}}
 }
 
