@@ -79,7 +79,7 @@ ecc <- function (mdata,
                  attr.space = 0.5,
                  ...,
                  save.datasets = FALSE,
-                 SEED = -1,
+                 SEED = NULL,
                  CORES = 1
 ) {
   #Validations
@@ -104,7 +104,7 @@ ecc <- function (mdata,
   eccmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   eccmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
 
-  if (SEED > 0) {
+  if (!is.null(SEED)) {
     eccmodel$seed <- SEED
     set.seed(SEED)
   }
@@ -120,7 +120,7 @@ ecc <- function (mdata,
   eccmodel$call <- match.call()
   class(eccmodel) <- "ECCmodel"
 
-  if (SEED > 0)
+  if (!is.null(SEED))
     set.seed(NULL)
 
   eccmodel

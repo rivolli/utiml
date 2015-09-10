@@ -5,7 +5,7 @@
 \title{Ensemble of Classifier Chains for multi-label Classification}
 \usage{
 ecc(mdata, base.method = "SVM", m = 10, subsample = 0.75,
-  attr.space = 0.5, ..., save.datasets = FALSE, SEED = -1, CORES = 1)
+  attr.space = 0.5, ..., save.datasets = FALSE, SEED = NULL, CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train

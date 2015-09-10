@@ -76,7 +76,7 @@ ebr <- function (mdata,
                 attr.space = 0.5,
                 ...,
                 save.datasets = FALSE,
-                SEED = -1,
+                SEED = NULL,
                 CORES = 1
 ) {
   #Validations
@@ -101,7 +101,7 @@ ebr <- function (mdata,
   ebrmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
 
-  if (SEED > 0) {
+  if (!is.null(SEED)) {
     ebrmodel$seed <- SEED
     set.seed(SEED)
   }
@@ -116,7 +116,7 @@ ebr <- function (mdata,
   ebrmodel$call <- match.call()
   class(ebrmodel) <- "EBRmodel"
 
-  if (SEED > 0)
+  if (!is.null(SEED))
     set.seed(NULL)
 
   ebrmodel
