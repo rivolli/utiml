@@ -1,3 +1,71 @@
+#' @title Nested Stacking for multi-label Classification
+#' @family Transformation methods
+#' @description Create a Nested Stacking model for multilabel classification.
+#'
+#'   Nested Stacking is based on Classifier Chains transformation method to predict
+#'   multi-label data. It differs from CC to predict the labels values in the
+#'   training step and to regularize the output based on the labelsets available
+#'   on training data.
+#'
+#' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label train
+#'   dataset (provided by \pkg{mldr} package).
+#' @param base.method A string with the name of base method. The same base method
+#'   will be used for train all subproblems.
+#'
+#'   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
+#'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
+#'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
+#'    \code{'SVM'})
+#' @param chain A vector with the label names to define the chain order. If
+#'   empty the chain is the default label sequence of the dataset. (default:
+#'   \code{list()})
+#' @param ... Others arguments passed to the base method for all subproblems.
+#' @param predict.params A list of default arguments passed to the predict
+#'  method. (default: \code{list()})
+#' @param save.datasets Logical indicating whether the binary datasets must be
+#'   saved in the model or not. (default: FALSE)
+#' @param CORES he number of cores to parallelize the training. Values higher
+#'   than 1 require the \pkg{parallel} package. (default: 1)
+#'
+#' @return An object of class \code{NSmodel} containing the set of fitted
+#'   models, including:
+#'   \describe{
+#'    \item{chain}{A vector with the chain order}
+#'    \item{labels}{A vector with the label names in expected order}
+#'    \item{labelset}{The matrix containing only labels values}
+#'    \item{models}{A list of models named by the label names.}
+#'    \item{datasets}{A list of \code{mldCC} named by the label names.
+#'      Only when the \code{save.datasets = TRUE}.}
+#'   }
+#'
+#' @section Warning:
+#'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
+#'    \code{'C5.0'} or \code{'CART'} instead of it.
+#'
+#' @references
+#'  Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
+#'    chains for multi-label classification. In Workshop of Lernen, Wissen &
+#'    Adaptivität (LWA 2013) (pp. 162–169). Bamberg, Germany.
+#'
+#' @export
+#'
+#' @examples
+#' # Train and predict emotion multilabel dataset using Nested Stacking
+#' library(utiml)
+#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#'
+#' # Use SVM as base method
+#' model <- ns(emotions)
+#' pred <- predict(model, testdata)
+#'
+#' # Use a specific chain with C4.5 classifier
+#' mychain <- sample(rownames(emotions$labels))
+#' model <- ns(emotions, "C4.5", mychain)
+#' pred <- predict(model, testdata)
+#'
+#' # Set a specific parameter
+#' model <- ns(emotions, "KNN", k=5)
+#' pred <- predict(model, testdata)
 ns <- function (mdata,
                 base.method = "SVM",
                 chain = c(),
@@ -27,9 +95,8 @@ ns <- function (mdata,
   nsmodel$chain <- chain
   nsmodel$models <- list()
   nsmodel$labelsets <- as.matrix(mdata$dataset[,mdata$labels$index])
-  if (save.datasets) {
+  if (save.datasets)
     nsmodel$datasets <- list()
-  }
 
   basedata <- mdata$dataset[mdata$attributesIndexes]
   newattrs <- matrix(nrow=mdata$measures$num.instances, ncol=0)
@@ -59,6 +126,43 @@ ns <- function (mdata,
   nsmodel
 }
 
+#' @title Predict Method for Nested Stacking
+#' @description This function predicts values based upon a model trained by \code{ns}.
+#'  The scores of the prediction was adapted once this method uses a correction of
+#'  labelsets to predict only classes present on training data. To more information
+#'  about this implementation see \code{\link{ns.subsetcorrection.score}}.
+#'
+#' @param object Object of class "\code{NSmodel}", created by \code{\link{ns}} method.
+#' @param newdata An object containing the new input data. This must be a matrix or
+#'          data.frame object containing the same size of training data.
+#' @param ... Others arguments passed to the base method prediction for all
+#'   subproblems.
+#' @param probability Logical indicating whether class probabilities should be returned.
+#'   (default: \code{TRUE})
+#'
+#' @return A matrix containing the probabilistic values or just predictions (only when
+#'   \code{probability = FALSE}). The rows indicate the predicted object and the
+#'   columns indicate the labels.
+#'
+#' @seealso \code{\link[=ns]{Nested Stacking (NS)}}
+#'
+#' @export
+#'
+#' @examples
+#' library(utiml)
+#'
+#' # Emotion multi-label dataset using Nested Stacking
+#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#'
+#' # Predict SVM scores
+#' model <- ns(emotions)
+#' pred <- predict(model, testdata)
+#'
+#' # Predict SVM bipartitions
+#' pred <- predict(model, testdata, probability = FALSE)
+#'
+#' # Passing a specif parameter for SVM predict method
+#' pred <- predict(model, testdata, na.action = na.fail)
 predict.NSmodel <- function (object,
                              newdata,
                              ...,
@@ -79,45 +183,6 @@ predict.NSmodel <- function (object,
   result <- as.resultMLPrediction(predictions, probability)[,object$labels]
   subset.correction <- c(ns.subsetcorrection, ns.subsetcorrection.score)
   subset.correction[c(!probability, probability)][[1]](result, object$labelsets)
-}
-
-ns.subsetcorrection <- function (predicted_y, train_y) {
-  if (ncol(predicted_y) != ncol(train_y))
-    stop("The number of columns in the predicted result are different from the training data")
-
-  labelsets <- unique(train_y)
-  rownames(labelsets) <- apply(labelsets, 1, paste, collapse = "")
-
-  order <- names(sort(table(apply(train_y, 1, paste, collapse = "")), decreasing = TRUE))
-  labelsets <- labelsets[order,]
-
-  new.predicted <- t(apply(predicted_y, 1, function (y) {
-    labelsets[names(which.min(apply(labelsets, 1, function (row) sum(row != y)))),]
-  }))
-
-  new.predicted
-}
-
-ns.subsetcorrection.score <- function (predicted_y, train_y, threshold = 0.5) {
-  if (ncol(predicted_y) != ncol(train_y))
-    stop("The number of columns in the predicted result are different from the training data")
-
-  new.predicted <- as.matrix(predicted_y)
-
-  y <- ns.subsetcorrection(simple.threshold(predicted_y, threshold), train_y)
-  for (r in 1:nrow(predicted_y)) {
-    row <- predicted_y[r,]
-
-    # Correct the values greater than threshold but that is expected to be lower
-    index <- y[r,] - row <= -(threshold)
-    new.predicted[index] <- threshold - (1/1-row[index]) / 10
-
-    # Correct the values lower than threshold but that is expected to be greater
-    index <- y[r,] - row > threshold
-    new.predicted[index] <- threshold + row[index] / 10
-  }
-
-  new.predicted
 }
 
 print.NSmodel <- function (x, ...) {

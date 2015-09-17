@@ -87,9 +87,8 @@ cc <- function (mdata,
   ccmodel$labels <- labels
   ccmodel$chain <- chain
   ccmodel$models <- list()
-  if (save.datasets) {
+  if (save.datasets)
     ccmodel$datasets <- list()
-  }
 
   basedata <- mdata$dataset[mdata$attributesIndexes]
   labeldata <- mdata$dataset[mdata$labels$index][chain]
