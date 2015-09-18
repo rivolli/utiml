@@ -183,7 +183,27 @@ utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
 }
 
 utiml_labelset_stratification <- function (mdata, r) {
+  D <- 1:mdata$measures$num.instances
+  S <- lapply(1:length(r), function (i) integer())
 
+  # Calculate the desired number of examples at each subset
+  cj <- round(mdata$measures$num.instances * r)
+  dif <- mdata$measures$num.instances - sum(cj)
+  if (dif != 0)
+    cj[1:abs(dif)] <- cj[1:abs(dif)] + c(1, -1)[c(dif>0, dif<0)]
+
+  # Calculate the desired number of examples of each labelset at each subset
+  cji <- trunc(sapply(mdata$labelsets, function (di) di * r))
+
+  labelsets <- apply(mdata$dataset[,mdata$labels$index], 1, paste, collapse = "")
+
+  # Labelsets that there are sufficients examples
+
+  # Labelsets that there are at least one for each
+
+  # Distribute Labelsets in the folds
+
+  browser()
 }
 
 #' @title Iterative Stratification
@@ -204,8 +224,7 @@ utiml_labelset_stratification <- function (mdata, r) {
 #' indexes <- utiml_iterative_stratification(emotions, rep(0.1,10))
 utiml_iterative_stratification <- function (mdata, r) {
   D <- 1:mdata$measures$num.instances
-  k <- length(r)
-  S <- lapply(1:k, function (i) integer())
+  S <- lapply(1:length(r), function (i) integer())
 
   # Calculate the desired number of examples at each subset
   cj <- round(mdata$measures$num.instances * r)
