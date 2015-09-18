@@ -14,7 +14,7 @@ The sum of all values does not be greater than 1. If a
 single value is informed then the complement of them is
 applied to generated the second partition. If two or more
 values are informed and the sum of them is lower than 1
-the partitions will be generated with the ratio informed.
+the partitions will be generated with the informed proportion.
 (default: \code{c(0.7, 0.3)})}
 
 \item{SEED}{A single value, interpreted as an integer to allow

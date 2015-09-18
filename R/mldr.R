@@ -12,7 +12,7 @@
 #'  single value is informed then the complement of them is
 #'  applied to generated the second partition. If two or more
 #'  values are informed and the sum of them is lower than 1
-#'  the partitions will be generated with the ratio informed.
+#'  the partitions will be generated with the informed proportion.
 #'  (default: \code{c(0.7, 0.3)})
 #' @param SEED A single value, interpreted as an integer to allow
 #'  obtain the same results again. (default: \code{NULL})
@@ -54,13 +54,99 @@ mldr_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
 
   # Calculate the indexes and limit the last index to avoid rounds mistakes
   idx <- c(0, cumsum(round(mdata$measures$num.instances * partitions)))
-  idx[length(idx)] <- mdata$measures$num.instances
+  idx[length(idx)] <- round(sum(mdata$measures$num.instances * partitions))
 
   ldata <- list()
   for (i in 1:length(partitions))
     ldata[[i]] <- mldr_subset(mdata, rows[(idx[i]+1):idx[i+1]], mdata$attributesIndexes)
 
   ldata
+}
+
+mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+
+}
+
+mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+  # Validations
+  if (sum(partitions) > 1)
+    stop("The sum of partitions can not be greater than 1")
+
+  if (length(partitions) == 1)
+    partitions[2] <- 1 - partitions[1]
+
+  if (!is.null(SEED))
+    set.seed(SEED)
+
+  # Splits
+  ldata <- lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
+    mldr_subset(mdata, fold, mdata$attributesIndexes)
+  })
+
+  if (!is.null(SEED))
+    set.seed(NULL)
+
+  ldata
+}
+
+mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
+  if(class(mdata) != 'mldr')
+    stop('First argument must be an mldr object')
+
+  if (class(kfold) != "mldr_kfolds")
+    stop("Second argument must be an 'mldr_kfolds' object")
+
+  if (n < 1 || n > kfold$k)
+    stop(cat("The 'n' value must be between 1 and", kfold$k))
+
+  folds <- kfold$fold[-n]
+  if (has.validation) {
+    i <- n == length(folds)
+    v <- c(1, n)[c(i, !i)]
+    folds <- folds[-v]
+  }
+  ldata <- list()
+  ldata$train <- mldr_subset(mdata, unlist(folds), mdata$attributesIndexes)
+  ldata$test <- mldr_subset(mdata, kfold$fold[[n]], mdata$attributesIndexes)
+
+  if (has.validation)
+    ldata$validation <- mldr_subset(mdata, kfold$fold[[v]], mdata$attributesIndexes)
+
+  ldata
+}
+
+mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
+  if (!is.null(SEED)) {
+    set.seed(SEED)
+    rows <- sample(1:mdata$measures$num.instances)
+    set.seed(NULL)
+  }
+  else
+    rows <- sample(1:mdata$measures$num.instances)
+
+  kf <- list(k=k)
+  kf$fold <- split(rows, ceiling(seq_along(rows)/k))
+  class(kf) <- "mldr_kfolds"
+
+  kf
+}
+
+mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
+
+}
+
+mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
+  if (!is.null(SEED))
+    set.seed(SEED)
+
+  kf <- list(k=k)
+  kf$fold <- utiml_iterative_stratification(mdata, rep(1/k, k))
+  class(kf) <- "mldr_kfolds"
+
+  if (!is.null(SEED))
+    set.seed(NULL)
+
+  kf
 }
 
 #' @title Create a subset of a dataset
