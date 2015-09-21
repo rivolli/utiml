@@ -182,28 +182,51 @@ utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
   apply(avgtable, 2, as.resultPrediction)
 }
 
+#' @title Labelsets Stratification
+#' @description Create the indexes using the Labelsets Stratification
+#'   approach.
+#'
+#' @param mdata A mldr dataset
+#' @param r Desired proportion of examples in each subset, r1, . . . rk
+#'
+#' @return A list with k disjoint indexes subsets S1, . . .Sk
+#' @export
+#'
+#' @examples
+#' # Create 3 partitions for train, validation and test
+#' indexes <- utiml_labelset_stratification(emotions, c(0.6,0.1,0.3))
+#'
+#' # Create a stratified 10-fold
+#' indexes <- utiml_labelset_stratification(emotions, rep(0.1,10))
 utiml_labelset_stratification <- function (mdata, r) {
-  D <- 1:mdata$measures$num.instances
+  D <- sample(mdata$measures$num.instances)
   S <- lapply(1:length(r), function (i) integer())
-
-  # Calculate the desired number of examples at each subset
-  cj <- round(mdata$measures$num.instances * r)
-  dif <- mdata$measures$num.instances - sum(cj)
-  if (dif != 0)
-    cj[1:abs(dif)] <- cj[1:abs(dif)] + c(1, -1)[c(dif>0, dif<0)]
-
-  # Calculate the desired number of examples of each labelset at each subset
-  cji <- trunc(sapply(mdata$labelsets, function (di) di * r))
-
   labelsets <- apply(mdata$dataset[,mdata$labels$index], 1, paste, collapse = "")
 
-  # Labelsets that there are sufficients examples
+  # Calculate the desired number of examples of each labelset at each subset
+  cji.aux <- sapply(mdata$labelsets, function (di) di * r)
+  cji <- trunc(cji.aux)
+  dif <- cji.aux - cji
+  rest <- round(apply(dif, 1, sum))
+  for (ls in rev(names(mdata$labelsets))) {
+    s <- sum(dif[,ls])
+    if (s > 0) {
+      for (i in 1:s) {
+        fold <- which.max(rest)
+        rest[fold] <- rest[fold] - 1
+        cji[fold, ls] <- cji[fold, ls] + 1
+      }
+    }
+  }
 
-  # Labelsets that there are at least one for each
+  for (ex in D) {
+    ls <- labelsets[ex]
+    fold <- which.max(cji[,ls])
+    S[[fold]] <- c(S[[fold]], ex)
+    cji[fold, ls] <- cji[fold, ls] - 1
+  }
 
-  # Distribute Labelsets in the folds
-
-  browser()
+  S
 }
 
 #' @title Iterative Stratification

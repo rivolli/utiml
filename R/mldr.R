@@ -23,19 +23,19 @@
 #'
 #' @examples
 #' # Create two partitions with 70% and 30% for training and test
-#' datasets <- mldr_holdout(emotions)
+#' datasets <- mldr_random_holdout(emotions)
 #'
 #' # The same result can be obtained as:
-#' datasets <- mldr_holdout(emotions, 0.7)
+#' datasets <- mldr_random_holdout(emotions, 0.7)
 #' print(datasets[[1]]$measures)
 #' print(datasets[[2]]$measures)
 #'
 #' # Using a SEED and split the dataset in the half
-#' datasets <- mldr_holdout(emotions, 0.5, SEED = 12)
+#' datasets <- mldr_random_holdout(emotions, 0.5, SEED = 12)
 #'
 #' # Split the dataset in three parts
-#' datasets <- mldr_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+#' datasets <- mldr_random_holdout(emotions, c(0.70, 0.15, 0.15))
+mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
   # Validations
   if (sum(partitions) > 1)
     stop("The sum of partitions can not be greater than 1")
@@ -64,7 +64,25 @@ mldr_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
 }
 
 mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+  # Validations
+  if (sum(partitions) > 1)
+    stop("The sum of partitions can not be greater than 1")
 
+  if (length(partitions) == 1)
+    partitions[2] <- 1 - partitions[1]
+
+  if (!is.null(SEED))
+    set.seed(SEED)
+
+  # Splits
+  ldata <- lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
+    mldr_subset(mdata, fold, mdata$attributesIndexes)
+  })
+
+  if (!is.null(SEED))
+    set.seed(NULL)
+
+  ldata
 }
 
 mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
@@ -132,7 +150,17 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
 }
 
 mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
+  if (!is.null(SEED))
+    set.seed(SEED)
 
+  kf <- list(k=k)
+  kf$fold <- utiml_labelset_stratification(mdata, rep(1/k, k))
+  class(kf) <- "mldr_kfolds"
+
+  if (!is.null(SEED))
+    set.seed(NULL)
+
+  kf
 }
 
 mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
