@@ -222,8 +222,10 @@ utiml_labelset_stratification <- function (mdata, r) {
   for (ex in D) {
     ls <- labelsets[ex]
     fold <- which.max(cji[,ls])
-    S[[fold]] <- c(S[[fold]], ex)
-    cji[fold, ls] <- cji[fold, ls] - 1
+    if (cji[fold, ls] > 0) {
+      S[[fold]] <- c(S[[fold]], ex)
+      cji[fold, ls] <- cji[fold, ls] - 1
+    }
   }
 
   S

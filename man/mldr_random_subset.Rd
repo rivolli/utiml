@@ -24,7 +24,9 @@ Create a random subset of a dataset
 mldr_random_subset(emotions, 100, 40)
 }
 \seealso{
-Other mldr: \code{\link{mldr_random_holdout}};
+Other mldr: \code{\link{mldr_iterative_stratification_holdout}};
+  \code{\link{mldr_random_holdout}};
+  \code{\link{mldr_stratified_holdout}};
   \code{\link{mldr_subset}}
 }
 

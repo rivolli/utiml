@@ -1,6 +1,7 @@
 #' @title Create distinct partitions of a multi-label dataset
 #' @family mldr
-#' @description This method create multi-label dataset for
+#' @family sampling
+#' @description This method creates multi-label dataset for
 #'  train, test, validation or other proposes. The number of
 #'  partitions is defined in \code{partitions} parameter.
 #'  The instances are used in only one partition of divistion.
@@ -63,6 +64,51 @@ mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
   ldata
 }
 
+#' @title Create stratified partitions of a multi-label dataset
+#' @family mldr
+#' @family sampling
+#' @description This method creates multi-label dataset for
+#'  train, test, validation or other proposes using stratified
+#'  approach based on labelsets distribution. The number of
+#'  partitions is defined in \code{partitions} parameter.
+#'  The instances are used in only one partition of divistion.
+#'  Use the SEED parameter to obtain the same result again.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param partitions A list of percentages or a single value.
+#'  The sum of all values does not be greater than 1. If a
+#'  single value is informed then the complement of them is
+#'  applied to generated the second partition. If two or more
+#'  values are informed and the sum of them is lower than 1
+#'  the partitions will be generated with the informed proportion.
+#'  (default: \code{c(0.7, 0.3)})
+#' @param SEED A single value, interpreted as an integer to allow
+#'  obtain the same results again. (default: \code{NULL})
+#'
+#' @return A list with at least two datasets sampled as specified
+#'  in partitions parameter.
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011).
+#'  On the stratification of multi-label data. In Proceedings of the
+#'  Machine Learning and Knowledge Discovery in Databases - European
+#'  Conference, ECML PKDD (pp. 145–158).
+#'
+#' @export
+#'
+#' @examples
+#' # Create two partitions with 70% and 30% for training and test
+#' datasets <- mldr_stratified_holdout(emotions)
+#'
+#' # The same result can be obtained as:
+#' datasets <- mldr_stratified_holdout(emotions, 0.7)
+#' print(datasets[[1]]$measures)
+#' print(datasets[[2]]$measures)
+#'
+#' # Using a SEED and split the dataset in the half
+#' datasets <- mldr_stratified_holdout(emotions, 0.5, SEED = 12)
+#'
+#' # Split the dataset in three parts
+#' datasets <- mldr_stratified_holdout(emotions, c(0.70, 0.15, 0.15))
 mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
   # Validations
   if (sum(partitions) > 1)
@@ -85,6 +131,51 @@ mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NUL
   ldata
 }
 
+#' @title Create iterative stratified partitions of a multi-label dataset
+#' @family mldr
+#' @family sampling
+#' @description This method creates multi-label dataset for
+#'  train, test, validation or other proposes using interative
+#'  stratified algorithm, that is based on labels proportions.
+#'  The number of partitions is defined in \code{partitions} parameter.
+#'  The instances are used in only one partition of divistion.
+#'  Use the SEED parameter to obtain the same result again.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param partitions A list of percentages or a single value.
+#'  The sum of all values does not be greater than 1. If a
+#'  single value is informed then the complement of them is
+#'  applied to generated the second partition. If two or more
+#'  values are informed and the sum of them is lower than 1
+#'  the partitions will be generated with the informed proportion.
+#'  (default: \code{c(0.7, 0.3)})
+#' @param SEED A single value, interpreted as an integer to allow
+#'  obtain the same results again. (default: \code{NULL})
+#'
+#' @return A list with at least two datasets sampled as specified
+#'  in partitions parameter.
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011).
+#'  On the stratification of multi-label data. In Proceedings of the
+#'  Machine Learning and Knowledge Discovery in Databases - European
+#'  Conference, ECML PKDD (pp. 145–158).
+#'
+#' @export
+#'
+#' @examples
+#' # Create two partitions with 70% and 30% for training and test
+#' datasets <- mldr_iterative_stratification_holdout(emotions)
+#'
+#' # The same result can be obtained as:
+#' datasets <- mldr_iterative_stratification_holdout(emotions, 0.7)
+#' print(datasets[[1]]$measures)
+#' print(datasets[[2]]$measures)
+#'
+#' # Using a SEED and split the dataset in the half
+#' datasets <- mldr_iterative_stratification_holdout(emotions, 0.5, SEED = 12)
+#'
+#' # Split the dataset in three parts
+#' datasets <- mldr_iterative_stratification_holdout(emotions, c(0.70, 0.15, 0.15))
 mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
   # Validations
   if (sum(partitions) > 1)

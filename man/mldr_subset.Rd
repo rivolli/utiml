@@ -26,7 +26,9 @@ cols <- c("Mean_Acc1298_Mean_Mem40_Centroid", "Mean_Acc1298_Mean_Mem40_MFCC_10")
 mldr_subset(emotions, rows, cols)
 }
 \seealso{
-Other mldr: \code{\link{mldr_random_holdout}};
-  \code{\link{mldr_random_subset}}
+Other mldr: \code{\link{mldr_iterative_stratification_holdout}};
+  \code{\link{mldr_random_holdout}};
+  \code{\link{mldr_random_subset}};
+  \code{\link{mldr_stratified_holdout}}
 }
 
