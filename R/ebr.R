@@ -126,9 +126,9 @@ ebr <- function (mdata,
 #' @description This function predicts values based upon a model trained
 #'  by \code{\link{ebr}}.
 #'
-#' @param object Object of class "\code{EBRmodel}", created by \code{\link{br}} method.
+#' @param object Object of class "\code{EBRmodel}", created by \code{\link{ebr}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
-#'          data.frame object containing the same size of training data.
+#'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
 #' The valid options are: \describe{
 #'  \code{'score'}{Compute the averages of probabilities},
@@ -186,6 +186,7 @@ predict.EBRmodel <- function (object,
   if (CORES < 1)
     stop('Cores must be a positive value')
 
+  newdata <- utiml_newdata(newdata)
   allpreds <- lapply(model$models, function (brmodel) {
     predict(brmodel, newdata[,brmodel$attrs], ..., probability = vote.schema[1] == "score", CORES = CORES)
   })

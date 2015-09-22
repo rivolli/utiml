@@ -114,7 +114,7 @@ cc <- function (mdata,
 #'
 #' @param object Object of class "\code{CCmodel}", created by \code{\link{cc}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
-#'          data.frame object containing the same size of training data.
+#'          data.frame object containing the same size of training data or a mldr object.
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
@@ -152,6 +152,7 @@ predict.CCmodel <- function (object,
   if(class(object) != 'CCmodel')
     stop('First argument must be an CCmodel object')
 
+  newdata <- utiml_newdata(newdata)
   predictions <- list()
   for (label in object$chain) {
     params <- c(list(model = object$models[[label]], newdata = newdata), ...)

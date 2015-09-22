@@ -198,11 +198,56 @@ mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.
   ldata
 }
 
+#' @title Get the multi-labels datasets for k-fold Cross Validation
+#' @family mldr
+#' @family sampling
+#' @description This is a simple way to use k-fold cross validation.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param kfold An object of class \code{mldr_kfolds}, this is obtained
+#'  from use of some kfold method.
+#' @param n The number of fold to separated train and test subsets.
+#' @param has.validation Logical value that indicate if a validation
+#'  dataset will be used. (defaul: \code{FALSE})
+#'
+#' @return A list contained train and test dataset:
+#'  \describe{
+#'    \code{train}{The mldr dataset with train examples, that inclue all
+#'      examples except those that are in test and validation samples}
+#'    \code{test}{The mldr dataset with test examples, defined by the
+#'      number of the fold}
+#'    \code{validation}{Optionally, only if \code{has.validation = TRUE}.
+#'      The mldr dataset with validation examples}
+#'  }
+#'
+#' @export
+#'
+#' @examples
+#' library(utiml)
+#' folds <- mldr_random_kfold(emotions, 10)
+#'
+#' # Using the first iteration
+#' dataset <- mldr_getfold(emotions, folds, 1)
+#' classifier <- br(dataset$train)
+#' result <- predict(classifier, dataset$test)
+#'
+#' # All iterations
+#' for (i in 1:10) {
+#'    dataset <- mldr_getfold(emotions, folds, i)
+#'    #dataset$train
+#'    #dataset$test
+#' }
+#'
+#' # Using validation
+#' dataset <- mldr_getfold(emotions, folds, 10, TRUE)
+#' # dataset$train, dataset$test, #dataset$validation
 mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
 
-  if (class(kfold) != "mldr_kfolds")
+  if (class(kfold) != "mld#' # 2 folds
+#' mldr_random_kfold(emotions, 2)#' # 2 folds
+#' mldr_random_kfold(emotions, 2)r_kfolds")
     stop("Second argument must be an 'mldr_kfolds' object")
 
   if (n < 1 || n > kfold$k)
@@ -224,7 +269,35 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
   ldata
 }
 
+#' @title Generate random k folds for multi-label data
+#' @family mldr
+#' @family sampling
+#' @description Use this method to generate random sampling for multi-labels
+#'   datasets. This may generate folds with differents proportions of labels.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param k The number of folds. (default: 10)
+#' @param SEED A single value, interpreted as an integer to allow obtain the
+#'   same results again. (default: \code{NULL})
+#'
+#' @return An object of type \code{mldr_kfolds}. This is a list with
+#'  k elements, where each element contains a list of row indexes based
+#'  on the original dataset.
+#'
+#' @seealso \code{\link{mldr_getfold}}
+#' @export
+#'
+#' @examples
+#' # 2 folds
+#' folds <- mldr_random_kfold(emotions, 2)
+#'
+#' # 10 folds
+#' folds <- mldr_random_kfold(emotions, 10)
 mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
+  if(class(mdata) != 'mldr')
+    stop('First argument must be an mldr object')
+
+  k <- as.integer(k)
   if (!is.null(SEED)) {
     set.seed(SEED)
     rows <- sample(1:mdata$measures$num.instances)
@@ -240,6 +313,36 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
   kf
 }
 
+#' @title Generate stratified k folds for multi-label data
+#' @family mldr
+#' @family sampling
+#' @description Use this method to generate stratified sampling for multi-labels
+#'   datasets. This method use the labelsets to compute the partitions
+#'   distributions, however some specific labelsets can not occurs in all folds.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param k The number of folds. (default: 10)
+#' @param SEED A single value, interpreted as an integer to allow obtain the
+#'   same results again. (default: \code{NULL})
+#'
+#' @return An object of type \code{mldr_kfolds}. This is a list with
+#'  k elements, where each element contains a list of row indexes based
+#'  on the original dataset.
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#'  stratification of multi-label data. In Proceedings of the Machine
+#'  Learningand Knowledge Discovery in Databases - European Conference,
+#'  ECML PKDD (pp. 145–158).
+#'
+#' @seealso \code{\link{mldr_getfold}}
+#' @export
+#'
+#' @examples
+#' # 2 folds
+#' folds <- mldr_stratified_kfold(emotions, 2)
+#'
+#' # 10 folds
+#' folds <- mldr_stratified_kfold(emotions, 10)
 mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
   if (!is.null(SEED))
     set.seed(SEED)
@@ -254,6 +357,37 @@ mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
   kf
 }
 
+#' @title Generate labels based stratified k folds for multi-label data
+#' @family mldr
+#' @family sampling
+#' @description Use this method to generate stratified sampling for multi-labels
+#'   datasets using the iterative stratified algorithm. This method use the
+#'   labels distributions to compute the partitions proportions, however some
+#'   specific label can not occurs in all folds.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param k The number of folds. (default: 10)
+#' @param SEED A single value, interpreted as an integer to allow obtain the
+#'   same results again. (default: \code{NULL})
+#'
+#' @return An object of type \code{mldr_kfolds}. This is a list with
+#'  k elements, where each element contains a list of row indexes based
+#'  on the original dataset.
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#'  stratification of multi-label data. In Proceedings of the Machine
+#'  Learningand Knowledge Discovery in Databases - European Conference,
+#'  ECML PKDD (pp. 145–158).
+#'
+#' @seealso \code{\link{mldr_getfold}}
+#' @export
+#'
+#' @examples
+#' # 2 folds
+#' folds <- mldr_iterative_stratification_kfold(emotions, 2)
+#'
+#' # 10 folds
+#' folds <- mldr_iterative_stratification_kfold(emotions, 10)
 mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
   if (!is.null(SEED))
     set.seed(SEED)

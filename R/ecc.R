@@ -126,6 +126,52 @@ ecc <- function (mdata,
   eccmodel
 }
 
+#' @title Predict Method for Ensemble of Classifier Chains
+#' @description This function predicts values based upon a model trained
+#'  by \code{\link{ecc}}.
+#'
+#' @param object Object of class "\code{ECCmodel}", created by \code{\link{ecc}} method.
+#' @param newdata An object containing the new input data. This must be a matrix or
+#'          data.frame object containing the same size of training data or a mldr object.
+#' @param vote.schema Define the way that ensemble must compute the predictions.
+#' The valid options are: \describe{
+#'  \code{'score'}{Compute the averages of probabilities},
+#'  \code{'majority'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
+#'  \code{'prop'}{Compute the proportion of votes, scale data between min and max of votes} }
+#'  (default: \code{'score'})
+#' @param ... Others arguments passed to the base method prediction for all
+#'   subproblems.
+#' @param probability Logical indicating whether class probabilities should be returned.
+#'   (default: \code{TRUE})
+#' @param CORES The number of cores to parallelize the prediction. Values higher
+#'   than 1 require the \pkg{parallel} package (default: 1).
+#'
+#' @return A matrix containing the probabilistic values or just predictions (only when
+#'   \code{probability = FALSE}). The rows indicate the predicted object and the
+#'   columns indicate the labels.
+#'
+#' @section Warning:
+#'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
+#'    \code{'C5.0'} or \code{'CART'} instead of it
+#'
+#' @seealso \code{\link[=ecc]{Ensemble of Classifier Chains (ECC)}}
+#' @export
+#'
+#' @examples
+#' library(utiml)
+#'
+#' # Emotion multi-label dataset using Ensemble of Binary Relevance
+#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#'
+#' # Predict SVM scores
+#' model <- ecc(emotions)
+#' pred <- predict(model, testdata)
+#'
+#' # Predict SVM bipartitions running in 6 cores
+#' pred <- predict(model, testdata, probability = FALSE, CORES = 6)
+#'
+#' # Return the classes with have at least half of votes
+#' pred <- predict(model, testdata, vote.schema = "majority", probability = FALSE)
 predict.ECCmodel <- function (object,
                               newdata,
                               vote.schema = c("score", "majority", "prop"),
@@ -144,6 +190,7 @@ predict.ECCmodel <- function (object,
   if (CORES < 1)
     stop('Cores must be a positive value')
 
+  newdata <- utiml_newdata(newdata)
   allpreds <- utiml_lapply(model$models, function (ccmodel) {
     predict(ccmodel, newdata[,ccmodel$attrs], ..., probability = vote.schema[1] == "score")
   }, CORES)

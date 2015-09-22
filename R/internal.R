@@ -182,6 +182,10 @@ utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
   apply(avgtable, 2, as.resultPrediction)
 }
 
+utiml_newdata <- function (newdata) UseMethod("utiml_newdata")
+utiml_newdata.default <- function (newdata) newdata
+utiml_newdata.mldr <- function (newdata) newdata$dataset[,newdata$attributesIndexes]
+
 #' @title Labelsets Stratification
 #' @description Create the indexes using the Labelsets Stratification
 #'   approach.
@@ -190,6 +194,12 @@ utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
 #' @param r Desired proportion of examples in each subset, r1, . . . rk
 #'
 #' @return A list with k disjoint indexes subsets S1, . . .Sk
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#'  stratification of multi-label data. In Proceedings of the Machine
+#'  Learningand Knowledge Discovery in Databases - European Conference,
+#'  ECML PKDD (pp. 145–158).
+#'
 #' @export
 #'
 #' @examples
@@ -239,6 +249,12 @@ utiml_labelset_stratification <- function (mdata, r) {
 #' @param r Desired proportion of examples in each subset, r1, . . . rk
 #'
 #' @return A list with k disjoint indexes subsets S1, . . .Sk
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#'  stratification of multi-label data. In Proceedings of the Machine
+#'  Learningand Knowledge Discovery in Databases - European Conference,
+#'  ECML PKDD (pp. 145–158).
+#'
 #' @export
 #'
 #' @examples

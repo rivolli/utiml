@@ -114,7 +114,7 @@ dbr <- function (mdata,
 #'
 #' @param object Object of class "\code{DBRmodel}", created by \code{\link{dbr}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
-#'          data.frame object containing the same size of training data.
+#'          data.frame object containing the same size of training data or a mldr object.
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
 #' @param estimative A matrix containing the result of other multi-label classification
@@ -170,6 +170,7 @@ predict.DBRmodel <- function (object,
   if (CORES < 1)
     stop('Cores must be a positive value')
 
+  newdata <- utiml_newdata(newdata)
   if (is.null(estimative))
     estimative <- predict(object$estimation, newdata, ..., probability = FALSE, CORES = CORES)
 

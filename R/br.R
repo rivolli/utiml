@@ -91,7 +91,7 @@ br <- function (mdata,
 #'
 #' @param object Object of class "\code{BRmodel}", created by \code{\link{br}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
-#'          data.frame object containing the same size of training data.
+#'          data.frame object containing the same size of training data or a mldr object.
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
@@ -136,7 +136,7 @@ predict.BRmodel <- function (object,
     stop('Cores must be a positive value')
 
   #Create models
-  predictions <- utiml_lapply(object$models, br.predict_model, CORES, newdata = newdata, ...)
+  predictions <- utiml_lapply(object$models, br.predict_model, CORES, newdata = utiml_newdata(newdata), ...)
   as.resultMLPrediction(predictions, probability)
 }
 

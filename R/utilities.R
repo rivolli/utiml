@@ -19,7 +19,7 @@
 #' @export
 #'
 #' @examples
-#' # This method is used to implement a mlpredict based method
+#' # This method is used Pearson product moment Correlation Coefficient (PCC)to implement a mlpredict based method
 #' # In this example we create a random predict method
 #' mlpredicti.random <- function (model, newdata, ...) {
 #'    probs <- runif(nrow(newdata), 0, 1)
@@ -54,6 +54,7 @@ as.resultPrediction <- function (probability, threshold = 0.5) {
 #' This is a specialized version of the Pearson product moment
 #' correlation coefficient for categorical variables with two
 #' values, also called dichotomous variables.
+#' This is also called of Pearson product moment Correlation Coefficient (PCC)
 #'
 #' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label dataset
 #'
@@ -61,18 +62,24 @@ as.resultPrediction <- function (probability, threshold = 0.5) {
 #' columns have the labels and the values are the phi value. The main diagonal
 #' have the 1 value that represents the correlation of a label with itself.
 #'
+#' @references
+#'  Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
+#'    Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance models
+#'    for multi-label learning. In Proceedings of the Workshop on Learning from
+#'    Multi-Label Data (MLD’09) (pp. 22–30).
+#'
 #' @export
 #'
 #' @examples
 #' library(utiml)
-#' result <- labelsPhiCorrelationCoefficient(emotions)
+#' result <- labels_correlation_coefficient(emotions)
 #'
 #' # Get the phi coefficient between the labels "happy-pleased" and "quiet-still"
 #' result["happy-pleased", "quiet-still"]
 #'
 #' # Get all coefficients of a specific label
 #' result[1, ]
-labelsPhiCorrelationCoefficient <- function (mdata) {
+labels_correlation_coefficient <- function (mdata) {
   labelnames <- rownames(mdata$labels)
   classes <- mdata$dataset[,mdata$labels$index]
   q <- length(labelnames)

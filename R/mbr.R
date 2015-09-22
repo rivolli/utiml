@@ -26,7 +26,7 @@
 #'    predicted label. A good value for this argument is 0.3 as suggest in
 #'    original paper. (default: 0)
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param predict.params A list of default arguments passed to the predict
+#' @param predict.params A list of default arguments passed to the predictor a mldr object
 #'  method. (default: \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: \code{FALSE})
@@ -59,7 +59,7 @@
 #'    Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance models
 #'    for multi-label learning. In Proceedings of the Workshop on Learning from
 #'    Multi-Label Data (MLD’09) (pp. 22–30).
-#'
+#' @seealso \code{\link{labels_correlation_coefficient}}
 #' @export
 #'
 #' @examples
@@ -106,7 +106,7 @@ mbr <- function (mdata,
   base.preds <- do.call(predict, c(params, predict.params))
 
   #2 Iteration - Meta level
-  corr <- mbrmodel$correlation <- labelsPhiCorrelationCoefficient(mdata)
+  corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)
   datasets <- utiml_lapply(mbrmodel$basemodel$datasets, function (dataset) {
     extracolumns <- base.preds[,colnames(corr)[corr[dataset$labelname,] > phi]]
     colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
@@ -131,7 +131,7 @@ mbr <- function (mdata,
 #'
 #' @param object Object of class "\code{MBRmodel}", created by \code{\link{mbr}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
-#'          data.frame object containing the same size of training data.
+#'          data.frame object containing the same size of training data or a mldr object.
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
@@ -173,6 +173,8 @@ predict.MBRmodel <- function (object,
 
   if (CORES < 1)
     stop('Cores must be a positive value')
+
+  newdata <- utiml_newdata(newdata)
 
   #1 Iteration - Base level
   base.preds <- predict(object$basemodel, newdata, ..., probability = FALSE, CORES = CORES)

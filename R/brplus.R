@@ -123,7 +123,7 @@ brplus <- function (mdata,
 #'
 #' @param object Object of class "\code{BRPmodel}", created by \code{\link{brplus}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
-#'          data.frame object containing the same size of training data.
+#'          data.frame object containing the same size of training data or a mldr object.
 #' @param strategy The strategy prefix to determine how to estimate the values of
 #'          the augmented features of unlabeled examples.
 #'
@@ -197,6 +197,8 @@ predict.BRPmodel <- function (object,
 
   if (CORES < 1)
     stop('Cores must be a positive value')
+
+  newdata <- utiml_newdata(newdata)
 
   if (strategy[1] == "NU") {
     initial.preds <- predict(object$initial, newdata, ..., probability = FALSE, CORES = CORES)
