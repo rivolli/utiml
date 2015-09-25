@@ -20,8 +20,7 @@
 #' @param estimate.models Logical value indicatind whether is necessary build
 #'   Binary Relevance classifier for estimate process. The default implementaion
 #'   use BR as estimators, however when other classifier is desirable then use
-#'   the value \code{FALSE} to skip this process.
-#'  (default: \code{TRUE}).
+#'   the value \code{FALSE} to skip this process. (default: \code{TRUE}).
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: FALSE)
 #' @param CORES he number of cores to parallelize the training. Values higher
@@ -37,10 +36,6 @@
 #'      \code{save.datasets = TRUE}.
 #'    }
 #' }
-#'
-#' @section Warning:
-#'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-#'    \code{'C5.0'} or \code{'CART'} instead of it.
 #'
 #' @references
 #'  Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,
@@ -118,7 +113,8 @@ dbr <- function (mdata,
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
 #' @param estimative A matrix containing the result of other multi-label classification
-#'   algorithm. This table must contain only 0 or 1 predictions.
+#'   algorithm. This table must contain only 0 or 1 predictions and it must be a
+#'   multi-label prediction result.
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param CORES The number of cores to parallelize the prediction. Values higher

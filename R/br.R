@@ -27,10 +27,6 @@
 #'   list of \code{mldBR} named by the label names. Only when the
 #'   \code{save.datasets = TRUE}.} }
 #'
-#' @section Warning:
-#'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-#'    \code{'C5.0'} or \code{'CART'} instead of it.
-#'
 #' @references
 #'  Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
 #'    multi-label scene classification. Pattern Recognition, 37(9), 1757–1771.

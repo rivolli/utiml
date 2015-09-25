@@ -24,8 +24,6 @@
 #'  method. (default: \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: FALSE)
-#' @param CORES he number of cores to parallelize the training. Values higher
-#'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
 #' @return An object of class \code{NSmodel} containing the set of fitted
 #'   models, including:
@@ -37,10 +35,6 @@
 #'    \item{datasets}{A list of \code{mldCC} named by the label names.
 #'      Only when the \code{save.datasets = TRUE}.}
 #'   }
-#'
-#' @section Warning:
-#'    RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-#'    \code{'C5.0'} or \code{'CART'} instead of it.
 #'
 #' @references
 #'  Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
@@ -71,8 +65,7 @@ ns <- function (mdata,
                 chain = c(),
                 ...,
                 predict.params = list(),
-                save.datasets = FALSE,
-                CORES = 1
+                save.datasets = FALSE
 ) {
   #Validations
   if(class(mdata) != 'mldr')

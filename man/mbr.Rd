@@ -93,6 +93,8 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
    Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance models
    for multi-label learning. In Proceedings of the Workshop on Learning from
    Multi-Label Data (MLD’09) (pp. 22–30).
+ Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for Multi-labeled
+   Classification. In Data Mining and Knowledge Discovery (pp. 1–26).
 }
 \seealso{
 \code{\link{labels_correlation_coefficient}}

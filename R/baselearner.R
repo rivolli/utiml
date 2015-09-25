@@ -144,6 +144,7 @@ mltrain.baseJ48 <- function (dataset, ...) {
   } else
     stop('There are no installed package "RWeka" to use C4.5/J48 classifier as base method')
 
+  rJava::.jcache(model$classifier)
   model
 }
 
