@@ -40,11 +40,6 @@ Create a Binary Relevance model for multilabel classification.
   multi-label data. This is based on the one-versus-all approach to build a
   specific model for each label.
 }
-\section{Warning}{
-
-   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it.
-}
 \examples{
 # Train and predict emotion multilabel dataset using Binary Relevance
 library(utiml)

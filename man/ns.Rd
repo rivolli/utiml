@@ -5,7 +5,7 @@
 \title{Nested Stacking for multi-label Classification}
 \usage{
 ns(mdata, base.method = "SVM", chain = c(), ..., predict.params = list(),
-  save.datasets = FALSE, CORES = 1)
+  save.datasets = FALSE)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -29,10 +29,7 @@ empty the chain is the default label sequence of the dataset. (default:
 method. (default: \code{list()})}
 
 \item{save.datasets}{Logical indicating whether the binary datasets must be
-saved in the model or not. (default: FALSE)}
-
-\item{CORES}{he number of cores to parallelize the training. Values higher
-  than 1 require the \pkg{parallel} package. (default: 1)}
+  saved in the model or not. (default: FALSE)}
 }
 \value{
 An object of class \code{NSmodel} containing the set of fitted
@@ -53,11 +50,6 @@ Create a Nested Stacking model for multilabel classification.
   multi-label data. It differs from CC to predict the labels values in the
   training step and to regularize the output based on the labelsets available
   on training data.
-}
-\section{Warning}{
-
-   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it.
 }
 \examples{
 # Train and predict emotion multilabel dataset using Nested Stacking

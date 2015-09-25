@@ -49,11 +49,6 @@ Create a BR+ classifier to predic multi-label data.
  set of labels for unlabeled examples, as proposed in original
  paper.
 }
-\section{Warning}{
-
-   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it.
-}
 \examples{
 # Train and predict emotion multilabel dataset using BRPlus
 library(utiml)

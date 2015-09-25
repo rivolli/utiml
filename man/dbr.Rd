@@ -22,10 +22,9 @@ dataset (provided by \pkg{mldr} package).}
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
 \item{estimate.models}{Logical value indicatind whether is necessary build
- Binary Relevance classifier for estimate process. The default implementaion
- use BR as estimators, however when other classifier is desirable then use
- the value \code{FALSE} to skip this process.
-(default: \code{TRUE}).}
+Binary Relevance classifier for estimate process. The default implementaion
+use BR as estimators, however when other classifier is desirable then use
+the value \code{FALSE} to skip this process. (default: \code{TRUE}).}
 
 \item{save.datasets}{Logical indicating whether the binary datasets must be
 saved in the model or not. (default: FALSE)}
@@ -52,11 +51,6 @@ Create a DBR classifier to predic multi-label data.
  is exactly the same used in BR+ (the training method is the same,
  excepted by the argument \code{estimate.models} that indicate if the
  estimated models must be created).
-}
-\section{Warning}{
-
-   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it.
 }
 \examples{
 # Train and predict emotion multilabel dataset using DBR

@@ -17,7 +17,8 @@ data.frame object containing the same size of training data or a mldr object.}
 subproblems.}
 
 \item{estimative}{A matrix containing the result of other multi-label classification
-algorithm. This table must contain only 0 or 1 predictions.}
+algorithm. This table must contain only 0 or 1 predictions and it must be a
+multi-label prediction result.}
 
 \item{probability}{Logical indicating whether class probabilities should be returned.
 (default: \code{TRUE})}

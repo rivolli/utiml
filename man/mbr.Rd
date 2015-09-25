@@ -66,11 +66,6 @@ Create a Meta-BR (MBR) classifier to predic multi-label
  to remove low label correlations on the second step. Furthermore, we
  remove the \code{F} parameter because its specification is not clear.
 }
-\section{Warning}{
-
-   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it.
-}
 \examples{
 # Train and predict emotion multilabel dataset using Meta-BR
 library(utiml)

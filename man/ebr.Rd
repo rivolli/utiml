@@ -55,11 +55,6 @@ Create an Ensemble of Binary Relevance model for
   Binary Relevance is a simple and effective transformation method
   to predict multi-label data.
 }
-\section{Warning}{
-
-   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it.
-}
 \examples{
 # Train and predict emotion multilabel dataset using Ensemble of Binary Relevance
 library(utiml)
