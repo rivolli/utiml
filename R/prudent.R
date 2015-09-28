@@ -1,14 +1,12 @@
-#' @title Meta-BR or 2BR for multi-label Classification
+#' @title PruDent classifier for multi-label Classification
 #' @family Transformation methods
-#' @description Create a Meta-BR (MBR) classifier to predic multi-label
+#' @description Create a PruDent (MBR) classifier to predic multi-label
 #'  data. To this, two round of Binary Relevance is executed, such that,
 #'  the first iteraction generates new attributes to enrich the second
 #'  prediction.
 #'
-#'  This implementation use complete training set for both training and
-#'  prediction steps of 2BR. However, the \code{phi} parameter may be used
-#'  to remove low label correlations on the second step. Furthermore, we
-#'  remove the \code{F} parameter because its specification is not clear.
+#'  In the second phase only labels whose information gain is greater than
+#'  a specific phi value is added.
 #'
 #' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label train
 #'   dataset (provided by \pkg{mldr} package).
@@ -21,23 +19,19 @@
 #'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
 #'    \code{'SVM'})
-#' @param phi A value between 0 and 1 to determine the correlation coefficient,
-#'    The value 0 include all labels in the second phase and the 1 only the
-#'    predicted label. A good value for this argument is 0.3 as suggest in
-#'    original paper. (default: 0)
+#' @param phi A value between 0 and 1 to determine the information gain,
+#'    The value 0 include all labels in the second phase and the none.
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param predict.params A list of default arguments passed to the predictor
-#'  method. (default: \code{list()})
 #' @param save.datasets Logical indicating whether the binary datasets must be
 #'   saved in the model or not. (default: \code{FALSE})
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
-#' @return An object of class \code{MBRmodel} containing the set of fitted
+#' @return An object of class \code{PruDentmodel} containing the set of fitted
 #'   models, including: \describe{
 #'      \item{labels}{A vector with the label names.}
 #'      \item{phi}{The value of \code{phi} parameter.}
-#'      \item{correlation}{The matrix of label correlations used in combination
+#'      \item{IG}{The matrix of Information Gain used in combination
 #'        with \code{phi} parameter to define the labels used in the second step.
 #'      }
 #'      \item{basemodel}{The BRModel used in the first iteration.}
@@ -51,13 +45,10 @@
 #'  }
 #'
 #' @references
-#'  Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
-#'    Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance models
-#'    for multi-label learning. In Proceedings of the Workshop on Learning from
-#'    Multi-Label Data (MLD’09) (pp. 22–30).
-#'  Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for Multi-labeled
-#'    Classification. In Data Mining and Knowledge Discovery (pp. 1–26).
-#' @seealso \code{\link{labels_correlation_coefficient}}
+#'  Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
+#'    Approach for Multi-Label Classification. IEEE Transactions on Knowledge
+#'    and Data Engineering, 27(9), 2480–2493.
+#' @seealso \code{\link{labels_information_gain}}
 #' @export
 #'
 #' @examples
@@ -66,21 +57,20 @@
 #' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
 #'
 #' # Use SVM as base method
-#' model <- mbr(emotions)
+#' model <- prudent(emotions)
 #' pred <- predict(model, testdata)
 #'
 #' # Use different phi correlation with C4.5 classifier
-#' model <- mbr(emotions, "C4.5", 0.3)
+#' model <- prudent(emotions, "C4.5", 0.3)
 #' pred <- predict(model, testdata)
 #'
 #' # Set a specific parameter
-#' model <- mbr(emotions, "KNN", k=5)
+#' model <- prudent(emotions, "KNN", k=5)
 #' pred <- predict(model, testdata)
-mbr <- function (mdata,
+prudent <- function (mdata,
                   base.method = "SVM",
                   phi = 0,
                   ...,
-                  predict.params = list(),
                   save.datasets = FALSE,
                   CORES = 1
 ) {
@@ -94,43 +84,41 @@ mbr <- function (mdata,
   if (CORES < 1)
     stop('Cores must be a positive value')
 
-  #MBR Model class
-  mbrmodel <- list()
-  mbrmodel$labels <- rownames(mdata$labels)
-  mbrmodel$phi <- phi
+  #PruDent Model class
+  pdmodel <- list()
+  pdmodel$labels <- rownames(mdata$labels)
+  pdmodel$phi <- phi
 
   #1 Iteration - Base Level
-  mbrmodel$basemodel <- br(mdata, base.method, ..., save.datasets = TRUE, CORES = CORES)
-  params <- list(object = mbrmodel$basemodel,
-                 newdata = mdata$dataset[mdata$attributesIndexes],
-                 probability = FALSE, CORES = CORES)
-  base.preds <- do.call(predict, c(params, predict.params))
+  pdmodel$basemodel <- br(mdata, base.method, ..., save.datasets = TRUE, CORES = CORES)
+  base.preds <- as.matrix(mdata$dataset[mdata$labels$index])
 
   #2 Iteration - Meta level
-  corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)
-  datasets <- utiml_lapply(mbrmodel$basemodel$datasets, function (dataset) {
-    extracolumns <- base.preds[,colnames(corr)[corr[dataset$labelname,] > phi], drop = FALSE]
-    colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
-    base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
-    br.transformation(base, "mldMBR", base.method, new.features = colnames(extracolumns))
+  IG <- pdmodel$IG <- labels_information_gain(mdata)
+  datasets <- utiml_lapply(pdmodel$basemodel$datasets, function (dataset) {
+    extracolumns <- base.preds[,colnames(IG)[IG[dataset$labelname,] > phi], drop = FALSE]
+    if (ncol(extracolumns) > 0) {
+      colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
+      base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
+      br.transformation(base, "mldPruDent", base.method, new.features = colnames(extracolumns))
+    }
   }, CORES)
-  mbrmodel$metamodels <- utiml_lapply(datasets, br.create_model, CORES, ...)
+  pdmodel$metamodels <- utiml_lapply(datasets[!unlist(lapply(datasets, is.null))], br.create_model, CORES, ...)
 
   if (save.datasets)
-    mbrmodel$datasets <- list(base = mbrmodel$basemodel$datasets, meta = datasets)
+    pdmodel$datasets <- list(base = pdmodel$basemodel$datasets, meta = datasets)
+  pdmodel$basemodel$datasets <- NULL
 
-  mbrmodel$basemodel$datasets <- NULL
+  pdmodel$call <- match.call()
+  class(pdmodel) <- "PruDentmodel"
 
-  mbrmodel$call <- match.call()
-  class(mbrmodel) <- "MBRmodel"
-
-  mbrmodel
+  pdmodel
 }
 
-#' @title Predict Method for Meta-BR/2BR
-#' @description This function predicts values based upon a model trained by \code{mbr}.
+#' @title Predict Method for PruDent
+#' @description This function predicts values based upon a model trained by \code{prudent}.
 #'
-#' @param object Object of class "\code{MBRmodel}", created by \code{\link{mbr}} method.
+#' @param object Object of class "\code{PruDentmodel}", created by \code{\link{prudent}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param ... Others arguments passed to the base method prediction for all
@@ -144,17 +132,17 @@ mbr <- function (mdata,
 #'   \code{probability = FALSE}). The rows indicate the predicted object and the
 #'   columns indicate the labels.
 #'
-#' @seealso \code{\link[=mbr]{Meta-BR (MBR or 2BR)}}
+#' @seealso \code{\link[=prudent]{PruDent}}
 #' @export
 #'
 #' @examples
 #' #' library(utiml)
 #'
-#' # Emotion multi-label dataset using Meta-BR or 2BR
+#' # Emotion multi-label dataset using PruDent
 #' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
 #'
 #' # Predict SVM scores
-#' model <- mbr(emotions)
+#' model <- prudent(emotions)
 #' pred <- predict(model, testdata)
 #'
 #' # Predict SVM bipartitions
@@ -162,15 +150,15 @@ mbr <- function (mdata,
 #'
 #' # Passing a specif parameter for SVM predict method
 #' pred <- predict(model, testdata, na.action = na.fail)
-predict.MBRmodel <- function (object,
+predict.PruDentmodel <- function (object,
                               newdata,
                               ...,
                               probability = TRUE,
                               CORES = 1
 ) {
   #Validations
-  if(class(object) != 'MBRmodel')
-    stop('First argument must be an MBRmodel object')
+  if(class(object) != 'PruDentmodel')
+    stop('First argument must be an PruDentmodel object')
 
   if (CORES < 1)
     stop('Cores must be a positive value')
@@ -178,39 +166,65 @@ predict.MBRmodel <- function (object,
   newdata <- utiml_newdata(newdata)
 
   #1 Iteration - Base level
-  base.preds <- predict(object$basemodel, newdata, ..., probability = FALSE, CORES = CORES)
+  base.scores <- predict(object$basemodel, newdata, ..., probability = TRUE, CORES = CORES)
+  base.preds <- simple.threshold(base.scores, 0.5)
 
   #2 Iteration - Meta level
-  corr <- object$correlation
+  corr <- object$IG
   predictions <- utiml_lapply(object$labels, function (labelname) {
     extracolumns <- base.preds[,colnames(corr)[corr[labelname,] > object$phi], drop = FALSE]
-    colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
-    br.predict_model(object$metamodels[[labelname]], cbind(newdata, extracolumns), ...)
+    if (ncol(extracolumns) > 0) {
+      colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
+      br.predict_model(object$metamodels[[labelname]], cbind(newdata, extracolumns), ...)
+    }
+    else {
+      as.resultPrediction(base.scores[,labelname])
+    }
   }, CORES)
   names(predictions) <- object$labels
+
+  original <- predictions
+  # Choosing the Final Classification
+  for (i in 1:length(predictions)) {
+    indexes <- predictions[[i]]$probability >= 0.5
+
+    #Positive scores
+    predictions[[i]]$probability[indexes] <- unlist(lapply(which(indexes), function (j) {
+      max(predictions[[i]]$probability[j], base.scores[j, i])
+    }))
+
+    #Negative scores
+    predictions[[i]]$probability[!indexes] <- unlist(lapply(which(!indexes), function (j) {
+      min(predictions[[i]]$probability[j], base.scores[j, i])
+    }))
+
+    predictions[[i]]$bipartition <- as.numeric(predictions[[i]]$probability >= 0.5)
+    names(predictions[[i]]$bipartition) <- names(predictions[[i]]$probability)
+  }
 
   as.resultMLPrediction(predictions, probability)
 }
 
-print.MBRmodel <- function (x, ...) {
-  cat("Classifier Meta-BR (also called 2BR)\n\nCall:\n")
+print.PruDentmodel <- function (x, ...) {
+  cat("Classifier PruDent\n\nCall:\n")
   print(x$call)
+  cat("\nMeta models:", length(x$metamodels), "\n")
   cat("\nPhi:", x$phi, "\n")
-  cat("\nCorrelation Table Overview:\n")
-  corr <- x$correlation
+  cat("\nInformation Gain Table Overview:\n")
+  corr <- x$IG
   diag(corr) <- NA
   tbl <- data.frame(
     min = apply(corr, 1, min, na.rm = TRUE),
     mean = apply(corr, 1, mean, na.rm = TRUE),
     median = apply(corr, 1, median, na.rm = TRUE),
     max = apply(corr, 1, max, na.rm = TRUE),
-    extra = apply(x$correlation, 1, function (row) sum(row > x$phi))
+    extra = apply(x$IG, 1, function (row) sum(row > x$phi))
   )
   print(tbl)
 }
 
-print.mldMBR <- function (x, ...) {
-  cat("Meta Binary Relevance Transformation Dataset\n\n")
+print.mldPruDent <- function (x, ...) {
+  cat("PruDent Transformation Dataset\n\n")
   cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep="")
   cat("Dataset info:\n")
   cat(" ", ncol(x$data) - 1 - length(x$new.features), "Predictive attributes\n")
