@@ -158,7 +158,7 @@ predict.DBRmodel <- function (object,
 ) {
   #Validations
   if(class(object) != 'DBRmodel')
-    stop('First argument must be an BRPmodel object')
+    stop('First argument must be an DBRmodel object')
 
   if (is.null(object$estimation) && is.null(estimative))
     stop('The model requires an estimative matrix')
