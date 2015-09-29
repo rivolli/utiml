@@ -78,6 +78,6 @@ Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
   \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}};
-  \code{\link{prudent}}
+  \code{\link{prudent}}; \code{\link{rdbr}}
 }
 

@@ -71,6 +71,6 @@ Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
 Other Transformation methods: \code{\link{br}};
   \code{\link{cc}}; \code{\link{dbr}}; \code{\link{ebr}};
   \code{\link{ecc}}; \code{\link{mbr}}; \code{\link{ns}};
-  \code{\link{prudent}}
+  \code{\link{prudent}}; \code{\link{rdbr}}
 }
 

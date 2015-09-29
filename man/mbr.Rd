@@ -97,6 +97,6 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
   \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{ns}};
-  \code{\link{prudent}}
+  \code{\link{prudent}}; \code{\link{rdbr}}
 }
 

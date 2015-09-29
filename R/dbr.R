@@ -41,7 +41,7 @@
 #'  Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,
 #'    J., & Hüllermeier, E. (2014). Dependent binary relevance models for
 #'    multi-label classification. Pattern Recognition, 47(3), 1494–1508.
-#'
+#' @seealso \code{\link{rdbr}}
 #' @export
 #'
 #' @examples
@@ -96,7 +96,6 @@ dbr <- function (mdata,
 
   dbrmodel
 }
-
 
 #' @title Predict Method for DBR
 #' @description This function predicts values based upon a model trained by \code{dbr}.

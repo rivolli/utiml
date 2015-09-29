@@ -87,6 +87,6 @@ Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
   \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}};
-  \code{\link{ns}}
+  \code{\link{ns}}; \code{\link{rdbr}}
 }
 

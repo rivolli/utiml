@@ -91,6 +91,6 @@ Other Ensemble: \code{\link{ebr}}
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
   \code{\link{ebr}}; \code{\link{mbr}}; \code{\link{ns}};
-  \code{\link{prudent}}
+  \code{\link{prudent}}; \code{\link{rdbr}}
 }
 
