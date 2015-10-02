@@ -72,6 +72,41 @@ crtl <- function (mdata,
   crtlmodel
 }
 
+predict.CRTLmodel <- function (object,
+                               newdata,
+                               ...,
+                               probability = TRUE,
+                               CORES = 1
+) {
+  #Validations
+  if(class(object) != 'CRTLmodel')
+    stop('First argument must be an CRTLmodel object')
+
+  if (CORES < 1)
+    stop('Cores must be a positive value')
+
+  newdata <- utiml_newdata(newdata)
+
+  #Predict initial values
+  predictions <- utiml_lapply(object$models, function (models){
+    br.predict_model(models[[1]], newdata, ...)
+  }, CORES)
+  fjk <- as.data.frame(as.resultMLPrediction(predictions, FALSE))
+
+  #Predict ensemble values
+  allpreds <- utiml_lapply(object$models, function (models){
+    preds <- list()
+    for (labels in names(models)[-1])
+      preds[[labels]] <- br.predict_model(models[[labels]], cbind(newdata, fjk[labels]), ...)
+
+    preds
+  }, CORES)
+
+  #Compute votes using "majority vote" scheme (when there are a tie we use the scores values)
+
+  browser()
+}
+
 
 print.CRTLmodel <- function (x, ...) {
   cat("BR with ConTRolled Label correlation Model\n\nCall:\n")

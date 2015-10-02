@@ -48,12 +48,13 @@ as.resultPrediction <- function (probability, threshold = 0.5) {
   res
 }
 
-#' @title Pearson product moment Correlation Coefficient (PCC) for labels
+#' @title Phi Correlation Coefficient
 #' @family labels correlation
 #' @description Calculate all labels phi correlation coefficient.
 #' This is a specialized version of the Pearson product moment
 #' correlation coefficient for categorical variables with two
 #' values, also called dichotomous variables.
+#' This is also called of Pearson product moment Correlation Coefficient (PCC)
 #'
 #' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label dataset
 #'
@@ -95,31 +96,4 @@ labels_correlation_coefficient <- function (mdata) {
     }
   }
   cor
-}
-
-binary_entropy <- function (prob) {
-  res <- c(0, -prob * log2(prob) - (1 - prob) * log2(1 - prob))
-  zero <- prob == 0 || prob == 1
-  res[c(zero, !zero)]
-}
-
-
-labels_information_gain <- function (mdata) {
-  labelnames <- rownames(mdata$labels)
-  classes <- mdata$dataset[,mdata$labels$index]
-  q <- length(labelnames)
-  ig <- matrix(nrow = q, ncol = q, dimnames = list(labelnames, labelnames))
-  for (i in 1:q) {
-    for (j in i:q) {
-      Hya <- binary_entropy(mdata$labels$freq[i])
-      hasJ <- classes[j] == 1
-      Hyab <- mdata$labels$freq[j] * binary_entropy(sum(classes[hasJ, i] == 1) / sum(hasJ)) +
-        (1 - mdata$labels$freq[j]) * binary_entropy(sum(classes[classes[j] == 0, i] == 1) / sum(!hasJ))
-
-      ig[i,j] <- Hya  - Hyab
-      ig[j,i] <- ig[i,j]
-    }
-    ig[i,i] <- 0
-  }
-  ig
 }

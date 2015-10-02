@@ -20,10 +20,10 @@
 #' as.resultMLPrediction(predictions, TRUE)
 #' ...
 as.resultMLPrediction <- function (predictions, probability) {
-  result <- if (probability)
-    sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
-  else
+  result <- list(
+    sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability))),
     sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
+  )[c(probability, !probability)][[1]]
   rownames(result) <- names(predictions[[1]]$bipartition)
   result
 }
@@ -180,6 +180,25 @@ utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
     utiml_normalize(sumtable) #proportionally
 
   apply(avgtable, 2, as.resultPrediction)
+}
+
+utiml_ensemble_majority_votes <- function (predictions) {
+  bipartitions  <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
+  probabilities <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
+  rownames(bipartitions) <- rownames(probabilities) <- names(predictions[[1]]$bipartition)
+
+  votes <- apply(bipartitions, 1, mean)
+  scores <- apply(probabilities, 1, mean)
+
+  positive <- votes > 0.5 | (votes == 0.5 && scores > 0.5)
+  result <- unlist(lapply(which(positive), function (row){
+    mean(probabilities[row, bipartitions[row,] == 1])
+  }))
+  result <- c(result, unlist(lapply(which(!positive), function (row){
+    mean(probabilities[row, bipartitions[row,] == 0])
+  })))
+  browser()
+  as.resultPrediction(result[names(votes)])
 }
 
 utiml_newdata <- function (newdata) UseMethod("utiml_newdata")
