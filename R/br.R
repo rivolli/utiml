@@ -7,25 +7,25 @@
 #'   specific model for each label.
 #'
 #' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label train
-#'   dataset (provided by \pkg{mldr} package).
-#' @param base.method A string with the name of base method. The same base method
-#'   will be used for train all subproblems.
+#'   dataset.
+#' @param base.method A string with the name of the base method.
 #'
 #'   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
 #'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
 #'    \code{'SVM'})
 #' @param ... Others arguments passed to the base method for all subproblems
-#' @param save.datasets Logical indicating whether the binary datasets must be
+#' @param save.datasets Logical value indicating whether the binary datasets must be
 #'   saved in the model or not. (default: \code{FALSE})
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
 #' @return An object of class \code{BRmodel} containing the set of fitted
-#'   models, including: \describe{ \item{labels}{A vector with the label names}
-#'   \item{models}{A list of models named by the label names.} \item{datasets}{A
-#'   list of \code{mldBR} named by the label names. Only when the
-#'   \code{save.datasets = TRUE}.} }
+#'   models, including: \describe{
+#'   \item{labels}{A vector with the label names}
+#'   \item{models}{A list of the generated models, named by the label names.}
+#'   \item{datasets}{A list of \code{mldBR} named by the label names.
+#'   Only when the \code{save.datasets = TRUE}.} }
 #'
 #' @references
 #'  Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
