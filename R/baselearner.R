@@ -263,9 +263,9 @@ mlpredict.baseKNN <- function (model, newdata, ...) {
     labeldata <- model$data[, model$labelindex]
     args <- list(...)
     result <- if (is.null(model$extrakNN[["k"]]) || !is.null(args[["k"]]))
-        class::knn(traindata, newdata, labeldata, prob=T, ...)
+        class::knn(traindata, newdata, labeldata, prob= T, ...)
       else
-        class::knn(traindata, newdata, labeldata, k=model$extrakNN[["k"]], prob=T, ...)
+        class::knn(traindata, newdata, labeldata, k = model$extrakNN[["k"]], prob = T, ...)
     result <- ifelse(result == 0, 1-attr(result, "prob"), attr(result, "prob"))
   } else
     stop('There are no installed package "class" to use kNN classifier as base method')
