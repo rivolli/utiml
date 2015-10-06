@@ -12,8 +12,8 @@ test_that("test train/prediction base learner methods", {
     expect_is(model, names(methods)[i])
     result <- mlpredict(model, iris[11:20, 1:4])
     expect_is(result, "mlresult")
-    expect_identical(names(result$bipartition), as.character(11:20))
-    expect_equal(names(result$bipartition), names(result$probability))
+    expect_named(result$bipartition, as.character(11:20))
+    expect_named(result$bipartition, names(result$probability))
   }
   class(testdataset) <- NULL
   expect_error(mltrain(testdataset))

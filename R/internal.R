@@ -1,3 +1,8 @@
+#
+# This file contains internal functions related with multi-label concepts
+# The functions are sorted in alphabetical order
+#
+
 #' @title Create a predictive multi-label result
 #' @description This function select the correct result and organize them in a
 #'  prediction matrix where the columns are the labels and the rows are the
@@ -10,6 +15,10 @@
 #'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 #'
 #' @return A matrix containing the probabilistic values or just predictions.
+#'  If the matrix contains the probabilistic values then an attribute called
+#'  "classes" contains the bipartitions values. Otherwise, if the matrix
+#'  contains the bipartitions values then an attribute called "probs" cantains
+#'  the probabilities
 #' @export
 #'
 #' @examples
@@ -17,47 +26,22 @@
 #' predictions <- list()
 #' predictions$class1 <- mlpredict(model1, testdata)
 #' predictions$class2 <- mlpredict(model2, testdata)
-#' as.resultMLPrediction(predictions, TRUE)
+#' result1 <- as.resultMLPrediction(predictions, TRUE)
+#' result2 <- as.resultMLPrediction(predictions, FALSE)
+#'
+#' all(result1 == attr(result2, "probs")) # TRUE
+#' all(result2 == attr(result1, "classes")) # TRUE
 #' ...
 as.resultMLPrediction <- function (predictions, probability) {
-  result <- list(
-    sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability))),
-    sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
-  )[c(probability, !probability)][[1]]
-  rownames(result) <- names(predictions[[1]]$bipartition)
-  result
-}
+  probabilities <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
+  bipartitions <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
+  rownames(probabilities) <- rownames(bipartitions) <- names(predictions[[1]]$bipartition)
 
-#' Create a Binary MultiLabel Data
-#'
-#' @param dataset A data.frame with the data (the last column must be the class column)
-#' @param classname The name of specific class of the object
-#' @param base.method The name of the base method that will process this dataset
-#' @param ... Extra parameters for adding in the dataset object
-#'
-#' @return A list with data, labelname, labelindex and methodname.
-#'    This list has three classes: mltransformation, baseMETHODNAME and a specific name
-#' @export
-#'
-#' @examples
-#' ...
-#' tbl <- br.transformation(dataframe, "mldBR", "SVM")
-#' ...
-br.transformation <- function (dataset, classname, base.method, ...) {
-  label <- colnames(dataset)[length(dataset)]
+  only.probabilities <- probabilities
+  attr(probabilities, "classes") <- bipartitions
+  attr(bipartitions, "probs") <- only.probabilities
 
-  #Convert the class column as factor
-  dataset[,label] <- as.factor(dataset[,label])
-
-  #Create data
-  dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
-  class(dataset) <- c(classname, paste("base", base.method, sep=''), "mltransformation")
-
-  extra <- list(...)
-  for (nextra in names(extra))
-    dataset[[nextra]] <- extra[[nextra]]
-
-  dataset
+  utiml_ifelse(probability, probabilities, bipartitions)
 }
 
 #' @title Create Dynamically the model for Binary Relevance Methods
@@ -101,51 +85,56 @@ br.predict_model <- function (model, newdata, ...) {
   do.call(mlpredict, params)
 }
 
-#' @title Internal Normalize data function
+#' Create a Binary MultiLabel Data
 #'
-#' @param data a set of numbers
-#' @param max.val The maximum value to normalize. If null use the max value present in the data
-#'   (default: \code{NULL} )
-#' @param min.val The minimum value to normalize. If NULL use the min value present in the data
-#'   (default: \code{NULL})
+#' @param dataset A data.frame with the data (the last column must be the class column)
+#' @param classname The name of specific class of the object
+#' @param base.method The name of the base method that will process this dataset
+#' @param ... Extra parameters for adding in the dataset object
 #'
-#' @return The normalized data
+#' @return A list with data, labelname, labelindex and methodname.
+#'    This list has three classes: mltransformation, baseMETHODNAME and a specific name
 #' @export
 #'
 #' @examples
-#' utiml_normalize(c(1,2,3,4,5))
-#' # 0 0.25 0.5 0.75 1
-#'
-#' utiml_normalize(c(1,2,3,4,5), 10, 0)
-#' # 0.1 0.2 0.3 0.4 0.5
-utiml_normalize <- function (data, max.val=NULL, min.val=NULL) {
-  if (is.null(max.val))
-    max.val <- max(data)
-  if (is.null(min.val))
-    min.val <- min(data)
-  (data-min.val)/(max.val-min.val)
+#' ...
+#' tbl <- br.transformation(dataframe, "mldBR", "SVM")
+#' ...
+br.transformation <- function (dataset, classname, base.method, ...) {
+  label <- colnames(dataset)[length(dataset)]
+
+  #Convert the class column as factor
+  dataset[,label] <- as.factor(dataset[,label])
+
+  #Create data
+  dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
+  class(dataset) <- c(classname, paste("base", base.method, sep=''), "mltransformation")
+
+  extra <- list(...)
+  for (nextra in names(extra))
+    dataset[[nextra]] <- extra[[nextra]]
+
+  dataset
 }
 
-#' Select the correct method: lapply or mclaplly
+#' @title Return the newdata to a data.frame or matrix
 #'
-#' @param mylist a list to iterate
-#' @param myfnc The function to be applied to each element of the mylist
-#' @param cores The number of cores to use. If 1 use lapply oterwise use
-#'    mclapply
-#' @param ... Extra arguments to myfnc
+#' @param newdata The data.frame or mldr data
 #'
-#' @return A list of the same length as X and named by X.
+#' @return
 #' @export
 #'
 #' @examples
-#' utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
-#' utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
-utiml_lapply <- function (mylist, myfnc, cores, ...) {
-  if (cores == 1)
-    lapply(mylist, myfnc, ...)
-  else
-    parallel::mclapply(mylist, myfnc, mc.cores=min(cores, length(mylist)), ...)
-}
+#' test <- emotions$dataset[,emotions$attributesIndexes]
+#' all(test == utiml_newdata(emotions)) # TRUE
+#' all(test == utiml_newdata(test)) # TRUE
+utiml_newdata <- function (newdata) UseMethod("utiml_newdata")
+
+#' @describeIn utiml_newdata
+utiml_newdata.default <- function (newdata) newdata
+
+#' @describeIn utiml_newdata
+utiml_newdata.mldr <- function (newdata) newdata$dataset[,newdata$attributesIndexes]
 
 #' @title Compute the ensemble predictions based on some vote schema
 #'
@@ -166,183 +155,18 @@ utiml_lapply <- function (mylist, myfnc, cores, ...) {
 #' predictions$model2 <- prediction(brmodel2, testdata)
 #' result <- utiml_compute_ensemble_predictions(predictions, "majority")
 #' ...
-utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
-  m <- length(predictions)
-  sumtable <- predictions[[1]]
-  for (i in 2:m)
-    sumtable <- sumtable + predictions[[i]]
-
-  avgtable <- if (vote.schema == "score")
-    sumtable / m
-  else if (vote.schema == "majority")
-    utiml_normalize(sumtable, m, 0)
-  else
-    utiml_normalize(sumtable) #proportionally
-
-  apply(avgtable, 2, as.resultPrediction)
-}
-
-utiml_ensemble_majority_votes <- function (predictions) {
-  bipartitions  <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
-  probabilities <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
-  rownames(bipartitions) <- rownames(probabilities) <- names(predictions[[1]]$bipartition)
-
-  votes <- apply(bipartitions, 1, mean)
-  scores <- apply(probabilities, 1, mean)
-
-  positive <- votes > 0.5 | (votes == 0.5 && scores > 0.5)
-  result <- unlist(lapply(which(positive), function (row){
-    mean(probabilities[row, bipartitions[row,] == 1])
-  }))
-  result <- c(result, unlist(lapply(which(!positive), function (row){
-    mean(probabilities[row, bipartitions[row,] == 0])
-  })))
-  browser()
-  as.resultPrediction(result[names(votes)])
-}
-
-utiml_newdata <- function (newdata) UseMethod("utiml_newdata")
-utiml_newdata.default <- function (newdata) newdata
-utiml_newdata.mldr <- function (newdata) newdata$dataset[,newdata$attributesIndexes]
-
-#' @title Labelsets Stratification
-#' @description Create the indexes using the Labelsets Stratification
-#'   approach.
-#'
-#' @param mdata A mldr dataset
-#' @param r Desired proportion of examples in each subset, r1, . . . rk
-#'
-#' @return A list with k disjoint indexes subsets S1, . . .Sk
-#'
-#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
-#'  stratification of multi-label data. In Proceedings of the Machine
-#'  Learningand Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145–158).
-#'
-#' @export
-#'
-#' @examples
-#' # Create 3 partitions for train, validation and test
-#' indexes <- utiml_labelset_stratification(emotions, c(0.6,0.1,0.3))
-#'
-#' # Create a stratified 10-fold
-#' indexes <- utiml_labelset_stratification(emotions, rep(0.1,10))
-utiml_labelset_stratification <- function (mdata, r) {
-  D <- sample(mdata$measures$num.instances)
-  S <- lapply(1:length(r), function (i) integer())
-  labelsets <- apply(mdata$dataset[,mdata$labels$index], 1, paste, collapse = "")
-
-  # Calculate the desired number of examples of each labelset at each subset
-  cji.aux <- sapply(mdata$labelsets, function (di) di * r)
-  cji <- trunc(cji.aux)
-  dif <- cji.aux - cji
-  rest <- round(apply(dif, 1, sum))
-  for (ls in rev(names(mdata$labelsets))) {
-    s <- sum(dif[,ls])
-    if (s > 0) {
-      for (i in 1:s) {
-        fold <- which.max(rest)
-        rest[fold] <- rest[fold] - 1
-        cji[fold, ls] <- cji[fold, ls] + 1
-      }
-    }
-  }
-
-  for (ex in D) {
-    ls <- labelsets[ex]
-    fold <- which.max(cji[,ls])
-    if (cji[fold, ls] > 0) {
-      S[[fold]] <- c(S[[fold]], ex)
-      cji[fold, ls] <- cji[fold, ls] - 1
-    }
-  }
-
-  S
-}
-
-#' @title Iterative Stratification
-#' @description Create the indexes using the Iterative Stratification
-#'   algorithm.
-#'
-#' @param mdata A mldr dataset
-#' @param r Desired proportion of examples in each subset, r1, . . . rk
-#'
-#' @return A list with k disjoint indexes subsets S1, . . .Sk
-#'
-#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
-#'  stratification of multi-label data. In Proceedings of the Machine
-#'  Learningand Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145–158).
-#'
-#' @export
-#'
-#' @examples
-#' # Create 3 partitions for train, validation and test
-#' indexes <- utiml_iterative_stratification(emotions, c(0.6,0.1,0.3))
-#'
-#' # Create a stratified 10-fold
-#' indexes <- utiml_iterative_stratification(emotions, rep(0.1,10))
-utiml_iterative_stratification <- function (mdata, r) {
-  D <- 1:mdata$measures$num.instances
-  S <- lapply(1:length(r), function (i) integer())
-
-  # Calculate the desired number of examples at each subset
-  cj <- round(mdata$measures$num.instances * r)
-  dif <- mdata$measures$num.instances - sum(cj)
-  if (dif != 0)
-    cj[1:abs(dif)] <- cj[1:abs(dif)] + c(1, -1)[c(dif>0, dif<0)]
-
-  # Calculate the desired number of examples of each label at each subset
-  cji <- trunc(sapply(mdata$labels$count, function (di) di * r))
-  colnames(cji) <- rownames(mdata$labels)
-
-  while (length(D) > 0) {
-    # Find the label with the fewest (but at least one) remaining examples,
-    Dl <- apply(mdata$dataset[D, mdata$labels$index], 2, function (col) as.numeric(names(which(col == 1))))
-    Di <- unlist(lapply(Dl, length))
-    l <- names(which.min(Di[Di>0]))
-
-    for (ex in Dl[[l]]) {
-      # Find the subset(s) with the largest number of desired examples for this
-      # label, breaking ties by considering the largest number of desired examples
-      m <- which(cji[which.max(cji[,l]),l] == cji[,l])
-      if (length(m) > 1) {
-        m <- intersect(m, which(cj[m[which.max(cj[m])]] == cj))
-        if (length(m) > 1)
-          m <- sample(m)[1]
-      }
-
-      S[[m]] <- c(S[[m]], ex)
-      D <- D[D != ex]
-
-      # Update desired number of examples
-      i <- which(mdata$dataset[ex, mdata$labels$index] == 1)
-      cji[m, i] <- cji[m, i] - 1
-      cj[m] <- cj[m] - 1
-    }
-  }
-
-  S
-}
-
-utiml_measure_precision <- function (expected, predict) {
-  sum(predict & expected) / sum(predict)
-}
-
-utiml_measure_recall <- function (expected, predict) {
-  sum(predict & expected) / sum(expected)
-}
-
-utiml_measure_f1 <- function (expected, predict) {
-  Precision <- utiml_measure_precision(expected, predict)
-  Recall <- utiml_measure_recall(expected, predict)
-  (2 * Precision * Recall) / (Precision + Recall)
-}
-
-utiml_measure_labels <- function (mdata, predicted, measure) {
-  values <- lapply(rownames(mdata$labels), function (label) {
-    do.call(measure, list(mdata$dataset[label], predicted[,label]))
-  })
-  names(values) <- rownames(mdata$labels)
-  unlist(values)
-}
+# utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
+#   m <- length(predictions)
+#   sumtable <- predictions[[1]]
+#   for (i in 2:m)
+#     sumtable <- sumtable + predictions[[i]]
+#
+#   avgtable <- if (vote.schema == "score")
+#     sumtable / m
+#   else if (vote.schema == "majority")
+#     utiml_normalize(sumtable, m, 0)
+#   else
+#     utiml_normalize(sumtable) #proportionally
+#
+#   apply(avgtable, 2, as.resultPrediction)
+# }

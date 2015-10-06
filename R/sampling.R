@@ -443,3 +443,124 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
   cols <- sample(mdata$attributesIndexes, num.cols)
   mldr_subset(mdata, rows, cols)
 }
+
+#' @title Internal Iterative Stratification
+#' @description Create the indexes using the Iterative Stratification
+#'   algorithm.
+#'
+#' @param mdata A mldr dataset.
+#' @param r Desired proportion of examples in each subset r1, . . . rk.
+#'
+#' @return A list with k disjoint indexes subsets S1, . . .Sk.
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#'  stratification of multi-label data. In Proceedings of the Machine
+#'  Learningand Knowledge Discovery in Databases - European Conference,
+#'  ECML PKDD (pp. 145–158).
+#'
+#' @export
+#'
+#' @examples
+#' # Create 3 partitions for train, validation and test
+#' indexes <- utiml_iterative_stratification(emotions, c(0.6,0.1,0.3))
+#'
+#' # Create a stratified 10-fold
+#' indexes <- utiml_iterative_stratification(emotions, rep(0.1,10))
+utiml_iterative_stratification <- function (mdata, r) {
+  D <- 1:mdata$measures$num.instances
+  S <- lapply(1:length(r), function (i) integer())
+
+  # Calculate the desired number of examples at each subset
+  cj <- round(mdata$measures$num.instances * r)
+  dif <- mdata$measures$num.instances - sum(cj)
+  if (dif != 0)
+    cj[1:abs(dif)] <- cj[1:abs(dif)] + c(1, -1)[c(dif>0, dif<0)]
+
+  # Calculate the desired number of examples of each label at each subset
+  cji <- trunc(sapply(mdata$labels$count, function (di) di * r))
+  colnames(cji) <- rownames(mdata$labels)
+
+  while (length(D) > 0) {
+    # Find the label with the fewest (but at least one) remaining examples,
+    Dl <- apply(mdata$dataset[D, mdata$labels$index], 2, function (col) as.numeric(names(which(col == 1))))
+    Di <- unlist(lapply(Dl, length))
+    l <- names(which.min(Di[Di>0]))
+
+    for (ex in Dl[[l]]) {
+      # Find the subset(s) with the largest number of desired examples for this
+      # label, breaking ties by considering the largest number of desired examples
+      m <- which(cji[which.max(cji[,l]),l] == cji[,l])
+      if (length(m) > 1) {
+        m <- intersect(m, which(cj[m[which.max(cj[m])]] == cj))
+        if (length(m) > 1)
+          m <- sample(m)[1]
+      }
+
+      S[[m]] <- c(S[[m]], ex)
+      D <- D[D != ex]
+
+      # Update desired number of examples
+      i <- which(mdata$dataset[ex, mdata$labels$index] == 1)
+      cji[m, i] <- cji[m, i] - 1
+      cj[m] <- cj[m] - 1
+    }
+  }
+
+  S
+}
+
+#' @title Labelsets Stratification
+#' @description Create the indexes using the Labelsets Stratification
+#'   approach.
+#'
+#' @param mdata A mldr dataset
+#' @param r Desired proportion of examples in each subset, r1, . . . rk
+#'
+#' @return A list with k disjoint indexes subsets S1, . . .Sk
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#'  stratification of multi-label data. In Proceedings of the Machine
+#'  Learningand Knowledge Discovery in Databases - European Conference,
+#'  ECML PKDD (pp. 145–158).
+#'
+#' @export
+#'
+#' @examples
+#' # Create 3 partitions for train, validation and test
+#' indexes <- utiml_labelset_stratification(emotions, c(0.6,0.1,0.3))
+#'
+#' # Create a stratified 10-fold
+#' indexes <- utiml_labelset_stratification(emotions, rep(0.1,10))
+utiml_labelset_stratification <- function (mdata, r) {
+  D <- sample(mdata$measures$num.instances)
+  S <- lapply(1:length(r), function (i) integer())
+  labelsets <- apply(mdata$dataset[,mdata$labels$index], 1, paste, collapse = "")
+
+  # Calculate the desired number of examples of each labelset at each subset
+  cji.aux <- sapply(mdata$labelsets, function (di) di * r)
+  cji <- trunc(cji.aux)
+  dif <- cji.aux - cji
+  rest <- round(apply(dif, 1, sum))
+  for (ls in rev(names(mdata$labelsets))) {
+    s <- sum(dif[,ls])
+    if (s > 0) {
+      for (i in 1:s) {
+        fold <- which.max(rest)
+        rest[fold] <- rest[fold] - 1
+        cji[fold, ls] <- cji[fold, ls] + 1
+      }
+    }
+  }
+
+  for (ex in D) {
+    ls <- labelsets[ex]
+    fold <- which.max(cji[,ls])
+    if (cji[fold, ls] > 0) {
+      S[[fold]] <- c(S[[fold]], ex)
+      cji[fold, ls] <- cji[fold, ls] - 1
+    }
+  }
+
+  S
+}
+

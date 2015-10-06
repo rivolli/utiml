@@ -97,3 +97,22 @@ labels_correlation_coefficient <- function (mdata) {
   }
   cor
 }
+
+
+utiml_ensemble_majority_votes <- function (predictions) {
+  probabilities <- as.resultMLPrediction(predictions)
+  bipartitions <- attr(probabilities, "probs")
+
+  votes <- apply(bipartitions, 1, mean)
+  scores <- apply(probabilities, 1, mean)
+
+  positive <- votes > 0.5 | (votes == 0.5 && scores > 0.5)
+  result <- unlist(lapply(which(positive), function (row){
+    mean(probabilities[row, bipartitions[row,] == 1])
+  }))
+  result <- c(result, unlist(lapply(which(!positive), function (row){
+    mean(probabilities[row, bipartitions[row,] == 0])
+  })))
+  browser()
+  as.resultPrediction(result[names(votes)])
+}
