@@ -27,13 +27,13 @@
 #' predictions <- list()
 #' predictions$class1 <- mlpredict(model1, testdata)
 #' predictions$class2 <- mlpredict(model2, testdata)
-#' result1 <- as.resultMLPrediction(predictions, TRUE)
-#' result2 <- as.resultMLPrediction(predictions, FALSE)
+#' result1 <- as.multilabelPrediction(predictions, TRUE)
+#' result2 <- as.multilabelPrediction(predictions, FALSE)
 #'
 #' all(result1 == attr(result2, "probs")) # TRUE
 #' all(result2 == attr(result1, "classes")) # TRUE
 #' ...
-as.resultMLPrediction <- function (predictions, probability) {
+as.multilabelPrediction <- function (predictions, probability) {
   probabilities <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$probability)))
   bipartitions <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
   rownames(probabilities) <- rownames(bipartitions) <- names(predictions[[1]]$bipartition)

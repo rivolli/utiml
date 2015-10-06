@@ -91,7 +91,7 @@ predict.CRTLmodel <- function (object,
   predictions <- utiml_lapply(object$models, function (models){
     br.predict_model(models[[1]], newdata, ...)
   }, CORES)
-  fjk <- as.data.frame(as.resultMLPrediction(predictions, FALSE))
+  fjk <- as.data.frame(as.multilabelPrediction(predictions, FALSE))
 
   #Predict ensemble values
   allpreds <- utiml_lapply(object$models, function (models){

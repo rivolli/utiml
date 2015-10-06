@@ -189,7 +189,7 @@ predict.MBRmodel <- function (object,
   }, CORES)
   names(predictions) <- object$labels
 
-  as.resultMLPrediction(predictions, probability)
+  as.multilabelPrediction(predictions, probability)
 }
 
 print.MBRmodel <- function (x, ...) {

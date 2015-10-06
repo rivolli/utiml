@@ -133,7 +133,7 @@ predict.BRmodel <- function (object,
 
   #Create models
   predictions <- utiml_lapply(object$models, br.predict_model, CORES, newdata = utiml_newdata(newdata), ...)
-  as.resultMLPrediction(predictions, probability)
+  as.multilabelPrediction(predictions, probability)
 }
 
 print.BRmodel <- function (x, ...) {

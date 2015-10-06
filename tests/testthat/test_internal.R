@@ -10,14 +10,14 @@ test_that("Result ML prediction", {
     class1 = as.binaryPrediction(runif(10, min = 0, max = 1)),
     class2 = as.binaryPrediction(runif(10, min = 0, max = 1))
   )
-  result1 <- as.resultMLPrediction(predictions, TRUE)
+  result1 <- as.multilabelPrediction(predictions, TRUE)
   expect_null(rownames(result1))
   expect_equal(colnames(result1), c("class1", "class2"))
 
   expect_equal(predictions$class1$probability, result1[,"class1"])
   expect_equal(predictions$class2$probability, result1[,"class2"])
 
-  result2 <- as.resultMLPrediction(predictions, FALSE)
+  result2 <- as.multilabelPrediction(predictions, FALSE)
   expect_equal(predictions$class1$bipartition, result2[,"class1"])
   expect_equal(predictions$class2$bipartition, result2[,"class2"])
 
@@ -30,10 +30,10 @@ test_that("Result ML prediction", {
     class1 = as.binaryPrediction(values),
     class2 = as.binaryPrediction(values)
   )
-  result <- as.resultMLPrediction(predictions, TRUE)
+  result <- as.multilabelPrediction(predictions, TRUE)
   expect_equal(rownames(result), as.character(6:15))
   expect_equal(result[,"class1"], result[,"class2"])
-  result <- as.resultMLPrediction(predictions, FALSE)
+  result <- as.multilabelPrediction(predictions, FALSE)
   expect_equal(rownames(result), as.character(6:15))
   expect_equal(result[,"class1"], result[,"class2"])
   set.seed(NULL)

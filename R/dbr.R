@@ -175,7 +175,7 @@ predict.DBRmodel <- function (object,
   }, CORES)
   names(predictions) <- labels
 
-  as.resultMLPrediction(predictions, probability)
+  as.multilabelPrediction(predictions, probability)
 }
 
 print.DBRmodel <- function (x, ...) {

@@ -221,7 +221,7 @@ predict.BRPmodel <- function (object,
     }
   }
 
-  result <- as.resultMLPrediction(predictions, probability)
+  result <- as.multilabelPrediction(predictions, probability)
   result[,labels]
 }
 

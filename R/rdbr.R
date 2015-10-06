@@ -184,7 +184,7 @@ predict.RDBRmodel <- function (object,
     }
   }
 
-  as.resultMLPrediction(predictions, probability)
+  as.multilabelPrediction(predictions, probability)
 }
 
 print.RDBRmodel <- function (x, ...) {

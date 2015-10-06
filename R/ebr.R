@@ -188,7 +188,7 @@ predict.EBRmodel <- function (object,
   })
 
   predictions <- utiml_compute_ensemble_predictions(allpreds, vote.schema[1])
-  as.resultMLPrediction(predictions, probability)
+  as.multilabelPrediction(predictions, probability)
 }
 
 print.EBRmodel <- function (x, ...) {

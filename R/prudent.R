@@ -202,7 +202,7 @@ predict.PruDentmodel <- function (object,
     names(predictions[[i]]$bipartition) <- names(predictions[[i]]$probability)
   }
 
-  as.resultMLPrediction(predictions, probability)
+  as.multilabelPrediction(predictions, probability)
 }
 
 print.PruDentmodel <- function (x, ...) {

@@ -174,7 +174,7 @@ predict.NSmodel <- function (object,
     names(newdata)[ncol(newdata)] <- label
   }
 
-  result <- as.resultMLPrediction(predictions, probability)[,object$labels]
+  result <- as.multilabelPrediction(predictions, probability)[,object$labels]
   subset.correction <- c(ns.subsetcorrection, ns.subsetcorrection.score)
   subset.correction[c(!probability, probability)][[1]](result, object$labelsets)
 }

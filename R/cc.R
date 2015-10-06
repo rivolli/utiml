@@ -161,7 +161,7 @@ predict.CCmodel <- function (object,
     names(newdata)[ncol(newdata)] <- label
   }
 
-  result <- as.resultMLPrediction(predictions, probability)
+  result <- as.multilabelPrediction(predictions, probability)
   result[,object$labels]
 }
 

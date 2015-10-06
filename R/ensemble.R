@@ -21,7 +21,7 @@
 #' )
 #' result <- utiml_ensemble_majority_votes(predictions)
 utiml_ensemble_majority_votes <- function (predictions) {
-  probabilities <- as.resultMLPrediction(predictions, TRUE)
+  probabilities <- as.multilabelPrediction(predictions, TRUE)
   bipartitions <- attr(probabilities, "classes")
 
   votes <- apply(bipartitions, 1, mean)
