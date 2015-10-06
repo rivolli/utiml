@@ -2,31 +2,33 @@
 % Please edit documentation in R/ensemble.R
 \name{utiml_ensemble_majority_votes}
 \alias{utiml_ensemble_majority_votes}
-\title{Compute the ensemble predictions based on some vote schema}
+\title{Majority vote combination for ensemble prediction}
 \usage{
 utiml_ensemble_majority_votes(predictions)
 }
 \arguments{
-\item{predictions}{A list of matrix predictions}
-
-\item{vote.schema}{Define the way that ensemble must compute the predictions.
-The valid options are: \describe{
- \code{'score'}{Compute the averages of probabilities},
- \code{'majority'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
- \code{'prop'}{Compute the proportion of votes, scale data between min and max of votes} }}
+\item{predictions}{A list of multi-label predictions
+ (a \code{\link{mlprediction}} object).}
 }
 \value{
-A list of mlresult as a result obtained from a multi-label transformation method
+A multi-label prediction (a \code{\link{mlprediction}} object).
 }
 \description{
-Compute the ensemble predictions based on some vote schema
+Compute the ensemble prediction using the majority
+ votes schema. The probabilities result is computed using only
+ the majority instances. In others words, if a example is
+ predicted as posivite, only the positive confidences are used to
+ compute the averaged value.
 }
 \examples{
-...
-predictions <- list()
-predictions$model1 <- prediction(brmodel1, testdata)
-predictions$model2 <- prediction(brmodel2, testdata)
-result <- utiml_compute_ensemble_predictions(predictions, "majority")
-...
+predictions <- list(
+ as.binaryPrediction(c(1  ,1  ,1  ,1  )),
+ as.binaryPrediction(c(0.6,0.1,0.8,0.2)),
+ as.binaryPrediction(c(0.8,0.3,0.4,0.1))
+)
+result <- utiml_ensemble_majority_votes(predictions)
+}
+\seealso{
+\code{link{mlprediction}}
 }
 

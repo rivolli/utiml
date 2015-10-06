@@ -1,3 +1,47 @@
+#' @title Majority vote combination for ensemble prediction
+#' @family Ensemble utilites
+#' @description Compute the ensemble prediction using the majority
+#'  votes schema. The probabilities result is computed using only
+#'  the majority instances. In others words, if a example is
+#'  predicted as posivite, only the positive confidences are used to
+#'  compute the averaged value.
+#
+#' @param predictions A list of multi-label predictions
+#'  (a \code{\link{mlprediction}} object).
+#'
+#' @return A multi-label prediction (a \code{\link{mlprediction}} object).
+#' @seealso \code{link{mlprediction}}
+#' @export
+#'
+#' @examples
+#' predictions <- list(
+#'  as.binaryPrediction(c(1  ,1  ,1  ,1  )),
+#'  as.binaryPrediction(c(0.6,0.1,0.8,0.2)),
+#'  as.binaryPrediction(c(0.8,0.3,0.4,0.1))
+#' )
+#' result <- utiml_ensemble_majority_votes(predictions)
+utiml_ensemble_majority_votes <- function (predictions) {
+  probabilities <- as.resultMLPrediction(predictions, TRUE)
+  bipartitions <- attr(probabilities, "classes")
+
+  votes <- apply(bipartitions, 1, mean)
+  scores <- apply(probabilities, 1, mean)
+  result <- scores
+
+  #Compute the positive probabilities
+  positive <- votes > 0.5 | (votes == 0.5 & scores >= 0.5)
+  result[positive] <- unlist(lapply(which(positive), function (row){
+    mean(probabilities[row, bipartitions[row,] == 1])
+  }))
+
+  #Compute the negative probabilities
+  result[!positive] <- unlist(lapply(which(!positive), function (row){
+    mean(probabilities[row, bipartitions[row,] == 0])
+  }))
+
+  as.binaryPrediction(result)
+}
+
 #' @title Compute the ensemble predictions based on some vote schema
 #'
 #' @param predictions A list of matrix predictions
@@ -32,24 +76,3 @@
 #
 #   apply(avgtable, 2, as.binaryPrediction)
 # }
-
-utiml_ensemble_majority_votes <- function (predictions) {
-  probabilities <- as.resultMLPrediction(predictions)
-  bipartitions <- attr(probabilities, "probs")
-
-  votes <- apply(bipartitions, 1, mean)
-  scores <- apply(probabilities, 1, mean)
-
-  #Compute the positive probabilities
-  positive <- votes > 0.5 | (votes == 0.5 && scores > 0.5)
-  result <- unlist(lapply(which(positive), function (row){
-    mean(probabilities[row, bipartitions[row,] == 1])
-  }))
-
-  #Compute the negative probabilities
-  result <- c(result, unlist(lapply(which(!positive), function (row){
-    mean(probabilities[row, bipartitions[row,] == 0])
-  })))
-
-  as.binaryPrediction(result[names(votes)])
-}
