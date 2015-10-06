@@ -40,7 +40,7 @@ determine the name of this method.}
 }
 \value{
 An object of the type "\code{mlresult}". Use the
- \code{\link{as.resultPrediction}} to return the prediction result
+ \code{\link{as.binaryPrediction}} to return the prediction result
 }
 \description{
 To extend a base classifier, two steps are necessary:
@@ -81,20 +81,20 @@ model is available on \code{model} parameter and the new data to predict
 \code{newdata}. In the examples there are some ways to implement this method.
 
 The return of this method must be provided by the
-\code{\link{as.resultPrediction}} method.
+\code{\link{as.binaryPrediction}} method.
 }
 \examples{
 # Create a method that predict always the negative class (The model must be the class "negativemodel")
 mlpredict.negativemodel <- function (model, newdata, ...) {
    preds <- rep(0, nrow(newdata))
-   as.resultPrediction(preds)
+   as.binaryPrediction(preds)
 }
 
 # Create a SVM predict method using the e1071 package (the class of SVM model from e1071 package is "svm")
 library(e1071)
 mlpredict.svm <- function (dataset, ...) {
    result <- predict(model, newdata, probability = TRUE, ...)
-   as.resultPrediction(attr(result, "probabilities")[,"1"])
+   as.biinaryPrediction(attr(result, "probabilities")[,"1"])
 }
 }
 

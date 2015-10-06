@@ -7,8 +7,8 @@ mydata <- data.frame(
 test_that("Result ML prediction", {
   set.seed(1)
   predictions <- list(
-    class1 = as.resultPrediction(runif(10, min = 0, max = 1)),
-    class2 = as.resultPrediction(runif(10, min = 0, max = 1))
+    class1 = as.binaryPrediction(runif(10, min = 0, max = 1)),
+    class2 = as.binaryPrediction(runif(10, min = 0, max = 1))
   )
   result1 <- as.resultMLPrediction(predictions, TRUE)
   expect_null(rownames(result1))
@@ -27,8 +27,8 @@ test_that("Result ML prediction", {
   values <- runif(10, min = 0, max = 1)
   names(values) <- 6:15
   predictions <- list(
-    class1 = as.resultPrediction(values),
-    class2 = as.resultPrediction(values)
+    class1 = as.binaryPrediction(values),
+    class2 = as.binaryPrediction(values)
   )
   result <- as.resultMLPrediction(predictions, TRUE)
   expect_equal(rownames(result), as.character(6:15))

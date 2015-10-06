@@ -1,3 +1,41 @@
+#' @title Create a predictive binary result object
+#'
+#' @description The transformation methods require a specific data format from base
+#'  classifiers prediction. If you implement a new base method then use this method
+#'  to return the final result of your \code{mlpredict} method.
+#'
+#' @param probability A vector with probabilities predictions or with bipartitions
+#'  prediction for a binary prediction.
+#' @param threshold A numeric value between 0 and 1 to create the bipartitions.
+#'
+#' @return An object of type "\code{mlresult}" used by problem transformation
+#'  methods that use binary classifiers. It has only two attributes:
+#'  \code{bipartition} and \code{probability}, that respectively have the
+#'  bipartition and probabilities results.
+#' @export
+#'
+#' @examples
+#' # This method is used to implement a mlpredict based method
+#' # In this example we create a random predict method
+#' mlpredict.random <- function (model, newdata, ...) {
+#'    probs <- runif(nrow(newdata), 0, 1)
+#'    as.binaryPrediction(probs)
+#' }
+#'
+#' # Use different threshold value
+#' probs <- runif(10, 0, 1)
+#' result <- as.binaryPrediction(probs, 0.6)
+as.binaryPrediction <- function (probability, threshold = 0.5) {
+  bipartition <- probability
+  active <- bipartition >= threshold
+  bipartition[active] <- 1
+  bipartition[!active] <- 0
+
+  res <- list(bipartition = bipartition, probability = probability)
+  class(res) <- "mlresult"
+  res
+}
+
 #' @title Train function to extend base classifiers
 #'
 #' @description
@@ -81,7 +119,7 @@ mltrain.default <- function (dataset, ...) {
 #' \code{newdata}. In the examples there are some ways to implement this method.
 #'
 #' The return of this method must be provided by the
-#' \code{\link{as.resultPrediction}} method.
+#' \code{\link{as.binaryPrediction}} method.
 #'
 #' @param model An object model returned by some mltrain method, its class
 #'  determine the name of this method.
@@ -89,7 +127,7 @@ mltrain.default <- function (dataset, ...) {
 #' @param ... Others arguments passed to the predict method.
 #'
 #' @return An object of the type "\code{mlresult}". Use the
-#'  \code{\link{as.resultPrediction}} to return the prediction result
+#'  \code{\link{as.binaryPrediction}} to return the prediction result
 #'
 #' @export
 #'
@@ -97,14 +135,14 @@ mltrain.default <- function (dataset, ...) {
 #' # Create a method that predict always the negative class (The model must be the class "negativemodel")
 #' mlpredict.negativemodel <- function (model, newdata, ...) {
 #'    preds <- rep(0, nrow(newdata))
-#'    as.resultPrediction(preds)
+#'    as.binaryPrediction(preds)
 #' }
 #'
 #' # Create a SVM predict method using the e1071 package (the class of SVM model from e1071 package is "svm")
 #' library(e1071)
 #' mlpredict.svm <- function (dataset, ...) {
 #'    result <- predict(model, newdata, probability = TRUE, ...)
-#'    as.resultPrediction(attr(result, "probabilities")[,"1"])
+#'    as.biinaryPrediction(attr(result, "probabilities")[,"1"])
 #' }
 mlpredict <- function (model, newdata, ...) UseMethod("mlpredict")
 
@@ -133,7 +171,7 @@ mlpredict.svm <- function (model, newdata, ...) {
   } else
     stop('There are no installed package "e1071" to use SVM classifier as base method')
 
-  as.resultPrediction(attr(result, "probabilities")[,"1"])
+  as.binaryPrediction(attr(result, "probabilities")[,"1"])
 }
 
 #' @describeIn mltrain J48 implementation (require \pkg{RWeka} package to use)
@@ -155,7 +193,7 @@ mlpredict.J48 <- function (model, newdata, ...) {
   else
     stop('There are no installed package "RWeka" to use C4.5/J48 classifier as base method')
 
-  as.resultPrediction(result[,"1"])
+  as.binaryPrediction(result[,"1"])
 }
 
 #' @describeIn mltrain C4.5 implementation (require \pkg{RWeka} package to use)
@@ -180,7 +218,7 @@ mlpredict.C5.0 <- function (model, newdata, ...) {
   } else
     stop('There are no installed package "C50" to use C5.0 classifier as base method')
 
-  as.resultPrediction(result[,"1"])
+  as.binaryPrediction(result[,"1"])
 }
 
 #' @describeIn mltrain CART implementation (require \pkg{rpart} package to use)
@@ -201,7 +239,7 @@ mlpredict.rpart <- function (model, newdata, ...) {
   } else
     stop('There are no installed package "rpart" to use Cart classifier as base method')
 
-  as.resultPrediction(result[,"1"])
+  as.binaryPrediction(result[,"1"])
 }
 
 #' @describeIn mltrain Random Forest (RF) implementation (require \pkg{randomForest} package to use)
@@ -223,7 +261,7 @@ mlpredict.randomForest <- function (model, newdata, ...) {
   } else
     stop('There are no installed package "randomForest" to use randomFores classifier as base method')
 
-  as.resultPrediction(result[,"1"])
+  as.binaryPrediction(result[,"1"])
 }
 
 #' @describeIn mltrain Naive Bayes (NB) implementation (require \pkg{e1071} package to use)
@@ -245,7 +283,7 @@ mlpredict.naiveBayes <- function (model, newdata, ...) {
   } else
     stop('There are no installed package "e1071" to use naiveBayes classifier as base method')
   rownames(result) <- rownames(newdata)
-  as.resultPrediction(result[,"1"])
+  as.binaryPrediction(result[,"1"])
 }
 
 #' @describeIn mltrain kNN implementation (require \pkg{class} package to use)
@@ -270,7 +308,7 @@ mlpredict.baseKNN <- function (model, newdata, ...) {
   } else
     stop('There are no installed package "class" to use kNN classifier as base method')
   names(result) <- rownames(newdata)
-  as.resultPrediction(result)
+  as.binaryPrediction(result)
 }
 
 summary.mltransformation <- function (x, ...) {

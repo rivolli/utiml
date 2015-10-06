@@ -178,7 +178,7 @@ predict.PruDentmodel <- function (object,
       br.predict_model(object$metamodels[[labelname]], cbind(newdata, extracolumns), ...)
     }
     else {
-      as.resultPrediction(base.scores[,labelname])
+      as.binaryPrediction(base.scores[,labelname])
     }
   }, CORES)
   names(predictions) <- object$labels

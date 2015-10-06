@@ -15,6 +15,10 @@ predictions.}
 }
 \value{
 A matrix containing the probabilistic values or just predictions.
+ If the matrix contains the probabilistic values then an attribute called
+ "classes" contains the bipartitions values. Otherwise, if the matrix
+ contains the bipartitions values then an attribute called "probs" cantains
+ the probabilities
 }
 \description{
 This function select the correct result and organize them in a
@@ -27,7 +31,11 @@ This function select the correct result and organize them in a
 predictions <- list()
 predictions$class1 <- mlpredict(model1, testdata)
 predictions$class2 <- mlpredict(model2, testdata)
-as.resultMLPrediction(predictions, TRUE)
+result1 <- as.resultMLPrediction(predictions, TRUE)
+result2 <- as.resultMLPrediction(predictions, FALSE)
+
+all(result1 == attr(result2, "probs")) # TRUE
+all(result2 == attr(result1, "classes")) # TRUE
 ...
 }
 
