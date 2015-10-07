@@ -118,6 +118,20 @@ br.transformation <- function (dataset, classname, base.method, ...) {
   dataset
 }
 
+#' @title Create an object mlresult
+#'
+#' @param bipartition The classes predictions (bipartition values), only 0 and 1
+#' @param probability The probability/confidence of a prediction, between 0..1
+#'
+#' @return An object of type mlresult
+#'
+#' @export
+mlresult <- function (bipartition, probability) {
+  res <- list(bipartition = bipartition, probability = probability)
+  class(res) <- "mlresult"
+  res
+}
+
 #' @title Return the newdata to a data.frame or matrix
 #'
 #' @param newdata The data.frame or mldr data

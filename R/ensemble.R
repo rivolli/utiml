@@ -1,3 +1,54 @@
+#' @title Average vote combination for ensemble prediction
+#' @family Ensemble utilites
+#' @description Compute the ensemble prediction using the average
+#'  votes schema. The probabilities result is computed using the
+#'  averaged values.
+#'
+#' @param predictions A list of multi-label predictions
+#'  (a \code{\link{mlprediction}} object).
+#'
+#' @return A multi-label prediction (a \code{\link{mlprediction}} object).
+#' @seealso \code{link{mlprediction}}
+#' @export
+#'
+#' @examples
+#' predictions <- list(
+#'  as.binaryPrediction(c(1,1,1,1)),
+#'  as.binaryPrediction(c(0.6,0.1,0.7,0.2)),
+#'  as.binaryPrediction(c(0.8,0.1,0.4,0.3))
+#' )
+#' result <- utiml_ensemble_average_votes(predictions)
+#' result$probability
+#' # --> 0.8, 0.4, 0.7, 0.5
+utiml_ensemble_average_votes <- function (predictions) {
+  utiml_ensemble_compute_votes(predictions, mean)
+}
+
+#' @title Generic vote combination for ensemble prediction
+#'
+#' @param predictions A list of multi-label predictions
+#'  (a \code{\link{mlprediction}} object).
+#' @param method.name The name or the method that will be compute
+#'  the results. This method receive a list of probability values
+#'  and must return a single value probability.
+#'
+#' @return A multi-label prediction (a \code{\link{mlprediction}} object).
+#' @seealso \code{link{mlprediction}}
+#' @export
+#'
+#' @examples
+#' predictions <- list(
+#'  as.binaryPrediction(c(1,1,1,1)),
+#'  as.binaryPrediction(c(0.6,0.1,0.7,0.2)),
+#'  as.binaryPrediction(c(0.8,0.1,0.4,0.3))
+#' )
+#'
+#' # Compute the maximum vote combination
+#' result <- utiml_ensemble_compute_votes(predictions, max)
+utiml_ensemble_compute_votes <- function (predictions, method.name) {
+  as.binaryPrediction(apply(as.multilabelPrediction(predictions, TRUE), 1, method.name))
+}
+
 #' @title Majority vote combination for ensemble prediction
 #' @family Ensemble utilites
 #' @description Compute the ensemble prediction using the majority
@@ -15,7 +66,7 @@
 #'
 #' @examples
 #' predictions <- list(
-#'  as.binaryPrediction(c(1  ,1  ,1  ,1  )),
+#'  as.binaryPrediction(c(1,1,1,1)),
 #'  as.binaryPrediction(c(0.6,0.1,0.8,0.2)),
 #'  as.binaryPrediction(c(0.8,0.3,0.4,0.1))
 #' )
@@ -34,12 +85,90 @@ utiml_ensemble_majority_votes <- function (predictions) {
     mean(probabilities[row, bipartitions[row,] == 1])
   }))
 
-  #Compute the negative probabilities
+  #Compute the negative p
   result[!positive] <- unlist(lapply(which(!positive), function (row){
     mean(probabilities[row, bipartitions[row,] == 0])
   }))
 
   as.binaryPrediction(result)
+}
+
+#' @title Maximum vote combination for ensemble prediction
+#' @family Ensemble utilites
+#' @description Compute the ensemble prediction using the maximum
+#'  votes schema. The probabilities result is computed using the
+#'  maximum value.
+#'
+#' @param predictions A list of multi-label predictions
+#'  (a \code{\link{mlprediction}} object).
+#'
+#' @return A multi-label prediction (a \code{\link{mlprediction}} object).
+#' @seealso \code{link{mlprediction}}
+#' @export
+#'
+#' @examples
+#' predictions <- list(
+#'  as.binaryPrediction(c(1,0.2,0.6,0.1)),
+#'  as.binaryPrediction(c(0.6,0.1,0.7,0.2)),
+#'  as.binaryPrediction(c(0.8,0.1,0.4,0.3))
+#' )
+#' result <- utiml_ensemble_maximum_votes(predictions)
+#' result$probability
+#' # --> 1, 0.2, 0.7, 0.3
+utiml_ensemble_maximum_votes <- function (predictions) {
+  utiml_ensemble_compute_votes(predictions, max)
+}
+
+#' @title Minimum vote combination for ensemble prediction
+#' @family Ensemble utilites
+#' @description Compute the ensemble prediction using the minimum
+#'  votes schema. The probabilities result is computed using the
+#'  minimum value.
+#'
+#' @param predictions A list of multi-label predictions
+#'  (a \code{\link{mlprediction}} object).
+#'
+#' @return A multi-label prediction (a \code{\link{mlprediction}} object).
+#' @seealso \code{link{mlprediction}}
+#' @export
+#'
+#' @examples
+#' predictions <- list(
+#'  as.binaryPrediction(c(1,0.2,0.6,0.1)),
+#'  as.binaryPrediction(c(0.6,0.1,0.7,0.2)),
+#'  as.binaryPrediction(c(0.8,0.1,0.4,0.3))
+#' )
+#' result <- utiml_ensemble_minimum_votes(predictions)
+#' result$probability
+#' # --> 0.6, 0.1, 0.4, 0.1
+utiml_ensemble_minimum_votes <- function (predictions) {
+  utiml_ensemble_compute_votes(predictions, min)
+}
+
+#' @title Product vote combination for ensemble prediction
+#' @family Ensemble utilites
+#' @description Compute the ensemble prediction using the product
+#'  votes schema. The probabilities result is computed using the
+#'  product of all values.
+#'
+#' @param predictions A list of multi-label predictions
+#'  (a \code{\link{mlprediction}} object).
+#'
+#' @return A multi-label prediction (a \code{\link{mlprediction}} object).
+#' @seealso \code{link{mlprediction}}
+#' @export
+#'
+#' @examples
+#' predictions <- list(
+#'  as.binaryPrediction(c(1,1,0.5,1)),
+#'  as.binaryPrediction(c(0.9,0.1,0.5,0.2)),
+#'  as.binaryPrediction(c(0.8,0.5,0.5,0.3))
+#' )
+#' result <- utiml_ensemble_product_votes(predictions)
+#' result$probability
+#' # --> 0.72, 0.05, 0.125, 0.06
+utiml_ensemble_product_votes <- function (predictions) {
+  utiml_ensemble_compute_votes(predictions, prod)
 }
 
 #' @title Compute the ensemble predictions based on some vote schema
@@ -61,18 +190,18 @@ utiml_ensemble_majority_votes <- function (predictions) {
 #' predictions$model2 <- prediction(brmodel2, testdata)
 #' result <- utiml_compute_ensemble_predictions(predictions, "majority")
 #' ...
-# utiml_compute_ensemble_predictions <- function (predictions, vote.schema) {
-#   m <- length(predictions)
-#   sumtable <- predictions[[1]]
-#   for (i in 2:m)
-#     sumtable <- sumtable + predictions[[i]]
-#
-#   avgtable <- if (vote.schema == "score")
-#     sumtable / m
-#   else if (vote.schema == "majority")
-#     utiml_normalize(sumtable, m, 0)
-#   else
-#     utiml_normalize(sumtable) #proportionally
-#
-#   apply(avgtable, 2, as.binaryPrediction)
-# }
+utiml_compute_multilabel_ensemble <- function (predictions, vote.schema) {
+  m <- length(predictions)
+  sumtable <- predictions[[1]]
+  for (i in 2:m)
+    sumtable <- sumtable + predictions[[i]]
+
+  avgtable <- if (vote.schema == "score")
+    sumtable / m
+  else if (vote.schema == "majority")
+    utiml_normalize(sumtable, m, 0)
+  else
+    utiml_normalize(sumtable) #proportionally
+
+  apply(avgtable, 2, as.binaryPrediction)
+}

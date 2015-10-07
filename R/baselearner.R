@@ -31,9 +31,7 @@ as.binaryPrediction <- function (probability, threshold = 0.5) {
   bipartition[active] <- 1
   bipartition[!active] <- 0
 
-  res <- list(bipartition = bipartition, probability = probability)
-  class(res) <- "mlresult"
-  res
+  mlresult(bipartition, probability)
 }
 
 #' @title Train function to extend base classifiers
