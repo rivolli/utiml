@@ -74,7 +74,7 @@ To extend a base classifier, two steps are necessary:
 
 \item \code{baseNB}: Naive Bayes (NB) implementation (require \pkg{e1071} package to use)
 
-\item \code{baseKNN}: kNN implementation (require \pkg{class} package to use)
+\item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
 }}
 \section{How to create a new train base method}{
 

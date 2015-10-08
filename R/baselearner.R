@@ -264,7 +264,7 @@ mlpredict.baseKNN <- function (model, newdata, ...) {
   if (!requireNamespace("kknn", quietly = TRUE))
     stop('There are no installed package "kknn" to use kNN classifier as base method')
 
-  formula <- as.formula(paste("`", dataset$labelname, "` ~ .", sep=""))
+  formula <- as.formula(paste("`", model$labelname, "` ~ .", sep=""))
   args <- list(...)
   result <- if (is.null(model$extrakNN[["k"]]) || !is.null(args[["k"]]))
       kknn::kknn(formula, model$data, newdata, ...)

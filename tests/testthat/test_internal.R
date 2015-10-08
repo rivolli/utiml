@@ -4,6 +4,30 @@ mydata <- data.frame(
   class2 = factor(as.numeric(runif(10, min = 0, max = 1) > 0.5), levels = c("0", "1"))
 )
 
+test_that("as binary prediction", {
+  probs <- runif(10, 0, 1)
+  result <- as.binaryPrediction(probs)
+  expect_is(result, "binary.prediction")
+  expect_false(is.null(result$bipartition))
+  expect_false(is.null(result$probability))
+  expect_equal(result$probability, probs)
+
+  names(probs) <- 11:20
+  result <- as.binaryPrediction(probs)
+  expect_named(result$bipartition, as.character(11:20))
+  expect_named(result$probability, as.character(11:20))
+
+  probs <- rep(0.5, 10)
+  result <- as.binaryPrediction(probs, 0.4)
+  expect_equal(result$bipartition, rep(1, 10))
+
+  result <- as.binaryPrediction(probs, 0.5)
+  expect_equal(result$bipartition, rep(1, 10))
+
+  result <- as.binaryPrediction(probs, 0.6)
+  expect_equal(result$bipartition, rep(0, 10))
+})
+
 test_that("Result ML prediction", {
   set.seed(1)
   predictions <- list(
@@ -18,11 +42,16 @@ test_that("Result ML prediction", {
   expect_equal(predictions$class2$probability, result1[,"class2"])
 
   result2 <- as.multilabelPrediction(predictions, FALSE)
-  expect_equal(predictions$class1$bipartition, result2[,"class1"])
-  expect_equal(predictions$class2$bipartition, result2[,"class2"])
+  TP1 <- predictions$class1$bipartition == 1
+  TP2 <- predictions$class2$bipartition == 1
+  expect_equal(predictions$class1$bipartition[TP1], result2[,"class1"][TP1])
+  expect_equal(predictions$class2$bipartition[TP2], result2[,"class2"][TP2])
+  expect_true(all(result2[,"class1"][!TP1] | result2[,"class2"][!TP1]))
+  expect_true(all(result2[,"class1"][TP2] | result2[,"class2"][TP2]))
+  expect_true(all(result2[,"class1"][!TP1 & !TP2] != result2[,"class2"][!TP1 & !TP2]))
 
-  expect_equivalent(attr(result1, "classes"), result2)
-  expect_equivalent(attr(result2, "probs"), result1)
+  expect_true(all(attr(result1, "classes") == result2))
+  expect_true(all(attr(result2, "probs") == result1))
   expect_equal(attr(result1, "type"), "probability")
   expect_equal(attr(result2, "type"), "bipartition")
 
@@ -37,7 +66,7 @@ test_that("Result ML prediction", {
   expect_equal(result[,"class1"], result[,"class2"])
   result <- as.multilabelPrediction(predictions, FALSE)
   expect_equal(rownames(result), as.character(6:15))
-  expect_equal(result[,"class1"], result[,"class2"])
+  #expect_equal(result[,"class1"], result[,"class2"])
   set.seed(NULL)
 })
 
@@ -72,7 +101,7 @@ test_that("br.create_model and br.predict_model", {
   expect_equal(attr(model, "methodname"), "KNN")
 
   predict1 <- br.predict_model(model, mydata[,1, drop = FALSE])
-  expect_is(predict1, "mlresult")
+  expect_is(predict1, "binary.prediction")
 
   model <- br.create_model(dataset)
   predict2 <- br.predict_model(model, mydata[,1, drop = FALSE], k=3)

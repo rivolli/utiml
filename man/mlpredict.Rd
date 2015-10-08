@@ -39,8 +39,8 @@ determine the name of this method.}
 \item{...}{Others arguments passed to the predict method.}
 }
 \value{
-An object of the type "\code{mlresult}". Use the
- \code{\link{as.binaryPrediction}} to return the prediction result
+A matrix with the probabilities of each class value for each example,
+ where the rows are the examples and the columns the class values.
 }
 \description{
 To extend a base classifier, two steps are necessary:
@@ -67,7 +67,7 @@ To extend a base classifier, two steps are necessary:
 
 \item \code{naiveBayes}: Naive Bayes (NB) implementation (require \pkg{e1071} package to use)
 
-\item \code{baseKNN}: kNN implementation (require \pkg{class} package to use)
+\item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
 }}
 \section{How to create a new prediction base method}{
 
@@ -80,21 +80,31 @@ After defined the name, you need to implement your prediction base method. The
 model is available on \code{model} parameter and the new data to predict
 \code{newdata}. In the examples there are some ways to implement this method.
 
-The return of this method must be provided by the
-\code{\link{as.binaryPrediction}} method.
+The return of this method must be a matrix with the probabilities of each class
+value for each examples. The rows represents the examples and the columns the
+class values.
+
+Remember that the prediction may be binary or multi-class, then the number and
+the column names may vary depending on the problem.
 }
 \examples{
-# Create a method that predict always the negative class (The model must be the class "negativemodel")
+# Create a method that predict always the negative class
+# We consider a binary scenario (The model must be the class "negativemodel")
 mlpredict.negativemodel <- function (model, newdata, ...) {
-   preds <- rep(0, nrow(newdata))
-   as.binaryPrediction(preds)
+   # Predict the class "0" with 100\% and the class "1" with 0\%
+   matrix(
+     c(rep(1, nrow(newdata)),
+     rep(0, nrow(newdata))),
+     ncol=2,
+     dimnames=list(rownames(newdata), c("0","1"))
+   )
 }
 
 # Create a SVM predict method using the e1071 package (the class of SVM model from e1071 package is "svm")
 library(e1071)
-mlpredict.svm <- function (dataset, ...) {
+mlpredict.svm <- function (dataset, newdata, ...) {
    result <- predict(model, newdata, probability = TRUE, ...)
-   as.biinaryPrediction(attr(result, "probabilities")[,"1"])
+   attr(result, "probabilities")
 }
 }
 

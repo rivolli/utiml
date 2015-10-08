@@ -6,9 +6,9 @@
 
 #' @title Create a predictive binary result object
 #'
-#' @description The transformation methods require a specific data format from base
-#'  classifiers prediction. If you implement a new base method then use this method
-#'  to return the final result of your \code{mlpredict} method.
+#' @description The binary transformation methods require a specific data format from
+#'  base classifiers prediction this is used to transform the result from the base
+#'  methods.
 #'
 #' @param probability A vector with probabilities predictions or with bipartitions
 #'  prediction for a binary prediction.
@@ -21,12 +21,8 @@
 #' @export
 #'
 #' @examples
-#' # This method is used to implement a mlpredict based method
-#' # In this example we create a random predict method
-#' mlpredict.random <- function (model, newdata, ...) {
-#'    probs <- runif(nrow(newdata), 0, 1)
-#'    as.binaryPrediction(probs)
-#' }
+#' probs <- runif(nrow(newdata), 0, 1)
+#' as.binaryPrediction(probs)
 #'
 #' # Use different threshold value
 #' probs <- runif(10, 0, 1)
@@ -74,8 +70,13 @@ as.multilabelPrediction <- function (predictions, probability) {
   bipartitions <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
   rownames(probabilities) <- rownames(bipartitions) <- names(predictions[[1]]$bipartition)
 
+  #At least one label is predict
+  for (row in 1:nrow(bipartitions))
+    bipartitions[row, which.max(probabilities[row,])] <- 1
+
+  only.bipartitions <- bipartitions
   only.probabilities <- probabilities
-  attr(probabilities, "classes") <- bipartitions
+  attr(probabilities, "classes") <- only.bipartitions
   attr(probabilities, "type") <- "probability"
 
   attr(bipartitions, "probs") <- only.probabilities
@@ -124,7 +125,7 @@ br.create_model <- function (dataset, ...) {
 br.predict_model <- function (model, newdata, ...) {
   label <- attr(model, "labelname")
   params <- c(list(model = model, newdata = newdata), ...)
-  do.call(mlpredict, params)
+  as.binaryPrediction(do.call(mlpredict, params)[,"1"])
 }
 
 #' Create a Binary MultiLabel Data
@@ -159,12 +160,12 @@ br.transformation <- function (dataset, classname, base.method, ...) {
   dataset
 }
 
-#' @title Create an object mlbinresult
+#' @title Create an object binary.prediction
 #'
 #' @param bipartition The classes predictions (bipartition values), only 0 and 1
 #' @param probability The probability/confidence of a prediction, between 0..1
 #'
-#' @return An object of type mlbinresult
+#' @return An object of type binary.prediction
 #'
 #' @export
 binary.prediction <- function (bipartition, probability) {

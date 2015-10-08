@@ -173,7 +173,7 @@ utiml_ensemble_product_votes <- function (predictions) {
 
 #' @title Compute the ensemble predictions based on some vote schema
 #'
-#' @param predictions A list of matrix predictions
+#' @param predictions A list of mlresult
 #' @param vote.schema Define the way that ensemble must compute the predictions.
 #' The valid options are: \describe{
 #'  \code{'MAJ'}{Compute the averages of probabilities},
@@ -182,8 +182,10 @@ utiml_ensemble_product_votes <- function (predictions) {
 #'  \code{'AVG'}{Compute the proportion of votes, scale data between min and max of votes}
 #'  \code{'PROD'}{Compute the proportion of votes, scale data between min and max of votes}
 #' }
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 #'
-#' @return A list of mlresult as a result obtained from a multi-label transformation method
+#' @return A new mlresult that final result
 #' @export
 #'
 #' @examples
@@ -191,9 +193,9 @@ utiml_ensemble_product_votes <- function (predictions) {
 #' predictions <- list()
 #' predictions$model1 <- prediction(brmodel1, testdata)
 #' predictions$model2 <- prediction(brmodel2, testdata)
-#' result <- utiml_compute_ensemble_predictions(predictions, "majority")
+#' result <- utiml_compute_ensemble_predictions(predictions, "MAJ")
 #' ...
-utiml_compute_multilabel_ensemble <- function (predictions, vote.schema) {
+utiml_compute_multilabel_ensemble <- function (predictions, vote.schema, probability = TRUE) {
   votes <- list(
     MAJ = utiml_ensemble_majority_votes,
     MAX = utiml_ensemble_maximum_votes,
@@ -202,4 +204,16 @@ utiml_compute_multilabel_ensemble <- function (predictions, vote.schema) {
     PROD = utiml_ensemble_product_votes
   )
 
+  new.prediction <- list()
+  for (label in colnames(predictions[[1]])) {
+    lpred <- lapply(predictions, function (prediction){
+      probs <- utiml_ifelse(attr(prediction, "type") == "probability",
+                    prediction[,label], attr(prediction, "probs")[,label])
+
+      as.binaryPrediction(probs)
+    })
+    new.prediction[[label]] <- do.call(votes[[vote.schema]], list(predictions = lpred))
+  }
+
+  as.multilabelPrediction(new.prediction, probability)
 }

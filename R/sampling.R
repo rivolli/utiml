@@ -15,6 +15,7 @@
 #'  values are informed and the sum of them is lower than 1
 #'  the partitions will be generated with the informed proportion.
 #'  (default: \code{c(0.7, 0.3)})
+#' @param partition.names a vector with the partition names (optional).
 #' @param SEED A single value, interpreted as an integer to allow
 #'  obtain the same results again. (default: \code{NULL})
 #'
@@ -36,7 +37,7 @@
 #'
 #' # Split the dataset in three parts
 #' datasets <- mldr_random_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
   # Validations
   if (sum(partitions) > 1)
     stop("The sum of partitions can not be greater than 1")

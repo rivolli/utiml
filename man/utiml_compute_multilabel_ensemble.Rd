@@ -4,10 +4,11 @@
 \alias{utiml_compute_multilabel_ensemble}
 \title{Compute the ensemble predictions based on some vote schema}
 \usage{
-utiml_compute_multilabel_ensemble(predictions, vote.schema)
+utiml_compute_multilabel_ensemble(predictions, vote.schema,
+  probability = TRUE)
 }
 \arguments{
-\item{predictions}{A list of matrix predictions}
+\item{predictions}{A list of mlresult}
 
 \item{vote.schema}{Define the way that ensemble must compute the predictions.
 The valid options are: \describe{
@@ -17,9 +18,12 @@ The valid options are: \describe{
  \code{'AVG'}{Compute the proportion of votes, scale data between min and max of votes}
  \code{'PROD'}{Compute the proportion of votes, scale data between min and max of votes}
 }}
+
+\item{probability}{A logical value. If \code{TRUE} the predicted values are
+ the score between 0 and 1, otherwise the values are bipartition 0 or 1.}
 }
 \value{
-A list of mlresult as a result obtained from a multi-label transformation method
+A new mlresult that final result
 }
 \description{
 Compute the ensemble predictions based on some vote schema
@@ -29,7 +33,7 @@ Compute the ensemble predictions based on some vote schema
 predictions <- list()
 predictions$model1 <- prediction(brmodel1, testdata)
 predictions$model2 <- prediction(brmodel2, testdata)
-result <- utiml_compute_ensemble_predictions(predictions, "majority")
+result <- utiml_compute_ensemble_predictions(predictions, "MAJ")
 ...
 }
 
