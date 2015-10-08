@@ -11,9 +11,12 @@ utiml_compute_multilabel_ensemble(predictions, vote.schema)
 
 \item{vote.schema}{Define the way that ensemble must compute the predictions.
 The valid options are: \describe{
- \code{'score'}{Compute the averages of probabilities},
- \code{'majority'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
- \code{'prop'}{Compute the proportion of votes, scale data between min and max of votes} }}
+ \code{'MAJ'}{Compute the averages of probabilities},
+ \code{'MAX'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
+ \code{'MIN'}{Compute the proportion of votes, scale data between min and max of votes}
+ \code{'AVG'}{Compute the proportion of votes, scale data between min and max of votes}
+ \code{'PROD'}{Compute the proportion of votes, scale data between min and max of votes}
+}}
 }
 \value{
 A list of mlresult as a result obtained from a multi-label transformation method

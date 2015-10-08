@@ -176,9 +176,12 @@ utiml_ensemble_product_votes <- function (predictions) {
 #' @param predictions A list of matrix predictions
 #' @param vote.schema Define the way that ensemble must compute the predictions.
 #' The valid options are: \describe{
-#'  \code{'score'}{Compute the averages of probabilities},
-#'  \code{'majority'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
-#'  \code{'prop'}{Compute the proportion of votes, scale data between min and max of votes} }
+#'  \code{'MAJ'}{Compute the averages of probabilities},
+#'  \code{'MAX'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
+#'  \code{'MIN'}{Compute the proportion of votes, scale data between min and max of votes}
+#'  \code{'AVG'}{Compute the proportion of votes, scale data between min and max of votes}
+#'  \code{'PROD'}{Compute the proportion of votes, scale data between min and max of votes}
+#' }
 #'
 #' @return A list of mlresult as a result obtained from a multi-label transformation method
 #' @export
@@ -191,17 +194,12 @@ utiml_ensemble_product_votes <- function (predictions) {
 #' result <- utiml_compute_ensemble_predictions(predictions, "majority")
 #' ...
 utiml_compute_multilabel_ensemble <- function (predictions, vote.schema) {
-  m <- length(predictions)
-  sumtable <- predictions[[1]]
-  for (i in 2:m)
-    sumtable <- sumtable + predictions[[i]]
+  votes <- list(
+    MAJ = utiml_ensemble_majority_votes,
+    MAX = utiml_ensemble_maximum_votes,
+    MIN = utiml_ensemble_minimum_votes,
+    AVG = utiml_ensemble_average_votes,
+    PROD = utiml_ensemble_product_votes
+  )
 
-  avgtable <- if (vote.schema == "score")
-    sumtable / m
-  else if (vote.schema == "majority")
-    utiml_normalize(sumtable, m, 0)
-  else
-    utiml_normalize(sumtable) #proportionally
-
-  apply(avgtable, 2, as.binaryPrediction)
 }

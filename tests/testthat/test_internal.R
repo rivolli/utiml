@@ -23,6 +23,8 @@ test_that("Result ML prediction", {
 
   expect_equivalent(attr(result1, "classes"), result2)
   expect_equivalent(attr(result2, "probs"), result1)
+  expect_equal(attr(result1, "type"), "probability")
+  expect_equal(attr(result2, "type"), "bipartition")
 
   values <- runif(10, min = 0, max = 1)
   names(values) <- 6:15
