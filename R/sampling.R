@@ -428,15 +428,11 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
 }
 
 utiml_random_split <- function (mdata, r) {
-  D <- sample(1:mdata$measures$num.instances)
-  S <- lapply(1:length(r), function (i) integer())
-
-  amount <- round(mdata$measures$num.instances * r)
   index <- c()
+  amount <- round(mdata$measures$num.instances * r)
   for (i in 1:length(amount))
     index <- c(index, rep(i, amount[i]))
-
-  split(D, index)
+  split(sample(1:mdata$measures$num.instances), index)
 }
 
 #' @title Internal Iterative Stratification
