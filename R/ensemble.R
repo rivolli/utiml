@@ -1,3 +1,9 @@
+#
+# This file contains functions related with ensemble
+# The most function are available public in the package
+# The functions are sorted in alphabetical order
+#
+
 #' @title Average vote combination for ensemble prediction
 #' @family Ensemble utilites
 #' @description Compute the ensemble prediction using the average

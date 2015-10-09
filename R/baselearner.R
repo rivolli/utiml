@@ -1,3 +1,22 @@
+#
+# This file contains the base methods used in problem transformation
+# All these function are available public in the package
+# Each base method require two functions:
+#  - mltrain
+#  - mlpredict
+#
+# The methods are organized following the sequence:
+#   S3 method
+#   default
+#   SVM
+#   J48/C4.5
+#   C5.0
+#   CART
+#   Random Forest
+#   Naive Bayes
+#   KNN
+#
+
 #' @title Train function to extend base classifiers
 #'
 #' @description
@@ -51,12 +70,6 @@
 #'    model
 #' }
 mltrain <- function (dataset, ...) UseMethod("mltrain")
-
-#' @describeIn mltrain Default S3 method
-mltrain.default <- function (dataset, ...) {
-  funcname <- paste("mltrain.base", dataset$methodname, sep='')
-  stop(paste("The function '", funcname, "(dataset, ...)' is not implemented", sep=''))
-}
 
 #' @title Prediction function to extend base classifiers
 #'
@@ -117,12 +130,24 @@ mltrain.default <- function (dataset, ...) {
 #' }
 mlpredict <- function (model, newdata, ...) UseMethod("mlpredict")
 
+
+
+#### DEFAULT METHOD #####
+#' @describeIn mltrain Default S3 method
+mltrain.default <- function (dataset, ...) {
+  funcname <- paste("mltrain.base", dataset$methodname, sep='')
+  stop(paste("The function '", funcname, "(dataset, ...)' is not implemented", sep=''))
+}
+
 #' @describeIn mlpredict Default S3 method
 mlpredict.default <- function (model, newdata, ...) {
   funcname <- paste("mlpredict.", class(model), sep='')
   stop(paste("The function '", funcname, "(dataset, newdata, ...)' is not implemented", sep=''))
 }
 
+
+
+#### SVM METHOD #####
 #' @describeIn mltrain SVM implementation (require \pkg{e1071} package to use)
 mltrain.baseSVM <- function (dataset, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
@@ -145,6 +170,9 @@ mlpredict.svm <- function (model, newdata, ...) {
   attr(result, "probabilities")
 }
 
+
+
+#### J48/C4.5 METHOD #####
 #' @describeIn mltrain J48 implementation (require \pkg{RWeka} package to use)
 mltrain.baseJ48 <- function (dataset, ...) {
   if (requireNamespace("RWeka", quietly = TRUE)) {
@@ -157,6 +185,9 @@ mltrain.baseJ48 <- function (dataset, ...) {
   model
 }
 
+#' @describeIn mltrain C4.5 implementation (require \pkg{RWeka} package to use)
+mltrain.baseC4.5 <- mltrain.baseJ48
+
 #' @describeIn mlpredict C4.5/J48 implementation (require \pkg{RWeka} package to use)
 mlpredict.J48 <- function (model, newdata, ...) {
   if (requireNamespace("RWeka", quietly = TRUE))
@@ -167,9 +198,9 @@ mlpredict.J48 <- function (model, newdata, ...) {
   result
 }
 
-#' @describeIn mltrain C4.5 implementation (require \pkg{RWeka} package to use)
-mltrain.baseC4.5 <- mltrain.baseJ48
 
+
+#### C5.0 METHOD #####
 #' @describeIn mltrain C5.0 implementation (require \pkg{C50} package to use)
 mltrain.baseC5.0 <- function (dataset, ...) {
   if (requireNamespace("C50", quietly = TRUE)) {
@@ -190,6 +221,9 @@ mlpredict.C5.0 <- function (model, newdata, ...) {
   predict(model, newdata, type = "prob", ...)
 }
 
+
+
+#### CART METHOD #####
 #' @describeIn mltrain CART implementation (require \pkg{rpart} package to use)
 mltrain.baseCART <- function (dataset, ...) {
   if (requireNamespace("rpart", quietly = TRUE)) {
@@ -209,6 +243,9 @@ mlpredict.rpart <- function (model, newdata, ...) {
   predict(model, newdata, type = "prob", ...)
 }
 
+
+
+#### RANDOM FOREST METHOD #####
 #' @describeIn mltrain Random Forest (RF) implementation (require \pkg{randomForest} package to use)
 mltrain.baseRF <- function (dataset, ...) {
   if (requireNamespace("randomForest", quietly = TRUE)) {
@@ -229,6 +266,9 @@ mlpredict.randomForest <- function (model, newdata, ...) {
   predict(model, newdata, type="prob", ...)
 }
 
+
+
+#### NAIVE BAYES METHOD #####
 #' @describeIn mltrain Naive Bayes (NB) implementation (require \pkg{e1071} package to use)
 mltrain.baseNB <- function (dataset, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
@@ -251,6 +291,9 @@ mlpredict.naiveBayes <- function (model, newdata, ...) {
   result
 }
 
+
+
+#### KNN METHOD #####
 #' @describeIn mltrain kNN implementation (require \pkg{kknn} package to use)
 mltrain.baseKNN <- function (dataset, ...) {
   if (!requireNamespace("kknn", quietly = TRUE))

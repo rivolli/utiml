@@ -1,3 +1,23 @@
+utiml_holdout <- function (mdata, partitions, partition.names, SEED, holdout.method) {
+  # Validations
+  if (sum(partitions) > 1)
+    stop("The sum of partitions can not be greater than 1")
+
+  if (!is.null(SEED))
+    set.seed(SEED)
+
+  partitions <- utiml_ifelse(length(partitions) == 1, c(partitions, 1 - partitions), partitions)
+
+  # Split data
+  ldata <- do.call(holdout.method, list(mdata = mdata, partitions = partitions))
+
+  if (!is.null(SEED))
+    set.seed(NULL)
+
+  names(ldata) <- partition.names
+  ldata
+}
+
 #' @title Create distinct partitions of a multi-label dataset
 #' @family mldr
 #' @family sampling
@@ -17,7 +37,7 @@
 #'  (default: \code{c(0.7, 0.3)})
 #' @param partition.names a vector with the partition names (optional).
 #' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again. (default: \code{NULL})
+#'  obtain the same results again. (default: \code{NULL}, optional)
 #'
 #' @return A list with at least two datasets sampled as specified
 #'  in partitions parameter.
@@ -38,31 +58,19 @@
 #' # Split the dataset in three parts
 #' datasets <- mldr_random_holdout(emotions, c(0.70, 0.15, 0.15))
 mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
-  # Validations
-  if (sum(partitions) > 1)
-    stop("The sum of partitions can not be greater than 1")
-
-  if (length(partitions) == 1)
-    partitions[2] <- 1 - partitions[1]
-
-  # Generate random sequence
-  if (!is.null(SEED)) {
-    set.seed(SEED)
-    rows <- sample(1:mdata$measures$num.instances)
-    set.seed(NULL)
-  }
-  else
+  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
     rows <- sample(1:mdata$measures$num.instances)
 
-  # Calculate the indexes and limit the last index to avoid rounds mistakes
-  idx <- c(0, cumsum(round(mdata$measures$num.instances * partitions)))
-  idx[length(idx)] <- round(sum(mdata$measures$num.instances * partitions))
+    # Calculate the indexes and limit the last index to avoid rounds mistakes
+    idx <- c(0, cumsum(round(mdata$measures$num.instances * partitions)))
+    idx[length(idx)] <- round(sum(mdata$measures$num.instances * partitions))
 
-  ldata <- list()
-  for (i in 1:length(partitions))
-    ldata[[i]] <- mldr_subset(mdata, rows[(idx[i]+1):idx[i+1]], mdata$attributesIndexes)
+    ldata <- list()
+    for (i in 1:length(partitions))
+      ldata[[i]] <- mldr_subset(mdata, rows[(idx[i]+1):idx[i+1]], mdata$attributesIndexes)
 
-  ldata
+    ldata
+  })
 }
 
 #' @title Create stratified partitions of a multi-label dataset
@@ -83,6 +91,7 @@ mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.name
 #'  values are informed and the sum of them is lower than 1
 #'  the partitions will be generated with the informed proportion.
 #'  (default: \code{c(0.7, 0.3)})
+#' @param partition.names a vector with the partition names (optional).
 #' @param SEED A single value, interpreted as an integer to allow
 #'  obtain the same results again. (default: \code{NULL})
 #'
@@ -101,7 +110,7 @@ mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.name
 #' datasets <- mldr_stratified_holdout(emotions)
 #'
 #' # The same result can be obtained as:
-#' datasets <- mldr_stratified_holdout(emotions, 0.7)
+#' datasets <- mldr_stratified_holdout(emotions, 0.7)partition.names = NULL,
 #' print(datasets[[1]]$measures)
 #' print(datasets[[2]]$measures)
 #'
@@ -110,26 +119,12 @@ mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.name
 #'
 #' # Split the dataset in three parts
 #' datasets <- mldr_stratified_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
-  # Validations
-  if (sum(partitions) > 1)
-    stop("The sum of partitions can not be greater than 1")
-
-  if (length(partitions) == 1)
-    partitions[2] <- 1 - partitions[1]
-
-  if (!is.null(SEED))
-    set.seed(SEED)
-
-  # Splits
-  ldata <- lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
-    mldr_subset(mdata, fold, mdata$attributesIndexes)
+mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
+  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
+    lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
+    })
   })
-
-  if (!is.null(SEED))
-    set.seed(NULL)
-
-  ldata
 }
 
 #' @title Create iterative stratified partitions of a multi-label dataset
@@ -150,6 +145,7 @@ mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NUL
 #'  values are informed and the sum of them is lower than 1
 #'  the partitions will be generated with the informed proportion.
 #'  (default: \code{c(0.7, 0.3)})
+#' @param partition.names a vector with the partition names (optional).
 #' @param SEED A single value, interpreted as an integer to allow
 #'  obtain the same results again. (default: \code{NULL})
 #'
@@ -177,26 +173,12 @@ mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NUL
 #'
 #' # Split the dataset in three parts
 #' datasets <- mldr_iterative_stratification_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
-  # Validations
-  if (sum(partitions) > 1)
-    stop("The sum of partitions can not be greater than 1")
-
-  if (length(partitions) == 1)
-    partitions[2] <- 1 - partitions[1]
-
-  if (!is.null(SEED))
-    set.seed(SEED)
-
-  # Splits
-  ldata <- lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
-    mldr_subset(mdata, fold, mdata$attributesIndexes)
+mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
+  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
+    lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
+    })
   })
-
-  if (!is.null(SEED))
-    set.seed(NULL)
-
-  ldata
 }
 
 #' @title Get the multi-labels datasets for k-fold Cross Validation
@@ -227,7 +209,7 @@ mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.
 #' library(utiml)
 #' folds <- mldr_random_kfold(emotions, 10)
 #'
-#' # Using the first iteration
+#' # Using the first iterationrows <- sample(1:mdata$measures$num.instances)rows <- sample(1:mdata$measures$num.instances)
 #' dataset <- mldr_getfold(emotions, folds, 1)
 #' classifier <- br(dataset$train)
 #' result <- predict(classifier, dataset$test)
@@ -443,6 +425,18 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
   rows <- sample(mdata$measures$num.instances, num.rows)
   cols <- sample(mdata$attributesIndexes, num.cols)
   mldr_subset(mdata, rows, cols)
+}
+
+utiml_random_split <- function (mdata, r) {
+  D <- sample(1:mdata$measures$num.instances)
+  S <- lapply(1:length(r), function (i) integer())
+
+  amount <- round(mdata$measures$num.instances * r)
+  index <- c()
+  for (i in 1:length(amount))
+    index <- c(index, rep(i, amount[i]))
+
+  split(D, index)
 }
 
 #' @title Internal Iterative Stratification

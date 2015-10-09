@@ -66,7 +66,6 @@ test_that("Result ML prediction", {
   expect_equal(result[,"class1"], result[,"class2"])
   result <- as.multilabelPrediction(predictions, FALSE)
   expect_equal(rownames(result), as.character(6:15))
-  #expect_equal(result[,"class1"], result[,"class2"])
   set.seed(NULL)
 })
 
