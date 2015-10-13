@@ -35,7 +35,7 @@ This is a simple way to use k-fold cross validation.
 library(utiml)
 folds <- mldr_random_kfold(emotions, 10)
 
-# Using the first iteration
+# Using the first iterationrows <- sample(1:mdata$measures$num.instances)rows <- sample(1:mdata$measures$num.instances)
 dataset <- mldr_getfold(emotions, folds, 1)
 classifier <- br(dataset$train)
 result <- predict(classifier, dataset$test)
@@ -66,6 +66,7 @@ Other sampling: \code{\link{mldr_iterative_stratification_holdout}};
   \code{\link{mldr_random_holdout}};
   \code{\link{mldr_random_kfold}};
   \code{\link{mldr_stratified_holdout}};
-  \code{\link{mldr_stratified_kfold}}
+  \code{\link{mldr_stratified_kfold}};
+  \code{\link{utiml_holdout}}; \code{\link{utiml_kfold}}
 }
 

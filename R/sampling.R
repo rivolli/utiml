@@ -1,3 +1,19 @@
+#' @title Create a holdout partition based in the specified method
+#' @family sampling
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param partitions A list of percentages with partitions sizes.
+#' @param partition.names a vector with the partition names.
+#' @param SEED A single value, interpreted as an integer to allow
+#'  obtain the same results again.
+#' @param holdout.method The method to split the data.
+#'
+#' @return A list with at least two datasets sampled as specified
+#'  in partitions parameter.
+#' @export
+#'
+#' @examples
+#' utiml_holdout(mdata, partitions, partition.names, SEED, utiml_random_split)
 utiml_holdout <- function (mdata, partitions, partition.names, SEED, holdout.method) {
   # Validations
   if (sum(partitions) > 1)
@@ -59,17 +75,9 @@ utiml_holdout <- function (mdata, partitions, partition.names, SEED, holdout.met
 #' datasets <- mldr_random_holdout(emotions, c(0.70, 0.15, 0.15))
 mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
   utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
-    rows <- sample(1:mdata$measures$num.instances)
-
-    # Calculate the indexes and limit the last index to avoid rounds mistakes
-    idx <- c(0, cumsum(round(mdata$measures$num.instances * partitions)))
-    idx[length(idx)] <- round(sum(mdata$measures$num.instances * partitions))
-
-    ldata <- list()
-    for (i in 1:length(partitions))
-      ldata[[i]] <- mldr_subset(mdata, rows[(idx[i]+1):idx[i+1]], mdata$attributesIndexes)
-
-    ldata
+    lapply(utiml_random_split(mdata, partitions), function (fold) {
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
+    })
   })
 }
 
@@ -228,9 +236,7 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
 
-  if (class(kfold) != "mld#' # 2 folds
-      #' mldr_random_kfold(emotions, 2)#' # 2 folds
-      #' mldr_random_kfold(emotions, 2)r_kfolds")
+  if (class(kfold) != "mldr_kfolds")
     stop("Second argument must be an 'mldr_kfolds' object")
 
   if (n < 1 || n > kfold$k)
@@ -250,6 +256,37 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
     ldata$validation <- mldr_subset(mdata, kfold$fold[[v]], mdata$attributesIndexes)
 
   ldata
+}
+
+#' @title Create the k partitions of k-fold
+#' @family sampling
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param k The number of folds.
+#' @param SEED A single value, interpreted as an integer to allow
+#'  obtain the same results again.
+#' @param kfold.method The method to split the data.
+#'
+#' @return An object of type mldr_kfolds
+#' @export
+#'
+#' @examples
+#' utiml_kfold(mdata, 10, SEED, utiml_random_split)
+utiml_kfold <- function (mdata, k, SEED, kfold.method) {
+  if(class(mdata) != 'mldr')
+    stop('First argument must be an mldr object')
+
+  if (!is.null(SEED))
+    set.seed(SEED)
+
+  kf <- list(k=k)
+  kf$fold <- do.call(kfold.method, list(mdata = mdata, r = rep(1/k, k)))
+  class(kf) <- "mldr_kfolds"
+
+  if (!is.null(SEED))
+    set.seed(NULL)
+
+  kf
 }
 
 #' @title Generate random k folds for multi-label data
@@ -277,23 +314,7 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
 #' # 10 folds
 #' folds <- mldr_random_kfold(emotions, 10)
 mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  k <- as.integer(k)
-  if (!is.null(SEED)) {
-    set.seed(SEED)
-    rows <- sample(1:mdata$measures$num.instances)
-    set.seed(NULL)
-  }
-  else
-    rows <- sample(1:mdata$measures$num.instances)
-
-  kf <- list(k=k)
-  kf$fold <- split(rows, ceiling(seq_along(rows)/k))
-  class(kf) <- "mldr_kfolds"
-
-  kf
+  utiml_kfold(mdata, k, SEED, utiml_random_split)
 }
 
 #' @title Generate stratified k folds for multi-label data
@@ -327,17 +348,7 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
 #' # 10 folds
 #' folds <- mldr_stratified_kfold(emotions, 10)
 mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
-  if (!is.null(SEED))
-    set.seed(SEED)
-
-  kf <- list(k=k)
-  kf$fold <- utiml_labelset_stratification(mdata, rep(1/k, k))
-  class(kf) <- "mldr_kfolds"
-
-  if (!is.null(SEED))
-    set.seed(NULL)
-
-  kf
+  utiml_kfold(mdata, k, SEED, utiml_labelset_stratification)
 }
 
 #' @title Generate labels based stratified k folds for multi-label data
@@ -372,17 +383,7 @@ mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
 #' # 10 folds
 #' folds <- mldr_iterative_stratification_kfold(emotions, 10)
 mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
-  if (!is.null(SEED))
-    set.seed(SEED)
-
-  kf <- list(k=k)
-  kf$fold <- utiml_iterative_stratification(mdata, rep(1/k, k))
-  class(kf) <- "mldr_kfolds"
-
-  if (!is.null(SEED))
-    set.seed(NULL)
-
-  kf
+  utiml_kfold(mdata, k, SEED, utiml_iterative_stratification)
 }
 
 #' @title Create a subset of a dataset
@@ -427,11 +428,27 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
   mldr_subset(mdata, rows, cols)
 }
 
+#' @title Random split of a dataset
+#'
+#' @param mdata A mldr dataset.
+#' @param r Desired proportion of examples in each subset r1, . . . rk.
+#'
+#' @return A list with k disjoint indexes subsets S1, . . .Sk.
+#' @export
+#'
+#' @examples
+#' utiml_random_split(emotions, c(0.6, 0.2, 0.2))
 utiml_random_split <- function (mdata, r) {
   index <- c()
   amount <- round(mdata$measures$num.instances * r)
+
+  dif <- mdata$measures$num.instances - sum(amount)
+  for (i in 1:abs(dif))
+    amount[i] <- amount[i] + sign(dif)
+
   for (i in 1:length(amount))
     index <- c(index, rep(i, amount[i]))
+
   split(sample(1:mdata$measures$num.instances), index)
 }
 

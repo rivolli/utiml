@@ -54,6 +54,7 @@ Other sampling: \code{\link{mldr_getfold}};
   \code{\link{mldr_iterative_stratification_kfold}};
   \code{\link{mldr_random_holdout}};
   \code{\link{mldr_random_kfold}};
-  \code{\link{mldr_stratified_holdout}}
+  \code{\link{mldr_stratified_holdout}};
+  \code{\link{utiml_holdout}}; \code{\link{utiml_kfold}}
 }
 

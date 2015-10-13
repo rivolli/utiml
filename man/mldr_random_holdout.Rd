@@ -21,7 +21,7 @@ the partitions will be generated with the informed proportion.
 \item{partition.names}{a vector with the partition names (optional).}
 
 \item{SEED}{A single value, interpreted as an integer to allow
- obtain the same results again. (default: \code{NULL})}
+ obtain the same results again. (default: \code{NULL}, optional)}
 }
 \value{
 A list with at least two datasets sampled as specified
@@ -64,6 +64,7 @@ Other sampling: \code{\link{mldr_getfold}};
   \code{\link{mldr_iterative_stratification_kfold}};
   \code{\link{mldr_random_kfold}};
   \code{\link{mldr_stratified_holdout}};
-  \code{\link{mldr_stratified_kfold}}
+  \code{\link{mldr_stratified_kfold}};
+  \code{\link{utiml_holdout}}; \code{\link{utiml_kfold}}
 }
 

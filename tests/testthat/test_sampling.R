@@ -39,29 +39,103 @@ test_that("stratified holdout", {
   expect_equal(f[[3]]$measures$num.instances, 20)
   expect_equal(rownames(f[[1]]$labels), rownames(f[[2]]$labels))
   expect_equal(rownames(f[[1]]$labels), rownames(f[[3]]$labels))
-  expect_true(all(abs(f[[1]]$labelsets - f[[2]]$labelsets) < 4))
-  expect_true(all(abs(f[[1]]$labelsets - f[[3]]$labelsets * 2) < 4))
+  #Test the stratified
 })
 
 test_that("iterative holdout", {
   f <- mldr_iterative_stratification_holdout(mdata, c(0.4, 0.4, 0.1, 0.1), c("a", "b", "c", "d"))
   expect_equal(length(f), 4)
   expect_named(f, c("a", "b", "c", "d"))
-  expect_less_than(abs(f[[1]]$measures$num.instances - f[[2]]$measures$num.instances), 5)
-  expect_less_than(abs(f[[3]]$measures$num.instances - f[[4]]$measures$num.instances), 5)
   expect_equal(rownames(f[[1]]$labels), rownames(f[[2]]$labels))
   expect_equal(rownames(f[[1]]$labels), rownames(f[[3]]$labels))
-  expect_true(all(abs(f[[1]]$labels$count - f[[2]]$labels$count) < 4))
-  expect_true(all(abs(f[[3]]$labels$count - f[[4]]$labels$count) < 4))
+  #Test the stratified
 })
 
 test_that("random kfold", {
+  f <- mldr_random_kfold(mdata, 10)
+  expect_is(f, "mldr_kfolds")
+  expect_equal(f$k, 10)
+  expect_equal(length(f$fold), 10)
+  for (i in 1:10)
+    expect_equal(length(f$fold[[i]]), 10)
+
+  fdata1 <- mldr_getfold(mdata, f, 1)
+  fdata2 <- mldr_getfold(mdata, f, 10)
+
+  expect_equal(rownames(fdata1$labels), rownames(fdata2$labels))
+  expect_equal(fdata1$measures$num.instances, fdata2$measures$num.instances)
+
+  f1 <- mldr_random_kfold(mdata, 4, SEED = 1)
+  f2 <- mldr_random_kfold(mdata, 4, SEED = 1)
+  expect_equal(length(f1$fold), 4)
+  expect_equal(length(f1$fold[[2]]), 25)
+  expect_equal(f1, f2)
+  expect_false(all(f$fold[[1]] == f1$fold[[1]]))
+
+  f3 <- mldr_random_kfold(mdata, 3)
+  expect_equal(f3$k, 3)
+  expect_equal(length(unlist(f3$fold)), 100)
+  expect_more_than(length(f3$fold[[1]]), 32)
+  expect_more_than(length(f3$fold[[2]]), 32)
+  expect_more_than(length(f3$fold[[3]]), 32)
 })
 
 test_that("stratified kfold", {
+  f <- mldr_stratified_kfold(mdata, 10)
+  expect_is(f, "mldr_kfolds")
+  expect_equal(f$k, 10)
+  expect_equal(length(f$fold), 10)
+  for (i in 1:10)
+    expect_equal(length(f$fold[[i]]), 10)
+
+  fdata1 <- mldr_getfold(mdata, f, 1)
+  fdata2 <- mldr_getfold(mdata, f, 10)
+
+  expect_equal(rownames(fdata1$labels), rownames(fdata2$labels))
+  expect_equal(fdata1$measures$num.instances, fdata2$measures$num.instances)
+
+  f1 <- mldr_stratified_kfold(mdata, 4, SEED = 1)
+  f2 <- mldr_stratified_kfold(mdata, 4, SEED = 1)
+  expect_equal(length(f1$fold), 4)
+  expect_equal(length(f1$fold[[2]]), 25)
+  expect_equal(f1, f2)
+  expect_false(all(f$fold[[1]] == f1$fold[[1]]))
+
+  f3 <- mldr_stratified_kfold(mdata, 3)
+  expect_equal(f3$k, 3)
+  expect_equal(length(unlist(f3$fold)), 100)
+  expect_more_than(length(f3$fold[[1]]), 32)
+  expect_more_than(length(f3$fold[[2]]), 32)
+  expect_more_than(length(f3$fold[[3]]), 32)
 })
 
 test_that("iterative kfold", {
+  f <- mldr_iterative_stratification_kfold(mdata, 10)
+  expect_is(f, "mldr_kfolds")
+  expect_equal(f$k, 10)
+  expect_equal(length(f$fold), 10)
+  for (i in 1:10)
+    expect_more_than(length(f$fold[[i]]), 7)
+
+  fdata1 <- mldr_getfold(mdata, f, 1)
+  fdata2 <- mldr_getfold(mdata, f, 10)
+
+  expect_equal(rownames(fdata1$labels), rownames(fdata2$labels))
+  expect_equal(fdata1$measures$num.instances, fdata2$measures$num.instances)
+
+  f1 <- mldr_iterative_stratification_kfold(mdata, 4, SEED = 1)
+  f2 <- mldr_iterative_stratification_kfold(mdata, 4, SEED = 1)
+  expect_equal(length(f1$fold), 4)
+  expect_equal(length(f1$fold[[2]]), 25)
+  expect_equal(f1, f2)
+  expect_false(all(f$fold[[1]] == f1$fold[[1]]))
+
+  f3 <- mldr_iterative_stratification_kfold(mdata, 3)
+  expect_equal(f3$k, 3)
+  expect_equal(length(unlist(f3$fold)), 100)
+  expect_more_than(length(f3$fold[[1]]), 32)
+  expect_more_than(length(f3$fold[[2]]), 32)
+  expect_more_than(length(f3$fold[[3]]), 32)
 })
 
 test_that("subset and random subset", {

@@ -4,7 +4,8 @@
 \alias{mldr_stratified_holdout}
 \title{Create stratified partitions of a multi-label dataset}
 \usage{
-mldr_stratified_holdout(mdata, partitions = c(0.7, 0.3), SEED = NULL)
+mldr_stratified_holdout(mdata, partitions = c(0.7, 0.3),
+  partition.names = NULL, SEED = NULL)
 }
 \arguments{
 \item{mdata}{A dataset of class \code{\link[mldr]{mldr}}.}
@@ -16,6 +17,8 @@ applied to generated the second partition. If two or more
 values are informed and the sum of them is lower than 1
 the partitions will be generated with the informed proportion.
 (default: \code{c(0.7, 0.3)})}
+
+\item{partition.names}{a vector with the partition names (optional).}
 
 \item{SEED}{A single value, interpreted as an integer to allow
  obtain the same results again. (default: \code{NULL})}
@@ -37,7 +40,7 @@ This method creates multi-label dataset for
 datasets <- mldr_stratified_holdout(emotions)
 
 # The same result can be obtained as:
-datasets <- mldr_stratified_holdout(emotions, 0.7)
+datasets <- mldr_stratified_holdout(emotions, 0.7)partition.names = NULL,
 print(datasets[[1]]$measures)
 print(datasets[[2]]$measures)
 
@@ -68,6 +71,7 @@ Other sampling: \code{\link{mldr_getfold}};
   \code{\link{mldr_iterative_stratification_kfold}};
   \code{\link{mldr_random_holdout}};
   \code{\link{mldr_random_kfold}};
-  \code{\link{mldr_stratified_kfold}}
+  \code{\link{mldr_stratified_kfold}};
+  \code{\link{utiml_holdout}}; \code{\link{utiml_kfold}}
 }
 
