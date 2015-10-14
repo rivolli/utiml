@@ -1,27 +1,22 @@
-mldr_remove_unique_attributes <- function (mdata) {
-  attributesIndexes <- which(apply(mdata$dataset[mdata$attributesIndexes], 2, function (col) length(unique(col)) > 1))
-  dataset <- cbind(mdata$dataset[attributesIndexes], mdata$dataset[mdata$labels$index])
-  mldr_from_dataframe(dataset, (length(attributesIndexes) + 1):ncol(dataset), mdata$name)
-}
+#
+# This file contains functions related with pre-process features
+# The all function are available public in the package
+# The functions are sorted in alphabetical order
+#
 
-mldr_remove_unusual_labels <- function (mdata, t = 1) {
-  labelsIndexes <- which(apply(mdata$dataset[mdata$labels$index], 2, function (col) {
-    tbl <- table(col)
-    length(tbl) > 1 && all(tbl > t)
-  })) + mdata$measures$num.attributes - mdata$measures$num.labels
-
-  dataset <- cbind(mdata$dataset[mdata$attributesIndexes], mdata$dataset[labelsIndexes])
-  mldr_from_dataframe(dataset, (1 + ncol(dataset) - length(labelsIndexes)):ncol(dataset), mdata$name)
-}
-
-mldr_remove_unlabeled_instances <- function (mdata) {
-  labelset <- rep(0, mdata$measures$num.labels)
-  rows <- !apply(mdata$dataset[mdata$labels$index] == labelset, 1, all)
-  cols <- c(mdata$attributesIndexes, mdata$labels$index)
-  mldr_from_dataframe(mdata$dataset[rows, cols], mdata$labels$index, mdata$name)
-}
-
+#' @title Fill sparce dataset with 0 or "" values
+#' @description Transform a sparce dataset filling values, if there is a numeric
+#' column but with text value change this column to numerical.
+#'
+#' @param mdata The dataset to be filled
+#'
+#' @return a mldr object
+#' @export
+#'
+#' @examples
+#' mldr_fill_sparce_data(emotions)
 mldr_fill_sparce_data <- function (mdata) {
+  is.letter <- function(x) grepl("[[:alpha:]]", x)
   dataset <- data.frame(row.names = rownames(mdata$dataset))
   dataset <- cbind(dataset, lapply(mdata$dataset[,1:mdata$measures$num.attributes], function (col){
     if (sum(!complete.cases(col)) > 0) {
@@ -30,14 +25,15 @@ mldr_fill_sparce_data <- function (mdata) {
         #Numeric value - fill with 0
         col[is.na(col)] <- 0
       }
-      else if (sum(!is.na(as.numeric(col[!is.na(col)]))) > 0) {
-        #Text but with numeric values - convert to numeric and fill with 0
-        col[is.na(col)] <- "0"
-        col <- as.numeric(col)
+      else if (any(is.letter(col))) {
+        #Text value - fill with ""
+        col <- as.character(col)
+        col[is.na(col)] <- ""
       }
       else {
-        #Text value - fill with ""
-        col[is.na(col)] <- ""
+        #Text but with numeric values - convert to numeric and fill with 0
+        col <- as.numeric(as.character(col))
+        col[is.na(col)] <- 0
       }
     }
     col
@@ -60,6 +56,29 @@ mldr_normalize <- function(mdata) {
     }
   }
   mldr_from_dataframe(data, mdata$labels$index, mdata$name)
+}
+
+mldr_remove_unique_attributes <- function (mdata) {
+  attributesIndexes <- which(apply(mdata$dataset[mdata$attributesIndexes], 2, function (col) length(unique(col)) > 1))
+  dataset <- cbind(mdata$dataset[attributesIndexes], mdata$dataset[mdata$labels$index])
+  mldr_from_dataframe(dataset, (length(attributesIndexes) + 1):ncol(dataset), mdata$name)
+}
+
+mldr_remove_unlabeled_instances <- function (mdata) {
+  labelset <- rep(0, mdata$measures$num.labels)
+  rows <- !apply(mdata$dataset[mdata$labels$index] == labelset, 1, all)
+  cols <- c(mdata$attributesIndexes, mdata$labels$index)
+  mldr_from_dataframe(mdata$dataset[rows, cols], mdata$labels$index, mdata$name)
+}
+
+mldr_remove_unusual_labels <- function (mdata, t = 1) {
+  labelsIndexes <- which(apply(mdata$dataset[mdata$labels$index], 2, function (col) {
+    tbl <- table(col)
+    length(tbl) > 1 && all(tbl > t)
+  })) + mdata$measures$num.attributes - mdata$measures$num.labels
+
+  dataset <- cbind(mdata$dataset[mdata$attributesIndexes], mdata$dataset[labelsIndexes])
+  mldr_from_dataframe(dataset, (1 + ncol(dataset) - length(labelsIndexes)):ncol(dataset), mdata$name)
 }
 
 mldr_replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) {

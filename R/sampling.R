@@ -1,193 +1,8 @@
-#' @title Create a holdout partition based in the specified method
-#' @family sampling
-#'
-#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
-#' @param partitions A list of percentages with partitions sizes.
-#' @param partition.names a vector with the partition names.
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again.
-#' @param holdout.method The method to split the data.
-#'
-#' @return A list with at least two datasets sampled as specified
-#'  in partitions parameter.
-#' @export
-#'
-#' @examples
-#' utiml_holdout(mdata, partitions, partition.names, SEED, utiml_random_split)
-utiml_holdout <- function (mdata, partitions, partition.names, SEED, holdout.method) {
-  # Validations
-  if (sum(partitions) > 1)
-    stop("The sum of partitions can not be greater than 1")
-
-  if (!is.null(SEED))
-    set.seed(SEED)
-
-  partitions <- utiml_ifelse(length(partitions) == 1, c(partitions, 1 - partitions), partitions)
-
-  # Split data
-  ldata <- do.call(holdout.method, list(mdata = mdata, partitions = partitions))
-
-  if (!is.null(SEED))
-    set.seed(NULL)
-
-  names(ldata) <- partition.names
-  ldata
-}
-
-#' @title Create distinct partitions of a multi-label dataset
-#' @family mldr
-#' @family sampling
-#' @description This method creates multi-label dataset for
-#'  train, test, validation or other proposes. The number of
-#'  partitions is defined in \code{partitions} parameter.
-#'  The instances are used in only one partition of divistion.
-#'  Use the SEED parameter to obtain the same result again.
-#'
-#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
-#' @param partitions A list of percentages or a single value.
-#'  The sum of all values does not be greater than 1. If a
-#'  single value is informed then the complement of them is
-#'  applied to generated the second partition. If two or more
-#'  values are informed and the sum of them is lower than 1
-#'  the partitions will be generated with the informed proportion.
-#'  (default: \code{c(0.7, 0.3)})
-#' @param partition.names a vector with the partition names (optional).
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again. (default: \code{NULL}, optional)
-#'
-#' @return A list with at least two datasets sampled as specified
-#'  in partitions parameter.
-#' @export
-#'
-#' @examples
-#' # Create two partitions with 70% and 30% for training and test
-#' datasets <- mldr_random_holdout(emotions)
-#'
-#' # The same result can be obtained as:
-#' datasets <- mldr_random_holdout(emotions, 0.7)
-#' print(datasets[[1]]$measures)
-#' print(datasets[[2]]$measures)
-#'
-#' # Using a SEED and split the dataset in the half
-#' datasets <- mldr_random_holdout(emotions, 0.5, SEED = 12)
-#'
-#' # Split the dataset in three parts
-#' datasets <- mldr_random_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
-  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
-    lapply(utiml_random_split(mdata, partitions), function (fold) {
-      mldr_subset(mdata, fold, mdata$attributesIndexes)
-    })
-  })
-}
-
-#' @title Create stratified partitions of a multi-label dataset
-#' @family mldr
-#' @family sampling
-#' @description This method creates multi-label dataset for
-#'  train, test, validation or other proposes using stratified
-#'  approach based on labelsets distribution. The number of
-#'  partitions is defined in \code{partitions} parameter.
-#'  The instances are used in only one partition of divistion.
-#'  Use the SEED parameter to obtain the same result again.
-#'
-#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
-#' @param partitions A list of percentages or a single value.
-#'  The sum of all values does not be greater than 1. If a
-#'  single value is informed then the complement of them is
-#'  applied to generated the second partition. If two or more
-#'  values are informed and the sum of them is lower than 1
-#'  the partitions will be generated with the informed proportion.
-#'  (default: \code{c(0.7, 0.3)})
-#' @param partition.names a vector with the partition names (optional).
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again. (default: \code{NULL})
-#'
-#' @return A list with at least two datasets sampled as specified
-#'  in partitions parameter.
-#'
-#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011).
-#'  On the stratification of multi-label data. In Proceedings of the
-#'  Machine Learning and Knowledge Discovery in Databases - European
-#'  Conference, ECML PKDD (pp. 145–158).
-#'
-#' @export
-#'
-#' @examples
-#' # Create two partitions with 70% and 30% for training and test
-#' datasets <- mldr_stratified_holdout(emotions)
-#'
-#' # The same result can be obtained as:
-#' datasets <- mldr_stratified_holdout(emotions, 0.7)partition.names = NULL,
-#' print(datasets[[1]]$measures)
-#' print(datasets[[2]]$measures)
-#'
-#' # Using a SEED and split the dataset in the half
-#' datasets <- mldr_stratified_holdout(emotions, 0.5, SEED = 12)
-#'
-#' # Split the dataset in three parts
-#' datasets <- mldr_stratified_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
-  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
-    lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
-      mldr_subset(mdata, fold, mdata$attributesIndexes)
-    })
-  })
-}
-
-#' @title Create iterative stratified partitions of a multi-label dataset
-#' @family mldr
-#' @family sampling
-#' @description This method creates multi-label dataset for
-#'  train, test, validation or other proposes using interative
-#'  stratified algorithm, that is based on labels proportions.
-#'  The number of partitions is defined in \code{partitions} parameter.
-#'  The instances are used in only one partition of divistion.
-#'  Use the SEED parameter to obtain the same result again.
-#'
-#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
-#' @param partitions A list of percentages or a single value.
-#'  The sum of all values does not be greater than 1. If a
-#'  single value is informed then the complement of them is
-#'  applied to generated the second partition. If two or more
-#'  values are informed and the sum of them is lower than 1
-#'  the partitions will be generated with the informed proportion.
-#'  (default: \code{c(0.7, 0.3)})
-#' @param partition.names a vector with the partition names (optional).
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again. (default: \code{NULL})
-#'
-#' @return A list with at least two datasets sampled as specified
-#'  in partitions parameter.
-#'
-#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011).
-#'  On the stratification of multi-label data. In Proceedings of the
-#'  Machine Learning and Knowledge Discovery in Databases - European
-#'  Conference, ECML PKDD (pp. 145–158).
-#'
-#' @export
-#'
-#' @examples
-#' # Create two partitions with 70% and 30% for training and test
-#' datasets <- mldr_iterative_stratification_holdout(emotions)
-#'
-#' # The same result can be obtained as:
-#' datasets <- mldr_iterative_stratification_holdout(emotions, 0.7)
-#' print(datasets[[1]]$measures)
-#' print(datasets[[2]]$measures)
-#'
-#' # Using a SEED and split the dataset in the half
-#' datasets <- mldr_iterative_stratification_holdout(emotions, 0.5, SEED = 12)
-#'
-#' # Split the dataset in three parts
-#' datasets <- mldr_iterative_stratification_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
-  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
-    lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
-      mldr_subset(mdata, fold, mdata$attributesIndexes)
-    })
-  })
-}
+#
+# This file contains functions related with sampling
+# The most function are available public in the package
+# The functions are sorted in alphabetical order
+#
 
 #' @title Get the multi-labels datasets for k-fold Cross Validation
 #' @family mldr
@@ -258,97 +73,58 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
   ldata
 }
 
-#' @title Create the k partitions of k-fold
+#' @title Create iterative stratified partitions of a multi-label dataset
+#' @family mldr
 #' @family sampling
+#' @description This method creates multi-label dataset for
+#'  train, test, validation or other proposes using interative
+#'  stratified algorithm, that is based on labels proportions.
+#'  The number of partitions is defined in \code{partitions} parameter.
+#'  The instances are used in only one partition of divistion.
+#'  Use the SEED parameter to obtain the same result again.
 #'
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
-#' @param k The number of folds.
+#' @param partitions A list of percentages or a single value.
+#'  The sum of all values does not be greater than 1. If a
+#'  single value is informed then the complement of them is
+#'  applied to generated the second partition. If two or more
+#'  values are informed and the sum of them is lower than 1
+#'  the partitions will be generated with the informed proportion.
+#'  (default: \code{c(0.7, 0.3)})
+#' @param partition.names a vector with the partition names (optional).
 #' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again.
-#' @param kfold.method The method to split the data.
+#'  obtain the same results again. (default: \code{NULL})
 #'
-#' @return An object of type mldr_kfolds
+#' @return A list with at least two datasets sampled as specified
+#'  in partitions parameter.
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011).
+#'  On the stratification of multi-label data. In Proceedings of the
+#'  Machine Learning and Knowledge Discovery in Databases - European
+#'  Conference, ECML PKDD (pp. 145–158).
+#'
 #' @export
 #'
 #' @examples
-#' utiml_kfold(mdata, 10, SEED, utiml_random_split)
-utiml_kfold <- function (mdata, k, SEED, kfold.method) {
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  if (!is.null(SEED))
-    set.seed(SEED)
-
-  kf <- list(k=k)
-  kf$fold <- do.call(kfold.method, list(mdata = mdata, r = rep(1/k, k)))
-  class(kf) <- "mldr_kfolds"
-
-  if (!is.null(SEED))
-    set.seed(NULL)
-
-  kf
-}
-
-#' @title Generate random k folds for multi-label data
-#' @family mldr
-#' @family sampling
-#' @description Use this method to generate random sampling for multi-labels
-#'   datasets. This may generate folds with differents proportions of labels.
+#' # Create two partitions with 70% and 30% for training and test
+#' datasets <- mldr_iterative_stratification_holdout(emotions)
 #'
-#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
-#' @param k The number of folds. (default: 10)
-#' @param SEED A single value, interpreted as an integer to allow obtain the
-#'   same results again. (default: \code{NULL})
+#' # The same result can be obtained as:
+#' datasets <- mldr_iterative_stratification_holdout(emotions, 0.7)
+#' print(datasets[[1]]$measures)
+#' print(datasets[[2]]$measures)
 #'
-#' @return An object of type \code{mldr_kfolds}. This is a list with
-#'  k elements, where each element contains a list of row indexes based
-#'  on the original dataset.
+#' # Using a SEED and split the dataset in the half
+#' datasets <- mldr_iterative_stratification_holdout(emotions, 0.5, SEED = 12)
 #'
-#' @seealso \code{\link{mldr_getfold}}
-#' @export
-#'
-#' @examples
-#' # 2 folds
-#' folds <- mldr_random_kfold(emotions, 2)
-#'
-#' # 10 folds
-#' folds <- mldr_random_kfold(emotions, 10)
-mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
-  utiml_kfold(mdata, k, SEED, utiml_random_split)
-}
-
-#' @title Generate stratified k folds for multi-label data
-#' @family mldr
-#' @family sampling
-#' @description Use this method to generate stratified sampling for multi-labels
-#'   datasets. This method use the labelsets to compute the partitions
-#'   distributions, however some specific labelsets can not occurs in all folds.
-#'
-#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
-#' @param k The number of folds. (default: 10)
-#' @param SEED A single value, interpreted as an integer to allow obtain the
-#'   same results again. (default: \code{NULL})
-#'
-#' @return An object of type \code{mldr_kfolds}. This is a list with
-#'  k elements, where each element contains a list of row indexes based
-#'  on the original dataset.
-#'
-#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
-#'  stratification of multi-label data. In Proceedings of the Machine
-#'  Learningand Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145–158).
-#'
-#' @seealso \code{\link{mldr_getfold}}
-#' @export
-#'
-#' @examples
-#' # 2 folds
-#' folds <- mldr_stratified_kfold(emotions, 2)
-#'
-#' # 10 folds
-#' folds <- mldr_stratified_kfold(emotions, 10)
-mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
-  utiml_kfold(mdata, k, SEED, utiml_labelset_stratification)
+#' # Split the dataset in three parts
+#' datasets <- mldr_iterative_stratification_holdout(emotions, c(0.70, 0.15, 0.15))
+mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
+  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
+    lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
+    })
+  })
 }
 
 #' @title Generate labels based stratified k folds for multi-label data
@@ -385,6 +161,237 @@ mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
 mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
   utiml_kfold(mdata, k, SEED, utiml_iterative_stratification)
 }
+
+#' @title Create distinct partitions of a multi-label dataset
+#' @family mldr
+#' @family sampling
+#' @description This method creates multi-label dataset for
+#'  train, test, validation or other proposes. The number of
+#'  partitions is defined in \code{partitions} parameter.
+#'  The instances are used in only one partition of divistion.
+#'  Use the SEED parameter to obtain the same result again.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param partitions A list of percentages or a single value.
+#'  The sum of all values does not be greater than 1. If a
+#'  single value is informed then the complement of them is
+#'  applied to generated the second partition. If two or more
+#'  values are informed and the sum of them is lower than 1
+#'  the partitions will be generated with the informed proportion.
+#'  (default: \code{c(0.7, 0.3)})
+#' @param partition.names a vector with the partition names (optional).
+#' @param SEED A single value, interpreted as an integer to allow
+#'  obtain the same results again. (default: \code{NULL}, optional)
+#'
+#' @return A list with at least two datasets sampled as specified
+#'  in partitions parameter.
+#' @export
+#'
+#' @examples
+#' # Create two partitions with 70% and 30% for training and test
+#' datasets <- mldr_random_holdout(emotions)
+#'
+#' # The same result can be obtained as:
+#' datasets <- mldr_random_holdout(emotions, 0.7)
+#' print(datasets[[1]]$measures)
+#' print(datasets[[2]]$measures)
+#'
+#' # Using a SEED and split the dataset in the half
+#' datasets <- mldr_random_holdout(emotions, 0.5, SEED = 12)
+#'
+#' # Split the dataset in three parts
+#' datasets <- mldr_random_holdout(emotions, c(0.70, 0.15, 0.15))
+mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
+  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
+    lapply(utiml_random_split(mdata, partitions), function (fold) {
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
+    })
+  })
+}
+
+#' @title Generate random k folds for multi-label data
+#' @family mldr
+#' @family sampling
+#' @description Use this method to generate random sampling for multi-labels
+#'   datasets. This may generate folds with differents proportions of labels.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param k The number of folds. (default: 10)
+#' @param SEED A single value, interpreted as an integer to allow obtain the
+#'   same results again. (default: \code{NULL})
+#'
+#' @return An object of type \code{mldr_kfolds}. This is a list with
+#'  k elements, where each element contains a list of row indexes based
+#'  on the original dataset.
+#'
+#' @seealso \code{\link{mldr_getfold}}
+#' @export
+#'
+#' @examples
+#' # 2 folds
+#' folds <- mldr_random_kfold(emotions, 2)
+#'
+#' # 10 folds
+#' folds <- mldr_random_kfold(emotions, 10)
+mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
+  utiml_kfold(mdata, k, SEED, utiml_random_split)
+}
+
+#' @title Create stratified partitions of a multi-label dataset
+#' @family mldr
+#' @family sampling
+#' @description This method creates multi-label dataset for
+#'  train, test, validation or other proposes using stratified
+#'  approach based on labelsets distribution. The number of
+#'  partitions is defined in \code{partitions} parameter.
+#'  The instances are used in only one partition of divistion.
+#'  Use the SEED parameter to obtain the same result again.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param partitions A list of percentages or a single value.
+#'  The sum of all values does not be greater than 1. If a
+#'  single value is informed then the complement of them is
+#'  applied to generated the second partition. If two or more
+#'  values are informed and the sum of them is lower than 1
+#'  the partitions will be generated with the informed proportion.
+#'  (default: \code{c(0.7, 0.3)})
+#' @param partition.names a vector with the partition names (optional).
+#' @param SEED A single value, interpreted as an integer to allow
+#'  obtain the same results again. (default: \code{NULL})
+#'
+#' @return A list with at least two datasets sampled as specified
+#'  in partitions parameter.
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011).
+#'  On the stratification of multi-label data. In Proceedings of the
+#'  Machine Learning and Knowledge Discovery in Databases - European
+#'  Conference, ECML PKDD (pp. 145–158).
+#'
+#' @export
+#'
+#' @examples
+#' # Create two partitions with 70% and 30% for training and test
+#' datasets <- mldr_stratified_holdout(emotions)
+#'
+#' # The same result can be obtained as:
+#' datasets <- mldr_stratified_holdout(emotions, 0.7)partition.names = NULL,
+#' print(datasets[[1]]$measures)
+#' print(datasets[[2]]$measures)
+#'
+#' # Using a SEED and split the dataset in the half
+#' datasets <- mldr_stratified_holdout(emotions, 0.5, SEED = 12)
+#'
+#' # Split the dataset in three parts
+#' datasets <- mldr_stratified_holdout(emotions, c(0.70, 0.15, 0.15))
+mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
+  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
+    lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
+    })
+  })
+}
+
+#' @title Generate stratified k folds for multi-label data
+#' @family mldr
+#' @family sampling
+#' @description Use this method to generate stratified sampling for multi-labels
+#'   datasets. This method use the labelsets to compute the partitions
+#'   distributions, however some specific labelsets can not occurs in all folds.
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param k The number of folds. (default: 10)
+#' @param SEED A single value, interpreted as an integer to allow obtain the
+#'   same results again. (default: \code{NULL})
+#'
+#' @return An object of type \code{mldr_kfolds}. This is a list with
+#'  k elements, where each element contains a list of row indexes based
+#'  on the original dataset.
+#'
+#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#'  stratification of multi-label data. In Proceedings of the Machine
+#'  Learningand Knowledge Discovery in Databases - European Conference,
+#'  ECML PKDD (pp. 145–158).
+#'
+#' @seealso \code{\link{mldr_getfold}}
+#' @export
+#'
+#' @examples
+#' # 2 folds
+#' folds <- mldr_stratified_kfold(emotions, 2)
+#'
+#' # 10 folds
+#' folds <- mldr_stratified_kfold(emotions, 10)
+mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
+  utiml_kfold(mdata, k, SEED, utiml_labelset_stratification)
+}
+
+#' @title Create the k partitions of k-fold
+#' @family sampling
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param k The number of folds.
+#' @param SEED A single value, interpreted as an integer to allow
+#'  obtain the same results again.
+#' @param kfold.method The method to split the data.
+#'
+#' @return An object of type mldr_kfolds
+#' @export
+#'
+#' @examples
+#' utiml_kfold(mdata, 10, SEED, utiml_random_split)
+utiml_kfold <- function (mdata, k, SEED, kfold.method) {
+  if(class(mdata) != 'mldr')
+    stop('First argument must be an mldr object')
+
+  if (!is.null(SEED))
+    set.seed(SEED)
+
+  kf <- list(k=k)
+  kf$fold <- do.call(kfold.method, list(mdata = mdata, r = rep(1/k, k)))
+  class(kf) <- "mldr_kfolds"
+
+  if (!is.null(SEED))
+    set.seed(NULL)
+
+  kf
+}
+
+#' @title Create a holdout partition based in the specified method
+#' @family sampling
+#'
+#' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
+#' @param partitions A list of percentages with partitions sizes.
+#' @param partition.names a vector with the partition names.
+#' @param SEED A single value, interpreted as an integer to allow
+#'  obtain the same results again.
+#' @param holdout.method The method to split the data.
+#'
+#' @return A list with at least two datasets sampled as specified
+#'  in partitions parameter.
+#' @export
+#'
+#' @examples
+#' utiml_holdout(mdata, partitions, partition.names, SEED, utiml_random_split)
+utiml_holdout <- function (mdata, partitions, partition.names, SEED, holdout.method) {
+  # Validations
+  if (sum(partitions) > 1)
+    stop("The sum of partitions can not be greater than 1")
+
+  if (!is.null(SEED))
+    set.seed(SEED)
+
+  partitions <- utiml_ifelse(length(partitions) == 1, c(partitions, 1 - partitions), partitions)
+
+  # Split data
+  ldata <- do.call(holdout.method, list(mdata = mdata, partitions = partitions))
+
+  if (!is.null(SEED))
+    set.seed(NULL)
+
+  names(ldata) <- partition.names
+  ldata
+}
+
 
 #' @title Create a subset of a dataset
 #' @family mldr
@@ -426,30 +433,6 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
   rows <- sample(mdata$measures$num.instances, num.rows)
   cols <- sample(mdata$attributesIndexes, num.cols)
   mldr_subset(mdata, rows, cols)
-}
-
-#' @title Random split of a dataset
-#'
-#' @param mdata A mldr dataset.
-#' @param r Desired proportion of examples in each subset r1, . . . rk.
-#'
-#' @return A list with k disjoint indexes subsets S1, . . .Sk.
-#' @export
-#'
-#' @examples
-#' utiml_random_split(emotions, c(0.6, 0.2, 0.2))
-utiml_random_split <- function (mdata, r) {
-  index <- c()
-  amount <- round(mdata$measures$num.instances * r)
-
-  dif <- mdata$measures$num.instances - sum(amount)
-  for (i in 1:abs(dif))
-    amount[i] <- amount[i] + sign(dif)
-
-  for (i in 1:length(amount))
-    index <- c(index, rep(i, amount[i]))
-
-  split(sample(1:mdata$measures$num.instances), index)
 }
 
 #' @title Internal Iterative Stratification
@@ -572,3 +555,26 @@ utiml_labelset_stratification <- function (mdata, r) {
   S
 }
 
+#' @title Random split of a dataset
+#'
+#' @param mdata A mldr dataset.
+#' @param r Desired proportion of examples in each subset r1, . . . rk.
+#'
+#' @return A list with k disjoint indexes subsets S1, . . .Sk.
+#' @export
+#'
+#' @examples
+#' utiml_random_split(emotions, c(0.6, 0.2, 0.2))
+utiml_random_split <- function (mdata, r) {
+  index <- c()
+  amount <- round(mdata$measures$num.instances * r)
+
+  dif <- mdata$measures$num.instances - sum(amount)
+  for (i in 1:abs(dif))
+    amount[i] <- amount[i] + sign(dif)
+
+  for (i in 1:length(amount))
+    index <- c(index, rep(i, amount[i]))
+
+  split(sample(1:mdata$measures$num.instances), index)
+}
