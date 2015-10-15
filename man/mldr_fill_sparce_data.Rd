@@ -7,10 +7,10 @@
 mldr_fill_sparce_data(mdata)
 }
 \arguments{
-\item{mdata}{The dataset to be filled}
+\item{mdata}{The mldr dataset to be filled.}
 }
 \value{
-a mldr object
+a new mldr object.
 }
 \description{
 Transform a sparce dataset filling values, if there is a numeric

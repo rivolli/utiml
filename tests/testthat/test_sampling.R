@@ -133,9 +133,9 @@ test_that("iterative kfold", {
   f3 <- mldr_iterative_stratification_kfold(mdata, 3)
   expect_equal(f3$k, 3)
   expect_equal(length(unlist(f3$fold)), 100)
-  expect_more_than(length(f3$fold[[1]]), 32)
-  expect_more_than(length(f3$fold[[2]]), 32)
-  expect_more_than(length(f3$fold[[3]]), 32)
+  expect_more_than(length(f3$fold[[1]]), 30)
+  expect_more_than(length(f3$fold[[2]]), 30)
+  expect_more_than(length(f3$fold[[3]]), 30)
 })
 
 test_that("subset and random subset", {

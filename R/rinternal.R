@@ -63,7 +63,7 @@ utiml_lapply <- function (mylist, myfnc, cores, ...) {
 #' utiml_normalize(c(1,2,3,4,5), 10, 0)
 #' #--> 0.1 0.2 0.3 0.4 0.5
 utiml_normalize <- function (data, max.val=NULL, min.val=NULL) {
-  max.val <- ifelse(is.null(max.val), max(data), max.val)
-  min.val <- ifelse(is.null(min.val), min(data), min.val)
+  max.val <- ifelse(is.null(max.val), max(data, na.rm = TRUE), max.val)
+  min.val <- ifelse(is.null(min.val), min(data, na.rm = TRUE), min.val)
   (data-min.val) / (max.val-min.val)
 }

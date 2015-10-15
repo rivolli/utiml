@@ -8,9 +8,9 @@
 #' @description Transform a sparce dataset filling values, if there is a numeric
 #' column but with text value change this column to numerical.
 #'
-#' @param mdata The dataset to be filled
+#' @param mdata The mldr dataset to be filled.
 #'
-#' @return a mldr object
+#' @return a new mldr object.
 #' @export
 #'
 #' @examples
@@ -42,28 +42,54 @@ mldr_fill_sparce_data <- function (mdata) {
   mldr_from_dataframe(dataset, mdata$labels$index, mdata$name)
 }
 
+#' @title Normalize dataset attributes
+#' @description Normalize all numerical attributes to values between
+#'  0 and 1.
+#'
+#' @param mdata The mldr dataset to be normalized.
+#'
+#' @return a new mldr object.
+#' @export
+#'
+#' @examples
+#' mldr_normalize(emotions)
 mldr_normalize <- function(mdata) {
   data <- mdata$dataset[c(mdata$attributesIndexes, mdata$labels$index)]
   for (col in mdata$attributesIndexes) {
     if (is.numeric(data[,col])) {
-      min_v = min(data[col])
-      max_v = max(data[col])
-      d <- (max_v - min_v)
-      if(is.na(d) || d == 0) {
-        d <- 1.0
-      }
-      data[col] <- (data[col] - min_v) / d
+      data[col] <- utiml_normalize(data[col])
     }
   }
   mldr_from_dataframe(data, mdata$labels$index, mdata$name)
 }
 
+#' @title Remove unique attributes
+#' @description Remove the attributes that have a single value.
+#'  Observation: NA is considered a value.
+#'
+#' @param mdata The mldr dataset to remove.
+#'
+#' @return a new mldr object.
+#' @export
+#'
+#' @examples
+#' mldr_remove_unique_attributes(emotions)
 mldr_remove_unique_attributes <- function (mdata) {
   attributesIndexes <- which(apply(mdata$dataset[mdata$attributesIndexes], 2, function (col) length(unique(col)) > 1))
   dataset <- cbind(mdata$dataset[attributesIndexes], mdata$dataset[mdata$labels$index])
   mldr_from_dataframe(dataset, (length(attributesIndexes) + 1):ncol(dataset), mdata$name)
 }
 
+#' @title Remove examples without labels
+#' @description Remove the examples that there are not labels.
+#'
+#' @param mdata The mldr dataset to remove.
+#'
+#' @return a new mldr object.
+#' @export
+#'
+#' @examples
+#' mldr_remove_unlabeled_instances(emotions)
 mldr_remove_unlabeled_instances <- function (mdata) {
   labelset <- rep(0, mdata$measures$num.labels)
   rows <- !apply(mdata$dataset[mdata$labels$index] == labelset, 1, all)
@@ -71,11 +97,26 @@ mldr_remove_unlabeled_instances <- function (mdata) {
   mldr_from_dataframe(mdata$dataset[rows, cols], mdata$labels$index, mdata$name)
 }
 
-mldr_remove_unusual_labels <- function (mdata, t = 1) {
+#' @title Remove unusual or very common labels
+#' @description Remove the labels that have smaller or higher examples based on
+#'  a specific threshold value.
+#'
+#' @param mdata The mldr dataset to remove.
+#' @param t Threshold value.
+#'
+#' @return a new mldr object.
+#' @export
+#'
+#' @examples
+#' mldr_remove_labels(emotions)
+mldr_remove_labels <- function (mdata, t = 1) {
   labelsIndexes <- which(apply(mdata$dataset[mdata$labels$index], 2, function (col) {
     tbl <- table(col)
     length(tbl) > 1 && all(tbl > t)
   })) + mdata$measures$num.attributes - mdata$measures$num.labels
+
+  if (length(labelsIndexes) <= 1)
+    stop("The pre process procedure result in a single label")
 
   dataset <- cbind(mdata$dataset[mdata$attributesIndexes], mdata$dataset[labelsIndexes])
   mldr_from_dataframe(dataset, (1 + ncol(dataset) - length(labelsIndexes)):ncol(dataset), mdata$name)
@@ -83,33 +124,33 @@ mldr_remove_unusual_labels <- function (mdata, t = 1) {
 
 mldr_replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) {
   #TODO ordinal.attributes
+  replace_nominal_column <- function(column, column.name = '', type = 1) {
+    column <- as.factor(column)
+    symbols <- levels(column)
+    result <- {}
+    if (length(symbols) == 2 && type == 1 && 0 %in% symbols && 1 %in% symbols) {
+      result <- cbind(result, as.double(column == 1))
+      names <- column.name
+    }
+    else {
+      for (i in 1:(length(symbols)-type))
+        result <- cbind(result, as.double(column == symbols[i]))
+      names <- paste(column.name, symbols[1:(length(symbols)-type)], sep='_')
+    }
+    if (column.name != '')
+      colnames(result) <- names
+
+    result
+  }
+
   dataset <- data.frame(row.names=rrownames(mdata$dataset))
   for(i in mdata$attributesIndexes) {
     dataset <- if (is.numeric(mdata$dataset[,i]))
        cbind(dataset, mdata$dataset[i])
     else
-      dataset <- cbind(dataset, mldr_replace_nominal_column(mdata$dataset[,i], colnames(mdata$dataset[i])))
+      dataset <- cbind(dataset, replace_nominal_column(mdata$dataset[,i], colnames(mdata$dataset[i])))
   }
 
   classIndexes <- (1 + ncol(dataset)):(ncol(dataset)+mdata$measures$num.labels)
   mldr_from_dataframe(cbind(result, mdata$dataset[mdata$labels$index]), classIndexes, mdata$name)
-}
-
-mldr_replace_nominal_column <- function(column, column.name = '', type = 1) {
-  column <- as.factor(column)
-  symbols <- levels(column)
-  result <- {}
-  if (length(symbols) == 2 && type == 1 && 0 %in% symbols && 1 %in% symbols) {
-    result <- cbind(result, as.double(column == 1))
-    names <- column.name
-  }
-  else {
-    for (i in 1:(length(symbols)-type))
-      result <- cbind(result, as.double(column == symbols[i]))
-    names <- paste(column.name, symbols[1:(length(symbols)-type)], sep='_')
-  }
-  if (column.name != '')
-    colnames(result) <- names
-
-  result
 }
