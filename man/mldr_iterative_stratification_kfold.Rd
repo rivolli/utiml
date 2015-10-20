@@ -34,7 +34,7 @@ folds <- mldr_iterative_stratification_kfold(emotions, 10)
 }
 \references{
 Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
- stratification of multi-label data. In Proceedings of the Machine
+ stratification of multi-label data.If partitions have names, they are used to name the return. In Proceedings of the Machine
  Learningand Knowledge Discovery in Databases - European Conference,
  ECML PKDD (pp. 145–158).
 }

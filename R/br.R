@@ -15,8 +15,6 @@
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
 #'    \code{'SVM'})
 #' @param ... Others arguments passed to the base method for all subproblems
-#' @param save.datasets Logical value indicating whether the binary datasets must be
-#'   saved in the model or not. (default: \code{FALSE})
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
@@ -24,8 +22,7 @@
 #'   models, including: \describe{
 #'   \item{labels}{A vector with the label names}
 #'   \item{models}{A list of the generated models, named by the label names.}
-#'   \item{datasets}{A list of \code{mldBR} named by the label names.
-#'   Only when the \code{save.datasets = TRUE}.} }
+#' }
 #'
 #' @references
 #'  Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
@@ -35,24 +32,22 @@
 #'
 #' @examples
 #' # Train and predict emotion multilabel dataset using Binary Relevance
-#' library(utiml)
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c("train"=0.9, "test"=0.1))
 #'
 #' # Use SVM as base method
-#' model <- br(emotions)
-#' pred <- predict(model, testdata)
+#' model <- br(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Change the default base method and use 4 CORES
-#' model <- br(emotions, "C4.5", CORES = 4)
-#' pred <- predict(model, testdata)
+#' model <- br(dataset$train "C4.5", CORES = 4)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Set a parameters for all subproblems
-#' model <- br(emotions, "KNN", k=5)
-#' pred <- predict(model, testdata)
+#' model <- br(dataset$train, "KNN", k=5)
+#' pred <- predict(model, dataset$test)
 br <- function (mdata,
                 base.method = "SVM",
                 ...,
-                save.datasets = FALSE,
                 CORES = 1
               ) {
   #Validations
@@ -69,8 +64,6 @@ br <- function (mdata,
   #Transformation
   datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
   names(datasets) <- brmodel$labels
-  if (save.datasets)
-    brmodel$datasets <- datasets
 
   #Create models
   brmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)

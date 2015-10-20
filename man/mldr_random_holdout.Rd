@@ -4,8 +4,7 @@
 \alias{mldr_random_holdout}
 \title{Create distinct partitions of a multi-label dataset}
 \usage{
-mldr_random_holdout(mdata, partitions = c(0.7, 0.3), partition.names = NULL,
-  SEED = NULL)
+mldr_random_holdout(mdata, partitions = c(0.7, 0.3), SEED = NULL)
 }
 \arguments{
 \item{mdata}{A dataset of class \code{\link[mldr]{mldr}}.}
@@ -16,9 +15,8 @@ single value is informed then the complement of them is
 applied to generated the second partition. If two or more
 values are informed and the sum of them is lower than 1
 the partitions will be generated with the informed proportion.
+If partitions have names, they are used to name the return.
 (default: \code{c(0.7, 0.3)})}
-
-\item{partition.names}{a vector with the partition names (optional).}
 
 \item{SEED}{A single value, interpreted as an integer to allow
  obtain the same results again. (default: \code{NULL}, optional)}
@@ -47,7 +45,11 @@ print(datasets[[2]]$measures)
 datasets <- mldr_random_holdout(emotions, 0.5, SEED = 12)
 
 # Split the dataset in three parts
-datasets <- mldr_random_holdout(emotions, c(0.70, 0.15, 0.15))
+partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
+dataset <- mldr_random_holdout(emotions, partitions)
+print(dataset$train)
+print(dataset$validation)
+print(dataset$test)
 }
 \seealso{
 Other mldr: \code{\link{mldr_getfold}};

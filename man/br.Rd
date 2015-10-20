@@ -4,7 +4,7 @@
 \alias{br}
 \title{Binary Relevance for multi-label Classification}
 \usage{
-br(mdata, base.method = "SVM", ..., save.datasets = FALSE, CORES = 1)
+br(mdata, base.method = "SVM", ..., CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -19,9 +19,6 @@ dataset.}
 
 \item{...}{Others arguments passed to the base method for all subproblems}
 
-\item{save.datasets}{Logical value indicating whether the binary datasets must be
-saved in the model or not. (default: \code{FALSE})}
-
 \item{CORES}{The number of cores to parallelize the training. Values higher
   than 1 require the \pkg{parallel} package. (default: 1)}
 }
@@ -30,8 +27,7 @@ An object of class \code{BRmodel} containing the set of fitted
   models, including: \describe{
   \item{labels}{A vector with the label names}
   \item{models}{A list of the generated models, named by the label names.}
-  \item{datasets}{A list of \code{mldBR} named by the label names.
-  Only when the \code{save.datasets = TRUE}.} }
+}
 }
 \description{
 Create a Binary Relevance model for multilabel classification.
@@ -42,20 +38,19 @@ Create a Binary Relevance model for multilabel classification.
 }
 \examples{
 # Train and predict emotion multilabel dataset using Binary Relevance
-library(utiml)
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c("train"=0.9, "test"=0.1))
 
 # Use SVM as base method
-model <- br(emotions)
-pred <- predict(model, testdata)
+model <- br(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Change the default base method and use 4 CORES
-model <- br(emotions, "C4.5", CORES = 4)
-pred <- predict(model, testdata)
+model <- br(dataset$train "C4.5", CORES = 4)
+pred <- predict(model, dataset$test)
 
 # Set a parameters for all subproblems
-model <- br(emotions, "KNN", k=5)
-pred <- predict(model, testdata)
+model <- br(dataset$train, "KNN", k=5)
+pred <- predict(model, dataset$test)
 }
 \references{
 Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning

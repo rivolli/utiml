@@ -90,8 +90,8 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
 #'  applied to generated the second partition. If two or more
 #'  values are informed and the sum of them is lower than 1
 #'  the partitions will be generated with the informed proportion.
+#'  If partitions have names, they are used to name the return.
 #'  (default: \code{c(0.7, 0.3)})
-#' @param partition.names a vector with the partition names (optional).
 #' @param SEED A single value, interpreted as an integer to allow
 #'  obtain the same results again. (default: \code{NULL})
 #'
@@ -110,16 +110,21 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
 #' datasets <- mldr_iterative_stratification_holdout(emotions)
 #'
 #' # The same result can be obtained as:
-#' datasets <- mldr_iterative_stratification_holdout(emotions, 0.7)
-#' print(datasets[[1]]$measures)
-#' print(datasets[[2]]$measures)
+#' dataset <- mldr_iterative_stratification_holdout(emotions, 0.7)
+#' print(dataset[[1]]$measures)
+#' print(dataset[[2]]$measures)
 #'
 #' # Using a SEED and split the dataset in the half
 #' datasets <- mldr_iterative_stratification_holdout(emotions, 0.5, SEED = 12)
 #'
 #' # Split the dataset in three parts
-#' datasets <- mldr_iterative_stratification_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
+#' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
+#' dataset <- mldr_iterative_stratification_holdout(emotions, partitions)
+#' print(dataset$train)
+#' print(dataset$validation)
+#' print(dataset$test)
+mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+  partition.names <- names(partitions)
   utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
     lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
       mldr_subset(mdata, fold, mdata$attributesIndexes)
@@ -145,7 +150,7 @@ mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.
 #'  on the original dataset.
 #'
 #' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
-#'  stratification of multi-label data. In Proceedings of the Machine
+#'  stratification of multi-label data.If partitions have names, they are used to name the return. In Proceedings of the Machine
 #'  Learningand Knowledge Discovery in Databases - European Conference,
 #'  ECML PKDD (pp. 145–158).
 #'
@@ -178,8 +183,8 @@ mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
 #'  applied to generated the second partition. If two or more
 #'  values are informed and the sum of them is lower than 1
 #'  the partitions will be generated with the informed proportion.
+#'  If partitions have names, they are used to name the return.
 #'  (default: \code{c(0.7, 0.3)})
-#' @param partition.names a vector with the partition names (optional).
 #' @param SEED A single value, interpreted as an integer to allow
 #'  obtain the same results again. (default: \code{NULL}, optional)
 #'
@@ -200,8 +205,13 @@ mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
 #' datasets <- mldr_random_holdout(emotions, 0.5, SEED = 12)
 #'
 #' # Split the dataset in three parts
-#' datasets <- mldr_random_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
+#' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
+#' dataset <- mldr_random_holdout(emotions, partitions)
+#' print(dataset$train)
+#' print(dataset$validation)
+#' print(dataset$test)
+mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+  partition.names <- names(partitions)
   utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
     lapply(utiml_random_split(mdata, partitions), function (fold) {
       mldr_subset(mdata, fold, mdata$attributesIndexes)
@@ -254,8 +264,8 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
 #'  applied to generated the second partition. If two or more
 #'  values are informed and the sum of them is lower than 1
 #'  the partitions will be generated with the informed proportion.
+#'  If partitions have names, they are used to name the return.
 #'  (default: \code{c(0.7, 0.3)})
-#' @param partition.names a vector with the partition names (optional).
 #' @param SEED A single value, interpreted as an integer to allow
 #'  obtain the same results again. (default: \code{NULL})
 #'
@@ -275,15 +285,20 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
 #'
 #' # The same result can be obtained as:
 #' datasets <- mldr_stratified_holdout(emotions, 0.7)partition.names = NULL,
-#' print(datasets[[1]]$measures)
+#' print(datasets[[1]]$measures)partition.names <- names(partitions)
 #' print(datasets[[2]]$measures)
 #'
 #' # Using a SEED and split the dataset in the half
 #' datasets <- mldr_stratified_holdout(emotions, 0.5, SEED = 12)
 #'
 #' # Split the dataset in three parts
-#' datasets <- mldr_stratified_holdout(emotions, c(0.70, 0.15, 0.15))
-mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), partition.names = NULL, SEED = NULL) {
+#' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
+#' dataset <- mldr_stratified_holdout(emotions, partitions)
+#' print(dataset$train)
+#' print(dataset$validation)
+#' print(dataset$test)
+mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+  partition.names <- names(partitions)
   utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
     lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
       mldr_subset(mdata, fold, mdata$attributesIndexes)

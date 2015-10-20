@@ -5,7 +5,7 @@
 \title{Create iterative stratified partitions of a multi-label dataset}
 \usage{
 mldr_iterative_stratification_holdout(mdata, partitions = c(0.7, 0.3),
-  partition.names = NULL, SEED = NULL)
+  SEED = NULL)
 }
 \arguments{
 \item{mdata}{A dataset of class \code{\link[mldr]{mldr}}.}
@@ -16,9 +16,8 @@ single value is informed then the complement of them is
 applied to generated the second partition. If two or more
 values are informed and the sum of them is lower than 1
 the partitions will be generated with the informed proportion.
+If partitions have names, they are used to name the return.
 (default: \code{c(0.7, 0.3)})}
-
-\item{partition.names}{a vector with the partition names (optional).}
 
 \item{SEED}{A single value, interpreted as an integer to allow
  obtain the same results again. (default: \code{NULL})}
@@ -40,15 +39,19 @@ This method creates multi-label dataset for
 datasets <- mldr_iterative_stratification_holdout(emotions)
 
 # The same result can be obtained as:
-datasets <- mldr_iterative_stratification_holdout(emotions, 0.7)
-print(datasets[[1]]$measures)
-print(datasets[[2]]$measures)
+dataset <- mldr_iterative_stratification_holdout(emotions, 0.7)
+print(dataset[[1]]$measures)
+print(dataset[[2]]$measures)
 
 # Using a SEED and split the dataset in the half
 datasets <- mldr_iterative_stratification_holdout(emotions, 0.5, SEED = 12)
 
 # Split the dataset in three parts
-datasets <- mldr_iterative_stratification_holdout(emotions, c(0.70, 0.15, 0.15))
+partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
+dataset <- mldr_iterative_stratification_holdout(emotions, partitions)
+print(dataset$train)
+print(dataset$validation)
+print(dataset$test)
 }
 \references{
 Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011).

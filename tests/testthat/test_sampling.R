@@ -17,7 +17,7 @@ test_that("random holdout", {
   expect_equal(folds[[2]]$measures$num.instances, 30)
   expect_equal(rownames(folds[[1]]$labels), rownames(folds[[2]]$labels))
 
-  folds <- mldr_random_holdout(mdata, c(0.5, 0.5), c("train", "test"))
+  folds <- mldr_random_holdout(mdata, c("train"=0.5, "test"=0.5))
   expect_named(folds, c("train", "test"))
   expect_equal(folds$train$measures$num.instances, folds$test$measures$num.instances)
   names <- sort(c(rownames(folds$train$dataset), rownames(folds$test$dataset)))
@@ -31,7 +31,7 @@ test_that("random holdout", {
 })
 
 test_that("stratified holdout", {
-  f <- mldr_stratified_holdout(mdata, c(0.4, 0.4, 0.2), c("a", "b", "c"))
+  f <- mldr_stratified_holdout(mdata, c("a"=0.4, "b"=0.4, "c"=0.2))
   expect_equal(length(f), 3)
   expect_named(f, c("a", "b", "c"))
   expect_equal(f[[1]]$measures$num.instances, 40)
@@ -43,7 +43,7 @@ test_that("stratified holdout", {
 })
 
 test_that("iterative holdout", {
-  f <- mldr_iterative_stratification_holdout(mdata, c(0.4, 0.4, 0.1, 0.1), c("a", "b", "c", "d"))
+  f <- mldr_iterative_stratification_holdout(mdata, c("a"=0.4, "b"=0.4, "c"=0.1, "d"=0.1))
   expect_equal(length(f), 4)
   expect_named(f, c("a", "b", "c", "d"))
   expect_equal(rownames(f[[1]]$labels), rownames(f[[2]]$labels))
