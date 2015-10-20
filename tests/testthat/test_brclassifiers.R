@@ -12,4 +12,13 @@ test_that("Binary Relevance", {
   expect_is(model, "BRmodel")
   expect_equal(length(model$models), train$measures$num.labels)
   expect_equal(model$labels, rownames(train$labels))
+  pred <- predict(model, test)
+  expect_is(pred, "mlresult")
+  expect_equal(nrow(pred), nrow(test))
+  expect_equal(ncol(pred), train$measures$num.labels)
+  expect_equal(colnames(pred), rownames(train$labels))
+  expect_equal(rownames(pred), rownames(test))
+  pred <- predict(model, test, prob = FALSE)
+  expect_is(pred, "mlresult")
 })
+

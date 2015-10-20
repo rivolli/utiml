@@ -81,10 +81,10 @@ br <- function (mdata,
 #' @param object Object of class "\code{BRmodel}", created by \code{\link{br}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
-#' @param ... Others arguments passed to the base method prediction for all
-#'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
+#' @param ... Others arguments passed to the base method prediction for all
+#'   subproblems.
 #' @param CORES The number of cores to parallelize the prediction. Values higher
 #'   than 1 require the \pkg{parallel} package (default: 1).
 #'
@@ -97,24 +97,22 @@ br <- function (mdata,
 #' @export
 #'
 #' @examples
-#' library(utiml)
-#'
 #' # Emotion multi-label dataset using Binary Relevance
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Predict SVM scores
-#' model <- br(emotions)
-#' pred <- predict(model, testdata)
+#' model <- br(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Predict SVM bipartitions running in 6 cores
-#' pred <- predict(model, testdata, probability = FALSE, CORES = 6)
+#' pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
 #'
-#' # Passing a specif parameter for SVM predict method
-#' pred <- predict(model, testdata, na.action = na.fail)
+#' # Passingrownames(train$labels) a specif parameter for SVM predict method
+#' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.BRmodel <- function (object,
                              newdata,
-                             ...,
                              probability = TRUE,
+                             ...,
                              CORES = 1
                              ) {
   #Validations
