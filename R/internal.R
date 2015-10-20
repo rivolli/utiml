@@ -192,3 +192,27 @@ utiml_newdata.default <- function (newdata) newdata
 
 #' @describeIn utiml_newdata
 utiml_newdata.mldr <- function (newdata) newdata$dataset[,newdata$attributesIndexes]
+
+as.matrix.mlresult <- function (x) {
+  attr.name <- ifelse(attr(x, "type") == "bipartition", "probs", "classes")
+  only.expected <- x
+  attr(only.expected, attr.name) <- NULL
+  attr(only.expected, "type") <- NULL
+  class(only.expected) <- "matrix"
+  only.expected
+}
+
+#Print mlresult as matrix
+print.mlresult <- function (x, ...) {
+  print(as.matrix(x), ...)
+}
+
+#Head mlresult as matrix
+head.mlresult <- function (x, ...) {
+  head(as.matrix(x), ...)
+}
+
+# Tail
+tail.mlresult <- function (x, ...) {
+  tail(as.matrix(x), ...)
+}

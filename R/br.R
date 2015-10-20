@@ -32,7 +32,7 @@
 #'
 #' @examples
 #' # Train and predict emotion multilabel dataset using Binary Relevance
-#' dataset <- mldr_random_holdout(emotions, c("train"=0.9, "test"=0.1))
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Use SVM as base method
 #' model <- br(dataset$train)
