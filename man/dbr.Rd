@@ -74,8 +74,9 @@ Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,
 \code{\link{rdbr}}
 
 Other Transformation methods: \code{\link{brplus}};
-  \code{\link{br}}; \code{\link{cc}}; \code{\link{ebr}};
-  \code{\link{ecc}}; \code{\link{mbr}}; \code{\link{ns}};
-  \code{\link{prudent}}; \code{\link{rdbr}}
+  \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};
+  \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}};
+  \code{\link{ns}}; \code{\link{prudent}};
+  \code{\link{rdbr}}
 }
 

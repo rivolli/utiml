@@ -202,14 +202,7 @@ utiml_ensemble_product_votes <- function (predictions) {
 #' result <- utiml_compute_ensemble_predictions(predictions, "MAJ")
 #' ...
 utiml_compute_multilabel_ensemble <- function (predictions, vote.schema, probability = TRUE) {
-  votes <- list(
-    MAJ = utiml_ensemble_majority_votes,
-    MAX = utiml_ensemble_maximum_votes,
-    MIN = utiml_ensemble_minimum_votes,
-    AVG = utiml_ensemble_average_votes,
-    PROD = utiml_ensemble_product_votes
-  )
-
+  method <- utiml_method_for_vote.schema(vote.schema)
   new.prediction <- list()
   for (label in colnames(predictions[[1]])) {
     lpred <- lapply(predictions, function (prediction){
@@ -218,8 +211,23 @@ utiml_compute_multilabel_ensemble <- function (predictions, vote.schema, probabi
 
       as.binaryPrediction(probs)
     })
-    new.prediction[[label]] <- do.call(votes[[vote.schema]], list(predictions = lpred))
+    new.prediction[[label]] <- utiml_compute_binary_ensemble(method, lpred)
   }
 
   as.multilabelPrediction(new.prediction, probability)
+}
+
+utiml_compute_binary_ensemble <- function (method.name, binary.predictions) {
+  do.call(method.name, list(predictions = binary.predictions))
+}
+
+utiml_method_for_vote.schema <- function (vote.schema) {
+  votes <- list(
+    MAJ = utiml_ensemble_majority_votes,
+    MAX = utiml_ensemble_maximum_votes,
+    MIN = utiml_ensemble_minimum_votes,
+    AVG = utiml_ensemble_average_votes,
+    PROD = utiml_ensemble_product_votes
+  )
+  votes[[vote.schema]]
 }

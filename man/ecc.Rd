@@ -86,11 +86,12 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
 \seealso{
 \code{\link[=ecc]{Ensemble of classifier Chains (ECC)}}
 
-Other Ensemble: \code{\link{ebr}}
+Other Ensemble: \code{\link{ctrl}}; \code{\link{ebr}}
 
 Other Transformation methods: \code{\link{brplus}};
-  \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
-  \code{\link{ebr}}; \code{\link{mbr}}; \code{\link{ns}};
-  \code{\link{prudent}}; \code{\link{rdbr}}
+  \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};
+  \code{\link{dbr}}; \code{\link{ebr}}; \code{\link{mbr}};
+  \code{\link{ns}}; \code{\link{prudent}};
+  \code{\link{rdbr}}
 }
 

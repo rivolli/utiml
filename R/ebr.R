@@ -166,7 +166,7 @@ ebr <- function (mdata,
 #' pred <- predict(model, testdata, vote.schema = "majority", probability = FALSE)
 predict.EBRmodel <- function (object,
                              newdata,
-                             vote.schema = c("score", "majority", "prop"),
+                             vote.schema = "MAJ",
                              ...,
                              probability = TRUE,
                              CORES = 1

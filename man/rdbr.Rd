@@ -75,8 +75,9 @@ Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejão, F. M. (2014).
 \code{\link{dbr}}
 
 Other Transformation methods: \code{\link{brplus}};
-  \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
-  \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}};
-  \code{\link{ns}}; \code{\link{prudent}}
+  \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};
+  \code{\link{dbr}}; \code{\link{ebr}}; \code{\link{ecc}};
+  \code{\link{mbr}}; \code{\link{ns}};
+  \code{\link{prudent}}
 }
 

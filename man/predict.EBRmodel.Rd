@@ -4,8 +4,8 @@
 \alias{predict.EBRmodel}
 \title{Predict Method for Ensemble of Binary Relevance}
 \usage{
-\method{predict}{EBRmodel}(object, newdata, vote.schema = c("score",
-  "majority", "prop"), ..., probability = TRUE, CORES = 1)
+\method{predict}{EBRmodel}(object, newdata, vote.schema = "MAJ", ...,
+  probability = TRUE, CORES = 1)
 }
 \arguments{
 \item{object}{Object of class "\code{EBRmodel}", created by \code{\link{ebr}} method.}

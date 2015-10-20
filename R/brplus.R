@@ -20,8 +20,6 @@
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
 #'    \code{'SVM'}).
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param save.datasets Logical indicating whether the binary datasets must be
-#'   saved in the model or not. (default: FALSE)
 #' @param CORES he number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
@@ -30,11 +28,7 @@
 #'    \item{freq}{The label frequencies to use with the "Stat" strategy}
 #'    \item{initial}{The BR model to predict the values for the labels to initial step}
 #'    \item{models}{A list of final models named by the label names.}
-#'    \item{datasets}{A list with \code{initial} and \code{final} datasets of
-#'      type \code{mldBRP} named by the label names. Only when the
-#'      \code{save.datasets = TRUE}.
 #'    }
-#' }
 #'
 #' @references
 #'  Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
@@ -45,20 +39,18 @@
 #'
 #' @examples
 #' # Train and predict emotion multilabel dataset using BRPlus
-#' library(utiml)
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Use SVM as base method
-#' model <- brplus(emotions)
+#' model <- brplus(dataset$train)
 #' pred <- predict(model, testdata)
 #'
 #' # Use Random Forest as base method and 4 cores
-#' model <- brplus(emotions, "RF", CORES = 4)
+#' model <- brplus(dataset$train, "RF", CORES = 4)
 #' pred <- predict(model, testdata)
 brplus <- function (mdata,
                     base.method = "SVM",
                     ...,
-                    save.datasets = FALSE,
                     CORES = 1
                   ) {
   #Validations
@@ -73,7 +65,7 @@ brplus <- function (mdata,
   freq <- mdata$labels$freq
   names(freq) <- rownames(mdata$labels)
   brpmodel$freq <- sort(freq)
-  brpmodel$initial <- br(mdata, base.method, ..., save.datasets = save.datasets, CORES = CORES)
+  brpmodel$initial <- br(mdata, base.method, ..., CORES = CORES)
 
   basedata <- mdata$dataset[mdata$attributesIndexes]
   labeldata <- mdata$dataset[mdata$labels$index]
@@ -82,11 +74,6 @@ brplus <- function (mdata,
   }, CORES)
   names(datasets) <- rownames(mdata$labels)
   brpmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-
-  if (save.datasets) {
-    bprmodel$datasets <- list(initial = brpmodel$initial$datasets, final = datasets)
-    brpmodel$initial$datasets <- NULL
-  }
 
   brpmodel$call <- match.call()
   class(brpmodel) <- "BRPmodel"
@@ -125,13 +112,13 @@ brplus <- function (mdata,
 #'
 #'        The possible values are: \code{'Dyn'}, \code{'Stat'}, \code{'Ord'} or \code{'NU'}.
 #'        See the description for more details. (default: \code{'Dyn'}).
-#' @param ... Others arguments passed to the base method prediction for all
-#'   subproblems.
-#' @param probability Logical indicating whether class probabilities should be returned.
-#'   (default: \code{TRUE})
 #' @param order The label sequence used to update the initial labels results based on the
 #'   final results. This argument is used only when the \code{strategy = "Ord"}
 #'   (default: \code{list()})
+#' @param probability Logical indicating whether class probabilities should be returned.
+#'   (default: \code{TRUE})
+#' @param ... Others arguments passed to the base method prediction for all
+#'   subproblems.
 #' @param CORES The number of cores to parallelize the prediction. Values higher
 #'   than 1 require the \pkg{parallel} package (default: 1).
 #'
@@ -151,27 +138,27 @@ brplus <- function (mdata,
 #' #' library(utiml)
 #'
 #' # Emotion multi-label dataset using BR+
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Predict SVM scores
-#' model <- brplus(emotions)
-#' pred <- predict(model, testdata)
+#' model <- brplus(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Predict SVM bipartitions and change the method to use No Update strategy
-#' pred <- predict(model, testdata, strategy = "NU", probability = FALSE)
+#' pred <- predict(model, dataset$test, strategy = "NU", probability = FALSE)
 #'
 #' # Predict using a random sequence to update the labels
-#' labels <- sample(rownames(emotions$labels))
-#' pred <- predict(model, testdata, strategy = "Ord", order = labels)
+#' labels <- sample(rownames(dataset$train$labels))
+#' pred <- predict(model, dataset$test, strategy = "Ord", order = labels)
 #'
 #' # Passing a specif parameter for SVM predict method
-#' pred <- predict(model, testdata, na.action = na.fail)
+#' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.BRPmodel <- function (object,
                               newdata,
                               strategy = c("Dyn", "Stat", "Ord", "NU"),
-                              ...,
-                              probability = TRUE,
                               order = list(),
+                              probability = TRUE,
+                              ...,
                               CORES = 1
                              ) {
   #Validations
@@ -182,7 +169,7 @@ predict.BRPmodel <- function (object,
   if(!strategy[1] %in% strategies)
     stop(paste("Strategy value must be '", paste(strategies, collapse = "' or '"), "'", sep=""))
 
-  labels <- model$initial$labels
+  labels <- object$initial$labels
   if (strategy[1] == "Ord") {
     if (length(order) != length(labels))
       stop('The ordered list must be the same size of the labels')
@@ -197,18 +184,18 @@ predict.BRPmodel <- function (object,
   newdata <- utiml_newdata(newdata)
 
   if (strategy[1] == "NU") {
-    initial.preds <- predict(object$initial, newdata, ..., probability = FALSE, CORES = CORES)
+    initial.preds <- predict(object$initial, newdata, probability = FALSE, ..., CORES = CORES)
     predictions <- utiml_lapply(1:length(labels), function (li) {
       br.predict_model(object$models[[li]], cbind(newdata, initial.preds[,-li]), ...)
     }, CORES)
     names(predictions) <- labels
   }
   else {
-    initial.probs <- predict(object$initial, newdata, ..., probability = TRUE, CORES = CORES)
+    initial.probs <- predict(object$initial, newdata, probability = TRUE, ..., CORES = CORES)
     initial.preds <- simple.threshold(initial.probs)
     orders <- list(
       Dyn = names(sort(apply(initial.preds, 2, mean))),
-      Stat = names(model$freq),
+      Stat = names(object$freq),
       Ord = order
     )
 
@@ -221,8 +208,7 @@ predict.BRPmodel <- function (object,
     }
   }
 
-  result <- as.multilabelPrediction(predictions, probability)
-  result[,labels]
+  result <- as.multilabelPrediction(predictions[labels], probability)
 }
 
 print.BRPmodel <- function (x, ...) {

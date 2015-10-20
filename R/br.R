@@ -39,7 +39,7 @@
 #' pred <- predict(model, dataset$test)
 #'
 #' # Change the default base method and use 4 CORES
-#' model <- br(dataset$train "C4.5", CORES = 4)
+#' model <- br(dataset$train, "C4.5", CORES = 4)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Set a parameters for all subproblems
@@ -107,7 +107,7 @@ br <- function (mdata,
 #' # Predict SVM bipartitions running in 6 cores
 #' pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
 #'
-#' # Passingrownames(train$labels) a specif parameter for SVM predict method
+#' # Passing a specif parameter for SVM predict method
 #' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.BRmodel <- function (object,
                              newdata,

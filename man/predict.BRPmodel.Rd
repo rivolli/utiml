@@ -5,7 +5,7 @@
 \title{Predict Method for BR+ (brplus)}
 \usage{
 \method{predict}{BRPmodel}(object, newdata, strategy = c("Dyn", "Stat", "Ord",
-  "NU"), ..., probability = TRUE, order = list(), CORES = 1)
+  "NU"), order = list(), probability = TRUE, ..., CORES = 1)
 }
 \arguments{
 \item{object}{Object of class "\code{BRPmodel}", created by \code{\link{brplus}} method.}
@@ -19,15 +19,15 @@ data.frame object containing the same size of training data or a mldr object.}
        The possible values are: \code{'Dyn'}, \code{'Stat'}, \code{'Ord'} or \code{'NU'}.
        See the description for more details. (default: \code{'Dyn'}).}
 
-\item{...}{Others arguments passed to the base method prediction for all
-subproblems.}
+\item{order}{The label sequence used to update the initial labels results based on the
+final results. This argument is used only when the \code{strategy = "Ord"}
+(default: \code{list()})}
 
 \item{probability}{Logical indicating whether class probabilities should be returned.
 (default: \code{TRUE})}
 
-\item{order}{The label sequence used to update the initial labels results based on the
-final results. This argument is used only when the \code{strategy = "Ord"}
-(default: \code{list()})}
+\item{...}{Others arguments passed to the base method prediction for all
+subproblems.}
 
 \item{CORES}{The number of cores to parallelize the prediction. Values higher
   than 1 require the \pkg{parallel} package (default: 1).}
@@ -64,21 +64,21 @@ The strategies of estimate the values of the new features are separeted in two g
 #' library(utiml)
 
 # Emotion multi-label dataset using BR+
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Predict SVM scores
-model <- brplus(emotions)
-pred <- predict(model, testdata)
+model <- brplus(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Predict SVM bipartitions and change the method to use No Update strategy
-pred <- predict(model, testdata, strategy = "NU", probability = FALSE)
+pred <- predict(model, dataset$test, strategy = "NU", probability = FALSE)
 
 # Predict using a random sequence to update the labels
-labels <- sample(rownames(emotions$labels))
-pred <- predict(model, testdata, strategy = "Ord", order = labels)
+labels <- sample(rownames(dataset$train$labels))
+pred <- predict(model, dataset$test, strategy = "Ord", order = labels)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, testdata, na.action = na.fail)
+pred <- predict(model, dataset$test, na.action = na.fail)
 }
 \references{
 Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
