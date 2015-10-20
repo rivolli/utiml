@@ -21,17 +21,15 @@
 #'   empty the chain is the default label sequence of the dataset. (default:
 #'   \code{list()})
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param save.datasets Logical indicating whether the binary datasets must be
-#'   saved in the model or not. (default: FALSE)
 #' @param CORES he number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
 #' @return An object of class \code{CCmodel} containing the set of fitted
-#'   models, including: \describe{ \item{chain}{A vector with the chain order}
+#'   models, including: \describe{
+#'   \item{chain}{A vector with the chain order}
 #'   \item{labels}{A vector with the label names in expected order}
-#'   \item{models}{A list of models named by the label names.} \item{datasets}{A
-#'   list of \code{mldCC} named by the label names. Only when the
-#'   \code{save.datasets = TRUE}.} }
+#'   \item{models}{A list of models named by the label names.}
+#' }
 #'
 #' @references
 #'  Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
@@ -45,26 +43,24 @@
 #'
 #' @examples
 #' # Train and predict emotion multilabel dataset using Classifier Chains
-#' library(utiml)
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Use SVM as base method
-#' model <- cc(emotions)
-#' pred <- predict(model, testdata)
+#' model <- cc(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Use a specific chain with C4.5 classifier
-#' mychain <- sample(rownames(emotions$labels))
-#' model <- cc(emotions, "C4.5", mychain)
-#' pred <- predict(model, testdata)
+#' mychain <- sample(rownames(dataset$train$labels))
+#' model <- cc(dataset$train, "C4.5", mychain)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Set a specific parameter
-#' model <- cc(emotions, "KNN", k=5)
-#' pred <- predict(model, testdata)
+#' model <- cc(dataset$train, "KNN", k=5)
+#' pred <- predict(model, dataset$test)
 cc <- function (mdata,
                 base.method = "SVM",
                 chain = c(),
                 ...,
-                save.datasets = FALSE,
                 CORES = 1
               ) {
   #Validations
@@ -87,21 +83,15 @@ cc <- function (mdata,
   ccmodel$labels <- labels
   ccmodel$chain <- chain
   ccmodel$models <- list()
-  if (save.datasets)
-    ccmodel$datasets <- list()
 
   basedata <- mdata$dataset[mdata$attributesIndexes]
   labeldata <- mdata$dataset[mdata$labels$index][chain]
-  datasets <- utiml_lapply(chain, function (labelname) {
-    labelIndex <- which(labelname == chain)[[1]]
+  datasets <- utiml_lapply(1:mdata$measures$num.labels, function (labelIndex) {
     data <- cbind(basedata, labeldata[1:labelIndex])
     br.transformation(data, "mldCC", base.method, chain.order = labelIndex)
   }, CORES)
   names(datasets) <- chain
   ccmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-
-  if (save.datasets)
-    ccmodel$datasets <- datasets
 
   ccmodel$call <- match.call()
   class(ccmodel) <- "CCmodel"
@@ -115,10 +105,10 @@ cc <- function (mdata,
 #' @param object Object of class "\code{CCmodel}", created by \code{\link{cc}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
-#' @param ... Others arguments passed to the base method prediction for all
-#'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
+#' @param ... Others arguments passed to the base method prediction for all
+#'   subproblems.
 #'
 #' @return A matrix containing the probabilistic values or just predictions (only when
 #'   \code{probability = FALSE}). The rows indicate the predicted object and the
@@ -129,24 +119,22 @@ cc <- function (mdata,
 #' @export
 #'
 #' @examples
-#' library(utiml)
-#'
 #' # Emotion multi-label dataset using Classifier Chains
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Predict SVM scores
-#' model <- cc(emotions)
-#' pred <- predict(model, testdata)
+#' model <- cc(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Predict SVM bipartitions
-#' pred <- predict(model, testdata, probability = FALSE)
+#' pred <- predict(model, dataset$test, prob = FALSE)
 #'
 #' # Passing a specif parameter for SVM predict method
-#' pred <- predict(model, testdata, na.action = na.fail)
+#' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.CCmodel <- function (object,
                              newdata,
-                             ...,
-                             probability = TRUE
+                             probability = TRUE,
+                             ...
                             ) {
   #Validations
   if(class(object) != 'CCmodel')
@@ -155,14 +143,12 @@ predict.CCmodel <- function (object,
   newdata <- utiml_newdata(newdata)
   predictions <- list()
   for (label in object$chain) {
-    params <- c(list(model = object$models[[label]], newdata = newdata), ...)
-    predictions[[label]] <- do.call(mlpredict, params)
+    predictions[[label]] <- br.predict_model(object$models[[label]], newdata, ...)
     newdata <- cbind(newdata, predictions[[label]]$bipartition)
     names(newdata)[ncol(newdata)] <- label
   }
 
-  result <- as.multilabelPrediction(predictions, probability)
-  result[,object$labels]
+  as.multilabelPrediction(predictions[object$labels], probability)
 }
 
 print.CCmodel <- function (x, ...) {

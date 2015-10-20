@@ -4,8 +4,7 @@
 \alias{cc}
 \title{Classifier Chains for multi-label Classification}
 \usage{
-cc(mdata, base.method = "SVM", chain = c(), ..., save.datasets = FALSE,
-  CORES = 1)
+cc(mdata, base.method = "SVM", chain = c(), ..., CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -25,19 +24,16 @@ empty the chain is the default label sequence of the dataset. (default:
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{save.datasets}{Logical indicating whether the binary datasets must be
-saved in the model or not. (default: FALSE)}
-
 \item{CORES}{he number of cores to parallelize the training. Values higher
   than 1 require the \pkg{parallel} package. (default: 1)}
 }
 \value{
 An object of class \code{CCmodel} containing the set of fitted
-  models, including: \describe{ \item{chain}{A vector with the chain order}
+  models, including: \describe{
+  \item{chain}{A vector with the chain order}
   \item{labels}{A vector with the label names in expected order}
-  \item{models}{A list of models named by the label names.} \item{datasets}{A
-  list of \code{mldCC} named by the label names. Only when the
-  \code{save.datasets = TRUE}.} }
+  \item{models}{A list of models named by the label names.}
+}
 }
 \description{
 Create a Classifier Chains model for multilabel classification.
@@ -50,21 +46,20 @@ Create a Classifier Chains model for multilabel classification.
 }
 \examples{
 # Train and predict emotion multilabel dataset using Classifier Chains
-library(utiml)
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Use SVM as base method
-model <- cc(emotions)
-pred <- predict(model, testdata)
+model <- cc(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Use a specific chain with C4.5 classifier
-mychain <- sample(rownames(emotions$labels))
-model <- cc(emotions, "C4.5", mychain)
-pred <- predict(model, testdata)
+mychain <- sample(rownames(dataset$train$labels))
+model <- cc(dataset$train, "C4.5", mychain)
+pred <- predict(model, dataset$test)
 
 # Set a specific parameter
-model <- cc(emotions, "KNN", k=5)
-pred <- predict(model, testdata)
+model <- cc(dataset$train, "KNN", k=5)
+pred <- predict(model, dataset$test)
 }
 \references{
 Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains

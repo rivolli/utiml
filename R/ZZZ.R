@@ -1,5 +1,5 @@
 mltrain.basetest <- function (dataset, ...) {
-  model <- list(predictions = utiml_normalize(rowMeans(dataset$data[,-dataset$labelindex])))
+  model <- list(predictions = round(utiml_normalize(rowMeans(dataset$data[,-dataset$labelindex])), 3))
   class(model) <- "test"
   model
 }

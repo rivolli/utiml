@@ -4,7 +4,7 @@
 \alias{predict.CCmodel}
 \title{Predict Method for Classifier Chains}
 \usage{
-\method{predict}{CCmodel}(object, newdata, ..., probability = TRUE)
+\method{predict}{CCmodel}(object, newdata, probability = TRUE, ...)
 }
 \arguments{
 \item{object}{Object of class "\code{CCmodel}", created by \code{\link{cc}} method.}
@@ -12,11 +12,11 @@
 \item{newdata}{An object containing the new input data. This must be a matrix or
 data.frame object containing the same size of training data or a mldr object.}
 
-\item{...}{Others arguments passed to the base method prediction for all
-subproblems.}
-
 \item{probability}{Logical indicating whether class probabilities should be returned.
-  (default: \code{TRUE})}
+(default: \code{TRUE})}
+
+\item{...}{Others arguments passed to the base method prediction for all
+  subproblems.}
 }
 \value{
 A matrix containing the probabilistic values or just predictions (only when
@@ -27,20 +27,18 @@ A matrix containing the probabilistic values or just predictions (only when
 This function predicts values based upon a model trained by \code{cc}.
 }
 \examples{
-library(utiml)
-
 # Emotion multi-label dataset using Classifier Chains
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Predict SVM scores
-model <- cc(emotions)
-pred <- predict(model, testdata)
+model <- cc(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Predict SVM bipartitions
-pred <- predict(model, testdata, probability = FALSE)
+pred <- predict(model, dataset$test, prob = FALSE)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, testdata, na.action = na.fail)
+pred <- predict(model, dataset$test, na.action = na.fail)
 }
 \seealso{
 \code{\link[=cc]{Classifier Chains (CC)}}
