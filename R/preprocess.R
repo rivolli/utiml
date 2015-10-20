@@ -122,6 +122,17 @@ mldr_remove_labels <- function (mdata, t = 1) {
   mldr_from_dataframe(dataset, (1 + ncol(dataset) - length(labelsIndexes)):ncol(dataset), mdata$name)
 }
 
+#' @title Replace nominal attributes
+#' @description Replace the nominal attributes by binary attributes.
+#'
+#' @param mdata The mldr dataset to remove.
+#' @param ordinal.attributes Not yet, but it will be used to specify which attributes need to be replaced.
+#'
+#' @return a new mldr object.
+#' @export
+#'
+#' @examples
+#' mldr_replace_nominal_attributes(emotions)
 mldr_replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) {
   #TODO ordinal.attributes
   replace_nominal_column <- function(column, column.name = '', type = 1) {
@@ -143,7 +154,7 @@ mldr_replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) 
     result
   }
 
-  dataset <- data.frame(row.names=rrownames(mdata$dataset))
+  dataset <- data.frame(row.names=rownames(mdata$dataset))
   for(i in mdata$attributesIndexes) {
     dataset <- if (is.numeric(mdata$dataset[,i]))
        cbind(dataset, mdata$dataset[i])
@@ -152,5 +163,5 @@ mldr_replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) 
   }
 
   classIndexes <- (1 + ncol(dataset)):(ncol(dataset)+mdata$measures$num.labels)
-  mldr_from_dataframe(cbind(result, mdata$dataset[mdata$labels$index]), classIndexes, mdata$name)
+  mldr_from_dataframe(cbind(dataset, mdata$dataset[mdata$labels$index]), classIndexes, mdata$name)
 }

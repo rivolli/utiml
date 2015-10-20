@@ -90,3 +90,25 @@ test_that("Remove examples and attributes", {
 
   expect_error(mldr_remove_labels(mdata, 11))
 })
+
+test_that("Replace nominal attributes", {
+  df <- data.frame(
+    X1 = sample(c("abc", "bcd", "cde"), 100, replace = TRUE),
+    X2 = c(1, 2, rep(NA, 98)),
+    X3 = factor(c(rep("a", 10), rep(NA, 90))),
+    X4 = c("1", "2", rep(NA, 98)),
+    X5 = c("alfa", "beta", rep(NA, 98))
+  )
+  df$Label1 <- sample(c(rep(1, 30), rep(0, 30), sample(c(0,1), 40, replace = TRUE)))
+  df$Label2 <- sample(c(rep(1, 30), rep(0, 30), sample(c(0,1), 40, replace = TRUE)))
+  mdata <- mldr_from_dataframe(df, labelIndices = c(6, 7), name = "testMLDR")
+
+  new.data <- mldr_replace_nominal_attributes(mdata)
+  expect_equal(new.data$measures$num.attributes, 8)
+  expect_equal(colnames(new.data$dataset[,new.data$attributesIndexes]),
+               c("X1_abc", "X1_bcd", "X2", "X3_a", "X4_1", "X5_alfa"))
+  expect_equal(new.data$dataset[,"X1_abc"], as.numeric(df$X1 == "abc"))
+  expect_equal(new.data$dataset[,"X1_bcd"], as.numeric(df$X1 == "bcd"))
+
+  #TODO ordinal.attributes
+})
