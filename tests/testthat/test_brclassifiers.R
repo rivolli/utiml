@@ -69,6 +69,31 @@ test_that("BR Plus", {
   expect_error(predict(model, test, "Ord", c("a", "b", "c")))
 })
 
+test_that("Classifier Chain", {
+  model <- cc(train, "test")
+  pred <- baseTest(model, "CCmodel")
+
+  pred1 <- predict(model, test, prob = FALSE)
+  expect_is(pred1, "mlresult")
+  expect_equal(as.matrix(pred1), attr(pred, "classes"))
+  expect_equal(as.matrix(pred), attr(pred1, "probs"))
+  expect_equal(pred[,1], model$models[[1]]$predictions, check.names=FALSE)
+
+  new.chain <- c("Label3", "Label2", "Label1")
+  model2 <- cc(train, "test", new.chain)
+  expect_equal(model2$chain, new.chain)
+
+  pred2 <- predict(model2, test)
+  expect_equal(colnames(pred2), rownames(train$labels))
+
+  pred3 <- predict(model2, test)
+  expect_false(isTRUE(all.equal(pred3, pred1)))
+  expect_equal(pred3, pred2)
+
+  expect_error(cc(train, "test", chain=c("a", "b", "c")))
+  expect_error(cc(train, "test", chain=c(new.chain, "extra")))
+})
+
 test_that("CTRL", {
   model <- ctrl(train, "test")
   pred1 <- baseTest(model, "CTRLmodel")
