@@ -7,8 +7,8 @@
 as.multilabelPrediction(predictions, probability)
 }
 \arguments{
-\item{predictions}{The list of mlresult obtained from union of all binary
-predictions.}
+\item{predictions}{The list of binary.prediction obtained from union of all
+binary predictions.}
 
 \item{probability}{A logical value. If \code{TRUE} the predicted values are
  the score between 0 and 1, otherwise the values are bipartition 0 or 1.}

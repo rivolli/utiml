@@ -11,13 +11,7 @@ utiml_compute_multilabel_ensemble(predictions, vote.schema,
 \item{predictions}{A list of mlresult}
 
 \item{vote.schema}{Define the way that ensemble must compute the predictions.
-The valid options are: \describe{
- \code{'MAJ'}{Compute the averages of probabilities},
- \code{'MAX'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
- \code{'MIN'}{Compute the proportion of votes, scale data between min and max of votes}
- \code{'AVG'}{Compute the proportion of votes, scale data between min and max of votes}
- \code{'PROD'}{Compute the proportion of votes, scale data between min and max of votes}
-}}
+The valid options are describe in \link{utiml_vote.schema_method}.}
 
 \item{probability}{A logical value. If \code{TRUE} the predicted values are
  the score between 0 and 1, otherwise the values are bipartition 0 or 1.}
@@ -29,11 +23,9 @@ A new mlresult that final result
 Compute the ensemble predictions based on some vote schema
 }
 \examples{
-...
 predictions <- list()
 predictions$model1 <- prediction(brmodel1, testdata)
 predictions$model2 <- prediction(brmodel2, testdata)
 result <- utiml_compute_ensemble_predictions(predictions, "MAJ")
-...
 }
 

@@ -7,11 +7,9 @@ df$Label3 <- c(sample(c(0,1), 10, replace = TRUE))
 train <- mldr_from_dataframe(df, labelIndices = c(6, 7, 8), name = "testMLDR")
 test <- train$dataset[, train$attributesIndexes]
 
-test_that("Binary Relevance", {
-  model <- br(train, "test")
-  expect_is(model, "BRmodel")
-  expect_equal(length(model$models), train$measures$num.labels)
-  expect_equal(model$labels, rownames(train$labels))
+baseTest <- function (model, expected.class) {
+  expect_is(model, expected.class)
+  expect_equal(names(model$models), rownames(train$labels))
 
   pred <- predict(model, test)
   expect_is(pred, "mlresult")
@@ -24,30 +22,22 @@ test_that("Binary Relevance", {
   expect_is(pred1, "mlresult")
   expect_equal(as.matrix(pred1), attr(pred, "classes"))
   expect_equal(as.matrix(pred), attr(pred1, "probs"))
-  expect_equal(pred[,1], model$models[[1]]$predictions, check.names=FALSE)
+}
+
+test_that("Binary Relevance", {
+  model <- br(train, "test")
+  baseTest(model, "BRmodel")
 })
 
 test_that("BR Plus", {
   model <- brplus(train, "test")
-  expect_is(model, "BRPmodel")
-  expect_is(model$initial, "BRmodel")
-  expect_equal(names(model$models), rownames(train$labels))
+  baseTest(model, "BRPmodel")
 
+  expect_is(model$initial, "BRmodel")
   pred0 <- predict(model$initial, test)
 
   pred1 <- predict(model, test)
-  expect_is(pred1, "mlresult")
-  expect_equal(nrow(pred1), nrow(test))
-  expect_equal(ncol(pred1), train$measures$num.labels)
-  expect_equal(colnames(pred1), rownames(train$labels))
-  expect_equal(rownames(pred1), rownames(test))
   expect_false(isTRUE(all.equal(pred0, pred1)))
-
-  pred2 <- predict(model, test, prob = FALSE)
-  expect_is(pred2, "mlresult")
-  expect_equal(as.matrix(pred2), attr(pred1, "classes"))
-  expect_equal(as.matrix(pred1), attr(pred2, "probs"))
-  expect_equal(pred1[,1], model$models[[1]]$predictions, check.names=FALSE)
 
   pred2 <- predict(model, test, strategy="NU")
   expect_equal(colnames(pred2), rownames(train$labels))
@@ -68,4 +58,21 @@ test_that("BR Plus", {
   expect_error(predict(model, test, "Ord", c("a", "b", "c")))
 })
 
+test_that("CTRL", {
+  model <- ctrl(train, "test")
+  baseTest(model, "CTRLmodel")
+  baseTest(ctrl(train, "test", validation.threshold = 1), "CTRLmodel")
+  pred1 <- predict(model, test)
 
+  model2 <- ctrl(train, "test", m = 2, validation.size = 0.2, validation.threshold = 0)
+  pred2 <- predict(model2, test)
+
+  expect_equal(model2$rounds, 2)
+  expect_false(isTRUE(all.equal(pred1, pred2)))
+
+  expect_error(ctrl(train, "test", 0))
+  expect_error(ctrl(train, "test", validation.size=0))
+  expect_error(ctrl(train, "test", validation.size=1))
+  expect_error(ctrl(train, "test", validation.threshold=1.1))
+  expect_error(predict(model, test, "ABC"))
+})

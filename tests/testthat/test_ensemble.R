@@ -11,6 +11,11 @@ test_that("Majority votes", {
   expect_equal(result$bipartition, c(1,0,1,0))
   expect_equal(result$probability, c(0.8,0.2,0.9,0.15))
 
+  result <- utiml_ensemble_majority_votes(predictions[2])
+  expect_equal(result, predictions[[2]])
+
+  expect_error(utiml_ensemble_majority_votes(list()), "Predictions can not be empty")
+
   predictions[[4]] <- as.binaryPrediction(c(0.6,0.5,0.6,1))
   for (i in 1:4) names(predictions[[i]]$bipartition) <- c(1,3,5,6)
   result <- utiml_ensemble_majority_votes(predictions)
@@ -26,30 +31,43 @@ test_that("Other votes", {
     as.binaryPrediction(c(0.8,0.3,0.4,0.1))
   )
   for (i in 1:3) names(predictions[[i]]$bipartition) <- c(1,3,5,6)
+  for (i in 1:3) names(predictions[[i]]$probability) <- c(1,3,5,6)
 
   result <- utiml_ensemble_maximum_votes(predictions)
   expect_is(result, "binary.prediction")
   expect_named(result$bipartition, as.character(c(1,3,5,6)))
   expect_equivalent(result$bipartition, c(1,1,1,1))
   expect_equivalent(result$probability, c(1,1,1,1))
+  result <- utiml_ensemble_maximum_votes(predictions[3])
+  expect_equal(result, predictions[[3]])
+  expect_error(utiml_ensemble_maximum_votes(list()), "Predictions can not be empty")
 
   result <- utiml_ensemble_minimum_votes(predictions)
   expect_is(result, "binary.prediction")
   expect_named(result$bipartition, as.character(c(1,3,5,6)))
   expect_equivalent(result$bipartition, c(1,0,0,0))
   expect_equivalent(result$probability, c(0.6,0.1,0.4,0.1))
+  result <- utiml_ensemble_minimum_votes(predictions[3])
+  expect_equal(result, predictions[[3]])
+  expect_error(utiml_ensemble_minimum_votes(list()), "Predictions can not be empty")
 
   result <- utiml_ensemble_average_votes(predictions)
   expect_is(result, "binary.prediction")
   expect_named(result$bipartition, as.character(c(1,3,5,6)))
   expect_equivalent(result$bipartition, c(1,0,1,0))
   expect_equivalent(result$probability, c(0.8,1.4/3,2.2/3,1.3/3))
+  result <- utiml_ensemble_average_votes(predictions[3])
+  expect_equal(result, predictions[[3]])
+  expect_error(utiml_ensemble_average_votes(list()), "Predictions can not be empty")
 
   result <- utiml_ensemble_product_votes(predictions)
   expect_is(result, "binary.prediction")
   expect_named(result$bipartition, as.character(c(1,3,5,6)))
   expect_equivalent(result$bipartition, c(0,0,0,0))
   expect_equivalent(result$probability, c(0.48,0.03,0.32,0.02))
+  result <- utiml_ensemble_product_votes(predictions[3])
+  expect_equal(result, predictions[[3]])
+  expect_error(utiml_ensemble_product_votes(list()), "Predictions can not be empty")
 })
 
 test_that("Multilabel ensemble", {

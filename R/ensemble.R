@@ -52,6 +52,8 @@ utiml_ensemble_average_votes <- function (predictions) {
 #' # Compute the maximum vote combination
 #' result <- utiml_ensemble_compute_votes(predictions, max)
 utiml_ensemble_compute_votes <- function (predictions, method.name) {
+  if (length(predictions) == 0)
+    stop("Predictions can not be empty")
   as.binaryPrediction(apply(as.multilabelPrediction(predictions, TRUE), 1, method.name))
 }
 
@@ -78,6 +80,9 @@ utiml_ensemble_compute_votes <- function (predictions, method.name) {
 #' )
 #' result <- utiml_ensemble_majority_votes(predictions)
 utiml_ensemble_majority_votes <- function (predictions) {
+  if (length(predictions) == 0)
+    stop("Predictions can not be empty")
+
   probabilities <- as.multilabelPrediction(predictions, TRUE)
   bipartitions <- attr(probabilities, "classes")
 
@@ -181,13 +186,7 @@ utiml_ensemble_product_votes <- function (predictions) {
 #'
 #' @param predictions A list of mlresult
 #' @param vote.schema Define the way that ensemble must compute the predictions.
-#' The valid options are: \describe{
-#'  \code{'MAJ'}{Compute the averages of probabilities},
-#'  \code{'MAX'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
-#'  \code{'MIN'}{Compute the proportion of votes, scale data between min and max of votes}
-#'  \code{'AVG'}{Compute the proportion of votes, scale data between min and max of votes}
-#'  \code{'PROD'}{Compute the proportion of votes, scale data between min and max of votes}
-#' }
+#'  The valid options are describe in \link{utiml_vote.schema_method}.
 #' @param probability A logical value. If \code{TRUE} the predicted values are
 #'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 #'
@@ -195,14 +194,12 @@ utiml_ensemble_product_votes <- function (predictions) {
 #' @export
 #'
 #' @examples
-#' ...
 #' predictions <- list()
 #' predictions$model1 <- prediction(brmodel1, testdata)
 #' predictions$model2 <- prediction(brmodel2, testdata)
 #' result <- utiml_compute_ensemble_predictions(predictions, "MAJ")
-#' ...
 utiml_compute_multilabel_ensemble <- function (predictions, vote.schema, probability = TRUE) {
-  method <- utiml_method_for_vote.schema(vote.schema)
+  method <- utiml_vote.schema_method(vote.schema)
   new.prediction <- list()
   for (label in colnames(predictions[[1]])) {
     lpred <- lapply(predictions, function (prediction){
@@ -217,11 +214,31 @@ utiml_compute_multilabel_ensemble <- function (predictions, vote.schema, probabi
   as.multilabelPrediction(new.prediction, probability)
 }
 
+#' @title Compute the ensemble predictions for binary predictions
+#'
+#' @param method.name The method to compute the votes
+#' @param binary.predictions A list of binary.prediction
+#'
+#' @return A new binary.result
+#' @export
 utiml_compute_binary_ensemble <- function (method.name, binary.predictions) {
   do.call(method.name, list(predictions = binary.predictions))
 }
 
-utiml_method_for_vote.schema <- function (vote.schema) {
+#' @title Define the method related with the vote schema
+#'
+#' @param vote.schema Define the way that ensemble must compute the predictions.
+#'  The valid options are:
+#' \describe{
+#'  \code{'MAJ'}{Compute the averages of probabilities},
+#'  \code{'MAX'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
+#'  \code{'MIN'}{Compute the proportion of votes, scale data between min and max of votes}
+#'  \code{'AVG'}{Compute the proportion of votes, scale data between min and max of votes}
+#'  \code{'PROD'}{Compute the proportion of votes, scale data between min and max of votes}
+#' }
+#' @return The method that will compute the votes
+#' @export
+utiml_vote.schema_method <- function (vote.schema) {
   votes <- list(
     MAJ = utiml_ensemble_majority_votes,
     MAX = utiml_ensemble_maximum_votes,

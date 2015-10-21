@@ -122,9 +122,11 @@ ctrl <- function (mdata,
   classes <- mdata$dataset[mdata$labels$index][,Yc]
   Rj <- utiml_lapply(rownames(mdata$labels), function (labelname) {
     formula <- as.formula(paste("`", labelname, "` ~ .", sep=""))
-    Aj <- mdata$dataset[mdata$labels$index][,unique(c(Yc, labelname))]
-    weights <- FSelector::relief(formula, Aj)
-    FSelector::cutoff.k(weights, m)
+    Aj <- mdata$dataset[,mdata$labels$index, drop = FALSE][,unique(c(Yc, labelname)), drop = FALSE]
+    if (ncol(Aj) > 1) {
+      weights <- FSelector::relief(formula, Aj)
+      FSelector::cutoff.k(weights, m)
+    }
   }, CORES)
   names(Rj) <- rownames(mdata$labels)
   ctrlmodel$R <- Rj
@@ -158,7 +160,7 @@ ctrl <- function (mdata,
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
-#'  Details in \link{utiml_compute_multilabel_ensemble}.
+#'  The valid options are describe in \link{utiml_vote.schema_method}. (default: "MAJ")
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param ... Others arguments passed to the base method prediction for all
@@ -197,7 +199,7 @@ predict.CTRLmodel <- function (object,
   if (class(object) != 'CTRLmodel')
     stop('First argument must be an CTRLmodel object')
 
-  vote.method <- utiml_method_for_vote.schema(vote.schema)
+  vote.method <- utiml_vote.schema_method(vote.schema)
 
   if (CORES < 1)
     stop('Cores must be a positive value')
@@ -211,24 +213,28 @@ predict.CTRLmodel <- function (object,
   fjk <- as.matrix(as.multilabelPrediction(initial.prediction, FALSE))
 
   #Predict binary ensemble values
-  predictions <- utiml_lapply(object$models, function (models){
+  predictions <- utiml_lapply(names(object$models), function (labelname){
+    models <- object$models[[labelname]]
     preds <- list()
     for (labels in names(models)[-1])
       preds[[labels]] <- br.predict_model(models[[labels]], cbind(newdata, fjk[, labels]), ...)
 
-    utiml_compute_binary_ensemble(vote.method, preds)
+    if (length(preds) < 1)
+      initial.prediction[[labelname]]  #No models are found, only first prediction
+    else
+      utiml_compute_binary_ensemble(vote.method, preds)
   }, CORES)
 
+  names(predictions) <- names(object$models)
   as.multilabelPrediction(predictions, probability)
 }
 
-
 print.CTRLmodel <- function (x, ...) {
-  cat("BR with ConTRolled Label correlation Model\n\nCall:\n")
+  cat("BR with ConTRolled Label correlation Model (CTRL)\n\nCall:\n")
   print(x$call)
   cat("\nDetails:")
   cat("\n ", x$rounds, "Iterations")
-  cat("\n ", 1- x$validation.size, "/", x$validation.size, "train/validation size")
+  cat("\n ", 1 - x$validation.size, "/", x$validation.size, "train/validation size")
   cat("\n ", x$validation.threshold, "Threshold value")
   if (!is.null(x$seed))
     cat("\nSeed value:", x$seed)

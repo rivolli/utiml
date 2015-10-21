@@ -42,8 +42,8 @@ as.binaryPrediction <- function (probability, threshold = 0.5) {
 #'  test examples. If probability is \code{TRUE} the values contain the labels
 #'  probabilities, otherwise the values are the predictive value "0" or "1".
 #'
-#' @param predictions The list of mlresult obtained from union of all binary
-#'  predictions.
+#' @param predictions The list of binary.prediction obtained from union of all
+#'  binary predictions.
 #' @param probability A logical value. If \code{TRUE} the predicted values are
 #'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 #'

@@ -5,8 +5,14 @@ mltrain.basetest <- function (dataset, ...) {
 }
 
 mlpredict.test <- function (model, newdata, ...) {
+  predictions <- model$predictions
+  if (nrow(newdata) < length(predictions))
+    predictions <- predictions[1:nrow(newdata)]
+  else if (nrow(newdata) > length(predictions))
+    predictions <- rep(predictions, nrow(newdata))[1:nrow(newdata)]
+
   matrix(
-    c(1 - model$predictions, model$predictions),
+    c(1 - predictions, predictions),
     ncol=2,
     dimnames=list(rownames(newdata), c("0","1"))
   )
