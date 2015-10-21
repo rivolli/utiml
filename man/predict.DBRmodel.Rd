@@ -4,8 +4,8 @@
 \alias{predict.DBRmodel}
 \title{Predict Method for DBR}
 \usage{
-\method{predict}{DBRmodel}(object, newdata, ..., estimative = NULL,
-  probability = TRUE, CORES = 1)
+\method{predict}{DBRmodel}(object, newdata, estimative = NULL,
+  probability = TRUE, ..., CORES = 1)
 }
 \arguments{
 \item{object}{Object of class "\code{DBRmodel}", created by \code{\link{dbr}} method.}
@@ -13,15 +13,15 @@
 \item{newdata}{An object containing the new input data. This must be a matrix or
 data.frame object containing the same size of training data or a mldr object.}
 
-\item{...}{Others arguments passed to the base method prediction for all
-subproblems.}
-
 \item{estimative}{A matrix containing the result of other multi-label classification
 algorithm. This table must contain only 0 or 1 predictions and it must be a
 multi-label prediction result.}
 
 \item{probability}{Logical indicating whether class probabilities should be returned.
 (default: \code{TRUE})}
+
+\item{...}{Others arguments passed to the base method prediction for all
+subproblems.}
 
 \item{CORES}{The number of cores to parallelize the prediction. Values higher
   than 1 require the \pkg{parallel} package (default: 1).}
@@ -41,22 +41,20 @@ values of each label. To this use the prediction argument to inform a result of 
 multi-label algorithm.
 }
 \examples{
-#' library(utiml)
-
 # Emotion multi-label dataset using DBR
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Predict SVM scores
-model <- dbr(emotions)
-pred <- predict(model, testdata)
+model <- dbr(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, testdata, na.action = na.fail)
+pred <- predict(model, dataset$test, na.action = na.fail)
 
 # Using other classifier (EBR) to made the labels estimatives
-estimative <- predict(ebr(emotions), testdata, probability = FALSE)
-model <- dbr(emotions, estimate.models = FALSE)
-pred <- predict(model, testdata, estimative = estimative)
+estimative <- predict(ebr(dataset$train), dataset$test, prob = FALSE)
+model <- dbr(dataset$train, estimate.models = FALSE)
+pred <- predict(model, dataset$test, estimative = estimative)
 }
 \references{
 Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,

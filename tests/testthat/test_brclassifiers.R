@@ -22,6 +22,8 @@ baseTest <- function (model, expected.class) {
   expect_is(pred1, "mlresult")
   expect_equal(as.matrix(pred1), attr(pred, "classes"))
   expect_equal(as.matrix(pred), attr(pred1, "probs"))
+
+  pred
 }
 
 test_that("Binary Relevance", {
@@ -31,12 +33,10 @@ test_that("Binary Relevance", {
 
 test_that("BR Plus", {
   model <- brplus(train, "test")
-  baseTest(model, "BRPmodel")
+  pred1 <- baseTest(model, "BRPmodel")
 
   expect_is(model$initial, "BRmodel")
   pred0 <- predict(model$initial, test)
-
-  pred1 <- predict(model, test)
   expect_false(isTRUE(all.equal(pred0, pred1)))
 
   pred2 <- predict(model, test, strategy="NU")
@@ -60,19 +60,29 @@ test_that("BR Plus", {
 
 test_that("CTRL", {
   model <- ctrl(train, "test")
-  baseTest(model, "CTRLmodel")
+  pred1 <- baseTest(model, "CTRLmodel")
   baseTest(ctrl(train, "test", validation.threshold = 1), "CTRLmodel")
-  pred1 <- predict(model, test)
 
   model2 <- ctrl(train, "test", m = 2, validation.size = 0.2, validation.threshold = 0)
-  pred2 <- predict(model2, test)
-
+  pred2 <- baseTest(model2, "CTRLmodel")
   expect_equal(model2$rounds, 2)
-  expect_false(isTRUE(all.equal(pred1, pred2)))
 
   expect_error(ctrl(train, "test", 0))
   expect_error(ctrl(train, "test", validation.size=0))
   expect_error(ctrl(train, "test", validation.size=1))
   expect_error(ctrl(train, "test", validation.threshold=1.1))
   expect_error(predict(model, test, "ABC"))
+})
+
+test_that("DBR", {
+  model <- dbr(train, "test")
+  pred <- baseTest(model, "DBRmodel")
+  expect_is(model$estimation, "BRmodel")
+
+  estimative <- predict(model$estimation, test, prob = FALSE)
+  pred1 <- predict(model, test, estimative)
+  expect_equal(pred1, pred)
+
+  model <- dbr(train, "test", estimate = FALSE)
+  expect_error(predict(model, test))
 })

@@ -16,13 +16,11 @@
 #'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
 #'    \code{'SVM'}).
-#' @param ... Others arguments passed to the base method for all subproblems.
 #' @param estimate.models Logical value indicatind whether is necessary build
 #'   Binary Relevance classifier for estimate process. The default implementaion
 #'   use BR as estimators, however when other classifier is desirable then use
 #'   the value \code{FALSE} to skip this process. (default: \code{TRUE}).
-#' @param save.datasets Logical indicating whether the binary datasets must be
-#'   saved in the model or not. (default: FALSE)
+#' @param ... Others arguments passed to the base method for all subproblems.
 #' @param CORES he number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
@@ -31,10 +29,6 @@
 #'    \item{estimation}{The BR model to estimate the values for the labels.
 #'      Only when the \code{estimate.models = TRUE}.}
 #'    \item{models}{A list of final models named by the label names.}
-#'    \item{datasets}{A list with \code{estimation} and \code{final} datasets of
-#'      type \code{mldDBR} named by the label names. Only when the
-#'      \code{save.datasets = TRUE}.
-#'    }
 #' }
 #'
 #' @references
@@ -46,23 +40,20 @@
 #'
 #' @examples
 #' # Train and predict emotion multilabel dataset using DBR
-#' library(utiml)
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Use SVM as base method
-#' model <- dbr(emotions)
-#' pred <- predict(model, testdata)
+#' model <- dbr(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Use Random Forest as base method and 4 cores
-#' model <- dbr(emotions, "RF", CORES = 4)
-#' pred <- predict(model, testdata)
+#' model <- dbr(dataset$train, "RF", CORES = 4)
+#' pred <- predict(model, dataset$test)
 dbr <- function (mdata,
-                    base.method = "SVM",
-                    ...,
-                    estimate.models = TRUE,
-                    save.datasets = FALSE,
-                    CORES = 1
-) {
+                  base.method = "SVM",
+                  estimate.models = TRUE,
+                  ...,
+                  CORES = 1) {
   #Validations
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
@@ -73,7 +64,7 @@ dbr <- function (mdata,
   #DBR Model class
   dbrmodel <- list()
   if (estimate.models)
-    dbrmodel$estimation <- br(mdata, base.method, ..., save.datasets = save.datasets, CORES = CORES)
+    dbrmodel$estimation <- br(mdata, base.method, ..., CORES = CORES)
 
   basedata <- mdata$dataset[mdata$attributesIndexes]
   labeldata <- mdata$dataset[mdata$labels$index]
@@ -82,14 +73,6 @@ dbr <- function (mdata,
   }, CORES)
   names(datasets) <- rownames(mdata$labels)
   dbrmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-
-  if (save.datasets) {
-    dbrmodel$datasets <- list(final = datasets)
-    if (estimate.models) {
-      dbrmodel$datasets$estimation = dbrmodel$estimation$datasets
-      dbrmodel$estimation$datasets <- NULL
-    }
-  }
 
   dbrmodel$call <- match.call()
   class(dbrmodel) <- "DBRmodel"
@@ -109,13 +92,13 @@ dbr <- function (mdata,
 #' @param object Object of class "\code{DBRmodel}", created by \code{\link{dbr}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
-#' @param ... Others arguments passed to the base method prediction for all
-#'   subproblems.
 #' @param estimative A matrix containing the result of other multi-label classification
 #'   algorithm. This table must contain only 0 or 1 predictions and it must be a
 #'   multi-label prediction result.
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
+#' @param ... Others arguments passed to the base method prediction for all
+#'   subproblems.
 #' @param CORES The number of cores to parallelize the prediction. Values higher
 #'   than 1 require the \pkg{parallel} package (default: 1).
 #'
@@ -132,27 +115,25 @@ dbr <- function (mdata,
 #' @export
 #'
 #' @examples
-#' #' library(utiml)
-#'
 #' # Emotion multi-label dataset using DBR
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Predict SVM scores
-#' model <- dbr(emotions)
-#' pred <- predict(model, testdata)
+#' model <- dbr(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Passing a specif parameter for SVM predict method
-#' pred <- predict(model, testdata, na.action = na.fail)
+#' pred <- predict(model, dataset$test, na.action = na.fail)
 #'
 #' # Using other classifier (EBR) to made the labels estimatives
-#' estimative <- predict(ebr(emotions), testdata, probability = FALSE)
-#' model <- dbr(emotions, estimate.models = FALSE)
-#' pred <- predict(model, testdata, estimative = estimative)
+#' estimative <- predict(ebr(dataset$train), dataset$test, prob = FALSE)
+#' model <- dbr(dataset$train, estimate.models = FALSE)
+#' pred <- predict(model, dataset$test, estimative = estimative)
 predict.DBRmodel <- function (object,
                               newdata,
-                              ...,
                               estimative = NULL,
                               probability = TRUE,
+                              ...,
                               CORES = 1
 ) {
   #Validations

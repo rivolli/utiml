@@ -4,8 +4,7 @@
 \alias{dbr}
 \title{Dependent Binary Relevance (DBR) for multi-label Classification}
 \usage{
-dbr(mdata, base.method = "SVM", ..., estimate.models = TRUE,
-  save.datasets = FALSE, CORES = 1)
+dbr(mdata, base.method = "SVM", estimate.models = TRUE, ..., CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -19,15 +18,12 @@ dataset (provided by \pkg{mldr} package).}
   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
    \code{'SVM'}).}
 
-\item{...}{Others arguments passed to the base method for all subproblems.}
-
 \item{estimate.models}{Logical value indicatind whether is necessary build
 Binary Relevance classifier for estimate process. The default implementaion
 use BR as estimators, however when other classifier is desirable then use
 the value \code{FALSE} to skip this process. (default: \code{TRUE}).}
 
-\item{save.datasets}{Logical indicating whether the binary datasets must be
-saved in the model or not. (default: FALSE)}
+\item{...}{Others arguments passed to the base method for all subproblems.}
 
 \item{CORES}{he number of cores to parallelize the training. Values higher
   than 1 require the \pkg{parallel} package. (default: 1)}
@@ -38,10 +34,6 @@ An object of class \code{DBRmodel} containing the set of fitted
    \item{estimation}{The BR model to estimate the values for the labels.
      Only when the \code{estimate.models = TRUE}.}
    \item{models}{A list of final models named by the label names.}
-   \item{datasets}{A list with \code{estimation} and \code{final} datasets of
-     type \code{mldDBR} named by the label names. Only when the
-     \code{save.datasets = TRUE}.
-   }
 }
 }
 \description{
@@ -54,16 +46,15 @@ Create a DBR classifier to predic multi-label data.
 }
 \examples{
 # Train and predict emotion multilabel dataset using DBR
-library(utiml)
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Use SVM as base method
-model <- dbr(emotions)
-pred <- predict(model, testdata)
+model <- dbr(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Use Random Forest as base method and 4 cores
-model <- dbr(emotions, "RF", CORES = 4)
-pred <- predict(model, testdata)
+model <- dbr(dataset$train, "RF", CORES = 4)
+pred <- predict(model, dataset$test)
 }
 \references{
 Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,
