@@ -13,8 +13,7 @@
 \item{newdata}{An object containing the new input data. This must be a matrix or
 data.frame object containing the same size of training data or a mldr object.}
 
-\item{vote.schema}{Define the way that ensemble must compute the predictions.
-The valid options are describe in \link{utiml_vote.schema_method}. (default: "MAJ")}
+\item{vote.schema}{utiml_vote.schema_method(vote.schema)}
 
 \item{probability}{Logical indicating whether class probabilities should be returned.
 (default: \code{TRUE})}

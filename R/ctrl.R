@@ -159,8 +159,7 @@ ctrl <- function (mdata,
 #' @param object Object of class "\code{CTRLmodel}", created by \code{\link{ctrl}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
-#' @param vote.schema Define the way that ensemble must compute the predictions.
-#'  The valid options are describe in \link{utiml_vote.schema_method}. (default: "MAJ")
+#' @param vote.schema utiml_vote.schema_method(vote.schema)
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param ... Others arguments passed to the base method prediction for all
@@ -200,6 +199,8 @@ predict.CTRLmodel <- function (object,
     stop('First argument must be an CTRLmodel object')
 
   vote.method <- utiml_vote.schema_method(vote.schema)
+  if (is.null(vote.method))
+    stop("Invalid vote schema")
 
   if (CORES < 1)
     stop('Cores must be a positive value')

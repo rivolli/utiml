@@ -7,10 +7,7 @@ df$Label3 <- c(sample(c(0,1), 10, replace = TRUE))
 train <- mldr_from_dataframe(df, labelIndices = c(6, 7, 8), name = "testMLDR")
 test <- train$dataset[, train$attributesIndexes]
 
-baseTest <- function (model, expected.class) {
-  expect_is(model, expected.class)
-  expect_equal(names(model$models), rownames(train$labels))
-
+predictionTest <- function (model) {
   pred <- predict(model, test)
   expect_is(pred, "mlresult")
   expect_equal(nrow(pred), nrow(test))
@@ -24,6 +21,20 @@ baseTest <- function (model, expected.class) {
   expect_equal(as.matrix(pred), attr(pred1, "probs"))
 
   pred
+}
+
+baseTest <- function (model, expected.class) {
+  expect_is(model, expected.class)
+  expect_equal(names(model$models), rownames(train$labels))
+
+  predictionTest(model)
+}
+
+ensembleTest <- function (model, expected.class) {
+  expect_is(model, expected.class)
+  expect_equal(length(model$models), model$rounds)
+
+  predictionTest(model)
 }
 
 test_that("Binary Relevance", {
@@ -85,4 +96,19 @@ test_that("DBR", {
 
   model <- dbr(train, "test", estimate = FALSE)
   expect_error(predict(model, test))
+})
+
+test_that("EBR", {
+  model1 <- ebr(train, "test")
+  pred1 <- ensembleTest(model1, "EBRmodel")
+
+  model2 <- ebr(train, "test", m=3, subsample=0.5, attr.space=0.3)
+  pred2<- ensembleTest(model2, "EBRmodel")
+
+  expect_false(isTRUE(all.equal(pred1, pred2)))
+
+  expect_error(ebr(train, "test", subsample=0))
+  expect_error(ebr(train, "test", attr.space=0))
+  expect_error(ebr(train, "test", m=0))
+  expect_error(predict(model1, test, "ABC"))
 })
