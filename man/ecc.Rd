@@ -5,7 +5,7 @@
 \title{Ensemble of Classifier Chains for multi-label Classification}
 \usage{
 ecc(mdata, base.method = "SVM", m = 10, subsample = 0.75,
-  attr.space = 0.5, ..., save.datasets = FALSE, SEED = NULL, CORES = 1)
+  attr.space = 0.5, ..., SEED = NULL, CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -19,8 +19,7 @@ dataset (provided by \pkg{mldr} package).}
   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
    \code{'SVM'})}
 
-\item{m}{The number of interations or Binary Relevance models to use in the
-ensemble.}
+\item{m}{The number of Binary Relevance models used in the ensemble.}
 
 \item{subsample}{A value between 0.1 and 1 to determine the percentage of
 training instances must be used for each interation. (default: 0.75)}
@@ -30,9 +29,6 @@ attributes must be used for each interation. (default: 0.50)}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{save.datasets}{Logical indicating whether the binary datasets must be
-saved in the model or not. (default: \code{FALSE})}
-
 \item{SEED}{A single value, interpreted as an integer to allow obtain the
 same results again. (default: \code{NULL})}
 
@@ -41,11 +37,12 @@ same results again. (default: \code{NULL})}
 }
 \value{
 An object of class \code{ECCmodel} containing the set of fitted
-  CC models, including: \describe{ \item{rounds}{The number of interations}
-  \item{models}{A list of BR models.} \item{nrow}{The number of instances
-  used in each training dataset} \item{ncol}{The number of attributes used
-  in each training dataset} \item{seed}{The value of the seed, present only
-  when the \code{SEED} is defined.}}
+  CC models, including: \describe{
+  \item{rounds}{The number of interations}
+  \item{models}{A list of BR models.}
+  \item{nrow}{The number of instances used in each training dataset}
+  \item{ncol}{The number of attributes used in each training dataset}
+}
 }
 \description{
 Create an Ensemble of Classifier Chains model for
@@ -59,20 +56,19 @@ Create an Ensemble of Classifier Chains model for
 }
 \examples{
 # Train and predict emotion multilabel dataset using Ensemble of Classifier Chains
-library(utiml)
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Use all default values
-model <- ecc(emotions)
-pred <- predict(model, testdata)
+model <- ecc(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Use C4.5 with 100\% of instances and only 5 rounds
-model <- ecc(emotions, "C4.5", m = 5, subsample = 1)
-pred <- predict(model, testdata)
+model <- ecc(dataset$train, "C4.5", m = 5, subsample = 1)
+pred <- predict(model, dataset$test)
 
 # Use 75\% of attributes and use a specific seed
-model <- ecc(emotions, attr.space = 0.75, SEED = 1)
-pred <- predict(model, testdata)
+model <- ecc(dataset$train, attr.space = 0.75, SEED = 1)
+pred <- predict(model, dataset$test)
 }
 \references{
 Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier

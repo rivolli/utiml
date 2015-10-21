@@ -4,8 +4,8 @@
 \alias{predict.ECCmodel}
 \title{Predict Method for Ensemble of Classifier Chains}
 \usage{
-\method{predict}{ECCmodel}(object, newdata, vote.schema = c("score",
-  "majority", "prop"), ..., probability = TRUE, CORES = 1)
+\method{predict}{ECCmodel}(object, newdata, vote.schema = "MAJ",
+  probability = TRUE, ..., CORES = 1)
 }
 \arguments{
 \item{object}{Object of class "\code{ECCmodel}", created by \code{\link{ecc}} method.}
@@ -14,17 +14,13 @@
 data.frame object containing the same size of training data or a mldr object.}
 
 \item{vote.schema}{Define the way that ensemble must compute the predictions.
-The valid options are: \describe{
- \code{'score'}{Compute the averages of probabilities},
- \code{'majority'}{Compute the votes scaled between 0 and \code{m} (number of interations)},
- \code{'prop'}{Compute the proportion of votes, scale data between min and max of votes} }
- (default: \code{'score'})}
-
-\item{...}{Others arguments passed to the base method prediction for all
-subproblems.}
+The valid options are describe in \link{utiml_vote.schema_method}. (default: "MAJ")}
 
 \item{probability}{Logical indicating whether class probabilities should be returned.
 (default: \code{TRUE})}
+
+\item{...}{Others arguments passed to the base method prediction for all
+subproblems.}
 
 \item{CORES}{The number of cores to parallelize the prediction. Values higher
   than 1 require the \pkg{parallel} package (default: 1).}
@@ -38,26 +34,19 @@ A matrix containing the probabilistic values or just predictions (only when
 This function predicts values based upon a model trained
  by \code{\link{ecc}}.
 }
-\section{Warning}{
-
-   RWeka package does not permit use \code{'C4.5'} in parallel mode, use
-   \code{'C5.0'} or \code{'CART'} instead of it
-}
 \examples{
-library(utiml)
-
 # Emotion multi-label dataset using Ensemble of Binary Relevance
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Predict SVM scores
-model <- ecc(emotions)
-pred <- predict(model, testdata)
+model <- ecc(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Predict SVM bipartitions running in 6 cores
-pred <- predict(model, testdata, probability = FALSE, CORES = 6)
+pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
 
-# Return the classes with have at least half of votes
-pred <- predict(model, testdata, vote.schema = "majority", probability = FALSE)
+# Return the classes with the highest score
+pred <- predict(model, dataset$test, vote.schema = "MAX")
 }
 \seealso{
 \code{\link[=ecc]{Ensemble of Classifier Chains (ECC)}}

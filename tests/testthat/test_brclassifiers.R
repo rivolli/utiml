@@ -102,7 +102,9 @@ test_that("EBR", {
   model1 <- ebr(train, "test")
   pred1 <- ensembleTest(model1, "EBRmodel")
 
-  model2 <- ebr(train, "test", m=3, subsample=0.5, attr.space=0.3)
+  model2 <- ebr(train, "test", m=3, subsample=0.5, attr.space=0.40)
+  expect_equal(model2$nrow, 5)
+  expect_equal(model2$ncol, 2)
   pred2<- ensembleTest(model2, "EBRmodel")
 
   expect_false(isTRUE(all.equal(pred1, pred2)))
@@ -110,5 +112,22 @@ test_that("EBR", {
   expect_error(ebr(train, "test", subsample=0))
   expect_error(ebr(train, "test", attr.space=0))
   expect_error(ebr(train, "test", m=0))
+  expect_error(predict(model1, test, "ABC"))
+})
+
+test_that("ECC", {
+  model1 <- ecc(train, "test")
+  pred1 <- ensembleTest(model1, "ECCmodel")
+
+  model2 <- ecc(train, "test", m=3, subsample=0.5, attr.space=0.40)
+  expect_equal(model2$nrow, 5)
+  expect_equal(model2$ncol, 2)
+  pred2<- ensembleTest(model2, "ECCmodel")
+
+  expect_false(isTRUE(all.equal(pred1, pred2)))
+
+  expect_error(ecc(train, "test", subsample=0))
+  expect_error(ecc(train, "test", attr.space=0))
+  expect_error(ecc(train, "test", m=0))
   expect_error(predict(model1, test, "ABC"))
 })

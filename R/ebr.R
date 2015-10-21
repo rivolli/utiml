@@ -62,6 +62,10 @@
 #' # Use 75% of attributes and use a specific seed
 #' model <- ebr(dataset$train, attr.space = 0.75, SEED = 1)
 #' pred <- predict(model, dataset$test)
+#'
+#' # Running in 4 cores
+#' model <- ebr(dataset$train, CORES=4)
+#' pred <- predict(model, dataset$test, CORES=4)
 ebr <- function (mdata,
                 base.method = "SVM",
                 m = 10,
