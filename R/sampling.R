@@ -81,7 +81,6 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
 #'  stratified algorithm, that is based on labels proportions.
 #'  The number of partitions is defined in \code{partitions} parameter.
 #'  The instances are used in only one partition of divistion.
-#'  Use the SEED parameter to obtain the same result again.
 #'
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
 #' @param partitions A list of percentages or a single value.
@@ -92,8 +91,6 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
 #'  the partitions will be generated with the informed proportion.
 #'  If partitions have names, they are used to name the return.
 #'  (default: \code{c(0.7, 0.3)})
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again. (default: \code{NULL})
 #'
 #' @return A list with at least two datasets sampled as specified
 #'  in partitions parameter.
@@ -114,18 +111,15 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
 #' print(dataset[[1]]$measures)
 #' print(dataset[[2]]$measures)
 #'
-#' # Using a SEED and split the dataset in the half
-#' datasets <- mldr_iterative_stratification_holdout(emotions, 0.5, SEED = 12)
-#'
 #' # Split the dataset in three parts
 #' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
 #' dataset <- mldr_iterative_stratification_holdout(emotions, partitions)
 #' print(dataset$train)
 #' print(dataset$validation)
 #' print(dataset$test)
-mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
   partition.names <- names(partitions)
-  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
+  utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
     lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
       mldr_subset(mdata, fold, mdata$attributesIndexes)
     })
@@ -142,8 +136,6 @@ mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.
 #'
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
 #' @param k The number of folds. (default: 10)
-#' @param SEED A single value, interpreted as an integer to allow obtain the
-#'   same results again. (default: \code{NULL})
 #'
 #' @return An object of type \code{mldr_kfolds}. This is a list with
 #'  k elements, where each element contains a list of row indexes based
@@ -163,8 +155,8 @@ mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.
 #'
 #' # 10 folds
 #' folds <- mldr_iterative_stratification_kfold(emotions, 10)
-mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
-  utiml_kfold(mdata, k, SEED, utiml_iterative_stratification)
+mldr_iterative_stratification_kfold <- function (mdata, k = 10) {
+  utiml_kfold(mdata, k, utiml_iterative_stratification)
 }
 
 #' @title Create distinct partitions of a multi-label dataset
@@ -174,7 +166,6 @@ mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
 #'  train, test, validation or other proposes. The number of
 #'  partitions is defined in \code{partitions} parameter.
 #'  The instances are used in only one partition of divistion.
-#'  Use the SEED parameter to obtain the same result again.
 #'
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
 #' @param partitions A list of percentages or a single value.
@@ -185,8 +176,6 @@ mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
 #'  the partitions will be generated with the informed proportion.
 #'  If partitions have names, they are used to name the return.
 #'  (default: \code{c(0.7, 0.3)})
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again. (default: \code{NULL}, optional)
 #'
 #' @return A list with at least two datasets sampled as specified
 #'  in partitions parameter.
@@ -201,18 +190,15 @@ mldr_iterative_stratification_kfold <- function (mdata, k = 10, SEED = NULL) {
 #' print(datasets[[1]]$measures)
 #' print(datasets[[2]]$measures)
 #'
-#' # Using a SEED and split the dataset in the half
-#' datasets <- mldr_random_holdout(emotions, 0.5, SEED = 12)
-#'
 #' # Split the dataset in three parts
 #' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
 #' dataset <- mldr_random_holdout(emotions, partitions)
 #' print(dataset$train)
 #' print(dataset$validation)
 #' print(dataset$test)
-mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
   partition.names <- names(partitions)
-  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
+  utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
     lapply(utiml_random_split(mdata, partitions), function (fold) {
       mldr_subset(mdata, fold, mdata$attributesIndexes)
     })
@@ -227,8 +213,6 @@ mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
 #'
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
 #' @param k The number of folds. (default: 10)
-#' @param SEED A single value, interpreted as an integer to allow obtain the
-#'   same results again. (default: \code{NULL})
 #'
 #' @return An object of type \code{mldr_kfolds}. This is a list with
 #'  k elements, where each element contains a list of row indexes based
@@ -243,8 +227,8 @@ mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
 #'
 #' # 10 folds
 #' folds <- mldr_random_kfold(emotions, 10)
-mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
-  utiml_kfold(mdata, k, SEED, utiml_random_split)
+mldr_random_kfold <- function (mdata, k = 10) {
+  utiml_kfold(mdata, k, utiml_random_split)
 }
 
 #' @title Create stratified partitions of a multi-label dataset
@@ -255,7 +239,6 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
 #'  approach based on labelsets distribution. The number of
 #'  partitions is defined in \code{partitions} parameter.
 #'  The instances are used in only one partition of divistion.
-#'  Use the SEED parameter to obtain the same result again.
 #'
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
 #' @param partitions A list of percentages or a single value.
@@ -266,8 +249,6 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
 #'  the partitions will be generated with the informed proportion.
 #'  If partitions have names, they are used to name the return.
 #'  (default: \code{c(0.7, 0.3)})
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again. (default: \code{NULL})
 #'
 #' @return A list with at least two datasets sampled as specified
 #'  in partitions parameter.
@@ -284,12 +265,9 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
 #' datasets <- mldr_stratified_holdout(emotions)
 #'
 #' # The same result can be obtained as:
-#' datasets <- mldr_stratified_holdout(emotions, 0.7)partition.names = NULL,
-#' print(datasets[[1]]$measures)partition.names <- names(partitions)
+#' datasets <- mldr_stratified_holdout(emotions, 0.7)
+#' print(datasets[[1]]$measures)
 #' print(datasets[[2]]$measures)
-#'
-#' # Using a SEED and split the dataset in the half
-#' datasets <- mldr_stratified_holdout(emotions, 0.5, SEED = 12)
 #'
 #' # Split the dataset in three parts
 #' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
@@ -297,9 +275,9 @@ mldr_random_kfold <- function (mdata, k = 10, SEED = NULL) {
 #' print(dataset$train)
 #' print(dataset$validation)
 #' print(dataset$test)
-mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NULL) {
+mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
   partition.names <- names(partitions)
-  utiml_holdout(mdata, partitions, partition.names, SEED, function (mdata, partitions){
+  utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
     lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
       mldr_subset(mdata, fold, mdata$attributesIndexes)
     })
@@ -315,8 +293,6 @@ mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NUL
 #'
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
 #' @param k The number of folds. (default: 10)
-#' @param SEED A single value, interpreted as an integer to allow obtain the
-#'   same results again. (default: \code{NULL})
 #'
 #' @return An object of type \code{mldr_kfolds}. This is a list with
 #'  k elements, where each element contains a list of row indexes based
@@ -336,8 +312,8 @@ mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3), SEED = NUL
 #'
 #' # 10 folds
 #' folds <- mldr_stratified_kfold(emotions, 10)
-mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
-  utiml_kfold(mdata, k, SEED, utiml_labelset_stratification)
+mldr_stratified_kfold <- function (mdata, k = 10) {
+  utiml_kfold(mdata, k, utiml_labelset_stratification)
 }
 
 #' @title Create the k partitions of k-fold
@@ -345,28 +321,20 @@ mldr_stratified_kfold <- function (mdata, k = 10, SEED = NULL) {
 #'
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
 #' @param k The number of folds.
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again.
 #' @param kfold.method The method to split the data.
 #'
 #' @return An object of type mldr_kfolds
 #' @export
 #'
 #' @examples
-#' utiml_kfold(mdata, 10, SEED, utiml_random_split)
-utiml_kfold <- function (mdata, k, SEED, kfold.method) {
+#' utiml_kfold(mdata, 10, utiml_random_split)
+utiml_kfold <- function (mdata, k, kfold.method) {
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
-
-  if (!is.null(SEED))
-    set.seed(SEED)
 
   kf <- list(k=k)
   kf$fold <- do.call(kfold.method, list(mdata = mdata, r = rep(1/k, k)))
   class(kf) <- "mldr_kfolds"
-
-  if (!is.null(SEED))
-    set.seed(NULL)
 
   kf
 }
@@ -377,8 +345,6 @@ utiml_kfold <- function (mdata, k, SEED, kfold.method) {
 #' @param mdata A dataset of class \code{\link[mldr]{mldr}}.
 #' @param partitions A list of percentages with partitions sizes.
 #' @param partition.names a vector with the partition names.
-#' @param SEED A single value, interpreted as an integer to allow
-#'  obtain the same results again.
 #' @param holdout.method The method to split the data.
 #'
 #' @return A list with at least two datasets sampled as specified
@@ -386,22 +352,16 @@ utiml_kfold <- function (mdata, k, SEED, kfold.method) {
 #' @export
 #'
 #' @examples
-#' utiml_holdout(mdata, partitions, partition.names, SEED, utiml_random_split)
-utiml_holdout <- function (mdata, partitions, partition.names, SEED, holdout.method) {
+#' utiml_holdout(mdata, partitions, partition.names, utiml_random_split)
+utiml_holdout <- function (mdata, partitions, partition.names, holdout.method) {
   # Validations
   if (sum(partitions) > 1)
     stop("The sum of partitions can not be greater than 1")
-
-  if (!is.null(SEED))
-    set.seed(SEED)
 
   partitions <- utiml_ifelse(length(partitions) == 1, c(partitions, 1 - partitions), partitions)
 
   # Split data
   ldata <- do.call(holdout.method, list(mdata = mdata, partitions = partitions))
-
-  if (!is.null(SEED))
-    set.seed(NULL)
 
   names(ldata) <- partition.names
   ldata
@@ -510,7 +470,6 @@ utiml_iterative_stratification <- function (mdata, r) {
       cji[m, i] <- cji[m, i] - 1
       cj[m] <- cj[m] - 1
     }
-    cat("|D|: ", length(D), "\n")
   }
 
   S

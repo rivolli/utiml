@@ -110,7 +110,7 @@ ctrl <- function (mdata,
   ctrlmodel$validation.threshold <- validation.threshold
 
   #Step1 - Split validation data, train and evaluation using F1 measure (1-5)
-  validation.set <- mldr_stratified_holdout(mdata, c(1 - validation.size, validation.size), SEED)
+  validation.set <- mldr_stratified_holdout(mdata, c(1 - validation.size, validation.size))
   validation.model <- br(validation.set[[1]], base.method = base.method, ..., CORES = CORES)
   params <- list(object = validation.model, newdata = validation.set[[2]], probability = FALSE, CORES = CORES)
   validation.prediction <- do.call(predict, c(params, predict.params))
