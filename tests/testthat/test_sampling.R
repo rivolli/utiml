@@ -8,7 +8,21 @@ df$Label4 <- as.numeric(df$Label1 == 0 | df$Label2 == 0 | df$Label3 == 0)
 mdata <- mldr_from_dataframe(df, labelIndices = c(11, 12, 13, 14), name = "testMLDR")
 set.seed(NULL)
 
-#TODO test sampling with the result of other sample
+testFolds <- function (kfold, original) {
+  real <- unlist(kfold$fold)
+  expected <- unique(real)
+  expect_true(all(expected == real))
+  expect_true(all(sort(as.character(expected)) == sort(rownames(original$dataset))))
+}
+
+testEmptyIntersectRows <- function (a, b) {
+  expect_equal(length(intersect(rownames(a$dataset), rownames(b$dataset))),0)
+}
+
+testCompletude <- function (list, original) {
+  names <- sort(unlist(lapply(list, function (fold)  rownames(fold$dataset))))
+  expect_true(all(names == sort(rownames(original$dataset))))
+}
 
 test_that("random holdout", {
   folds <- mldr_random_holdout(mdata, 0.7)
@@ -18,12 +32,17 @@ test_that("random holdout", {
   expect_equal(folds[[1]]$measures$num.instances, 70)
   expect_equal(folds[[2]]$measures$num.instances, 30)
   expect_equal(rownames(folds[[1]]$labels), rownames(folds[[2]]$labels))
+  testEmptyIntersectRows(folds[[1]], folds[[2]])
+  testCompletude(folds, mdata)
+
+  subfolds <- mldr_random_holdout(folds[[1]], 0.5)
+  testEmptyIntersectRows(subfolds[[1]], subfolds[[2]])
+  testCompletude(subfolds, folds[[1]])
 
   folds <- mldr_random_holdout(mdata, c("train"=0.5, "test"=0.5))
   expect_named(folds, c("train", "test"))
   expect_equal(folds$train$measures$num.instances, folds$test$measures$num.instances)
-  names <- sort(c(rownames(folds$train$dataset), rownames(folds$test$dataset)))
-  expect_equal(names, sort(rownames(mdata$dataset)))
+  testCompletude(folds, mdata)
 
   set.seed(1)
   f1 <- mldr_random_holdout(mdata, c(0.5, 0.5))
@@ -44,7 +63,16 @@ test_that("stratified holdout", {
   expect_equal(f[[3]]$measures$num.instances, 20)
   expect_equal(rownames(f[[1]]$labels), rownames(f[[2]]$labels))
   expect_equal(rownames(f[[1]]$labels), rownames(f[[3]]$labels))
-  #Test the stratified
+
+  testEmptyIntersectRows(f$a, f$b)
+  testEmptyIntersectRows(f$a, f$c)
+  testEmptyIntersectRows(f$b, f$c)
+  testCompletude(f, mdata)
+
+  sf <- mldr_stratified_holdout(f$a, c("a"=0.5, "b"=0.5))
+  expect_equal(length(sf), 2)
+  testEmptyIntersectRows(sf$a, sf$b)
+  testCompletude(sf, f$a)
 })
 
 test_that("iterative holdout", {
@@ -53,7 +81,24 @@ test_that("iterative holdout", {
   expect_named(f, c("a", "b", "c", "d"))
   expect_equal(rownames(f[[1]]$labels), rownames(f[[2]]$labels))
   expect_equal(rownames(f[[1]]$labels), rownames(f[[3]]$labels))
-  #Test the stratified
+
+  testEmptyIntersectRows(f$a, f$b)
+  testEmptyIntersectRows(f$a, f$c)
+  testEmptyIntersectRows(f$a, f$d)
+  testEmptyIntersectRows(f$b, f$c)
+  testEmptyIntersectRows(f$b, f$d)
+  testEmptyIntersectRows(f$c, f$d)
+  testCompletude(f, mdata)
+
+  sf <- mldr_stratified_holdout(f$a, c("a"=0.5, "b"=0.5))
+  expect_equal(length(sf), 2)
+  testEmptyIntersectRows(sf$a, sf$b)
+  testCompletude(sf, f$a)
+
+  folds <- mldr_random_holdout(mdata, 0.6)
+  sf <- mldr_stratified_holdout(folds[[2]], c("a"=0.6, "b"=0.4))
+  testEmptyIntersectRows(sf$a, sf$b)
+  testCompletude(sf, folds[[2]])
 })
 
 test_that("random kfold", {
@@ -63,6 +108,7 @@ test_that("random kfold", {
   expect_equal(length(f$fold), 10)
   for (i in 1:10)
     expect_equal(length(f$fold[[i]]), 10)
+  testFolds(f, mdata)
 
   fdata1 <- mldr_getfold(mdata, f, 1)
   fdata2 <- mldr_getfold(mdata, f, 10)
@@ -72,6 +118,7 @@ test_that("random kfold", {
 
   set.seed(1)
   f1 <- mldr_random_kfold(mdata, 4)
+  testFolds(f1, mdata)
   set.seed(1)
   f2 <- mldr_random_kfold(mdata, 4)
   expect_equal(length(f1$fold), 4)
@@ -81,11 +128,16 @@ test_that("random kfold", {
   set.seed(NULL)
 
   f3 <- mldr_random_kfold(mdata, 3)
+  testFolds(f3, mdata)
   expect_equal(f3$k, 3)
   expect_equal(length(unlist(f3$fold)), 100)
   expect_more_than(length(f3$fold[[1]]), 32)
   expect_more_than(length(f3$fold[[2]]), 32)
   expect_more_than(length(f3$fold[[3]]), 32)
+
+  ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
+  f4 <- mldr_random_kfold(ds$train, 9)
+  testFolds(f4, ds$train)
 })
 
 test_that("stratified kfold", {
@@ -96,6 +148,7 @@ test_that("stratified kfold", {
   for (i in 1:10)
     expect_equal(length(f$fold[[i]]), 10)
 
+  testFolds(f, mdata)
   fdata1 <- mldr_getfold(mdata, f, 1)
   fdata2 <- mldr_getfold(mdata, f, 10)
 
@@ -104,6 +157,7 @@ test_that("stratified kfold", {
 
   set.seed(1)
   f1 <- mldr_stratified_kfold(mdata, 4)
+  testFolds(f1, mdata)
   set.seed(1)
   f2 <- mldr_stratified_kfold(mdata, 4)
   expect_equal(length(f1$fold), 4)
@@ -113,11 +167,16 @@ test_that("stratified kfold", {
   set.seed(NULL)
 
   f3 <- mldr_stratified_kfold(mdata, 3)
+  testFolds(f3, mdata)
   expect_equal(f3$k, 3)
   expect_equal(length(unlist(f3$fold)), 100)
   expect_more_than(length(f3$fold[[1]]), 32)
   expect_more_than(length(f3$fold[[2]]), 32)
   expect_more_than(length(f3$fold[[3]]), 32)
+
+  ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
+  f4 <- mldr_random_kfold(ds$train, 9)
+  testFolds(f4, ds$train)
 })
 
 test_that("iterative kfold", {
@@ -128,6 +187,7 @@ test_that("iterative kfold", {
   for (i in 1:10)
     expect_more_than(length(f$fold[[i]]), 7)
 
+  testFolds(f, mdata)
   fdata1 <- mldr_getfold(mdata, f, 1)
   fdata2 <- mldr_getfold(mdata, f, 10)
 
@@ -136,6 +196,7 @@ test_that("iterative kfold", {
 
   set.seed(1)
   f1 <- mldr_iterative_stratification_kfold(mdata, 4)
+  testFolds(f1, mdata)
   set.seed(1)
   f2 <- mldr_iterative_stratification_kfold(mdata, 4)
   expect_equal(length(f1$fold), 4)
@@ -145,11 +206,16 @@ test_that("iterative kfold", {
   set.seed(NULL)
 
   f3 <- mldr_iterative_stratification_kfold(mdata, 3)
+  testFolds(f3, mdata)
   expect_equal(f3$k, 3)
   expect_equal(length(unlist(f3$fold)), 100)
   expect_more_than(length(f3$fold[[1]]), 30)
   expect_more_than(length(f3$fold[[2]]), 30)
   expect_more_than(length(f3$fold[[3]]), 30)
+
+  ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
+  f4 <- mldr_random_kfold(ds$train, 9)
+  testFolds(f4, ds$train)
 })
 
 test_that("subset and random subset", {
