@@ -4,8 +4,9 @@
 \alias{mbr}
 \title{Meta-BR or 2BR for multi-label Classification}
 \usage{
-mbr(mdata, base.method = "SVM", phi = 0, ..., predict.params = list(),
-  save.datasets = FALSE, CORES = 1)
+mbr(mdata, base.method = "SVM", folds = 1, phi = 0, ...,
+  predict.params = list(), save.datasets = FALSE, SEED = NULL,
+  CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -21,6 +22,9 @@ dataset (provided by \pkg{mldr} package).}
   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
    \code{'SVM'})}
 
+\item{folds}{the number of folds used in internal prediction. If this value is
+1 all dataset will be used to predict the first prediction. (default: 1)}
+
 \item{phi}{A value between 0 and 1 to determine the correlation coefficient,
 The value 0 include all labels in the second phase and the 1 only the
 predicted label. A good value for this argument is 0.3 as suggest in
@@ -30,9 +34,6 @@ original paper. (default: 0)}
 
 \item{predict.params}{A list of default arguments passed to the predictor
 method. (default: \code{list()})}
-
-\item{save.datasets}{Logical indicating whether the binary datasets must be
-saved in the model or not. (default: \code{FALSE})}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
   than 1 require the \pkg{parallel} package. (default: 1)}
@@ -46,12 +47,8 @@ An object of class \code{MBRmodel} containing the set of fitted
        with \code{phi} parameter to define the labels used in the second step.
      }
      \item{basemodel}{The BRModel used in the first iteration.}
-     \item{metamodels}{A list of models named by the label names used in the
+     \item{models}{A list of models named by the label names used in the
        second iteration.
-     }
-     \item{datasets}{A list with \code{base} and \code{meta} datasets of
-       type \code{mldBR} named by the label names. Only when the
-       \code{save.datasets = TRUE}.
      }
  }
 }
@@ -63,24 +60,22 @@ Create a Meta-BR (MBR) classifier to predic multi-label
 
  This implementation use complete training set for both training and
  prediction steps of 2BR. However, the \code{phi} parameter may be used
- to remove low label correlations on the second step. Furthermore, we
- remove the \code{F} parameter because its specification is not clear.
+ to remove low label correlations on the second step.
 }
 \examples{
 # Train and predict emotion multilabel dataset using Meta-BR
-library(utiml)
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Use SVM as base method
-model <- mbr(emotions)
+model <- mbr(dataset$train)
 pred <- predict(model, testdata)
 
-# Use different phi correlation with C4.5 classifier
-model <- mbr(emotions, "C4.5", 0.3)
+# Use 10 folds and different phi correlation with C4.5 classifier
+model <- mbr(dataset$train, "C4.5", 10, 0.3)
 pred <- predict(model, testdata)
 
 # Set a specific parameter
-model <- mbr(emotions, "KNN", k=5)
+model <- mbr(dataset$train, "KNN", k=5)
 pred <- predict(model, testdata)
 }
 \references{
@@ -93,6 +88,9 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
 }
 \seealso{
 \code{\link{labels_correlation_coefficient}}
+
+Other Stacking methods: \code{\link{brplus}};
+  \code{\link{dbr}}
 
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};

@@ -8,6 +8,8 @@ df$Label4 <- as.numeric(df$Label1 == 0 | df$Label2 == 0 | df$Label3 == 0)
 mdata <- mldr_from_dataframe(df, labelIndices = c(11, 12, 13, 14), name = "testMLDR")
 set.seed(NULL)
 
+#TODO test sampling with the result of other sample
+
 test_that("random holdout", {
   folds <- mldr_random_holdout(mdata, 0.7)
   expect_equal(length(folds), 2)

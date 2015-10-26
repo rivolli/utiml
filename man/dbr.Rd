@@ -64,6 +64,9 @@ Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,
 \seealso{
 \code{\link{rdbr}}
 
+Other Stacking methods: \code{\link{brplus}};
+  \code{\link{mbr}}
+
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};
   \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}};

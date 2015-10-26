@@ -67,6 +67,10 @@ pred <- predict(model, dataset$test)
 # Use 75\% of attributes and use a specific seed
 model <- ebr(dataset$train, attr.space = 0.75, SEED = 1)
 pred <- predict(model, dataset$test)
+
+# Running in 4 cores
+model <- ebr(dataset$train, CORES=4)
+pred <- predict(model, dataset$test, CORES=4)
 }
 \references{
 Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
@@ -78,7 +82,8 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
    5782, 254–269.
 }
 \seealso{
-Other Ensemble: \code{\link{ctrl}}; \code{\link{ecc}}
+Other Ensemble methods: \code{\link{ctrl}};
+  \code{\link{ecc}}
 
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};

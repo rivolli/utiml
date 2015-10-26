@@ -510,6 +510,7 @@ utiml_iterative_stratification <- function (mdata, r) {
       cji[m, i] <- cji[m, i] - 1
       cj[m] <- cj[m] - 1
     }
+    cat("|D|: ", length(D), "\n")
   }
 
   S

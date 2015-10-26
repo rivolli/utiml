@@ -1,5 +1,6 @@
 #' @title Classifier Chains for multi-label Classification
 #' @family Transformation methods
+#' @family Chain methods
 #' @description Create a Classifier Chains model for multilabel classification.
 #'
 #'   Classifier Chains is a Binary Relevance transformation method based to predict

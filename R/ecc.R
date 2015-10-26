@@ -1,6 +1,6 @@
 #' @title Ensemble of Classifier Chains for multi-label Classification
 #' @family Transformation methods
-#' @family Ensemble
+#' @family Ensemble methods
 #' @description Create an Ensemble of Classifier Chains model for
 #'   multilabel classification.
 #'

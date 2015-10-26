@@ -1,6 +1,6 @@
 #' @title Ensemble of Binary Relevance for multi-label Classification
 #' @family Transformation methods
-#' @family Ensemble
+#' @family Ensemble methods
 #' @description Create an Ensemble of Binary Relevance model for
 #'   multilabel classification.
 #'

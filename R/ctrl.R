@@ -1,6 +1,6 @@
 #' @title CTRL model for multi-label Classification
 #' @family Transformation methods
-#' @family Ensemble
+#' @family Ensemble methods
 #' @description Create a binary relevance with ConTRolled Label correlation
 #'   exploitation (CTRL) model for multilabel classification.
 #'

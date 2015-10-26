@@ -94,7 +94,8 @@ Li, Y., & Zhang, M. (2014). Enhancing Binary Relevance for Multi-label
    Gold Coast, Australia.
 }
 \seealso{
-Other Ensemble: \code{\link{ebr}}; \code{\link{ecc}}
+Other Ensemble methods: \code{\link{ebr}};
+  \code{\link{ecc}}
 
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};

@@ -1,5 +1,6 @@
 #' @title Meta-BR or 2BR for multi-label Classification
 #' @family Transformation methods
+#' @family Stacking methods
 #' @description Create a Meta-BR (MBR) classifier to predic multi-label
 #'  data. To this, two round of Binary Relevance is executed, such that,
 #'  the first iteraction generates new attributes to enrich the second
@@ -7,8 +8,7 @@
 #'
 #'  This implementation use complete training set for both training and
 #'  prediction steps of 2BR. However, the \code{phi} parameter may be used
-#'  to remove low label correlations on the second step. Furthermore, we
-#'  remove the \code{F} parameter because its specification is not clear.
+#'  to remove low label correlations on the second step.
 #'
 #' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label train
 #'   dataset (provided by \pkg{mldr} package).
@@ -21,6 +21,8 @@
 #'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
 #'    \code{'SVM'})
+#' @param folds the number of folds used in internal prediction. If this value is
+#'    1 all dataset will be used to predict the first prediction. (default: 1)
 #' @param phi A value between 0 and 1 to determine the correlation coefficient,
 #'    The value 0 include all labels in the second phase and the 1 only the
 #'    predicted label. A good value for this argument is 0.3 as suggest in
@@ -28,8 +30,6 @@
 #' @param ... Others arguments passed to the base method for all subproblems.
 #' @param predict.params A list of default arguments passed to the predictor
 #'  method. (default: \code{list()})
-#' @param save.datasets Logical indicating whether the binary datasets must be
-#'   saved in the model or not. (default: \code{FALSE})
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
@@ -41,12 +41,8 @@
 #'        with \code{phi} parameter to define the labels used in the second step.
 #'      }
 #'      \item{basemodel}{The BRModel used in the first iteration.}
-#'      \item{metamodels}{A list of models named by the label names used in the
+#'      \item{models}{A list of models named by the label names used in the
 #'        second iteration.
-#'      }
-#'      \item{datasets}{A list with \code{base} and \code{meta} datasets of
-#'        type \code{mldBR} named by the label names. Only when the
-#'        \code{save.datasets = TRUE}.
 #'      }
 #'  }
 #'
@@ -62,31 +58,35 @@
 #'
 #' @examples
 #' # Train and predict emotion multilabel dataset using Meta-BR
-#' library(utiml)
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Use SVM as base method
-#' model <- mbr(emotions)
+#' model <- mbr(dataset$train)
 #' pred <- predict(model, testdata)
 #'
-#' # Use different phi correlation with C4.5 classifier
-#' model <- mbr(emotions, "C4.5", 0.3)
+#' # Use 10 folds and different phi correlation with C4.5 classifier
+#' model <- mbr(dataset$train, "C4.5", 10, 0.3)
 #' pred <- predict(model, testdata)
 #'
 #' # Set a specific parameter
-#' model <- mbr(emotions, "KNN", k=5)
+#' model <- mbr(dataset$train, "KNN", k=5)
 #' pred <- predict(model, testdata)
 mbr <- function (mdata,
                   base.method = "SVM",
+                  folds = 1,
                   phi = 0,
                   ...,
                   predict.params = list(),
                   save.datasets = FALSE,
+                  SEED = NULL,
                   CORES = 1
 ) {
   #Validations
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
+
+  if (folds < 0)
+    stop("The number of folds must be positive")
 
   if (phi < 0)
     stop('The phi threshold must be between 0 and 1, inclusive')
@@ -100,11 +100,24 @@ mbr <- function (mdata,
   mbrmodel$phi <- phi
 
   #1 Iteration - Base Level
-  mbrmodel$basemodel <- br(mdata, base.method, ..., save.datasets = TRUE, CORES = CORES)
-  params <- list(object = mbrmodel$basemodel,
-                 newdata = mdata$dataset[mdata$attributesIndexes],
-                 probability = FALSE, CORES = CORES)
-  base.preds <- do.call(predict, c(params, predict.params))
+  mbrmodel$basemodel <- br(mdata, base.method, ..., CORES = CORES)
+
+  if (folds == 1) {
+    params <- list(object = mbrmodel$basemodel,
+                   newdata = mdata$dataset[mdata$attributesIndexes],
+                   probability = FALSE, CORES = CORES)
+    base.preds <- do.call(predict, c(params, predict.params))
+  }
+  else {
+    #kf <- mldr_iterative_stratification_kfold(mdata, folds)
+    kf <- mldr_random_kfold(mdata, folds)
+    base.preds <- do.call(rbind, lapply(1:folds, function (f){
+      dataset <- mldr_getfold(mdata, kf, f)
+      classifier <- br(dataset$train)
+      predict(classifier, dataset$test, prob = FALSE, CORES = CORES)
+    }))
+    browser()
+  }
 
   #2 Iteration - Meta level
   corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)

@@ -1,5 +1,6 @@
 #' @title Dependent Binary Relevance (DBR) for multi-label Classification
 #' @family Transformation methods
+#' @family Stacking methods
 #' @description Create a DBR classifier to predic multi-label data.
 #'  This is a simple approach that enables the binary classifiers to
 #'  discover existing label dependency by themselves. The idea of DBR

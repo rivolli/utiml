@@ -60,6 +60,9 @@ Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
    classification. Expert Systems with Applications, 39(2), 1647–1655.
 }
 \seealso{
+Other Stacking methods: \code{\link{dbr}};
+  \code{\link{mbr}}
+
 Other Transformation methods: \code{\link{br}};
   \code{\link{cc}}; \code{\link{ctrl}}; \code{\link{dbr}};
   \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}};
