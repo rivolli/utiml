@@ -433,7 +433,7 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
 #' # Create a stratified 10-fold
 #' indexes <- utiml_iterative_stratification(emotions, rep(0.1,10))
 utiml_iterative_stratification <- function (mdata, r) {
-  D <- 1:mdata$measures$num.instances
+  D <- rownames(mdata$dataset)
   S <- lapply(1:length(r), function (i) integer())
 
   # Calculate the desired number of examples at each subset
@@ -448,10 +448,11 @@ utiml_iterative_stratification <- function (mdata, r) {
 
   while (length(D) > 0) {
     # Find the label with the fewest (but at least one) remaining examples,
-    Dl <- apply(mdata$dataset[D, mdata$labels$index], 2, function (col) as.numeric(names(which(col == 1))))
+    Dl <- apply(mdata$dataset[D, mdata$labels$index], 2, function (col) names(which(col == 1)))
     Di <- unlist(lapply(Dl, length))
     l <- names(which.min(Di[Di>0]))
 
+    #browser()
     for (ex in Dl[[l]]) {
       # Find the subset(s) with the largest number of desired examples for this
       # label, breaking ties by considering the largest number of desired examples
@@ -471,6 +472,12 @@ utiml_iterative_stratification <- function (mdata, r) {
       cj[m] <- cj[m] - 1
     }
   }
+
+  S <- lapply(S, function (fold){
+    new.fold <- which(rownames(mdata$dataset) %in% fold)
+    names(new.fold) <- rownames(mdata$dataset[new.fold,])
+    new.fold
+  })
 
   S
 }

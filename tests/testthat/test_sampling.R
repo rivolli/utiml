@@ -8,15 +8,12 @@ df$Label4 <- as.numeric(df$Label1 == 0 | df$Label2 == 0 | df$Label3 == 0)
 mdata <- mldr_from_dataframe(df, labelIndices = c(11, 12, 13, 14), name = "testMLDR")
 set.seed(NULL)
 
-testFolds <- function (kfold, original) {
-  real <- c()
-  for (fold in kfold$fold)
-    real <- c(real, names(fold))
-
+testFolds <- function (kfold, original, msg) {
+  real <- unlist(lapply(kfold$fold, names))
   expected <- unique(real)
-  expect_true(all(expected == real))
-  expect_true(all(sort(unlist(kfold$fold)) == 1:original$measures$num.instances))
-  expect_true(all(sort(real) == sort(rownames(original$dataset))))
+  expect_true(all(expected == real), label=msg)
+  expect_true(all(sort(unlist(kfold$fold)) == 1:original$measures$num.instances), label=msg)
+  expect_true(all(sort(real) == sort(rownames(original$dataset))), label=msg)
 }
 
 testEmptyIntersectRows <- function (a, b) {
@@ -112,7 +109,7 @@ test_that("random kfold", {
   expect_equal(length(f$fold), 10)
   for (i in 1:10)
     expect_equal(length(f$fold[[i]]), 10)
-  testFolds(f, mdata)
+  testFolds(f, mdata, "f Random kfolds")
 
   fdata1 <- mldr_getfold(mdata, f, 1)
   fdata2 <- mldr_getfold(mdata, f, 10)
@@ -122,7 +119,7 @@ test_that("random kfold", {
 
   set.seed(1)
   f1 <- mldr_random_kfold(mdata, 4)
-  testFolds(f1, mdata)
+  testFolds(f1, mdata, "f1 Random kfolds")
   set.seed(1)
   f2 <- mldr_random_kfold(mdata, 4)
   expect_equal(length(f1$fold), 4)
@@ -132,7 +129,7 @@ test_that("random kfold", {
   set.seed(NULL)
 
   f3 <- mldr_random_kfold(mdata, 3)
-  testFolds(f3, mdata)
+  testFolds(f3, mdata, "f3 Random kfolds")
   expect_equal(f3$k, 3)
   expect_equal(length(unlist(f3$fold)), 100)
   expect_more_than(length(f3$fold[[1]]), 32)
@@ -141,7 +138,7 @@ test_that("random kfold", {
 
   ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
   f4 <- mldr_random_kfold(ds$train, 9)
-  testFolds(f4, ds$train)
+  testFolds(f4, ds$train, "f4 Random kfolds")
 })
 
 test_that("stratified kfold", {
@@ -152,7 +149,7 @@ test_that("stratified kfold", {
   for (i in 1:10)
     expect_equal(length(f$fold[[i]]), 10)
 
-  testFolds(f, mdata)
+  testFolds(f, mdata, "f Stratified kfold")
   fdata1 <- mldr_getfold(mdata, f, 1)
   fdata2 <- mldr_getfold(mdata, f, 10)
 
@@ -161,7 +158,7 @@ test_that("stratified kfold", {
 
   set.seed(1)
   f1 <- mldr_stratified_kfold(mdata, 4)
-  testFolds(f1, mdata)
+  testFolds(f1, mdata, "f1 Stratified kfold")
   set.seed(1)
   f2 <- mldr_stratified_kfold(mdata, 4)
   expect_equal(length(f1$fold), 4)
@@ -171,7 +168,7 @@ test_that("stratified kfold", {
   set.seed(NULL)
 
   f3 <- mldr_stratified_kfold(mdata, 3)
-  testFolds(f3, mdata)
+  testFolds(f3, mdata, "f3 Stratified kfold")
   expect_equal(f3$k, 3)
   expect_equal(length(unlist(f3$fold)), 100)
   expect_more_than(length(f3$fold[[1]]), 32)
@@ -179,8 +176,8 @@ test_that("stratified kfold", {
   expect_more_than(length(f3$fold[[3]]), 32)
 
   ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
-  f4 <- mldr_random_kfold(ds$train, 9)
-  testFolds(f4, ds$train)
+  f4 <- mldr_stratified_kfold(ds$train, 9)
+  testFolds(f4, ds$train, "f4 Stratified kfold")
 })
 
 test_that("iterative kfold", {
@@ -191,7 +188,7 @@ test_that("iterative kfold", {
   for (i in 1:10)
     expect_more_than(length(f$fold[[i]]), 7)
 
-  testFolds(f, mdata)
+  testFolds(f, mdata, "f Iterative kfold")
   fdata1 <- mldr_getfold(mdata, f, 1)
   fdata2 <- mldr_getfold(mdata, f, 10)
 
@@ -200,7 +197,7 @@ test_that("iterative kfold", {
 
   set.seed(1)
   f1 <- mldr_iterative_stratification_kfold(mdata, 4)
-  testFolds(f1, mdata)
+  testFolds(f1, mdata, "f1 Iterative kfold")
   set.seed(1)
   f2 <- mldr_iterative_stratification_kfold(mdata, 4)
   expect_equal(length(f1$fold), 4)
@@ -210,7 +207,7 @@ test_that("iterative kfold", {
   set.seed(NULL)
 
   f3 <- mldr_iterative_stratification_kfold(mdata, 3)
-  testFolds(f3, mdata)
+  testFolds(f3, mdata, "f3 Iterative kfold")
   expect_equal(f3$k, 3)
   expect_equal(length(unlist(f3$fold)), 100)
   expect_more_than(length(f3$fold[[1]]), 30)
@@ -218,8 +215,8 @@ test_that("iterative kfold", {
   expect_more_than(length(f3$fold[[3]]), 30)
 
   ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
-  f4 <- mldr_random_kfold(ds$train, 9)
-  testFolds(f4, ds$train)
+  f4 <- mldr_iterative_stratification_kfold(ds$train, 9)
+  testFolds(f4, ds$train, "f4 Iterative kfold")
 })
 
 test_that("subset and random subset", {
