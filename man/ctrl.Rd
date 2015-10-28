@@ -5,8 +5,7 @@
 \title{CTRL model for multi-label Classification}
 \usage{
 ctrl(mdata, base.method = "SVM", m = 5, validation.size = 0.3,
-  validation.threshold = 0.3, ..., predict.params = list(), SEED = NULL,
-  CORES = 1)
+  validation.threshold = 0.3, ..., predict.params = list(), CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -33,9 +32,6 @@ class label in Y is regarded as error-prone or not. (default: 0.3)}
 
 \item{predict.params}{A list of default arguments passed to the predictor
 method. (default: \code{list()})}
-
-\item{SEED}{A single value, interpreted as an integer to allow obtain the
-same results again. (default: \code{NULL})}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
   than 1 require the \pkg{parallel} package. (default: 1)}
@@ -83,8 +79,8 @@ pred <- predict(model, dataset$test)
 model <- ctrl(dataset$train, "C4.5", m = 10, validation.size = 0.4, validation.threshold = 0.5, CORES = 4)
 pred <- predict(model, dataset$test)
 
-# Set a parameters for all subproblems and set a SEED
-model <- ctrl(dataset$train, "KNN", k=5, SEED = 1)
+# Set a parameters for all subproblems
+model <- ctrl(dataset$train, "KNN", k=5)
 pred <- predict(model, dataset$test)
 }
 \references{

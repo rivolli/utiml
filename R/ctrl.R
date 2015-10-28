@@ -28,8 +28,6 @@
 #' @param ... Others arguments passed to the base method for all subproblems
 #' @param predict.params A list of default arguments passed to the predictor
 #'  method. (default: \code{list()})
-#' @param SEED A single value, interpreted as an integer to allow obtain the
-#'   same results again. (default: \code{NULL})
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
@@ -72,8 +70,8 @@
 #' model <- ctrl(dataset$train, "C4.5", m = 10, validation.size = 0.4, validation.threshold = 0.5, CORES = 4)
 #' pred <- predict(model, dataset$test)
 #'
-#' # Set a parameters for all subproblems and set a SEED
-#' model <- ctrl(dataset$train, "KNN", k=5, SEED = 1)
+#' # Set a parameters for all subproblems
+#' model <- ctrl(dataset$train, "KNN", k=5)
 #' pred <- predict(model, dataset$test)
 ctrl <- function (mdata,
                   base.method = "SVM",
@@ -82,7 +80,6 @@ ctrl <- function (mdata,
                   validation.threshold = 0.3,
                   ...,
                   predict.params = list(),
-                  SEED = NULL,
                   CORES = 1) {
   #Validations
   if (!requireNamespace("FSelector", quietly = TRUE))
@@ -237,9 +234,6 @@ print.CTRLmodel <- function (x, ...) {
   cat("\n ", x$rounds, "Iterations")
   cat("\n ", 1 - x$validation.size, "/", x$validation.size, "train/validation size")
   cat("\n ", x$validation.threshold, "Threshold value")
-  if (!is.null(x$seed))
-    cat("\nSeed value:", x$seed)
-
   cat("\n\nPruned Labels:", length(x$Y), "\n  ")
   cat(x$Y, sep = ", ")
 }
