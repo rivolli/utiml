@@ -78,7 +78,6 @@ mbr <- function (mdata,
                   ...,
                   predict.params = list(),
                   save.datasets = FALSE,
-                  SEED = NULL,
                   CORES = 1
 ) {
   #Validations
@@ -109,15 +108,14 @@ mbr <- function (mdata,
     base.preds <- do.call(predict, c(params, predict.params))
   }
   else {
-    #kf <- mldr_iterative_stratification_kfold(mdata, folds)
-    kf <- mldr_random_kfold(mdata, folds)
+    kf <- mldr_iterative_stratification_kfold(mdata, folds)
     base.preds <- do.call(rbind, lapply(1:folds, function (f){
       dataset <- mldr_getfold(mdata, kf, f)
       classifier <- br(dataset$train)
       predict(classifier, dataset$test, prob = FALSE, CORES = CORES)
     }))
-    browser()
   }
+  browser()
 
   #2 Iteration - Meta level
   corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)

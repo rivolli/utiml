@@ -5,8 +5,7 @@
 \title{Meta-BR or 2BR for multi-label Classification}
 \usage{
 mbr(mdata, base.method = "SVM", folds = 1, phi = 0, ...,
-  predict.params = list(), save.datasets = FALSE, SEED = NULL,
-  CORES = 1)
+  predict.params = list(), save.datasets = FALSE, CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train

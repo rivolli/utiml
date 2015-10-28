@@ -5,7 +5,7 @@
 \title{Ensemble of Binary Relevance for multi-label Classification}
 \usage{
 ebr(mdata, base.method = "SVM", m = 10, subsample = 0.75,
-  attr.space = 0.5, ..., SEED = NULL, CORES = 1)
+  attr.space = 0.5, ..., CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -29,11 +29,11 @@ attributes must be used for each interation. (default: 0.50)}
 
 \item{...}{Others arguments passed to the base method for all subproblems}
 
-\item{SEED}{A single value, interpreted as an integer to allow obtain the
-same results again. (default: \code{NULL})}
-
 \item{CORES}{The number of cores to parallelize the training. Values higher
   than 1 require the \pkg{parallel} package. (default: 1)}
+
+\item{SEED}{A single value, interpreted as an integer to allow obtain the
+same results again. (default: \code{NULL})}
 }
 \value{
 An object of class \code{EBRmodel} containing the set of fitted
@@ -64,8 +64,8 @@ pred <- predict(model, dataset$test)
 model <- ebr(dataset$train, "C4.5", m = 5, subsample = 1)
 pred <- predict(model, dataset$test)
 
-# Use 75\% of attributes and use a specific seed
-model <- ebr(dataset$train, attr.space = 0.75, SEED = 1)
+# Use 75\% of attributes
+model <- ebr(dataset$train, attr.space = 0.75)
 pred <- predict(model, dataset$test)
 
 # Running in 4 cores

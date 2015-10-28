@@ -25,8 +25,6 @@
 #' @param attr.space A value between 0.1 and 1 to determine the percentage of
 #'    attributes must be used for each interation. (default: 0.50)
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param SEED A single value, interpreted as an integer to allow obtain the
-#'   same results again. (default: \code{NULL})
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'   than 1 require the \pkg{parallel} package. (default: 1)
 #'
@@ -62,8 +60,8 @@
 #' model <- ecc(dataset$train, "C4.5", m = 5, subsample = 1)
 #' pred <- predict(model, dataset$test)
 #'
-#' # Use 75% of attributes and use a specific seed
-#' model <- ecc(dataset$train, attr.space = 0.75, SEED = 1)
+#' # Use 75% of attributes
+#' model <- ecc(dataset$train, attr.space = 0.75)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Running in 4 cores
@@ -75,7 +73,6 @@ ecc <- function (mdata,
                  subsample = 0.75,
                  attr.space = 0.5,
                  ...,
-                 SEED = NULL,
                  CORES = 1
 ) {
   #Validations
@@ -100,11 +97,6 @@ ecc <- function (mdata,
   eccmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   eccmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
 
-  if (!is.null(SEED)) {
-    eccmodel$seed <- SEED
-    set.seed(SEED)
-  }
-
   eccmodel$models <- lapply(1:m, function (iteration){
     ndata <- mldr_random_subset(mdata, eccmodel$nrow, eccmodel$ncol)
     chain <- sample(rownames(ndata$labels))
@@ -115,9 +107,6 @@ ecc <- function (mdata,
 
   eccmodel$call <- match.call()
   class(eccmodel) <- "ECCmodel"
-
-  if (!is.null(SEED))
-    set.seed(NULL)
 
   eccmodel
 }
@@ -190,6 +179,4 @@ print.ECCmodel <- function (x, ...) {
   cat("\n ", x$rounds, "Iterations")
   cat("\n ", x$nrow, "Instances")
   cat("\n ", x$ncol, "Attributes\n")
-  if (!is.null(x$seed))
-    cat("\nSeed value:", x$seed)
 }

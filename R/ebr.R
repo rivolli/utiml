@@ -59,8 +59,8 @@
 #' model <- ebr(dataset$train, "C4.5", m = 5, subsample = 1)
 #' pred <- predict(model, dataset$test)
 #'
-#' # Use 75% of attributes and use a specific seed
-#' model <- ebr(dataset$train, attr.space = 0.75, SEED = 1)
+#' # Use 75% of attributes
+#' model <- ebr(dataset$train, attr.space = 0.75)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Running in 4 cores
@@ -72,7 +72,6 @@ ebr <- function (mdata,
                 subsample = 0.75,
                 attr.space = 0.5,
                 ...,
-                SEED = NULL,
                 CORES = 1) {
   #Validations
   if(class(mdata) != 'mldr')
@@ -96,11 +95,6 @@ ebr <- function (mdata,
   ebrmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
 
-  if (!is.null(SEED)) {
-    ebrmodel$seed <- SEED
-    set.seed(SEED)
-  }
-
   ebrmodel$models <- lapply(1:m, function (iteration){
     ndata <- mldr_random_subset(mdata, ebrmodel$nrow, ebrmodel$ncol)
     brmodel <- br(ndata, base.method, ..., CORES = CORES)
@@ -110,9 +104,6 @@ ebr <- function (mdata,
 
   ebrmodel$call <- match.call()
   class(ebrmodel) <- "EBRmodel"
-
-  if (!is.null(SEED))
-    set.seed(NULL)
 
   ebrmodel
 }
@@ -184,6 +175,4 @@ print.EBRmodel <- function (x, ...) {
   cat("\n ", x$rounds, "Iterations")
   cat("\n ", x$nrow, "Instances")
   cat("\n ", x$ncol, "Attributes\n")
-  if (!is.null(x$seed))
-    cat("\nSeed value:", x$seed)
 }

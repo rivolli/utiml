@@ -5,7 +5,7 @@
 \title{Ensemble of Classifier Chains for multi-label Classification}
 \usage{
 ecc(mdata, base.method = "SVM", m = 10, subsample = 0.75,
-  attr.space = 0.5, ..., SEED = NULL, CORES = 1)
+  attr.space = 0.5, ..., CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -28,9 +28,6 @@ training instances must be used for each interation. (default: 0.75)}
 attributes must be used for each interation. (default: 0.50)}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
-
-\item{SEED}{A single value, interpreted as an integer to allow obtain the
-same results again. (default: \code{NULL})}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
   than 1 require the \pkg{parallel} package. (default: 1)}
@@ -66,8 +63,8 @@ pred <- predict(model, dataset$test)
 model <- ecc(dataset$train, "C4.5", m = 5, subsample = 1)
 pred <- predict(model, dataset$test)
 
-# Use 75\% of attributes and use a specific seed
-model <- ecc(dataset$train, attr.space = 0.75, SEED = 1)
+# Use 75\% of attributes
+model <- ecc(dataset$train, attr.space = 0.75)
 pred <- predict(model, dataset$test)
 
 # Running in 4 cores
