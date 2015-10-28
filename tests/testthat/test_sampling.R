@@ -9,10 +9,14 @@ mdata <- mldr_from_dataframe(df, labelIndices = c(11, 12, 13, 14), name = "testM
 set.seed(NULL)
 
 testFolds <- function (kfold, original) {
-  real <- unlist(kfold$fold)
+  real <- c()
+  for (fold in kfold$fold)
+    real <- c(real, names(fold))
+
   expected <- unique(real)
   expect_true(all(expected == real))
-  expect_true(all(sort(as.character(expected)) == sort(rownames(original$dataset))))
+  expect_true(all(sort(unlist(kfold$fold)) == 1:original$measures$num.instances))
+  expect_true(all(sort(real) == sort(rownames(original$dataset))))
 }
 
 testEmptyIntersectRows <- function (a, b) {
