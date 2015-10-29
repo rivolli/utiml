@@ -217,11 +217,19 @@ as.matrix.mlresult <- function (x) {
 }
 
 as.bipartition <- function (mlresult) {
-  utiml_ifelse(attr(mlresult, "type") == "bipartition", as.matrix(mlresult), attr(mlresult, "classes"))
+  utiml_ifelse(is.bipartition(mlresult), as.matrix(mlresult), attr(mlresult, "classes"))
 }
 
 as.probability <- function (mlresult) {
-  utiml_ifelse(attr(mlresult, "type") == "probability", as.matrix(mlresult), attr(mlresult, "probs"))
+  utiml_ifelse(is.probability(mlresult), as.matrix(mlresult), attr(mlresult, "probs"))
+}
+
+is.bipartition <- function (mlresult) {
+  attr(mlresult, "type") == "bipartition"
+}
+
+is.probability <- function (mlresult) {
+  attr(mlresult, "type") == "probability"
 }
 
 #Print mlresult as matrix

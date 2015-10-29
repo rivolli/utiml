@@ -78,7 +78,7 @@ subsetcorretion <- function (mlresult, train_y, threshold = 0.5) {
     new.probability[r, min_index] = row[min_index] * (threshold - min_v) + min_v
   }
 
-  multilabel.prediction(new.predicted, new.probability)
+  multilabel.prediction(new.predicted, new.probability, is.probability(mlresult))
 }
 
 #' @title Subset Correction of a predicted result
