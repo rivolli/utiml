@@ -5,7 +5,7 @@
 \title{Meta-BR or 2BR for multi-label Classification}
 \usage{
 mbr(mdata, base.method = "SVM", folds = 1, phi = 0, ...,
-  predict.params = list(), save.datasets = FALSE, CORES = 1)
+  predict.params = list(), CORES = 1)
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -67,15 +67,15 @@ dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Use SVM as base method
 model <- mbr(dataset$train)
-pred <- predict(model, testdata)
+pred <- predict(model, dataset$test)
 
 # Use 10 folds and different phi correlation with C4.5 classifier
 model <- mbr(dataset$train, "C4.5", 10, 0.3)
-pred <- predict(model, testdata)
+pred <- predict(model, dataset$test)
 
 # Set a specific parameter
 model <- mbr(dataset$train, "KNN", k=5)
-pred <- predict(model, testdata)
+pred <- predict(model, dataset$test)
 }
 \references{
 Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &

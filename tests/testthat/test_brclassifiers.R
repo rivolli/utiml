@@ -156,3 +156,15 @@ test_that("ECC", {
   expect_error(ecc(train, "test", m=0))
   expect_error(predict(model1, test, "ABC"))
 })
+
+test_that("MBR", {
+  model <- mbr(train, "test")
+  pred <- baseTest(model, "MBRmodel")
+  expect_is(model$basemodel, "BRmodel")
+
+  model <- mbr(train, "test", folds=2, phi=0.3)
+  pred <- baseTest(model, "MBRmodel")
+
+  expect_error(mbr(train, "test", folds=0))
+  expect_error(mbr(train, "test", phi=1.1))
+})

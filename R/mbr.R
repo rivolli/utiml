@@ -62,32 +62,31 @@
 #'
 #' # Use SVM as base method
 #' model <- mbr(dataset$train)
-#' pred <- predict(model, testdata)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Use 10 folds and different phi correlation with C4.5 classifier
 #' model <- mbr(dataset$train, "C4.5", 10, 0.3)
-#' pred <- predict(model, testdata)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Set a specific parameter
 #' model <- mbr(dataset$train, "KNN", k=5)
-#' pred <- predict(model, testdata)
+#' pred <- predict(model, dataset$test)
 mbr <- function (mdata,
                   base.method = "SVM",
                   folds = 1,
                   phi = 0,
                   ...,
                   predict.params = list(),
-                  save.datasets = FALSE,
                   CORES = 1
 ) {
   #Validations
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
 
-  if (folds < 0)
+  if (folds < 1)
     stop("The number of folds must be positive")
 
-  if (phi < 0)
+  if (phi < 0 || phi > 1)
     stop('The phi threshold must be between 0 and 1, inclusive')
 
   if (CORES < 1)
@@ -115,22 +114,18 @@ mbr <- function (mdata,
       predict(classifier, dataset$test, prob = FALSE, CORES = CORES)
     }))
   }
-  browser()
 
   #2 Iteration - Meta level
   corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)
-  datasets <- utiml_lapply(mbrmodel$basemodel$datasets, function (dataset) {
+  br.datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
+  names(br.datasets) <- mbrmodel$labels
+  datasets <- utiml_lapply(br.datasets, function (dataset) {
     extracolumns <- base.preds[,colnames(corr)[corr[dataset$labelname,] > phi], drop = FALSE]
     colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
     base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
     br.transformation(base, "mldMBR", base.method, new.features = colnames(extracolumns))
   }, CORES)
-  mbrmodel$metamodels <- utiml_lapply(datasets, br.create_model, CORES, ...)
-
-  if (save.datasets)
-    mbrmodel$datasets <- list(base = mbrmodel$basemodel$datasets, meta = datasets)
-
-  mbrmodel$basemodel$datasets <- NULL
+  mbrmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
 
   mbrmodel$call <- match.call()
   class(mbrmodel) <- "MBRmodel"
@@ -159,26 +154,23 @@ mbr <- function (mdata,
 #' @export
 #'
 #' @examples
-#' #' library(utiml)
-#'
 #' # Emotion multi-label dataset using Meta-BR or 2BR
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Predict SVM scores
-#' model <- mbr(emotions)
-#' pred <- predict(model, testdata)
+#' model <- mbr(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Predict SVM bipartitions
-#' pred <- predict(model, testdata, probability = FALSE)
+#' pred <- predict(model, dataset$test, probability = FALSE)
 #'
 #' # Passing a specif parameter for SVM predict method
-#' pred <- predict(model, testdata, na.action = na.fail)
+#' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.MBRmodel <- function (object,
                               newdata,
-                              ...,
                               probability = TRUE,
-                              CORES = 1
-) {
+                              ...,
+                              CORES = 1) {
   #Validations
   if(class(object) != 'MBRmodel')
     stop('First argument must be an MBRmodel object')
@@ -189,14 +181,14 @@ predict.MBRmodel <- function (object,
   newdata <- utiml_newdata(newdata)
 
   #1 Iteration - Base level
-  base.preds <- predict(object$basemodel, newdata, ..., probability = FALSE, CORES = CORES)
+  base.preds <- predict(object$basemodel, newdata, probability = FALSE, ..., CORES = CORES)
 
   #2 Iteration - Meta level
   corr <- object$correlation
   predictions <- utiml_lapply(object$labels, function (labelname) {
     extracolumns <- base.preds[,colnames(corr)[corr[labelname,] > object$phi], drop = FALSE]
     colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
-    br.predict_model(object$metamodels[[labelname]], cbind(newdata, extracolumns), ...)
+    br.predict_model(object$models[[labelname]], cbind(newdata, extracolumns), ...)
   }, CORES)
   names(predictions) <- object$labels
 

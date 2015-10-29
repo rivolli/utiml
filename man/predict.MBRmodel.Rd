@@ -4,7 +4,7 @@
 \alias{predict.MBRmodel}
 \title{Predict Method for Meta-BR/2BR}
 \usage{
-\method{predict}{MBRmodel}(object, newdata, ..., probability = TRUE,
+\method{predict}{MBRmodel}(object, newdata, probability = TRUE, ...,
   CORES = 1)
 }
 \arguments{
@@ -13,11 +13,11 @@
 \item{newdata}{An object containing the new input data. This must be a matrix or
 data.frame object containing the same size of training data or a mldr object.}
 
-\item{...}{Others arguments passed to the base method prediction for all
-subproblems.}
-
 \item{probability}{Logical indicating whether class probabilities should be returned.
 (default: \code{TRUE})}
+
+\item{...}{Others arguments passed to the base method prediction for all
+subproblems.}
 
 \item{CORES}{The number of cores to parallelize the prediction. Values higher
   than 1 require the \pkg{parallel} package (default: 1).}
@@ -31,20 +31,18 @@ A matrix containing the probabilistic values or just predictions (only when
 This function predicts values based upon a model trained by \code{mbr}.
 }
 \examples{
-#' library(utiml)
-
 # Emotion multi-label dataset using Meta-BR or 2BR
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Predict SVM scores
-model <- mbr(emotions)
-pred <- predict(model, testdata)
+model <- mbr(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Predict SVM bipartitions
-pred <- predict(model, testdata, probability = FALSE)
+pred <- predict(model, dataset$test, probability = FALSE)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, testdata, na.action = na.fail)
+pred <- predict(model, dataset$test, na.action = na.fail)
 }
 \seealso{
 \code{\link[=mbr]{Meta-BR (MBR or 2BR)}}
