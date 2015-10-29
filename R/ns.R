@@ -22,8 +22,6 @@
 #' @param ... Others arguments passed to the base method for all subproblems.
 #' @param predict.params A list of default arguments passed to the predict
 #'  method. (default: \code{list()})
-#' @param save.datasets Logical indicating whether the binary datasets must be
-#'   saved in the model or not. (default: FALSE)
 #'
 #' @return An object of class \code{NSmodel} containing the set of fitted
 #'   models, including:
@@ -32,8 +30,6 @@
 #'    \item{labels}{A vector with the label names in expected order}
 #'    \item{labelset}{The matrix containing only labels values}
 #'    \item{models}{A list of models named by the label names.}
-#'    \item{datasets}{A list of \code{mldCC} named by the label names.
-#'      Only when the \code{save.datasets = TRUE}.}
 #'   }
 #'
 #' @references
@@ -45,28 +41,25 @@
 #'
 #' @examples
 #' # Train and predict emotion multilabel dataset using Nested Stacking
-#' library(utiml)
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Use SVM as base method
-#' model <- ns(emotions)
-#' pred <- predict(model, testdata)
+#' model <- ns(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Use a specific chain with C4.5 classifier
-#' mychain <- sample(rownames(emotions$labels))
-#' model <- ns(emotions, "C4.5", mychain)
-#' pred <- predict(model, testdata)
+#' mychain <- sample(rownames(dataset$train$labels))
+#' model <- ns(dataset$train, "C4.5", mychain)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Set a specific parameter
-#' model <- ns(emotions, "KNN", k=5)
-#' pred <- predict(model, testdata)
+#' model <- ns(dataset$train, "KNN", k=5)
+#' pred <- predict(model, dataset$test)
 ns <- function (mdata,
                 base.method = "SVM",
                 chain = c(),
                 ...,
-                predict.params = list(),
-                save.datasets = FALSE
-) {
+                predict.params = list()) {
   #Validations
   if(class(mdata) != 'mldr')
     stop('First argument must be an mldr object')
@@ -107,9 +100,6 @@ ns <- function (mdata,
     basedata <- cbind(basedata, result$bipartition)
     names(basedata)[ncol(basedata)] <- label
 
-    if (save.datasets) {
-      nsmodel$datasets[[label]] <- mldCC
-    }
     nsmodel$models[[label]] <- model
   }
 
@@ -142,25 +132,22 @@ ns <- function (mdata,
 #' @export
 #'
 #' @examples
-#' library(utiml)
-#'
 #' # Emotion multi-label dataset using Nested Stacking
-#' testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 #'
 #' # Predict SVM scores
-#' model <- ns(emotions)
-#' pred <- predict(model, testdata)
+#' model <- ns(dataset$train)
+#' pred <- predict(model, dataset$test)
 #'
 #' # Predict SVM bipartitions
-#' pred <- predict(model, testdata, probability = FALSE)
+#' pred <- predict(model, dataset$test, probability = FALSE)
 #'
 #' # Passing a specif parameter for SVM predict method
-#' pred <- predict(model, testdata, na.action = na.fail)
+#' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.NSmodel <- function (object,
                              newdata,
-                             ...,
-                             probability = TRUE
-) {
+                             probability = TRUE,
+                             ...) {
   #Validations
   if(class(object) != 'NSmodel')
     stop('First argument must be an NSmodel object')
@@ -174,7 +161,7 @@ predict.NSmodel <- function (object,
     names(newdata)[ncol(newdata)] <- label
   }
 
-  result <- as.multilabelPrediction(predictions, probability)[,object$labels]
+  result <- as.multilabelPrediction(predictions[object$labels], TRUE)
   subset.correction <- c(ns.subsetcorrection, ns.subsetcorrection.score)
   subset.correction[c(!probability, probability)][[1]](result, object$labelsets)
 }

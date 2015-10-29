@@ -42,6 +42,45 @@ simple.threshold <- function (prediction, threshold = 0.5) {
   result
 }
 
+subsetcorretion <- function (mlresult, train_y, threshold = 0.5) {
+  bipartition <- as.bipartition(mlresult)
+  probability <- as.probability(mlresult)
+
+  if (ncol(mlresult) != ncol(train_y))
+    stop("The number of columns in the predicted result are different from the training data")
+
+  #Bipartition correction
+  labelsets <- unique(train_y)
+  rownames(labelsets) <- apply(labelsets, 1, paste, collapse = "")
+
+  order <- names(sort(table(apply(train_y, 1, paste, collapse = "")), decreasing = TRUE))
+  labelsets <- labelsets[order,]
+
+  new.prediction <- t(apply(bipartition, 1, function (y) {
+    labelsets[names(which.min(apply(labelsets, 1, function (row) sum(row != y)))),]
+  }))
+  dimnames(new.prediction) <- dimnames(bipartition)
+
+  #Probabilities correction
+  new.probability <- probability
+  for (r in 1:nrow(probability)) {
+    row <- probability[r,]
+
+    max_index <- new.prediction[r,] - row > threshold
+    min_index <- new.prediction[r,] - row <= -threshold
+
+    indexes <- min_index | max_index
+    max_v <- min(c(row[row > threshold & !indexes], threshold + 0.1))
+    min_v <- max(c(row[row < threshold & !indexes], threshold - 0.1))
+
+    #Normalize values
+    new.probability[r, max_index] = row[max_index] * (max_v - threshold) + threshold
+    new.probability[r, min_index] = row[min_index] * (threshold - min_v) + min_v
+  }
+
+  multilabel.prediction(new.predicted, new.probability)
+}
+
 #' @title Subset Correction of a predicted result
 #' @family threshold
 #' @description This method restrict a multi-label learner prediction to only
@@ -96,6 +135,8 @@ ns.subsetcorrection <- function (predicted_y, train_y) {
     labelsets[names(which.min(apply(labelsets, 1, function (row) sum(row != y)))),]
   }))
   dimnames(new.predicted) <- dimnames(predicted_y)
+
+
 
   new.predicted
 }

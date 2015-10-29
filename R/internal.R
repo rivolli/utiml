@@ -70,21 +70,7 @@ as.multilabelPrediction <- function (predictions, probability) {
   bipartitions <- sapply(predictions, function (lblres) as.numeric(as.character(lblres$bipartition)))
   rownames(probabilities) <- rownames(bipartitions) <- names(predictions[[1]]$bipartition)
 
-  #At least one label is predict
-  for (row in 1:nrow(bipartitions))
-    bipartitions[row, which.max(probabilities[row,])] <- 1
-
-  only.bipartitions <- bipartitions
-  only.probabilities <- probabilities
-  attr(probabilities, "classes") <- only.bipartitions
-  attr(probabilities, "type") <- "probability"
-
-  attr(bipartitions, "probs") <- only.probabilities
-  attr(bipartitions, "type") <- "bipartition"
-
-  class(probabilities) <- class(bipartitions) <- "mlresult"
-
-  utiml_ifelse(probability, probabilities, bipartitions)
+  multilabel.prediction(bipartitions, probabilities, probability)
 }
 
 #' @title Create Dynamically the model for Binary Relevance Methods
@@ -174,6 +160,34 @@ binary.prediction <- function (bipartition, probability) {
   res
 }
 
+#' @title Create an object mlresult
+#'
+#' @param bipartitions The matrix of predictions (bipartition values), only 0 and 1
+#' @param probabilities The matrix of probability/confidence of a prediction, between 0..1
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#'
+#' @return An object of type mlresult
+#'
+#' @export
+multilabel.prediction <- function (bipartitions, probabilities, probability) {
+  #At least one label is predict
+  for (row in 1:nrow(bipartitions))
+    bipartitions[row, which.max(probabilities[row,])] <- 1
+
+  only.bipartitions <- bipartitions
+  only.probabilities <- probabilities
+  attr(probabilities, "classes") <- only.bipartitions
+  attr(probabilities, "type") <- "probability"
+
+  attr(bipartitions, "probs") <- only.probabilities
+  attr(bipartitions, "type") <- "bipartition"
+
+  class(probabilities) <- class(bipartitions) <- "mlresult"
+
+  utiml_ifelse(probability, probabilities, bipartitions)
+}
+
 #' @title Return the newdata to a data.frame or matrix
 #'
 #' @param newdata The data.frame or mldr data
@@ -200,6 +214,14 @@ as.matrix.mlresult <- function (x) {
   attr(only.expected, "type") <- NULL
   class(only.expected) <- "matrix"
   only.expected
+}
+
+as.bipartition <- function (mlresult) {
+  utiml_ifelse(attr(mlresult, "type") == "bipartition", as.matrix(mlresult), attr(mlresult, "classes"))
+}
+
+as.probability <- function (mlresult) {
+  utiml_ifelse(attr(mlresult, "type") == "probability", as.matrix(mlresult), attr(mlresult, "probs"))
 }
 
 #Print mlresult as matrix

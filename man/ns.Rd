@@ -4,8 +4,7 @@
 \alias{ns}
 \title{Nested Stacking for multi-label Classification}
 \usage{
-ns(mdata, base.method = "SVM", chain = c(), ..., predict.params = list(),
-  save.datasets = FALSE)
+ns(mdata, base.method = "SVM", chain = c(), ..., predict.params = list())
 }
 \arguments{
 \item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
@@ -26,10 +25,7 @@ empty the chain is the default label sequence of the dataset. (default:
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
 \item{predict.params}{A list of default arguments passed to the predict
-method. (default: \code{list()})}
-
-\item{save.datasets}{Logical indicating whether the binary datasets must be
-  saved in the model or not. (default: FALSE)}
+ method. (default: \code{list()})}
 }
 \value{
 An object of class \code{NSmodel} containing the set of fitted
@@ -39,8 +35,6 @@ An object of class \code{NSmodel} containing the set of fitted
    \item{labels}{A vector with the label names in expected order}
    \item{labelset}{The matrix containing only labels values}
    \item{models}{A list of models named by the label names.}
-   \item{datasets}{A list of \code{mldCC} named by the label names.
-     Only when the \code{save.datasets = TRUE}.}
   }
 }
 \description{
@@ -53,21 +47,20 @@ Create a Nested Stacking model for multilabel classification.
 }
 \examples{
 # Train and predict emotion multilabel dataset using Nested Stacking
-library(utiml)
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
+dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 
 # Use SVM as base method
-model <- ns(emotions)
-pred <- predict(model, testdata)
+model <- ns(dataset$train)
+pred <- predict(model, dataset$test)
 
 # Use a specific chain with C4.5 classifier
-mychain <- sample(rownames(emotions$labels))
-model <- ns(emotions, "C4.5", mychain)
-pred <- predict(model, testdata)
+mychain <- sample(rownames(dataset$train$labels))
+model <- ns(dataset$train, "C4.5", mychain)
+pred <- predict(model, dataset$test)
 
 # Set a specific parameter
-model <- ns(emotions, "KNN", k=5)
-pred <- predict(model, testdata)
+model <- ns(dataset$train, "KNN", k=5)
+pred <- predict(model, dataset$test)
 }
 \references{
 Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
