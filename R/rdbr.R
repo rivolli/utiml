@@ -175,6 +175,7 @@ predict.RDBRmodel <- function (object,
     for (i in 1:max.iterations) {
       old.estimative <- estimative
       predictions <- list()
+      #the labels needs to be shuffled in each iteraction
       for (li in 1:length(labels)) {
         predictions[[li]] <- br.predict_model(object$models[[li]], cbind(newdata, estimative[,-li]), ...)
         estimative[,li] <- predictions[[li]]$bipartition

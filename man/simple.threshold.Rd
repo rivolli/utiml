@@ -36,7 +36,6 @@ simple.threshold(result)
 simple.threshold(result, c(0.4, 0.6, 0.7))
 }
 \seealso{
-Other threshold: \code{\link{ns.subsetcorrection.score}};
-  \code{\link{ns.subsetcorrection}}
+Other threshold: \code{\link{subset.corretion}}
 }
 
