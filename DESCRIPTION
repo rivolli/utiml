@@ -6,10 +6,13 @@ Date: 2015-08-18
 Author: Adriano Rivolli and Andre Carvalho
 Maintainer: <rivolli@usp.br>
 Description: Multi-label learning transformation methods and others
-  utilities to work with multi-label classification on R
+    utilities to work with multi-label classification on R
 URL: https://github.com/rivolli/utiml
-Depends: R (>= 3.0.0), mldr
-Suggests: parallel,
+Depends:
+    R (>= 3.0.0),
+    mldr
+Suggests:
+    parallel,
     e1071,
     C50,
     RWeka,
@@ -19,3 +22,4 @@ Suggests: parallel,
     FSelector
 License: GPL
 LazyData: TRUE
+RoxygenNote: 5.0.0

@@ -134,6 +134,11 @@ test_that("EBR", {
 
   expect_false(isTRUE(all.equal(pred1, pred2)))
 
+  predictions <- predict(model1, test, vote.schema = NULL)
+  expect_equal(length(predictions), 10)
+  predictions <- predict(model2, test, vote.schema = NULL)
+  expect_equal(length(predictions), 3)
+
   expect_error(ebr(train, "test", subsample=0))
   expect_error(ebr(train, "test", attr.space=0))
   expect_error(ebr(train, "test", m=0))
@@ -150,6 +155,11 @@ test_that("ECC", {
   pred2<- ensembleTest(model2, "ECCmodel")
 
   expect_false(isTRUE(all.equal(pred1, pred2)))
+
+  predictions <- predict(model1, test, vote.schema = NULL)
+  expect_equal(length(predictions), 10)
+  predictions <- predict(model2, test, vote.schema = NULL)
+  expect_equal(length(predictions), 3)
 
   expect_error(ecc(train, "test", subsample=0))
   expect_error(ecc(train, "test", attr.space=0))
