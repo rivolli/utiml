@@ -384,9 +384,13 @@ utiml_holdout <- function (mdata, partitions, partition.names, holdout.method) {
 #' cols <- c("Mean_Acc1298_Mean_Mem40_Centroid", "Mean_Acc1298_Mean_Mem40_MFCC_10")
 #' mldr_subset(emotions, rows, cols)
 mldr_subset <- function (mdata, rows, cols) {
+  if (mode(cols) == "character")
+    cols <- which(colnames(mdata$dataset[mdata$attributesIndexes]) %in% cols)
+
+  dataset <- mdata$dataset[rows, sort(unique(c(cols, mdata$labels$index)))]
   mldr_from_dataframe(
-    cbind(mdata$dataset[rows, cols], mdata$dataset[rows, rownames(mdata$labels)]),
-    labelIndices = (length(cols) + 1):(length(cols)+1):(length(cols)+mdata$measures$num.labels),
+    dataset,
+    labelIndices = which(colnames(dataset) %in% rownames(mdata$labels)),
     name = mdata$name
   )
 }

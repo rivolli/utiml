@@ -262,3 +262,30 @@ test_that("subset and random subset", {
   expect_equal(data$measures$num.attributes, 5 + data$measures$num.labels)
   expect_equal(data$dataset[,data$labels$index], mdata$dataset[rownames(data$dataset),mdata$labels$index])
 })
+
+test_that("Alternatives dataset for sampling", {
+  dataset <- cbind(mdata$dataset[mdata$labels$index], mdata$dataset[mdata$attributesIndexes])
+  ndata <- mldr_from_dataframe(dataset, labelIndices = 1:4, name = "testMLDR")
+
+  test <- mldr_random_holdout(ndata)
+  expect_equal(colnames(test[[1]]$dataset), colnames(ndata$dataset))
+  expect_equal(colnames(test[[2]]$dataset), colnames(ndata$dataset))
+
+  test <- mldr_iterative_stratification_holdout(ndata)
+  expect_equal(colnames(test[[1]]$dataset), colnames(ndata$dataset))
+  expect_equal(colnames(test[[2]]$dataset), colnames(ndata$dataset))
+
+  test <- mldr_stratified_holdout(ndata)
+  expect_equal(colnames(test[[1]]$dataset), colnames(ndata$dataset))
+  expect_equal(colnames(test[[2]]$dataset), colnames(ndata$dataset))
+
+  kf <- mldr_random_kfold(ndata, 3)
+  test <- mldr_getfold(ndata, kf, 1)
+  expect_equal(colnames(test[[1]]$dataset), colnames(ndata$dataset))
+  expect_equal(colnames(test[[2]]$dataset), colnames(ndata$dataset))
+
+  test <- mldr_getfold(ndata, kf, 2, has.validation = T)
+  expect_equal(colnames(test[[1]]$dataset), colnames(ndata$dataset))
+  expect_equal(colnames(test[[2]]$dataset), colnames(ndata$dataset))
+  expect_equal(colnames(test[[3]]$dataset), colnames(ndata$dataset))
+})
