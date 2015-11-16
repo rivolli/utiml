@@ -54,7 +54,7 @@ mldr_fill_sparce_data <- function (mdata) {
 #' @examples
 #' mldr_normalize(emotions)
 mldr_normalize <- function(mdata) {
-  data <- mdata$dataset[c(mdata$attributesIndexes, mdata$labels$index)]
+  data <- mdata$dataset[seq(mdata$measures$num.attributes)]
   for (col in mdata$attributesIndexes) {
     if (is.numeric(data[,col])) {
       data[col] <- utiml_normalize(data[col])
@@ -75,9 +75,20 @@ mldr_normalize <- function(mdata) {
 #' @examples
 #' mldr_remove_unique_attributes(emotions)
 mldr_remove_unique_attributes <- function (mdata) {
-  attributesIndexes <- which(apply(mdata$dataset[mdata$attributesIndexes], 2, function (col) length(unique(col)) > 1))
-  dataset <- cbind(mdata$dataset[attributesIndexes], mdata$dataset[mdata$labels$index])
-  mldr_from_dataframe(dataset, (length(attributesIndexes) + 1):ncol(dataset), mdata$name)
+  labelsIndexes <- c()
+  attributesIndexes <- c()
+  for (col in seq(mdata$measures$num.attributes)) {
+    if (col %in% mdata$labels$index) {
+      attributesIndexes <- c(attributesIndexes, col)
+      labelsIndexes <- c(labelsIndexes, length(attributesIndexes))
+    }
+    else {
+      if (length(unique(mdata$dataset[,col])) > 1) {
+        attributesIndexes <- c(attributesIndexes, col)
+      }
+    }
+  }
+  mldr_from_dataframe(mdata$dataset[attributesIndexes], labelsIndexes, mdata$name)
 }
 
 #' @title Remove examples without labels
@@ -93,7 +104,7 @@ mldr_remove_unique_attributes <- function (mdata) {
 mldr_remove_unlabeled_instances <- function (mdata) {
   labelset <- rep(0, mdata$measures$num.labels)
   rows <- !apply(mdata$dataset[mdata$labels$index] == labelset, 1, all)
-  cols <- c(mdata$attributesIndexes, mdata$labels$index)
+  cols <- seq(mdata$measures$num.attributes)
   mldr_from_dataframe(mdata$dataset[rows, cols], mdata$labels$index, mdata$name)
 }
 
@@ -110,16 +121,19 @@ mldr_remove_unlabeled_instances <- function (mdata) {
 #' @examples
 #' mldr_remove_labels(emotions)
 mldr_remove_labels <- function (mdata, t = 1) {
-  labelsIndexes <- which(apply(mdata$dataset[mdata$labels$index], 2, function (col) {
-    tbl <- table(col)
-    length(tbl) > 1 && all(tbl > t)
-  })) + mdata$measures$num.attributes - mdata$measures$num.labels
+  labelsIndexes <- c()
+  for (col in mdata$labels$index) {
+    tbl <- table(mdata$dataset[col])
+    if (length(tbl) > 1 && all(tbl > t)) {
+      labelsIndexes <- c(labelsIndexes, col)
+    }
+  }
 
   if (length(labelsIndexes) <= 1)
     stop("The pre process procedure result in a single label")
 
-  dataset <- cbind(mdata$dataset[mdata$attributesIndexes], mdata$dataset[labelsIndexes])
-  mldr_from_dataframe(dataset, (1 + ncol(dataset) - length(labelsIndexes)):ncol(dataset), mdata$name)
+  dataset <- mdata$dataset[sort(c(mdata$attributesIndexes, labelsIndexes))]
+  mldr_from_dataframe(dataset, which(colnames(dataset) %in% rownames(mdata$labels)), mdata$name)
 }
 
 #' @title Replace nominal attributes
@@ -155,13 +169,17 @@ mldr_replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) 
   }
 
   dataset <- data.frame(row.names=rownames(mdata$dataset))
-  for(i in mdata$attributesIndexes) {
-    dataset <- if (is.numeric(mdata$dataset[,i]))
-       cbind(dataset, mdata$dataset[i])
-    else
-      dataset <- cbind(dataset, replace_nominal_column(mdata$dataset[,i], colnames(mdata$dataset[i])))
+  labelIndexes <- c()
+  for(col in seq(mdata$measures$num.attributes)) {
+    if (is.numeric(mdata$dataset[,col])) {
+      dataset <- cbind(dataset, mdata$dataset[col])
+      if (col %in% mdata$labels$index) {
+        labelIndexes <- c(labelIndexes, ncol(dataset))
+      }
+    } else {
+      dataset <- cbind(dataset, replace_nominal_column(mdata$dataset[,col], colnames(mdata$dataset[col])))
+    }
   }
 
-  classIndexes <- (1 + ncol(dataset)):(ncol(dataset)+mdata$measures$num.labels)
-  mldr_from_dataframe(cbind(dataset, mdata$dataset[mdata$labels$index]), classIndexes, mdata$name)
+  mldr_from_dataframe(dataset, labelIndexes, mdata$name)
 }

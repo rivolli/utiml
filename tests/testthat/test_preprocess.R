@@ -115,8 +115,9 @@ test_that("Replace nominal attributes", {
 
 test_that("Alternatives datasets", {
   df <- data.frame(
-    Label1 <- c(sample(c(0,1), 100, replace = TRUE)),
-    Label2 <- c(sample(c(0,1), 100, replace = TRUE)),
+    Label1 = c(sample(c(0,1), 100, replace = TRUE)),
+    Label2 = c(sample(c(0,1), 100, replace = TRUE)),
+    Label3 = c(sample(c(0,1), 100, replace = TRUE)),
     X1 = factor(c("1", "2", rep(NA, 98))),
     X2 = c(1, 2, rep(NA, 98)),
     X3 = factor(c("a", "b", rep(NA, 98))),
@@ -124,8 +125,33 @@ test_that("Alternatives datasets", {
     X5 = c("a", "b", rep(NA, 98)),
     X6 = c("alfa", "beta", rep(NA, 98))
   )
-  mdata <- mldr_from_dataframe(df, labelIndices = c(1, 2), name = "testMLDR")
+  df[df$Label1 == 0 & df$Label2 == 0,"Label3"] <- 1
+  mdata <- mldr_from_dataframe(df, labelIndices = c(1, 2, 3), name = "testMLDR")
 
   ndata <- mldr_fill_sparce_data(mdata)
-  expect_equal(ndata$measures, ndata$measures)
+  expect_equal(ndata$measures, mdata$measures)
+  expect_equal(ndata$labels, mdata$labels)
+
+  ndata <- mldr_remove_unique_attributes(ndata)
+  expect_equal(ndata$measures, mdata$measures)
+  expect_equal(ndata$labels, mdata$labels)
+
+  ndata <- mldr_remove_labels(ndata)
+  expect_equal(ndata$measures, mdata$measures)
+  expect_equal(ndata$labels, mdata$labels)
+
+  ndata <- mldr_remove_unlabeled_instances(ndata)
+  expect_equal(ndata$measures, mdata$measures)
+  expect_equal(ndata$labels, mdata$labels)
+
+  ndata <- mldr_normalize(ndata)
+  expect_equal(ndata$measures, mdata$measures)
+  expect_equal(ndata$labels, mdata$labels)
+
+  ndata <- mldr_replace_nominal_attributes(ndata)
+  attrs <- c("num.instances", "num.labels",
+             "num.labelsets", "num.single.labelsets",
+             "max.frequency", "cardinality", "density")
+  expect_equal(ndata$measures[attrs], mdata$measures[attrs])
+  expect_equal(ndata$labels, mdata$labels)
 })
