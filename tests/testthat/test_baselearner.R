@@ -18,7 +18,11 @@ test_that("test train/prediction base learner methods", {
   class(testdataset) <- NULL
   expect_error(mltrain(testdataset))
   expect_error(mlpredict(testdataset))
- })
+})
+
+test_that("KNN", {
+  #Train with a k and predict with other k
+})
 
 test_that("Summary", {
   class(testdataset) <- "mltransformation"

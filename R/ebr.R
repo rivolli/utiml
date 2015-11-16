@@ -116,7 +116,8 @@ ebr <- function (mdata,
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
-#'  The valid options are describe in \link{utiml_vote.schema_method}. (default: "MAJ")
+#'  The valid options are describe in \link{utiml_vote.schema_method}. If the value is
+#'  NULL then all predictions will be returned instead of a mlresult. (default: "MAJ")
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param ... Others arguments passed to the base method prediction for all
@@ -154,8 +155,10 @@ predict.EBRmodel <- function (object,
   if(class(object) != 'EBRmodel')
     stop('First argument must be an EBRmodel object')
 
-  if (is.null(utiml_vote.schema_method(vote.schema)))
-    stop("Invalid vote schema")
+  if (!is.null(vote.schema)) {
+    if (is.null(utiml_vote.schema_method(vote.schema)))
+      stop("Invalid vote schema")
+  }
 
   if (CORES < 1)
     stop('Cores must be a positive value')
@@ -165,7 +168,10 @@ predict.EBRmodel <- function (object,
     predict(brmodel, newdata[,brmodel$attrs], ..., CORES = CORES)
   })
 
-  utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
+  if (is.null(vote.schema))
+    allpreds
+  else
+    utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
 }
 
 print.EBRmodel <- function (x, ...) {

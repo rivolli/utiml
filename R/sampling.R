@@ -434,7 +434,7 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
 #' indexes <- utiml_iterative_stratification(emotions, rep(0.1,10))
 utiml_iterative_stratification <- function (mdata, r) {
   D <- rownames(mdata$dataset)
-  S <- lapply(1:length(r), function (i) integer())
+  S <- lapply(1:length(r), function (i) character())
 
   # Calculate the desired number of examples at each subset
   cj <- round(mdata$measures$num.instances * r)
@@ -446,13 +446,26 @@ utiml_iterative_stratification <- function (mdata, r) {
   cji <- trunc(sapply(mdata$labels$count, function (di) di * r))
   colnames(cji) <- rownames(mdata$labels)
 
+  #Empty examples (without any labels)
+  empty.inst <- as.character(which(apply(mdata$dataset[, mdata$labels$index], 1, sum) == 0))
+  if (length(empty.inst) > 0) {
+    D <- setdiff(D, empty.inst)
+    indexes <- rep(1:length(r), ceiling(length(empty.inst) / length(r)))[1:length(empty.inst)]
+    Dist <- split(empty.inst, indexes)
+    for (i in 1:length(Dist)) {
+      S[[i]] <- Dist[[i]]
+      cj[i] <- cj[i] - length(S[[i]])
+    }
+  }
+
   while (length(D) > 0) {
     # Find the label with the fewest (but at least one) remaining examples,
-    Dl <- apply(mdata$dataset[D, mdata$labels$index], 2, function (col) names(which(col == 1)))
+    # Do not use apply because sometimes its returns is a matrix
+    Dl <- lapply(mdata$labels$index, function (col) D[which(mdata$dataset[D, col] == 1)])
+    names(Dl) <- rownames(mdata$labels)
     Di <- unlist(lapply(Dl, length))
     l <- names(which.min(Di[Di>0]))
 
-    #browser()
     for (ex in Dl[[l]]) {
       # Find the subset(s) with the largest number of desired examples for this
       # label, breaking ties by considering the largest number of desired examples

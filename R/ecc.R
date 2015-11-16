@@ -119,7 +119,8 @@ ecc <- function (mdata,
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
-#'  The valid options are describe in \link{utiml_vote.schema_method}. (default: "MAJ")
+#'  The valid options are describe in \link{utiml_vote.schema_method}. If the value is
+#'  NULL then all predictions will be returned instead of a mlresult. (default: "MAJ")
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
@@ -158,8 +159,10 @@ predict.ECCmodel <- function (object,
   if(class(object) != 'ECCmodel')
     stop('First argument must be an ECCmodel object')
 
-  if (is.null(utiml_vote.schema_method(vote.schema)))
-    stop("Invalid vote schema")
+  if (!is.null(vote.schema)) {
+    if (is.null(utiml_vote.schema_method(vote.schema)))
+      stop("Invalid vote schema")
+  }
 
   if (CORES < 1)
     stop('Cores must be a positive value')
@@ -169,7 +172,10 @@ predict.ECCmodel <- function (object,
     predict(ccmodel, newdata[,ccmodel$attrs], ...)
   }, CORES)
 
-  utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
+  if (is.null(vote.schema))
+    allpreds
+  else
+    utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
 }
 
 print.ECCmodel <- function (x, ...) {

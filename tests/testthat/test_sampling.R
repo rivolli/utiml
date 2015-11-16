@@ -6,6 +6,7 @@ df$Label2 <- c(sample(c(0,1), 100, replace = TRUE))
 df$Label3 <- c(sample(c(0,1), 100, replace = TRUE))
 df$Label4 <- as.numeric(df$Label1 == 0 | df$Label2 == 0 | df$Label3 == 0)
 mdata <- mldr_from_dataframe(df, labelIndices = c(11, 12, 13, 14), name = "testMLDR")
+empty.mdata <- mldr_from_dataframe(df[,1:13], labelIndices = c(11, 12, 13), name = "testMLDR")
 set.seed(NULL)
 
 testFolds <- function (kfold, original, msg) {
@@ -45,6 +46,10 @@ test_that("random holdout", {
   expect_equal(folds$train$measures$num.instances, folds$test$measures$num.instances)
   testCompletude(folds, mdata)
 
+  folds <- mldr_random_holdout(empty.mdata, c("train"=0.5, "test"=0.5))
+  expect_equal(folds$train$measures$num.instances, folds$test$measures$num.instances)
+  testCompletude(folds, mdata)
+
   set.seed(1)
   f1 <- mldr_random_holdout(mdata, c(0.5, 0.5))
   set.seed(1)
@@ -70,6 +75,10 @@ test_that("stratified holdout", {
   testEmptyIntersectRows(f$b, f$c)
   testCompletude(f, mdata)
 
+  folds <- mldr_stratified_holdout(empty.mdata, c("train"=0.5, "test"=0.5))
+  expect_equal(folds$train$measures$num.instances, folds$test$measures$num.instances)
+  testCompletude(folds, mdata)
+
   sf <- mldr_stratified_holdout(f$a, c("a"=0.5, "b"=0.5))
   expect_equal(length(sf), 2)
   testEmptyIntersectRows(sf$a, sf$b)
@@ -91,13 +100,17 @@ test_that("iterative holdout", {
   testEmptyIntersectRows(f$c, f$d)
   testCompletude(f, mdata)
 
-  sf <- mldr_stratified_holdout(f$a, c("a"=0.5, "b"=0.5))
+  folds <- mldr_iterative_stratification_holdout(empty.mdata, c("train"=0.5, "test"=0.5))
+  testEmptyIntersectRows(folds$train, folds$test)
+  testCompletude(folds, mdata)
+
+  sf <- mldr_iterative_stratification_holdout(f$a, c("a"=0.5, "b"=0.5))
   expect_equal(length(sf), 2)
   testEmptyIntersectRows(sf$a, sf$b)
   testCompletude(sf, f$a)
 
   folds <- mldr_random_holdout(mdata, 0.6)
-  sf <- mldr_stratified_holdout(folds[[2]], c("a"=0.6, "b"=0.4))
+  sf <- mldr_iterative_stratification_holdout(folds[[2]], c("a"=0.6, "b"=0.4))
   testEmptyIntersectRows(sf$a, sf$b)
   testCompletude(sf, folds[[2]])
 })
@@ -139,6 +152,9 @@ test_that("random kfold", {
   ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
   f4 <- mldr_random_kfold(ds$train, 9)
   testFolds(f4, ds$train, "f4 Random kfolds")
+
+  folds <- mldr_random_kfold(empty.mdata, 5)
+  testFolds(folds, empty.mdata, "empty Random kfolds")
 })
 
 test_that("stratified kfold", {
@@ -178,6 +194,9 @@ test_that("stratified kfold", {
   ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
   f4 <- mldr_stratified_kfold(ds$train, 9)
   testFolds(f4, ds$train, "f4 Stratified kfold")
+
+  folds <- mldr_stratified_kfold(empty.mdata, 5)
+  testFolds(folds, empty.mdata, "empty stratified kfolds")
 })
 
 test_that("iterative kfold", {
@@ -217,6 +236,9 @@ test_that("iterative kfold", {
   ds <- mldr_random_holdout(mdata, c("train" = 0.9, "test" = 0.1))
   f4 <- mldr_iterative_stratification_kfold(ds$train, 9)
   testFolds(f4, ds$train, "f4 Iterative kfold")
+
+  folds <- mldr_iterative_stratification_kfold(empty.mdata, 5)
+  testFolds(folds, empty.mdata, "empty iterative kfolds")
 })
 
 test_that("subset and random subset", {
