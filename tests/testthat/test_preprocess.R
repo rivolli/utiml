@@ -112,3 +112,20 @@ test_that("Replace nominal attributes", {
 
   #TODO ordinal.attributes
 })
+
+test_that("Alternatives datasets", {
+  df <- data.frame(
+    Label1 <- c(sample(c(0,1), 100, replace = TRUE)),
+    Label2 <- c(sample(c(0,1), 100, replace = TRUE)),
+    X1 = factor(c("1", "2", rep(NA, 98))),
+    X2 = c(1, 2, rep(NA, 98)),
+    X3 = factor(c("a", "b", rep(NA, 98))),
+    X4 = c("1", "2", rep(NA, 98)),
+    X5 = c("a", "b", rep(NA, 98)),
+    X6 = c("alfa", "beta", rep(NA, 98))
+  )
+  mdata <- mldr_from_dataframe(df, labelIndices = c(1, 2), name = "testMLDR")
+
+  ndata <- mldr_fill_sparce_data(mdata)
+  expect_equal(ndata$measures, ndata$measures)
+})
