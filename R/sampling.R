@@ -121,7 +121,7 @@ mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.
   partition.names <- names(partitions)
   utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
     lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
-      mdata[fold]
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
     })
   })
 }
@@ -200,7 +200,7 @@ mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
   partition.names <- names(partitions)
   utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
     lapply(utiml_random_split(mdata, partitions), function (fold) {
-      mdata[fold]
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
     })
   })
 }
@@ -279,7 +279,7 @@ mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
   partition.names <- names(partitions)
   utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
     lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
-      mdata[fold]
+      mldr_subset(mdata, fold, mdata$attributesIndexes)
     })
   })
 }
