@@ -24,26 +24,26 @@
 #' library(utiml)
 #' result <- labels_correlation_coefficient(emotions)
 #'
-#' # Get the phi coefficient between the labels "happy-pleased" and "quiet-still"
-#' result["happy-pleased", "quiet-still"]
+#' # Get the phi coefficient between the labels 'happy-pleased' and 'quiet-still'
+#' result['happy-pleased', 'quiet-still']
 #'
 #' # Get all coefficients of a specific label
 #' result[1, ]
-labels_correlation_coefficient <- function (mdata) {
-  labelnames <- rownames(mdata$labels)
-  classes <- mdata$dataset[,mdata$labels$index]
-  q <- length(labelnames)
-  cor <- matrix(nrow = q, ncol = q, dimnames = list(labelnames, labelnames))
-  for (i in 1:q) {
-    for (j in i:q) {
-      confmat <- table(classes[,c(i, j)])
-      A <- as.numeric(confmat["1", "1"])
-      B <- as.numeric(confmat["1", "0"])
-      C <- as.numeric(confmat["0", "1"])
-      D <- as.numeric(confmat["0", "0"])
-      cor[i,j] <- abs((A*D - B*C)/sqrt(as.numeric(A+B)*(C+D)*(A+C)*(B+D)))
-      cor[j,i] <- cor[i,j]
+labels_correlation_coefficient <- function(mdata) {
+    labelnames <- rownames(mdata$labels)
+    classes <- mdata$dataset[, mdata$labels$index]
+    q <- length(labelnames)
+    cor <- matrix(nrow = q, ncol = q, dimnames = list(labelnames, labelnames))
+    for (i in 1:q) {
+        for (j in i:q) {
+            confmat <- table(classes[, c(i, j)])
+            A <- as.numeric(confmat["1", "1"])
+            B <- as.numeric(confmat["1", "0"])
+            C <- as.numeric(confmat["0", "1"])
+            D <- as.numeric(confmat["0", "0"])
+            cor[i, j] <- abs((A * D - B * C)/sqrt(as.numeric(A + B) * (C + D) * (A + C) * (B + D)))
+            cor[j, i] <- cor[i, j]
+        }
     }
-  }
-  cor
-}
+    cor
+} 

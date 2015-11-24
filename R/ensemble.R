@@ -1,8 +1,4 @@
-#
-# This file contains functions related with ensemble
-# The most function are available public in the package
-# The functions are sorted in alphabetical order
-#
+# This file contains functions related with ensemble The most function are available public in the package The functions are sorted in alphabetical order
 
 #' @title Average vote combination for ensemble prediction
 #' @family Ensemble utilites
@@ -26,8 +22,8 @@
 #' result <- utiml_ensemble_average_votes(predictions)
 #' result$probability
 #' # --> 0.8, 0.4, 0.7, 0.5
-utiml_ensemble_average_votes <- function (predictions) {
-  utiml_ensemble_compute_votes(predictions, mean)
+utiml_ensemble_average_votes <- function(predictions) {
+    utiml_ensemble_compute_votes(predictions, mean)
 }
 
 #' @title Generic vote combination for ensemble prediction
@@ -51,10 +47,10 @@ utiml_ensemble_average_votes <- function (predictions) {
 #'
 #' # Compute the maximum vote combination
 #' result <- utiml_ensemble_compute_votes(predictions, max)
-utiml_ensemble_compute_votes <- function (predictions, method.name) {
-  if (length(predictions) == 0)
-    stop("Predictions can not be empty")
-  as.binaryPrediction(apply(as.multilabelPrediction(predictions, TRUE), 1, method.name))
+utiml_ensemble_compute_votes <- function(predictions, method.name) {
+    if (length(predictions) == 0) 
+        stop("Predictions can not be empty")
+    as.binaryPrediction(apply(as.multilabelPrediction(predictions, TRUE), 1, method.name))
 }
 
 #' @title Majority vote combination for ensemble prediction
@@ -64,7 +60,7 @@ utiml_ensemble_compute_votes <- function (predictions, method.name) {
 #'  the majority instances. In others words, if a example is
 #'  predicted as posivite, only the positive confidences are used to
 #'  compute the averaged value.
-#
+# 
 #' @param predictions A list of multi-label predictions
 #'  (a \code{\link{mlprediction}} object).
 #'
@@ -79,29 +75,29 @@ utiml_ensemble_compute_votes <- function (predictions, method.name) {
 #'  as.binaryPrediction(c(0.8,0.3,0.4,0.1))
 #' )
 #' result <- utiml_ensemble_majority_votes(predictions)
-utiml_ensemble_majority_votes <- function (predictions) {
-  if (length(predictions) == 0)
-    stop("Predictions can not be empty")
-
-  probabilities <- as.multilabelPrediction(predictions, TRUE)
-  bipartitions <- attr(probabilities, "classes")
-
-  votes <- apply(bipartitions, 1, mean)
-  scores <- apply(probabilities, 1, mean)
-  result <- scores
-
-  #Compute the positive probabilities
-  positive <- votes > 0.5 | (votes == 0.5 & scores >= 0.5)
-  result[positive] <- unlist(lapply(which(positive), function (row){
-    mean(probabilities[row, bipartitions[row,] == 1])
-  }))
-
-  #Compute the negative p
-  result[!positive] <- unlist(lapply(which(!positive), function (row){
-    mean(probabilities[row, bipartitions[row,] == 0])
-  }))
-
-  as.binaryPrediction(result)
+utiml_ensemble_majority_votes <- function(predictions) {
+    if (length(predictions) == 0) 
+        stop("Predictions can not be empty")
+    
+    probabilities <- as.multilabelPrediction(predictions, TRUE)
+    bipartitions <- attr(probabilities, "classes")
+    
+    votes <- apply(bipartitions, 1, mean)
+    scores <- apply(probabilities, 1, mean)
+    result <- scores
+    
+    # Compute the positive probabilities
+    positive <- votes > 0.5 | (votes == 0.5 & scores >= 0.5)
+    result[positive] <- unlist(lapply(which(positive), function(row) {
+        mean(probabilities[row, bipartitions[row, ] == 1])
+    }))
+    
+    # Compute the negative p
+    result[!positive] <- unlist(lapply(which(!positive), function(row) {
+        mean(probabilities[row, bipartitions[row, ] == 0])
+    }))
+    
+    as.binaryPrediction(result)
 }
 
 #' @title Maximum vote combination for ensemble prediction
@@ -126,8 +122,8 @@ utiml_ensemble_majority_votes <- function (predictions) {
 #' result <- utiml_ensemble_maximum_votes(predictions)
 #' result$probability
 #' # --> 1, 0.2, 0.7, 0.3
-utiml_ensemble_maximum_votes <- function (predictions) {
-  utiml_ensemble_compute_votes(predictions, max)
+utiml_ensemble_maximum_votes <- function(predictions) {
+    utiml_ensemble_compute_votes(predictions, max)
 }
 
 #' @title Minimum vote combination for ensemble prediction
@@ -152,8 +148,8 @@ utiml_ensemble_maximum_votes <- function (predictions) {
 #' result <- utiml_ensemble_minimum_votes(predictions)
 #' result$probability
 #' # --> 0.6, 0.1, 0.4, 0.1
-utiml_ensemble_minimum_votes <- function (predictions) {
-  utiml_ensemble_compute_votes(predictions, min)
+utiml_ensemble_minimum_votes <- function(predictions) {
+    utiml_ensemble_compute_votes(predictions, min)
 }
 
 #' @title Product vote combination for ensemble prediction
@@ -178,8 +174,8 @@ utiml_ensemble_minimum_votes <- function (predictions) {
 #' result <- utiml_ensemble_product_votes(predictions)
 #' result$probability
 #' # --> 0.72, 0.05, 0.125, 0.06
-utiml_ensemble_product_votes <- function (predictions) {
-  utiml_ensemble_compute_votes(predictions, prod)
+utiml_ensemble_product_votes <- function(predictions) {
+    utiml_ensemble_compute_votes(predictions, prod)
 }
 
 #' @title Compute the ensemble predictions based on some vote schema
@@ -197,21 +193,20 @@ utiml_ensemble_product_votes <- function (predictions) {
 #' predictions <- list()
 #' predictions$model1 <- prediction(brmodel1, testdata)
 #' predictions$model2 <- prediction(brmodel2, testdata)
-#' result <- utiml_compute_ensemble_predictions(predictions, "MAJ")
-utiml_compute_multilabel_ensemble <- function (predictions, vote.schema, probability = TRUE) {
-  method <- utiml_vote.schema_method(vote.schema)
-  new.prediction <- list()
-  for (label in colnames(predictions[[1]])) {
-    lpred <- lapply(predictions, function (prediction){
-      probs <- utiml_ifelse(attr(prediction, "type") == "probability",
-                    prediction[,label], attr(prediction, "probs")[,label])
-
-      as.binaryPrediction(probs)
-    })
-    new.prediction[[label]] <- utiml_compute_binary_ensemble(method, lpred)
-  }
-
-  as.multilabelPrediction(new.prediction, probability)
+#' result <- utiml_compute_ensemble_predictions(predictions, 'MAJ')
+utiml_compute_multilabel_ensemble <- function(predictions, vote.schema, probability = TRUE) {
+    method <- utiml_vote.schema_method(vote.schema)
+    new.prediction <- list()
+    for (label in colnames(predictions[[1]])) {
+        lpred <- lapply(predictions, function(prediction) {
+            probs <- utiml_ifelse(attr(prediction, "type") == "probability", prediction[, label], attr(prediction, "probs")[, label])
+            
+            as.binaryPrediction(probs)
+        })
+        new.prediction[[label]] <- utiml_compute_binary_ensemble(method, lpred)
+    }
+    
+    as.multilabelPrediction(new.prediction, probability)
 }
 
 #' @title Compute the ensemble predictions for binary predictions
@@ -221,8 +216,8 @@ utiml_compute_multilabel_ensemble <- function (predictions, vote.schema, probabi
 #'
 #' @return A new binary.result
 #' @export
-utiml_compute_binary_ensemble <- function (method.name, binary.predictions) {
-  do.call(method.name, list(predictions = binary.predictions))
+utiml_compute_binary_ensemble <- function(method.name, binary.predictions) {
+    do.call(method.name, list(predictions = binary.predictions))
 }
 
 #' @title Define the method related with the vote schema
@@ -238,13 +233,8 @@ utiml_compute_binary_ensemble <- function (method.name, binary.predictions) {
 #' }
 #' @return The method that will compute the votes
 #' @export
-utiml_vote.schema_method <- function (vote.schema) {
-  votes <- list(
-    MAJ = utiml_ensemble_majority_votes,
-    MAX = utiml_ensemble_maximum_votes,
-    MIN = utiml_ensemble_minimum_votes,
-    AVG = utiml_ensemble_average_votes,
-    PROD = utiml_ensemble_product_votes
-  )
-  votes[[vote.schema]]
-}
+utiml_vote.schema_method <- function(vote.schema) {
+    votes <- list(MAJ = utiml_ensemble_majority_votes, MAX = utiml_ensemble_maximum_votes, MIN = utiml_ensemble_minimum_votes, AVG = utiml_ensemble_average_votes, 
+        PROD = utiml_ensemble_product_votes)
+    votes[[vote.schema]]
+} 

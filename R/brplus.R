@@ -26,7 +26,7 @@
 #'
 #' @return An object of class \code{BRPmodel} containing the set of fitted
 #'   models, including: \describe{
-#'    \item{freq}{The label frequencies to use with the "Stat" strategy}
+#'    \item{freq}{The label frequencies to use with the 'Stat' strategy}
 #'    \item{initial}{The BR model to predict the values for the labels to initial step}
 #'    \item{models}{A list of final models named by the label names.}
 #'    }
@@ -47,39 +47,35 @@
 #' pred <- predict(model, testdata)
 #'
 #' # Use Random Forest as base method and 4 cores
-#' model <- brplus(dataset$train, "RF", CORES = 4)
+#' model <- brplus(dataset$train, 'RF', CORES = 4)
 #' pred <- predict(model, testdata)
-brplus <- function (mdata,
-                    base.method = "SVM",
-                    ...,
-                    CORES = 1
-                  ) {
-  #Validations
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  #BRplus Model class
-  brpmodel <- list()
-  freq <- mdata$labels$freq
-  names(freq) <- rownames(mdata$labels)
-  brpmodel$freq <- sort(freq)
-  brpmodel$initial <- br(mdata, base.method, ..., CORES = CORES)
-
-  basedata <- mdata$dataset[mdata$attributesIndexes]
-  labeldata <- mdata$dataset[mdata$labels$index]
-  datasets <- utiml_lapply(1:mdata$measures$num.labels, function (li) {
-    br.transformation(cbind(basedata, labeldata[-li], labeldata[li]), "mldBRP", base.method)
-  }, CORES)
-  names(datasets) <- rownames(mdata$labels)
-  brpmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-
-  brpmodel$call <- match.call()
-  class(brpmodel) <- "BRPmodel"
-
-  brpmodel
+brplus <- function(mdata, base.method = "SVM", ..., CORES = 1) {
+    # Validations
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    # BRplus Model class
+    brpmodel <- list()
+    freq <- mdata$labels$freq
+    names(freq) <- rownames(mdata$labels)
+    brpmodel$freq <- sort(freq)
+    brpmodel$initial <- br(mdata, base.method, ..., CORES = CORES)
+    
+    basedata <- mdata$dataset[mdata$attributesIndexes]
+    labeldata <- mdata$dataset[mdata$labels$index]
+    datasets <- utiml_lapply(1:mdata$measures$num.labels, function(li) {
+        br.transformation(cbind(basedata, labeldata[-li], labeldata[li]), "mldBRP", base.method)
+    }, CORES)
+    names(datasets) <- rownames(mdata$labels)
+    brpmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
+    
+    brpmodel$call <- match.call()
+    class(brpmodel) <- "BRPmodel"
+    
+    brpmodel
 }
 
 #' @title Predict Method for BR+ (brplus)
@@ -105,7 +101,7 @@ brplus <- function (mdata,
 #'  }
 #' }
 #'
-#' @param object Object of class "\code{BRPmodel}", created by \code{\link{brplus}} method.
+#' @param object Object of class '\code{BRPmodel}', created by \code{\link{brplus}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param strategy The strategy prefix to determine how to estimate the values of
@@ -114,7 +110,7 @@ brplus <- function (mdata,
 #'        The possible values are: \code{'Dyn'}, \code{'Stat'}, \code{'Ord'} or \code{'NU'}.
 #'        See the description for more details. (default: \code{'Dyn'}).
 #' @param order The label sequence used to update the initial labels results based on the
-#'   final results. This argument is used only when the \code{strategy = "Ord"}
+#'   final results. This argument is used only when the \code{strategy = 'Ord'}
 #'   (default: \code{list()})
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
@@ -146,76 +142,63 @@ brplus <- function (mdata,
 #' pred <- predict(model, dataset$test)
 #'
 #' # Predict SVM bipartitions and change the method to use No Update strategy
-#' pred <- predict(model, dataset$test, strategy = "NU", probability = FALSE)
+#' pred <- predict(model, dataset$test, strategy = 'NU', probability = FALSE)
 #'
 #' # Predict using a random sequence to update the labels
 #' labels <- sample(rownames(dataset$train$labels))
-#' pred <- predict(model, dataset$test, strategy = "Ord", order = labels)
+#' pred <- predict(model, dataset$test, strategy = 'Ord', order = labels)
 #'
 #' # Passing a specif parameter for SVM predict method
 #' pred <- predict(model, dataset$test, na.action = na.fail)
-predict.BRPmodel <- function (object,
-                              newdata,
-                              strategy = c("Dyn", "Stat", "Ord", "NU"),
-                              order = list(),
-                              probability = TRUE,
-                              ...,
-                              CORES = 1
-                             ) {
-  #Validations
-  if(class(object) != 'BRPmodel')
-    stop('First argument must be an BRPmodel object')
-
-  strategies <- c("Dyn", "Stat", "Ord", "NU")
-  if(!strategy[1] %in% strategies)
-    stop(paste("Strategy value must be '", paste(strategies, collapse = "' or '"), "'", sep=""))
-
-  labels <- object$initial$labels
-  if (strategy[1] == "Ord") {
-    if (length(order) != length(labels))
-      stop('The ordered list must be the same size of the labels')
-
-    if (!all(order %in% labels))
-      stop('The ordered list must contain all label names')
-  }
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  newdata <- utiml_newdata(newdata)
-
-  if (strategy[1] == "NU") {
-    initial.preds <- predict(object$initial, newdata, probability = FALSE, ..., CORES = CORES)
-    predictions <- utiml_lapply(1:length(labels), function (li) {
-      br.predict_model(object$models[[li]], cbind(newdata, initial.preds[,-li]), ...)
-    }, CORES)
-    names(predictions) <- labels
-  }
-  else {
-    initial.probs <- predict(object$initial, newdata, probability = TRUE, ..., CORES = CORES)
-    initial.preds <- simple.threshold(initial.probs)
-    orders <- list(
-      Dyn = names(sort(apply(initial.preds, 2, mean))),
-      Stat = names(object$freq),
-      Ord = order
-    )
-
-    predictions <- list()
-    for (labelname in orders[[strategy[1]]]) {
-      model <- object$models[[labelname]]
-      data <- cbind(newdata, initial.preds[,!labels %in% labelname])
-      predictions[[labelname]] <- br.predict_model(model, data, ...)
-      initial.preds[,labelname] <- predictions[[labelname]]$bipartition
+predict.BRPmodel <- function(object, newdata, strategy = c("Dyn", "Stat", "Ord", "NU"), order = list(), probability = TRUE, ..., CORES = 1) {
+    # Validations
+    if (class(object) != "BRPmodel") 
+        stop("First argument must be an BRPmodel object")
+    
+    strategies <- c("Dyn", "Stat", "Ord", "NU")
+    if (!strategy[1] %in% strategies) 
+        stop(paste("Strategy value must be '", paste(strategies, collapse = "' or '"), "'", sep = ""))
+    
+    labels <- object$initial$labels
+    if (strategy[1] == "Ord") {
+        if (length(order) != length(labels)) 
+            stop("The ordered list must be the same size of the labels")
+        
+        if (!all(order %in% labels)) 
+            stop("The ordered list must contain all label names")
     }
-  }
-
-  result <- as.multilabelPrediction(predictions[labels], probability)
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    newdata <- utiml_newdata(newdata)
+    
+    if (strategy[1] == "NU") {
+        initial.preds <- predict(object$initial, newdata, probability = FALSE, ..., CORES = CORES)
+        predictions <- utiml_lapply(1:length(labels), function(li) {
+            br.predict_model(object$models[[li]], cbind(newdata, initial.preds[, -li]), ...)
+        }, CORES)
+        names(predictions) <- labels
+    } else {
+        initial.probs <- predict(object$initial, newdata, probability = TRUE, ..., CORES = CORES)
+        initial.preds <- simple.threshold(initial.probs)
+        orders <- list(Dyn = names(sort(apply(initial.preds, 2, mean))), Stat = names(object$freq), Ord = order)
+        
+        predictions <- list()
+        for (labelname in orders[[strategy[1]]]) {
+            model <- object$models[[labelname]]
+            data <- cbind(newdata, initial.preds[, !labels %in% labelname])
+            predictions[[labelname]] <- br.predict_model(model, data, ...)
+            initial.preds[, labelname] <- predictions[[labelname]]$bipartition
+        }
+    }
+    
+    result <- as.multilabelPrediction(predictions[labels], probability)
 }
 
-print.BRPmodel <- function (x, ...) {
-  cat("Classifier BR+ (also called BRplus)\n\nCall:\n")
-  print(x$call)
-  cat("\n", length(x$models), "Models (labels):\n")
-  print(names(x$models))
-}
-
+print.BRPmodel <- function(x, ...) {
+    cat("Classifier BR+ (also called BRplus)\n\nCall:\n")
+    print(x$call)
+    cat("\n", length(x$models), "Models (labels):\n")
+    print(names(x$models))
+} 

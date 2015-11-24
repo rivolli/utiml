@@ -1,40 +1,27 @@
 #' utiml: Utilities for Multi-Label Learning
 #'
-#' @description
-#' The utiml package provides the follow categories of important functions:
+#' The utiml package provides the follow categories of multi-label functions:
 #' \enumerate{
-#'  \item Transformation methods
+#'  \item Classification methods
+#'  \item Pre-process utilities
+#'  \item Sampling methods
+#'  \item Threshold methods
+#'  \item Evaluation measures
 #' }
 #'
-#' @section 1. Transformation methods:
-#' These functions contain the main methods for predict multi-label data
-#'    using transformation approaches
-#'  \itemize{
-#'    \item \code{\link[=br]{Binary Relevance}}
-#'    \item Classifier Chains
-#'  }
-#'
-#' @section 1.1 Base methods:
-#' The default implementation has support to the specific base methods:
-#' \itemize{
-#'  \item \emph{Support Vector Machines (SVM)} - requires the '\pkg{e1071}'
-#'    package
-#'  \item \emph{Decision tree C4.5} (J48 implementation) - requires the
-#'    '\pkg{RWeka}' package
-#'  \item \emph{Decision tree C5.0} - requires the '\pkg{C50}' package
-#'  \item \emph{Random Forest}, a ensemble of decision trees - requires the
-#'    '\pkg{randomForest}' package
-#'  \item \emph{Naive Bayes} - requires the '\pkg{e1071}' package
-#'  \item \emph{k-Nearest Neighbors (kNN)} - requires the '\pkg{class}' package
-#' }
-#' New base methods can be added, to use  other methods see \link{TODO}
-#'  documentation.
+#' @section Notes:
+#'  We use the good \code{\link{mldr}} package, to represent and support
+#'  multi-label data. See its documentation to more information about the
+#'  multi-label data.
 #'
 #' @author
-#' \itemize{
-#'  \item Adriano Rivolli <rivolli@@usp.br>
-#'  \item Andre C. P. L. F. de Carvalho <andre@@icmc.usp.br>
-#' }
+#'  \itemize{
+#'    \item Adriano Rivolli <rivolli@@utfpr.edu.br>
+#'  }
+#'  This package is a result of my PhD at Institute of Mathematics and Computer
+#'  Sciences (ICMC) in the University of Sao Paulo.
+#'
+#'  PhD advisor: Andre C. P. L. F. de Carvalho
 #'
 #' @docType package
 #' @name utiml

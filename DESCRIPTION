@@ -1,25 +1,27 @@
 Package: utiml
 Type: Package
-Title: Utilities for multi-label learning
-Version: 0.1
+Title: Utilities for Multi-Label Learning
+Version: 0.0.0.9000
 Date: 2015-08-18
-Author: Adriano Rivolli and Andre Carvalho
-Maintainer: <rivolli@usp.br>
-Description: Multi-label learning transformation methods and others
-    utilities to work with multi-label classification on R
+Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
+                  role = c("aut", "cre"))
+Description: Multi-label learning methods and others utilities to support
+    multi-label classification in R.
 URL: https://github.com/rivolli/utiml
 Depends:
-    R (>= 3.0.0),
+    R (>= 3.0.0)
+Imports:
     mldr
 Suggests:
-    parallel,
-    e1071,
     C50,
-    RWeka,
+    e1071,
+    FSelector,
     kknn,
+    parallel,
     randomForest,
     rpart,
-    FSelector
+    RWeka
 License: GPL
-LazyData: TRUE
-RoxygenNote: 5.0.0
+LazyData: true
+BugReports: https://github.com/rivolli/utiml
+RoxygenNote: 5.0.1

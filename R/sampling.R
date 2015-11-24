@@ -1,8 +1,4 @@
-#
-# This file contains functions related with sampling
-# The most function are available public in the package
-# The functions are sorted in alphabetical order
-#
+# This file contains functions related with sampling The most function are available public in the package The functions are sorted in alphabetical order
 
 #' @title Get the multi-labels datasets for k-fold Cross Validation
 #' @family mldr
@@ -47,30 +43,30 @@
 #' # Using validation
 #' dataset <- mldr_getfold(emotions, folds, 10, TRUE)
 #' # dataset$train, dataset$test, #dataset$validation
-mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  if (class(kfold) != "mldr_kfolds")
-    stop("Second argument must be an 'mldr_kfolds' object")
-
-  if (n < 1 || n > kfold$k)
-    stop(cat("The 'n' value must be between 1 and", kfold$k))
-
-  folds <- kfold$fold[-n]
-  if (has.validation) {
-    i <- n == length(folds)
-    v <- c(1, n)[c(i, !i)]
-    folds <- folds[-v]
-  }
-  ldata <- list()
-  ldata$train <- mldr_subset(mdata, unlist(folds), mdata$attributesIndexes)
-  ldata$test <- mldr_subset(mdata, kfold$fold[[n]], mdata$attributesIndexes)
-
-  if (has.validation)
-    ldata$validation <- mldr_subset(mdata, kfold$fold[[v]], mdata$attributesIndexes)
-
-  ldata
+mldr_getfold <- function(mdata, kfold, n, has.validation = FALSE) {
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    if (class(kfold) != "mldr_kfolds") 
+        stop("Second argument must be an 'mldr_kfolds' object")
+    
+    if (n < 1 || n > kfold$k) 
+        stop(cat("The 'n' value must be between 1 and", kfold$k))
+    
+    folds <- kfold$fold[-n]
+    if (has.validation) {
+        i <- n == length(folds)
+        v <- c(1, n)[c(i, !i)]
+        folds <- folds[-v]
+    }
+    ldata <- list()
+    ldata$train <- mldr_subset(mdata, unlist(folds), mdata$attributesIndexes)
+    ldata$test <- mldr_subset(mdata, kfold$fold[[n]], mdata$attributesIndexes)
+    
+    if (has.validation) 
+        ldata$validation <- mldr_subset(mdata, kfold$fold[[v]], mdata$attributesIndexes)
+    
+    ldata
 }
 
 #' @title Create iterative stratified partitions of a multi-label dataset
@@ -112,18 +108,18 @@ mldr_getfold <- function (mdata, kfold, n, has.validation = FALSE) {
 #' print(dataset[[2]]$measures)
 #'
 #' # Split the dataset in three parts
-#' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
+#' partitions <- c('train' = 0.70, 'validation' = 0.15, 'test' = 0.15)
 #' dataset <- mldr_iterative_stratification_holdout(emotions, partitions)
 #' print(dataset$train)
 #' print(dataset$validation)
 #' print(dataset$test)
-mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
-  partition.names <- names(partitions)
-  utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
-    lapply(utiml_iterative_stratification(mdata, partitions), function (fold) {
-      mldr_subset(mdata, fold, mdata$attributesIndexes)
+mldr_iterative_stratification_holdout <- function(mdata, partitions = c(0.7, 0.3)) {
+    partition.names <- names(partitions)
+    utiml_holdout(mdata, partitions, partition.names, function(mdata, partitions) {
+        lapply(utiml_iterative_stratification(mdata, partitions), function(fold) {
+            mldr_subset(mdata, fold, mdata$attributesIndexes)
+        })
     })
-  })
 }
 
 #' @title Generate labels based stratified k folds for multi-label data
@@ -155,8 +151,8 @@ mldr_iterative_stratification_holdout <- function (mdata, partitions = c(0.7, 0.
 #'
 #' # 10 folds
 #' folds <- mldr_iterative_stratification_kfold(emotions, 10)
-mldr_iterative_stratification_kfold <- function (mdata, k = 10) {
-  utiml_kfold(mdata, k, utiml_iterative_stratification)
+mldr_iterative_stratification_kfold <- function(mdata, k = 10) {
+    utiml_kfold(mdata, k, utiml_iterative_stratification)
 }
 
 #' @title Create distinct partitions of a multi-label dataset
@@ -191,18 +187,18 @@ mldr_iterative_stratification_kfold <- function (mdata, k = 10) {
 #' print(datasets[[2]]$measures)
 #'
 #' # Split the dataset in three parts
-#' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
+#' partitions <- c('train' = 0.70, 'validation' = 0.15, 'test' = 0.15)
 #' dataset <- mldr_random_holdout(emotions, partitions)
 #' print(dataset$train)
 #' print(dataset$validation)
 #' print(dataset$test)
-mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
-  partition.names <- names(partitions)
-  utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
-    lapply(utiml_random_split(mdata, partitions), function (fold) {
-      mldr_subset(mdata, fold, mdata$attributesIndexes)
+mldr_random_holdout <- function(mdata, partitions = c(0.7, 0.3)) {
+    partition.names <- names(partitions)
+    utiml_holdout(mdata, partitions, partition.names, function(mdata, partitions) {
+        lapply(utiml_random_split(mdata, partitions), function(fold) {
+            mldr_subset(mdata, fold, mdata$attributesIndexes)
+        })
     })
-  })
 }
 
 #' @title Generate random k folds for multi-label data
@@ -227,8 +223,8 @@ mldr_random_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
 #'
 #' # 10 folds
 #' folds <- mldr_random_kfold(emotions, 10)
-mldr_random_kfold <- function (mdata, k = 10) {
-  utiml_kfold(mdata, k, utiml_random_split)
+mldr_random_kfold <- function(mdata, k = 10) {
+    utiml_kfold(mdata, k, utiml_random_split)
 }
 
 #' @title Create stratified partitions of a multi-label dataset
@@ -270,18 +266,18 @@ mldr_random_kfold <- function (mdata, k = 10) {
 #' print(datasets[[2]]$measures)
 #'
 #' # Split the dataset in three parts
-#' partitions <- c("train" = 0.70, "validation" = 0.15, "test" = 0.15)
+#' partitions <- c('train' = 0.70, 'validation' = 0.15, 'test' = 0.15)
 #' dataset <- mldr_stratified_holdout(emotions, partitions)
 #' print(dataset$train)
 #' print(dataset$validation)
 #' print(dataset$test)
-mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
-  partition.names <- names(partitions)
-  utiml_holdout(mdata, partitions, partition.names, function (mdata, partitions){
-    lapply(utiml_labelset_stratification(mdata, partitions), function (fold) {
-      mldr_subset(mdata, fold, mdata$attributesIndexes)
+mldr_stratified_holdout <- function(mdata, partitions = c(0.7, 0.3)) {
+    partition.names <- names(partitions)
+    utiml_holdout(mdata, partitions, partition.names, function(mdata, partitions) {
+        lapply(utiml_labelset_stratification(mdata, partitions), function(fold) {
+            mldr_subset(mdata, fold, mdata$attributesIndexes)
+        })
     })
-  })
 }
 
 #' @title Generate stratified k folds for multi-label data
@@ -312,8 +308,8 @@ mldr_stratified_holdout <- function (mdata, partitions = c(0.7, 0.3)) {
 #'
 #' # 10 folds
 #' folds <- mldr_stratified_kfold(emotions, 10)
-mldr_stratified_kfold <- function (mdata, k = 10) {
-  utiml_kfold(mdata, k, utiml_labelset_stratification)
+mldr_stratified_kfold <- function(mdata, k = 10) {
+    utiml_kfold(mdata, k, utiml_labelset_stratification)
 }
 
 #' @title Create the k partitions of k-fold
@@ -328,15 +324,15 @@ mldr_stratified_kfold <- function (mdata, k = 10) {
 #'
 #' @examples
 #' utiml_kfold(mdata, 10, utiml_random_split)
-utiml_kfold <- function (mdata, k, kfold.method) {
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  kf <- list(k=k)
-  kf$fold <- do.call(kfold.method, list(mdata = mdata, r = rep(1/k, k)))
-  class(kf) <- "mldr_kfolds"
-
-  kf
+utiml_kfold <- function(mdata, k, kfold.method) {
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    kf <- list(k = k)
+    kf$fold <- do.call(kfold.method, list(mdata = mdata, r = rep(1/k, k)))
+    class(kf) <- "mldr_kfolds"
+    
+    kf
 }
 
 #' @title Create a holdout partition based in the specified method
@@ -353,18 +349,18 @@ utiml_kfold <- function (mdata, k, kfold.method) {
 #'
 #' @examples
 #' utiml_holdout(mdata, partitions, partition.names, utiml_random_split)
-utiml_holdout <- function (mdata, partitions, partition.names, holdout.method) {
-  # Validations
-  if (sum(partitions) > 1)
-    stop("The sum of partitions can not be greater than 1")
-
-  partitions <- utiml_ifelse(length(partitions) == 1, c(partitions, 1 - partitions), partitions)
-
-  # Split data
-  ldata <- do.call(holdout.method, list(mdata = mdata, partitions = partitions))
-
-  names(ldata) <- partition.names
-  ldata
+utiml_holdout <- function(mdata, partitions, partition.names, holdout.method) {
+    # Validations
+    if (sum(partitions) > 1) 
+        stop("The sum of partitions can not be greater than 1")
+    
+    partitions <- utiml_ifelse(length(partitions) == 1, c(partitions, 1 - partitions), partitions)
+    
+    # Split data
+    ldata <- do.call(holdout.method, list(mdata = mdata, partitions = partitions))
+    
+    names(ldata) <- partition.names
+    ldata
 }
 
 
@@ -381,18 +377,14 @@ utiml_holdout <- function (mdata, partitions, partition.names, holdout.method) {
 #' @examples
 #' #Return a emotion subset with the first 40 examples and only with two attributes
 #' rows <- 1:40
-#' cols <- c("Mean_Acc1298_Mean_Mem40_Centroid", "Mean_Acc1298_Mean_Mem40_MFCC_10")
+#' cols <- c('Mean_Acc1298_Mean_Mem40_Centroid', 'Mean_Acc1298_Mean_Mem40_MFCC_10')
 #' mldr_subset(emotions, rows, cols)
-mldr_subset <- function (mdata, rows, cols) {
-  if (mode(cols) == "character")
-    cols <- which(colnames(mdata$dataset[mdata$attributesIndexes]) %in% cols)
-
-  dataset <- mdata$dataset[rows, sort(unique(c(cols, mdata$labels$index)))]
-  mldr_from_dataframe(
-    dataset,
-    labelIndices = which(colnames(dataset) %in% rownames(mdata$labels)),
-    name = mdata$name
-  )
+mldr_subset <- function(mdata, rows, cols) {
+    if (mode(cols) == "character") 
+        cols <- which(colnames(mdata$dataset[mdata$attributesIndexes]) %in% cols)
+    
+    dataset <- mdata$dataset[rows, sort(unique(c(cols, mdata$labels$index)))]
+    mldr_from_dataframe(dataset, labelIndices = which(colnames(dataset) %in% rownames(mdata$labels)), name = mdata$name)
 }
 
 #' @title Create a random subset of a dataset
@@ -408,10 +400,10 @@ mldr_subset <- function (mdata, rows, cols) {
 #' @examples
 #' #Return a emotion subset with 100 examples and 40 predictive attributes
 #' mldr_random_subset(emotions, 100, 40)
-mldr_random_subset <- function (mdata, num.rows, num.cols) {
-  rows <- sample(mdata$measures$num.instances, num.rows)
-  cols <- sample(mdata$attributesIndexes, num.cols)
-  mldr_subset(mdata, rows, cols)
+mldr_random_subset <- function(mdata, num.rows, num.cols) {
+    rows <- sample(mdata$measures$num.instances, num.rows)
+    cols <- sample(mdata$attributesIndexes, num.cols)
+    mldr_subset(mdata, rows, cols)
 }
 
 #' @title Internal Iterative Stratification
@@ -436,67 +428,65 @@ mldr_random_subset <- function (mdata, num.rows, num.cols) {
 #'
 #' # Create a stratified 10-fold
 #' indexes <- utiml_iterative_stratification(emotions, rep(0.1,10))
-utiml_iterative_stratification <- function (mdata, r) {
-  D <- rownames(mdata$dataset)
-  S <- lapply(1:length(r), function (i) character())
-
-  # Calculate the desired number of examples at each subset
-  cj <- round(mdata$measures$num.instances * r)
-  dif <- mdata$measures$num.instances - sum(cj)
-  if (dif != 0)
-    cj[1:abs(dif)] <- cj[1:abs(dif)] + c(1, -1)[c(dif>0, dif<0)]
-
-  # Calculate the desired number of examples of each label at each subset
-  cji <- trunc(sapply(mdata$labels$count, function (di) di * r))
-  colnames(cji) <- rownames(mdata$labels)
-
-  #Empty examples (without any labels)
-  empty.inst <- as.character(which(apply(mdata$dataset[, mdata$labels$index], 1, sum) == 0))
-  if (length(empty.inst) > 0) {
-    D <- setdiff(D, empty.inst)
-    indexes <- rep(1:length(r), ceiling(length(empty.inst) / length(r)))[1:length(empty.inst)]
-    Dist <- split(empty.inst, indexes)
-    for (i in 1:length(Dist)) {
-      S[[i]] <- Dist[[i]]
-      cj[i] <- cj[i] - length(S[[i]])
+utiml_iterative_stratification <- function(mdata, r) {
+    D <- rownames(mdata$dataset)
+    S <- lapply(1:length(r), function(i) character())
+    
+    # Calculate the desired number of examples at each subset
+    cj <- round(mdata$measures$num.instances * r)
+    dif <- mdata$measures$num.instances - sum(cj)
+    if (dif != 0) 
+        cj[1:abs(dif)] <- cj[1:abs(dif)] + c(1, -1)[c(dif > 0, dif < 0)]
+    
+    # Calculate the desired number of examples of each label at each subset
+    cji <- trunc(sapply(mdata$labels$count, function(di) di * r))
+    colnames(cji) <- rownames(mdata$labels)
+    
+    # Empty examples (without any labels)
+    empty.inst <- as.character(which(apply(mdata$dataset[, mdata$labels$index], 1, sum) == 0))
+    if (length(empty.inst) > 0) {
+        D <- setdiff(D, empty.inst)
+        indexes <- rep(1:length(r), ceiling(length(empty.inst)/length(r)))[1:length(empty.inst)]
+        Dist <- split(empty.inst, indexes)
+        for (i in 1:length(Dist)) {
+            S[[i]] <- Dist[[i]]
+            cj[i] <- cj[i] - length(S[[i]])
+        }
     }
-  }
-
-  while (length(D) > 0) {
-    # Find the label with the fewest (but at least one) remaining examples,
-    # Do not use apply because sometimes its returns is a matrix
-    Dl <- lapply(mdata$labels$index, function (col) D[which(mdata$dataset[D, col] == 1)])
-    names(Dl) <- rownames(mdata$labels)
-    Di <- unlist(lapply(Dl, length))
-    l <- names(which.min(Di[Di>0]))
-
-    for (ex in Dl[[l]]) {
-      # Find the subset(s) with the largest number of desired examples for this
-      # label, breaking ties by considering the largest number of desired examples
-      m <- which(cji[which.max(cji[,l]),l] == cji[,l])
-      if (length(m) > 1) {
-        m <- intersect(m, which(cj[m[which.max(cj[m])]] == cj))
-        if (length(m) > 1)
-          m <- sample(m)[1]
-      }
-
-      S[[m]] <- c(S[[m]], ex)
-      D <- D[D != ex]
-
-      # Update desired number of examples
-      i <- which(mdata$dataset[ex, mdata$labels$index] == 1)
-      cji[m, i] <- cji[m, i] - 1
-      cj[m] <- cj[m] - 1
+    
+    while (length(D) > 0) {
+        # Find the label with the fewest (but at least one) remaining examples, Do not use apply because sometimes its returns is a matrix
+        Dl <- lapply(mdata$labels$index, function(col) D[which(mdata$dataset[D, col] == 1)])
+        names(Dl) <- rownames(mdata$labels)
+        Di <- unlist(lapply(Dl, length))
+        l <- names(which.min(Di[Di > 0]))
+        
+        for (ex in Dl[[l]]) {
+            # Find the subset(s) with the largest number of desired examples for this label, breaking ties by considering the largest number of desired examples
+            m <- which(cji[which.max(cji[, l]), l] == cji[, l])
+            if (length(m) > 1) {
+                m <- intersect(m, which(cj[m[which.max(cj[m])]] == cj))
+                if (length(m) > 1) 
+                  m <- sample(m)[1]
+            }
+            
+            S[[m]] <- c(S[[m]], ex)
+            D <- D[D != ex]
+            
+            # Update desired number of examples
+            i <- which(mdata$dataset[ex, mdata$labels$index] == 1)
+            cji[m, i] <- cji[m, i] - 1
+            cj[m] <- cj[m] - 1
+        }
     }
-  }
-
-  S <- lapply(S, function (fold){
-    new.fold <- which(rownames(mdata$dataset) %in% fold)
-    names(new.fold) <- rownames(mdata$dataset[new.fold,])
-    new.fold
-  })
-
-  S
+    
+    S <- lapply(S, function(fold) {
+        new.fold <- which(rownames(mdata$dataset) %in% fold)
+        names(new.fold) <- rownames(mdata$dataset[new.fold, ])
+        new.fold
+    })
+    
+    S
 }
 
 #' @title Labelsets Stratification
@@ -521,40 +511,39 @@ utiml_iterative_stratification <- function (mdata, r) {
 #'
 #' # Create a stratified 10-fold
 #' indexes <- utiml_labelset_stratification(emotions, rep(0.1,10))
-utiml_labelset_stratification <- function (mdata, r) {
-  D <- sample(mdata$measures$num.instances)
-  S <- lapply(1:length(r), function (i) integer())
-  labelsets <- apply(mdata$dataset[,mdata$labels$index], 1, paste, collapse = "")
-
-  # Calculate the desired number of examples of each labelset at each subset
-  cji.aux <- sapply(mdata$labelsets, function (di) di * r)
-  cji <- trunc(cji.aux)
-  dif <- cji.aux - cji
-  rest <- round(apply(dif, 1, sum))
-  for (ls in rev(names(mdata$labelsets))) {
-    s <- sum(dif[,ls])
-    if (s > 0) {
-      for (i in 1:s) {
-        fold <- which.max(rest)
-        rest[fold] <- rest[fold] - 1
-        cji[fold, ls] <- cji[fold, ls] + 1
-      }
+utiml_labelset_stratification <- function(mdata, r) {
+    D <- sample(mdata$measures$num.instances)
+    S <- lapply(1:length(r), function(i) integer())
+    labelsets <- apply(mdata$dataset[, mdata$labels$index], 1, paste, collapse = "")
+    
+    # Calculate the desired number of examples of each labelset at each subset
+    cji.aux <- sapply(mdata$labelsets, function(di) di * r)
+    cji <- trunc(cji.aux)
+    dif <- cji.aux - cji
+    rest <- round(apply(dif, 1, sum))
+    for (ls in rev(names(mdata$labelsets))) {
+        s <- sum(dif[, ls])
+        if (s > 0) {
+            for (i in 1:s) {
+                fold <- which.max(rest)
+                rest[fold] <- rest[fold] - 1
+                cji[fold, ls] <- cji[fold, ls] + 1
+            }
+        }
     }
-  }
-
-  for (ex in D) {
-    ls <- labelsets[ex]
-    fold <- which.max(cji[,ls])
-    if (cji[fold, ls] > 0) {
-      S[[fold]] <- c(S[[fold]], ex)
-      cji[fold, ls] <- cji[fold, ls] - 1
+    
+    for (ex in D) {
+        ls <- labelsets[ex]
+        fold <- which.max(cji[, ls])
+        if (cji[fold, ls] > 0) {
+            S[[fold]] <- c(S[[fold]], ex)
+            cji[fold, ls] <- cji[fold, ls] - 1
+        }
     }
-  }
-
-  for (i in 1:length(S))
-    names(S[[i]]) <- rownames(mdata$dataset[S[[i]],])
-
-  S
+    
+    for (i in 1:length(S)) names(S[[i]]) <- rownames(mdata$dataset[S[[i]], ])
+    
+    S
 }
 
 #' @title Random split of a dataset
@@ -567,20 +556,17 @@ utiml_labelset_stratification <- function (mdata, r) {
 #'
 #' @examples
 #' utiml_random_split(emotions, c(0.6, 0.2, 0.2))
-utiml_random_split <- function (mdata, r) {
-  index <- c()
-  amount <- round(mdata$measures$num.instances * r)
-
-  dif <- mdata$measures$num.instances - sum(amount)
-  for (i in 1:abs(dif))
-    amount[i] <- amount[i] + sign(dif)
-
-  for (i in 1:length(amount))
-    index <- c(index, rep(i, amount[i]))
-
-  S <- split(sample(1:mdata$measures$num.instances), index)
-  for (i in 1:length(S))
-    names(S[[i]]) <- rownames(mdata$dataset[S[[i]],])
-
-  S
-}
+utiml_random_split <- function(mdata, r) {
+    index <- c()
+    amount <- round(mdata$measures$num.instances * r)
+    
+    dif <- mdata$measures$num.instances - sum(amount)
+    for (i in 1:abs(dif)) amount[i] <- amount[i] + sign(dif)
+    
+    for (i in 1:length(amount)) index <- c(index, rep(i, amount[i]))
+    
+    S <- split(sample(1:mdata$measures$num.instances), index)
+    for (i in 1:length(S)) names(S[[i]]) <- rownames(mdata$dataset[S[[i]], ])
+    
+    S
+} 

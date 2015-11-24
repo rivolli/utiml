@@ -52,58 +52,50 @@
 #'
 #' # Use a specific chain with C4.5 classifier
 #' mychain <- sample(rownames(dataset$train$labels))
-#' model <- cc(dataset$train, "C4.5", mychain)
+#' model <- cc(dataset$train, 'C4.5', mychain)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Set a specific parameter
-#' model <- cc(dataset$train, "KNN", k=5)
+#' model <- cc(dataset$train, 'KNN', k=5)
 #' pred <- predict(model, dataset$test)
-cc <- function (mdata,
-                base.method = "SVM",
-                chain = c(),
-                ...,
-                CORES = 1
-              ) {
-  #Validations
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  labels <- rownames(mdata$labels)
-  if (length(chain) == 0)
-    chain <- rownames(mdata$labels)
-  else {
-    if (length(chain) != mdata$measures$num.labels ||
-        length(setdiff(union(chain,labels),intersect(chain,labels))) > 0
-        ) {
-      stop('Invalid chain (all labels must be on the chain)')
+cc <- function(mdata, base.method = "SVM", chain = c(), ..., CORES = 1) {
+    # Validations
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    labels <- rownames(mdata$labels)
+    if (length(chain) == 0) 
+        chain <- rownames(mdata$labels) else {
+        if (length(chain) != mdata$measures$num.labels || length(setdiff(union(chain, labels), intersect(chain, labels))) > 0) {
+            stop("Invalid chain (all labels must be on the chain)")
+        }
     }
-  }
-
-  #CC Model class
-  ccmodel <- list()
-  ccmodel$labels <- labels
-  ccmodel$chain <- chain
-  ccmodel$models <- list()
-
-  basedata <- mdata$dataset[mdata$attributesIndexes]
-  labeldata <- mdata$dataset[mdata$labels$index][chain]
-  datasets <- utiml_lapply(1:mdata$measures$num.labels, function (labelIndex) {
-    data <- cbind(basedata, labeldata[1:labelIndex])
-    br.transformation(data, "mldCC", base.method, chain.order = labelIndex)
-  }, CORES)
-  names(datasets) <- chain
-  ccmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-
-  ccmodel$call <- match.call()
-  class(ccmodel) <- "CCmodel"
-
-  ccmodel
+    
+    # CC Model class
+    ccmodel <- list()
+    ccmodel$labels <- labels
+    ccmodel$chain <- chain
+    ccmodel$models <- list()
+    
+    basedata <- mdata$dataset[mdata$attributesIndexes]
+    labeldata <- mdata$dataset[mdata$labels$index][chain]
+    datasets <- utiml_lapply(1:mdata$measures$num.labels, function(labelIndex) {
+        data <- cbind(basedata, labeldata[1:labelIndex])
+        br.transformation(data, "mldCC", base.method, chain.order = labelIndex)
+    }, CORES)
+    names(datasets) <- chain
+    ccmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
+    
+    ccmodel$call <- match.call()
+    class(ccmodel) <- "CCmodel"
+    
+    ccmodel
 }
 
 #' @title Predict Method for Classifier Chains
 #' @description This function predicts values based upon a model trained by \code{cc}.
 #'
-#' @param object Object of class "\code{CCmodel}", created by \code{\link{cc}} method.
+#' @param object Object of class '\code{CCmodel}', created by \code{\link{cc}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be returned.
@@ -132,39 +124,35 @@ cc <- function (mdata,
 #'
 #' # Passing a specif parameter for SVM predict method
 #' pred <- predict(model, dataset$test, na.action = na.fail)
-predict.CCmodel <- function (object,
-                             newdata,
-                             probability = TRUE,
-                             ...
-                            ) {
-  #Validations
-  if(class(object) != 'CCmodel')
-    stop('First argument must be an CCmodel object')
-
-  newdata <- utiml_newdata(newdata)
-  predictions <- list()
-  for (label in object$chain) {
-    predictions[[label]] <- br.predict_model(object$models[[label]], newdata, ...)
-    newdata <- cbind(newdata, predictions[[label]]$bipartition)
-    names(newdata)[ncol(newdata)] <- label
-  }
-
-  as.multilabelPrediction(predictions[object$labels], probability)
+predict.CCmodel <- function(object, newdata, probability = TRUE, ...) {
+    # Validations
+    if (class(object) != "CCmodel") 
+        stop("First argument must be an CCmodel object")
+    
+    newdata <- utiml_newdata(newdata)
+    predictions <- list()
+    for (label in object$chain) {
+        predictions[[label]] <- br.predict_model(object$models[[label]], newdata, ...)
+        newdata <- cbind(newdata, predictions[[label]]$bipartition)
+        names(newdata)[ncol(newdata)] <- label
+    }
+    
+    as.multilabelPrediction(predictions[object$labels], probability)
 }
 
-print.CCmodel <- function (x, ...) {
-  cat("Classifier Chains Model\n\nCall:\n")
-  print(x$call)
-  cat("\n Chain: (", length(x$chain), "labels )\n")
-  print(x$chain)
+print.CCmodel <- function(x, ...) {
+    cat("Classifier Chains Model\n\nCall:\n")
+    print(x$call)
+    cat("\n Chain: (", length(x$chain), "labels )\n")
+    print(x$chain)
 }
 
-print.mldCC <- function (x, ...) {
-  cat("Classifier Chains Transformation Dataset\n\n")
-  cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep="")
-  cat("Chain Order: ", x$chain.order, "\n\n", sep="")
-  cat("Dataset info:\n")
-  cat(" ", ncol(x$data) - 1, "Predictive attributes\n")
-  cat(" ", nrow(x$data), "Examples\n")
-  cat("  ", round((sum(x$data[,ncol(x$data)] == 1) / nrow(x$data)) * 100, 1), "% of positive examples\n", sep="")
-}
+print.mldCC <- function(x, ...) {
+    cat("Classifier Chains Transformation Dataset\n\n")
+    cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep = "")
+    cat("Chain Order: ", x$chain.order, "\n\n", sep = "")
+    cat("Dataset info:\n")
+    cat(" ", ncol(x$data) - 1, "Predictive attributes\n")
+    cat(" ", nrow(x$data), "Examples\n")
+    cat("  ", round((sum(x$data[, ncol(x$data)] == 1)/nrow(x$data)) * 100, 1), "% of positive examples\n", sep = "")
+} 

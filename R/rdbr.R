@@ -56,22 +56,12 @@
 #' pred <- predict(model, testdata)
 #'
 #' # Use Random Forest as base method and 4 cores
-#' model <- rdbr(emotions, "RF", CORES = 4)
+#' model <- rdbr(emotions, 'RF', CORES = 4)
 #' pred <- predict(model, testdata)
-rdbr <- function (mdata,
-                  base.method = "SVM",
-                  ...,
-                  estimate.models = TRUE,
-                  save.datasets = FALSE,
-                  CORES = 1
-) {
-  rdbrmodel <- dbr(
-    mdata, base.method, ...,
-    estimate.models = estimate.models,
-    save.datasets = save.datasets,
-    CORES = CORES)
-  class(rdbrmodel) <- "RDBRmodel"
-  rdbrmodel
+rdbr <- function(mdata, base.method = "SVM", ..., estimate.models = TRUE, save.datasets = FALSE, CORES = 1) {
+    rdbrmodel <- dbr(mdata, base.method, ..., estimate.models = estimate.models, save.datasets = save.datasets, CORES = CORES)
+    class(rdbrmodel) <- "RDBRmodel"
+    rdbrmodel
 }
 
 #' @title Predict Method for RDBR
@@ -84,7 +74,7 @@ rdbr <- function (mdata,
 #' does not support parallelize the prediction, however stabilizes earlier than batch
 #' mode.
 #'
-#' @param object Object of class "\code{DBRmodel}", created by \code{\link{dbr}} method.
+#' @param object Object of class '\code{DBRmodel}', created by \code{\link{dbr}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param ... Others arguments passed to the base method prediction for all
@@ -133,64 +123,57 @@ rdbr <- function (mdata,
 #' estimative <- predict(ebr(emotions), testdata, probability = FALSE)
 #' model <- rdbr(emotions, estimate.models = FALSE)
 #' pred <- predict(model, testdata, estimative = estimative)
-predict.RDBRmodel <- function (object,
-                               newdata,
-                               ...,
-                               max.iterations = 5,
-                               batch.mode = FALSE,
-                               estimative = NULL,
-                               probability = TRUE,
-                               CORES = 1
-) {
-  #Validations
-  if(class(object) != 'RDBRmodel')
-    stop('First argument must be an RDDBRmodel object')
-
-  if (is.null(object$estimation) && is.null(estimative))
-    stop('The model requires an estimative matrix')
-
-  if (max.iterations < 1)
-    stop('The number of iteractions must be positive')
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  newdata <- utiml_newdata(newdata)
-  if (is.null(estimative))
-    estimative <- predict(object$estimation, newdata, ..., probability = FALSE, CORES = CORES)
-
-  labels <- names(object$models)
-  if (batch.mode) {
-    for (i in 1:max.iterations) {
-      predictions <- utiml_lapply(1:length(labels), function (li) {
-        br.predict_model(object$models[[li]], cbind(newdata, estimative[,-li]), ...)
-      }, CORES)
-      names(predictions) <- labels
-      new.estimative <- do.call(cbind, lapply(predictions, function (lbl) lbl$bipartition))
-      if (all(new.estimative == estimative)) break
-      estimative <- new.estimative
+predict.RDBRmodel <- function(object, newdata, ..., max.iterations = 5, batch.mode = FALSE, estimative = NULL, probability = TRUE, CORES = 1) {
+    # Validations
+    if (class(object) != "RDBRmodel") 
+        stop("First argument must be an RDDBRmodel object")
+    
+    if (is.null(object$estimation) && is.null(estimative)) 
+        stop("The model requires an estimative matrix")
+    
+    if (max.iterations < 1) 
+        stop("The number of iteractions must be positive")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    newdata <- utiml_newdata(newdata)
+    if (is.null(estimative)) 
+        estimative <- predict(object$estimation, newdata, ..., probability = FALSE, CORES = CORES)
+    
+    labels <- names(object$models)
+    if (batch.mode) {
+        for (i in 1:max.iterations) {
+            predictions <- utiml_lapply(1:length(labels), function(li) {
+                br.predict_model(object$models[[li]], cbind(newdata, estimative[, -li]), ...)
+            }, CORES)
+            names(predictions) <- labels
+            new.estimative <- do.call(cbind, lapply(predictions, function(lbl) lbl$bipartition))
+            if (all(new.estimative == estimative)) 
+                break
+            estimative <- new.estimative
+        }
+    } else {
+        for (i in 1:max.iterations) {
+            old.estimative <- estimative
+            predictions <- list()
+            # the labels needs to be shuffled in each iteraction
+            for (li in 1:length(labels)) {
+                predictions[[li]] <- br.predict_model(object$models[[li]], cbind(newdata, estimative[, -li]), ...)
+                estimative[, li] <- predictions[[li]]$bipartition
+            }
+            names(predictions) <- labels
+            if (all(old.estimative == estimative)) 
+                break
+        }
     }
-  }
-  else {
-    for (i in 1:max.iterations) {
-      old.estimative <- estimative
-      predictions <- list()
-      #the labels needs to be shuffled in each iteraction
-      for (li in 1:length(labels)) {
-        predictions[[li]] <- br.predict_model(object$models[[li]], cbind(newdata, estimative[,-li]), ...)
-        estimative[,li] <- predictions[[li]]$bipartition
-      }
-      names(predictions) <- labels
-      if (all(old.estimative == estimative)) break
-    }
-  }
-
-  as.multilabelPrediction(predictions, probability)
+    
+    as.multilabelPrediction(predictions, probability)
 }
 
-print.RDBRmodel <- function (x, ...) {
-  cat("Classifier RDBR\n\nCall:\n")
-  print(x$call)
-  cat("\n", length(x$models), "Models (labels):\n")
-  print(names(x$models))
-}
+print.RDBRmodel <- function(x, ...) {
+    cat("Classifier RDBR\n\nCall:\n")
+    print(x$call)
+    cat("\n", length(x$models), "Models (labels):\n")
+    print(names(x$models))
+} 

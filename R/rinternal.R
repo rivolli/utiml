@@ -1,8 +1,5 @@
-#
-# This file contains internal functions of general purpose
-# All functions here are not related about multi-label concepts
-# The functions are sorted in alphabetical order
-#
+# This file contains internal functions of general purpose All functions here are not related about multi-label concepts The functions are sorted in alphabetical
+# order
 
 #' Conditional value selection
 #'
@@ -20,8 +17,8 @@
 #' @examples
 #' utiml_ifelse(TRUE, dataframe1, dataframe2) #dataframe1
 #' utiml_ifelse(length(my.list) > 10, my.list[1:10], my.list)
-utiml_ifelse <- function (test, yes, no) {
-  list(yes, no)[c(test, !test)][[1]]
+utiml_ifelse <- function(test, yes, no) {
+    list(yes, no)[c(test, !test)][[1]]
 }
 
 #' Select the suitable method lapply or mclaplly
@@ -38,11 +35,9 @@ utiml_ifelse <- function (test, yes, no) {
 #' @examples
 #' utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
 #' utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
-utiml_lapply <- function (mylist, myfnc, cores, ...) {
-  if (cores == 1)
-    lapply(mylist, myfnc, ...)
-  else
-    parallel::mclapply(mylist, myfnc, mc.cores=min(cores, length(mylist)), ...)
+utiml_lapply <- function(mylist, myfnc, cores, ...) {
+    if (cores == 1) 
+        lapply(mylist, myfnc, ...) else parallel::mclapply(mylist, myfnc, mc.cores = min(cores, length(mylist)), ...)
 }
 
 #' @title Internal normalize data function
@@ -62,8 +57,8 @@ utiml_lapply <- function (mylist, myfnc, cores, ...) {
 #'
 #' utiml_normalize(c(1,2,3,4,5), 10, 0)
 #' #--> 0.1 0.2 0.3 0.4 0.5
-utiml_normalize <- function (data, max.val=NULL, min.val=NULL) {
-  max.val <- ifelse(is.null(max.val), max(data, na.rm = TRUE), max.val)
-  min.val <- ifelse(is.null(min.val), min(data, na.rm = TRUE), min.val)
-  (data-min.val) / (max.val-min.val)
-}
+utiml_normalize <- function(data, max.val = NULL, min.val = NULL) {
+    max.val <- ifelse(is.null(max.val), max(data, na.rm = TRUE), max.val)
+    min.val <- ifelse(is.null(min.val), min(data, na.rm = TRUE), min.val)
+    (data - min.val)/(max.val - min.val)
+} 

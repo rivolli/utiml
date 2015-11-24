@@ -57,7 +57,7 @@
 #' pred <- predict(model, dataset$test)
 #'
 #' # Use C4.5 with 100% of instances and only 5 rounds
-#' model <- ecc(dataset$train, "C4.5", m = 5, subsample = 1)
+#' model <- ecc(dataset$train, 'C4.5', m = 5, subsample = 1)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Use 75% of attributes
@@ -67,60 +67,53 @@
 #' # Running in 4 cores
 #' model <- ecc(dataset$train, CORES=4)
 #' pred <- predict(model, dataset$test, CORES=4)
-ecc <- function (mdata,
-                 base.method = "SVM",
-                 m = 10,
-                 subsample = 0.75,
-                 attr.space = 0.5,
-                 ...,
-                 CORES = 1
-) {
-  #Validations
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  if(m <= 1)
-    stop('The number of iterations (m) must be greater than 1')
-
-  if (subsample < 0.1 || subsample > 1)
-    stop("The subset of training instances must be between 0.1 and 1 inclusive")
-
-  if (attr.space <= 0.1 || attr.space > 1)
-    stop("The attribbute space of training instances must be between 0.1 and 1 inclusive")
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  #BR Model class
-  eccmodel <- list()
-  eccmodel$rounds <- m
-  eccmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
-  eccmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
-
-  eccmodel$models <- lapply(1:m, function (iteration){
-    ndata <- mldr_random_subset(mdata, eccmodel$nrow, eccmodel$ncol)
-    chain <- sample(rownames(ndata$labels))
-    ccmodel <- cc(ndata, base.method, chain, ..., CORES = CORES)
-    ccmodel$attrs <- colnames(ndata$dataset[,ndata$attributesIndexes])
-    ccmodel
-  })
-
-  eccmodel$call <- match.call()
-  class(eccmodel) <- "ECCmodel"
-
-  eccmodel
+ecc <- function(mdata, base.method = "SVM", m = 10, subsample = 0.75, attr.space = 0.5, ..., CORES = 1) {
+    # Validations
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    if (m <= 1) 
+        stop("The number of iterations (m) must be greater than 1")
+    
+    if (subsample < 0.1 || subsample > 1) 
+        stop("The subset of training instances must be between 0.1 and 1 inclusive")
+    
+    if (attr.space <= 0.1 || attr.space > 1) 
+        stop("The attribbute space of training instances must be between 0.1 and 1 inclusive")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    # BR Model class
+    eccmodel <- list()
+    eccmodel$rounds <- m
+    eccmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
+    eccmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
+    
+    eccmodel$models <- lapply(1:m, function(iteration) {
+        ndata <- mldr_random_subset(mdata, eccmodel$nrow, eccmodel$ncol)
+        chain <- sample(rownames(ndata$labels))
+        ccmodel <- cc(ndata, base.method, chain, ..., CORES = CORES)
+        ccmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
+        ccmodel
+    })
+    
+    eccmodel$call <- match.call()
+    class(eccmodel) <- "ECCmodel"
+    
+    eccmodel
 }
 
 #' @title Predict Method for Ensemble of Classifier Chains
 #' @description This function predicts values based upon a model trained
 #'  by \code{\link{ecc}}.
 #'
-#' @param object Object of class "\code{ECCmodel}", created by \code{\link{ecc}} method.
+#' @param object Object of class '\code{ECCmodel}', created by \code{\link{ecc}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
 #'  The valid options are describe in \link{utiml_vote.schema_method}. If the value is
-#'  NULL then all predictions will be returned instead of a mlresult. (default: "MAJ")
+#'  NULL then all predictions will be returned instead of a mlresult. (default: 'MAJ')
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
@@ -147,42 +140,34 @@ ecc <- function (mdata,
 #' pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
 #'
 #' # Return the classes with the highest score
-#' pred <- predict(model, dataset$test, vote.schema = "MAX")
-predict.ECCmodel <- function (object,
-                              newdata,
-                              vote.schema = "MAJ",
-                              probability = TRUE,
-                              ...,
-                              CORES = 1
-) {
-  #Validations
-  if(class(object) != 'ECCmodel')
-    stop('First argument must be an ECCmodel object')
-
-  if (!is.null(vote.schema)) {
-    if (is.null(utiml_vote.schema_method(vote.schema)))
-      stop("Invalid vote schema")
-  }
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  newdata <- utiml_newdata(newdata)
-  allpreds <- utiml_lapply(object$models, function (ccmodel) {
-    predict(ccmodel, newdata[,ccmodel$attrs], ...)
-  }, CORES)
-
-  if (is.null(vote.schema))
-    allpreds
-  else
-    utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
+#' pred <- predict(model, dataset$test, vote.schema = 'MAX')
+predict.ECCmodel <- function(object, newdata, vote.schema = "MAJ", probability = TRUE, ..., CORES = 1) {
+    # Validations
+    if (class(object) != "ECCmodel") 
+        stop("First argument must be an ECCmodel object")
+    
+    if (!is.null(vote.schema)) {
+        if (is.null(utiml_vote.schema_method(vote.schema))) 
+            stop("Invalid vote schema")
+    }
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    newdata <- utiml_newdata(newdata)
+    allpreds <- utiml_lapply(object$models, function(ccmodel) {
+        predict(ccmodel, newdata[, ccmodel$attrs], ...)
+    }, CORES)
+    
+    if (is.null(vote.schema)) 
+        allpreds else utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
 }
 
-print.ECCmodel <- function (x, ...) {
-  cat("Ensemble of Classifier Chains Model\n\nCall:\n")
-  print(x$call)
-  cat("\nDetails:")
-  cat("\n ", x$rounds, "Iterations")
-  cat("\n ", x$nrow, "Instances")
-  cat("\n ", x$ncol, "Attributes\n")
-}
+print.ECCmodel <- function(x, ...) {
+    cat("Ensemble of Classifier Chains Model\n\nCall:\n")
+    print(x$call)
+    cat("\nDetails:")
+    cat("\n ", x$rounds, "Iterations")
+    cat("\n ", x$nrow, "Instances")
+    cat("\n ", x$ncol, "Attributes\n")
+} 

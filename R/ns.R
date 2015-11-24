@@ -49,64 +49,57 @@
 #'
 #' # Use a specific chain with C4.5 classifier
 #' mychain <- sample(rownames(dataset$train$labels))
-#' model <- ns(dataset$train, "C4.5", mychain)
+#' model <- ns(dataset$train, 'C4.5', mychain)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Set a specific parameter
-#' model <- ns(dataset$train, "KNN", k=5)
+#' model <- ns(dataset$train, 'KNN', k=5)
 #' pred <- predict(model, dataset$test)
-ns <- function (mdata,
-                base.method = "SVM",
-                chain = c(),
-                ...,
-                predict.params = list()) {
-  #Validations
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  labels <- rownames(mdata$labels)
-  if (length(chain) == 0)
-    chain <- rownames(mdata$labels)
-  else {
-    if (length(chain) != mdata$measures$num.labels ||
-        length(setdiff(union(chain,labels),intersect(chain,labels))) > 0
-    ) {
-      stop('Invalid chain (all labels must be on the chain)')
+ns <- function(mdata, base.method = "SVM", chain = c(), ..., predict.params = list()) {
+    # Validations
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    labels <- rownames(mdata$labels)
+    if (length(chain) == 0) 
+        chain <- rownames(mdata$labels) else {
+        if (length(chain) != mdata$measures$num.labels || length(setdiff(union(chain, labels), intersect(chain, labels))) > 0) {
+            stop("Invalid chain (all labels must be on the chain)")
+        }
     }
-  }
-
-  #NS Model class
-  nsmodel <- list()
-  nsmodel$labels <- labels
-  nsmodel$chain <- chain
-  nsmodel$models <- list()
-  nsmodel$labelsets <- as.matrix(mdata$dataset[,mdata$labels$index])
-  if (save.datasets)
-    nsmodel$datasets <- list()
-
-  basedata <- mdata$dataset[mdata$attributesIndexes]
-  newattrs <- matrix(nrow=mdata$measures$num.instances, ncol=0)
-  for (labelIndex in 1:length(chain)) {
-    label <- chain[labelIndex]
-
-    #Create data
-    dataset <- cbind(basedata, mdata$dataset[label])
-    mldCC <- br.transformation(dataset, "mldCC", base.method, chain.order = labelIndex)
-
-    #Call dynamic multilabel model with merged parameters
-    model <- do.call(mltrain, c(list(dataset=mldCC), ...))
-
-    result <- do.call(mlpredict, c(list(model = model, newdata = basedata), predict.params))
-    basedata <- cbind(basedata, result$bipartition)
-    names(basedata)[ncol(basedata)] <- label
-
-    nsmodel$models[[label]] <- model
-  }
-
-  nsmodel$call <- match.call()
-  class(nsmodel) <- "NSmodel"
-
-  nsmodel
+    
+    # NS Model class
+    nsmodel <- list()
+    nsmodel$labels <- labels
+    nsmodel$chain <- chain
+    nsmodel$models <- list()
+    nsmodel$labelsets <- as.matrix(mdata$dataset[, mdata$labels$index])
+    if (save.datasets) 
+        nsmodel$datasets <- list()
+    
+    basedata <- mdata$dataset[mdata$attributesIndexes]
+    newattrs <- matrix(nrow = mdata$measures$num.instances, ncol = 0)
+    for (labelIndex in 1:length(chain)) {
+        label <- chain[labelIndex]
+        
+        # Create data
+        dataset <- cbind(basedata, mdata$dataset[label])
+        mldCC <- br.transformation(dataset, "mldCC", base.method, chain.order = labelIndex)
+        
+        # Call dynamic multilabel model with merged parameters
+        model <- do.call(mltrain, c(list(dataset = mldCC), ...))
+        
+        result <- do.call(mlpredict, c(list(model = model, newdata = basedata), predict.params))
+        basedata <- cbind(basedata, result$bipartition)
+        names(basedata)[ncol(basedata)] <- label
+        
+        nsmodel$models[[label]] <- model
+    }
+    
+    nsmodel$call <- match.call()
+    class(nsmodel) <- "NSmodel"
+    
+    nsmodel
 }
 
 #' @title Predict Method for Nested Stacking
@@ -115,7 +108,7 @@ ns <- function (mdata,
 #'  labelsets to predict only classes present on training data. To more information
 #'  about this implementation see \code{\link{ns.subsetcorrection.score}}.
 #'
-#' @param object Object of class "\code{NSmodel}", created by \code{\link{ns}} method.
+#' @param object Object of class '\code{NSmodel}', created by \code{\link{ns}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param ... Others arguments passed to the base method prediction for all
@@ -144,30 +137,27 @@ ns <- function (mdata,
 #'
 #' # Passing a specif parameter for SVM predict method
 #' pred <- predict(model, dataset$test, na.action = na.fail)
-predict.NSmodel <- function (object,
-                             newdata,
-                             probability = TRUE,
-                             ...) {
-  #Validations
-  if(class(object) != 'NSmodel')
-    stop('First argument must be an NSmodel object')
-
-  newdata <- utiml_newdata(newdata)
-  predictions <- list()
-  for (label in object$chain) {
-    params <- c(list(model = object$models[[label]], newdata = newdata), ...)
-    predictions[[label]] <- do.call(mlpredict, params)
-    newdata <- cbind(newdata, predictions[[label]]$bipartition)
-    names(newdata)[ncol(newdata)] <- label
-  }
-
-  result <- as.multilabelPrediction(predictions[object$labels], probability)
-  subset.corretion(result, object$labelsets)
+predict.NSmodel <- function(object, newdata, probability = TRUE, ...) {
+    # Validations
+    if (class(object) != "NSmodel") 
+        stop("First argument must be an NSmodel object")
+    
+    newdata <- utiml_newdata(newdata)
+    predictions <- list()
+    for (label in object$chain) {
+        params <- c(list(model = object$models[[label]], newdata = newdata), ...)
+        predictions[[label]] <- do.call(mlpredict, params)
+        newdata <- cbind(newdata, predictions[[label]]$bipartition)
+        names(newdata)[ncol(newdata)] <- label
+    }
+    
+    result <- as.multilabelPrediction(predictions[object$labels], probability)
+    subset.corretion(result, object$labelsets)
 }
 
-print.NSmodel <- function (x, ...) {
-  cat("Nested Stacking Model\n\nCall:\n")
-  print(x$call)
-  cat("\n Chain: (", length(x$chain), "labels )\n")
-  print(x$chain)
-}
+print.NSmodel <- function(x, ...) {
+    cat("Nested Stacking Model\n\nCall:\n")
+    print(x$call)
+    cat("\n Chain: (", length(x$chain), "labels )\n")
+    print(x$chain)
+} 

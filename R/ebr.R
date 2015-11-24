@@ -56,7 +56,7 @@
 #' pred <- predict(model, dataset$test)
 #'
 #' # Use C4.5 with 100% of instances and only 5 rounds
-#' model <- ebr(dataset$train, "C4.5", m = 5, subsample = 1)
+#' model <- ebr(dataset$train, 'C4.5', m = 5, subsample = 1)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Use 75% of attributes
@@ -66,58 +66,52 @@
 #' # Running in 4 cores
 #' model <- ebr(dataset$train, CORES=4)
 #' pred <- predict(model, dataset$test, CORES=4)
-ebr <- function (mdata,
-                base.method = "SVM",
-                m = 10,
-                subsample = 0.75,
-                attr.space = 0.5,
-                ...,
-                CORES = 1) {
-  #Validations
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  if(m <= 1)
-    stop('The number of iterations (m) must be greater than 1')
-
-  if (subsample < 0.1 || subsample > 1)
-    stop("The subset of training instances must be between 0.1 and 1 inclusive")
-
-  if (attr.space <= 0.1 || attr.space > 1)
-    stop("The attribbute space of training instances must be between 0.1 and 1 inclusive")
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  #BR Model class
-  ebrmodel <- list()
-  ebrmodel$rounds <- m
-  ebrmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
-  ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
-
-  ebrmodel$models <- lapply(1:m, function (iteration){
-    ndata <- mldr_random_subset(mdata, ebrmodel$nrow, ebrmodel$ncol)
-    brmodel <- br(ndata, base.method, ..., CORES = CORES)
-    brmodel$attrs <- colnames(ndata$dataset[,ndata$attributesIndexes])
-    brmodel
-  })
-
-  ebrmodel$call <- match.call()
-  class(ebrmodel) <- "EBRmodel"
-
-  ebrmodel
+ebr <- function(mdata, base.method = "SVM", m = 10, subsample = 0.75, attr.space = 0.5, ..., CORES = 1) {
+    # Validations
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    if (m <= 1) 
+        stop("The number of iterations (m) must be greater than 1")
+    
+    if (subsample < 0.1 || subsample > 1) 
+        stop("The subset of training instances must be between 0.1 and 1 inclusive")
+    
+    if (attr.space <= 0.1 || attr.space > 1) 
+        stop("The attribbute space of training instances must be between 0.1 and 1 inclusive")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    # BR Model class
+    ebrmodel <- list()
+    ebrmodel$rounds <- m
+    ebrmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
+    ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
+    
+    ebrmodel$models <- lapply(1:m, function(iteration) {
+        ndata <- mldr_random_subset(mdata, ebrmodel$nrow, ebrmodel$ncol)
+        brmodel <- br(ndata, base.method, ..., CORES = CORES)
+        brmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
+        brmodel
+    })
+    
+    ebrmodel$call <- match.call()
+    class(ebrmodel) <- "EBRmodel"
+    
+    ebrmodel
 }
 
 #' @title Predict Method for Ensemble of Binary Relevance
 #' @description This function predicts values based upon a model trained
 #'  by \code{\link{ebr}}.
 #'
-#' @param object Object of class "\code{EBRmodel}", created by \code{\link{ebr}} method.
+#' @param object Object of class '\code{EBRmodel}', created by \code{\link{ebr}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
 #'  The valid options are describe in \link{utiml_vote.schema_method}. If the value is
-#'  NULL then all predictions will be returned instead of a mlresult. (default: "MAJ")
+#'  NULL then all predictions will be returned instead of a mlresult. (default: 'MAJ')
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param ... Others arguments passed to the base method prediction for all
@@ -144,41 +138,34 @@ ebr <- function (mdata,
 #' pred <- predict(model, dataset$test, prob = FALSE, CORES = 6)
 #'
 #' # Return the classes with the highest score
-#' pred <- predict(model, dataset$test, vote = "MAX")
-predict.EBRmodel <- function (object,
-                             newdata,
-                             vote.schema = "MAJ",
-                             probability = TRUE,
-                             ...,
-                             CORES = 1) {
-  #Validations
-  if(class(object) != 'EBRmodel')
-    stop('First argument must be an EBRmodel object')
-
-  if (!is.null(vote.schema)) {
-    if (is.null(utiml_vote.schema_method(vote.schema)))
-      stop("Invalid vote schema")
-  }
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  newdata <- utiml_newdata(newdata)
-  allpreds <- lapply(object$models, function (brmodel) {
-    predict(brmodel, newdata[,brmodel$attrs], ..., CORES = CORES)
-  })
-
-  if (is.null(vote.schema))
-    allpreds
-  else
-    utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
+#' pred <- predict(model, dataset$test, vote = 'MAX')
+predict.EBRmodel <- function(object, newdata, vote.schema = "MAJ", probability = TRUE, ..., CORES = 1) {
+    # Validations
+    if (class(object) != "EBRmodel") 
+        stop("First argument must be an EBRmodel object")
+    
+    if (!is.null(vote.schema)) {
+        if (is.null(utiml_vote.schema_method(vote.schema))) 
+            stop("Invalid vote schema")
+    }
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    newdata <- utiml_newdata(newdata)
+    allpreds <- lapply(object$models, function(brmodel) {
+        predict(brmodel, newdata[, brmodel$attrs], ..., CORES = CORES)
+    })
+    
+    if (is.null(vote.schema)) 
+        allpreds else utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
 }
 
-print.EBRmodel <- function (x, ...) {
-  cat("Ensemble of Binary Relevance Model\n\nCall:\n")
-  print(x$call)
-  cat("\nDetails:")
-  cat("\n ", x$rounds, "Iterations")
-  cat("\n ", x$nrow, "Instances")
-  cat("\n ", x$ncol, "Attributes\n")
-}
+print.EBRmodel <- function(x, ...) {
+    cat("Ensemble of Binary Relevance Model\n\nCall:\n")
+    print(x$call)
+    cat("\nDetails:")
+    cat("\n ", x$rounds, "Iterations")
+    cat("\n ", x$nrow, "Instances")
+    cat("\n ", x$ncol, "Attributes\n")
+} 

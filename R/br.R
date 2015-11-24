@@ -39,46 +39,42 @@
 #' pred <- predict(model, dataset$test)
 #'
 #' # Change the default base method and use 4 CORES
-#' model <- br(dataset$train, "C4.5", CORES = 4)
+#' model <- br(dataset$train, 'C4.5', CORES = 4)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Set a parameters for all subproblems
-#' model <- br(dataset$train, "KNN", k=5)
+#' model <- br(dataset$train, 'KNN', k=5)
 #' pred <- predict(model, dataset$test)
-br <- function (mdata,
-                base.method = "SVM",
-                ...,
-                CORES = 1
-              ) {
-  #Validations
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  #BR Model class
-  brmodel <- list()
-  brmodel$labels <- rownames(mdata$labels)
-
-  #Transformation
-  datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
-  names(datasets) <- brmodel$labels
-
-  #Create models
-  brmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-
-  brmodel$call <- match.call()
-  class(brmodel) <- "BRmodel"
-
-  brmodel
+br <- function(mdata, base.method = "SVM", ..., CORES = 1) {
+    # Validations
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    # BR Model class
+    brmodel <- list()
+    brmodel$labels <- rownames(mdata$labels)
+    
+    # Transformation
+    datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
+    names(datasets) <- brmodel$labels
+    
+    # Create models
+    brmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
+    
+    brmodel$call <- match.call()
+    class(brmodel) <- "BRmodel"
+    
+    brmodel
 }
 
 #' @title Predict Method for Binary Relevance
 #' @description This function predicts values based upon a model trained by
 #'  \code{\link{br}}.
 #'
-#' @param object Object of class "\code{BRmodel}", created by \code{\link{br}} method.
+#' @param object Object of class '\code{BRmodel}', created by \code{\link{br}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be returned.
@@ -109,36 +105,31 @@ br <- function (mdata,
 #'
 #' # Passing a specif parameter for SVM predict method
 #' pred <- predict(model, dataset$test, na.action = na.fail)
-predict.BRmodel <- function (object,
-                             newdata,
-                             probability = TRUE,
-                             ...,
-                             CORES = 1
-                             ) {
-  #Validations
-  if(class(object) != 'BRmodel')
-    stop('First argument must be an BRmodel object')
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  #Create models
-  predictions <- utiml_lapply(object$models, br.predict_model, CORES, newdata = utiml_newdata(newdata), ...)
-  as.multilabelPrediction(predictions, probability)
+predict.BRmodel <- function(object, newdata, probability = TRUE, ..., CORES = 1) {
+    # Validations
+    if (class(object) != "BRmodel") 
+        stop("First argument must be an BRmodel object")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    # Create models
+    predictions <- utiml_lapply(object$models, br.predict_model, CORES, newdata = utiml_newdata(newdata), ...)
+    as.multilabelPrediction(predictions, probability)
 }
 
-print.BRmodel <- function (x, ...) {
-  cat("Binary Relevance Model\n\nCall:\n")
-  print(x$call)
-  cat("\n", length(x$labels), "Models (labels):\n")
-  print(x$labels)
+print.BRmodel <- function(x, ...) {
+    cat("Binary Relevance Model\n\nCall:\n")
+    print(x$call)
+    cat("\n", length(x$labels), "Models (labels):\n")
+    print(x$labels)
 }
 
-print.mldBR <- function (x, ...) {
-  cat("Binary Relevance Transformation Dataset\n\n")
-  cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep="")
-  cat("Dataset info:\n")
-  cat(" ", ncol(x$data) - 1, "Predictive attributes\n")
-  cat(" ", nrow(x$data), "Examples\n")
-  cat("  ", round((sum(x$data[,ncol(x$data)] == 1) / nrow(x$data)) * 100, 1), "% of positive examples\n", sep="")
-}
+print.mldBR <- function(x, ...) {
+    cat("Binary Relevance Transformation Dataset\n\n")
+    cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep = "")
+    cat("Dataset info:\n")
+    cat(" ", ncol(x$data) - 1, "Predictive attributes\n")
+    cat(" ", nrow(x$data), "Examples\n")
+    cat("  ", round((sum(x$data[, ncol(x$data)] == 1)/nrow(x$data)) * 100, 1), "% of positive examples\n", sep = "")
+} 

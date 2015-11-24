@@ -65,78 +65,68 @@
 #' pred <- predict(model, dataset$test)
 #'
 #' # Use 10 folds and different phi correlation with C4.5 classifier
-#' model <- mbr(dataset$train, "C4.5", 10, 0.3)
+#' model <- mbr(dataset$train, 'C4.5', 10, 0.3)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Set a specific parameter
-#' model <- mbr(dataset$train, "KNN", k=5)
+#' model <- mbr(dataset$train, 'KNN', k=5)
 #' pred <- predict(model, dataset$test)
-mbr <- function (mdata,
-                  base.method = "SVM",
-                  folds = 1,
-                  phi = 0,
-                  ...,
-                  predict.params = list(),
-                  CORES = 1
-) {
-  #Validations
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  if (folds < 1)
-    stop("The number of folds must be positive")
-
-  if (phi < 0 || phi > 1)
-    stop('The phi threshold must be between 0 and 1, inclusive')
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  #MBR Model class
-  mbrmodel <- list()
-  mbrmodel$labels <- rownames(mdata$labels)
-  mbrmodel$phi <- phi
-
-  #1 Iteration - Base Level
-  mbrmodel$basemodel <- br(mdata, base.method, ..., CORES = CORES)
-
-  if (folds == 1) {
-    params <- list(object = mbrmodel$basemodel,
-                   newdata = mdata$dataset[mdata$attributesIndexes],
-                   probability = FALSE, CORES = CORES)
-    base.preds <- do.call(predict, c(params, predict.params))
-  }
-  else {
-    kf <- mldr_iterative_stratification_kfold(mdata, folds)
-    base.preds <- do.call(rbind, lapply(1:folds, function (f){
-      dataset <- mldr_getfold(mdata, kf, f)
-      classifier <- br(dataset$train)
-      predict(classifier, dataset$test, prob = FALSE, CORES = CORES)
-    }))
-  }
-
-  #2 Iteration - Meta level
-  corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)
-  br.datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
-  names(br.datasets) <- mbrmodel$labels
-  datasets <- utiml_lapply(br.datasets, function (dataset) {
-    extracolumns <- base.preds[,colnames(corr)[corr[dataset$labelname,] > phi], drop = FALSE]
-    colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
-    base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
-    br.transformation(base, "mldMBR", base.method, new.features = colnames(extracolumns))
-  }, CORES)
-  mbrmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-
-  mbrmodel$call <- match.call()
-  class(mbrmodel) <- "MBRmodel"
-
-  mbrmodel
+mbr <- function(mdata, base.method = "SVM", folds = 1, phi = 0, ..., predict.params = list(), CORES = 1) {
+    # Validations
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    if (folds < 1) 
+        stop("The number of folds must be positive")
+    
+    if (phi < 0 || phi > 1) 
+        stop("The phi threshold must be between 0 and 1, inclusive")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    # MBR Model class
+    mbrmodel <- list()
+    mbrmodel$labels <- rownames(mdata$labels)
+    mbrmodel$phi <- phi
+    
+    # 1 Iteration - Base Level
+    mbrmodel$basemodel <- br(mdata, base.method, ..., CORES = CORES)
+    
+    if (folds == 1) {
+        params <- list(object = mbrmodel$basemodel, newdata = mdata$dataset[mdata$attributesIndexes], probability = FALSE, CORES = CORES)
+        base.preds <- do.call(predict, c(params, predict.params))
+    } else {
+        kf <- mldr_iterative_stratification_kfold(mdata, folds)
+        base.preds <- do.call(rbind, lapply(1:folds, function(f) {
+            dataset <- mldr_getfold(mdata, kf, f)
+            classifier <- br(dataset$train, base.method, ..., CORES = CORES)
+            predict(classifier, dataset$test, prob = FALSE, CORES = CORES)
+        }))
+    }
+    
+    # 2 Iteration - Meta level
+    corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)
+    br.datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
+    names(br.datasets) <- mbrmodel$labels
+    datasets <- utiml_lapply(br.datasets, function(dataset) {
+        extracolumns <- base.preds[, colnames(corr)[corr[dataset$labelname, ] > phi], drop = FALSE]
+        colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
+        base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
+        br.transformation(base, "mldMBR", base.method, new.features = colnames(extracolumns))
+    }, CORES)
+    mbrmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
+    
+    mbrmodel$call <- match.call()
+    class(mbrmodel) <- "MBRmodel"
+    
+    mbrmodel
 }
 
 #' @title Predict Method for Meta-BR/2BR
 #' @description This function predicts values based upon a model trained by \code{mbr}.
 #'
-#' @param object Object of class "\code{MBRmodel}", created by \code{\link{mbr}} method.
+#' @param object Object of class '\code{MBRmodel}', created by \code{\link{mbr}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param ... Others arguments passed to the base method prediction for all
@@ -166,59 +156,49 @@ mbr <- function (mdata,
 #'
 #' # Passing a specif parameter for SVM predict method
 #' pred <- predict(model, dataset$test, na.action = na.fail)
-predict.MBRmodel <- function (object,
-                              newdata,
-                              probability = TRUE,
-                              ...,
-                              CORES = 1) {
-  #Validations
-  if(class(object) != 'MBRmodel')
-    stop('First argument must be an MBRmodel object')
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  newdata <- utiml_newdata(newdata)
-
-  #1 Iteration - Base level
-  base.preds <- predict(object$basemodel, newdata, probability = FALSE, ..., CORES = CORES)
-
-  #2 Iteration - Meta level
-  corr <- object$correlation
-  predictions <- utiml_lapply(object$labels, function (labelname) {
-    extracolumns <- base.preds[,colnames(corr)[corr[labelname,] > object$phi], drop = FALSE]
-    colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
-    br.predict_model(object$models[[labelname]], cbind(newdata, extracolumns), ...)
-  }, CORES)
-  names(predictions) <- object$labels
-
-  as.multilabelPrediction(predictions, probability)
+predict.MBRmodel <- function(object, newdata, probability = TRUE, ..., CORES = 1) {
+    # Validations
+    if (class(object) != "MBRmodel") 
+        stop("First argument must be an MBRmodel object")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    newdata <- utiml_newdata(newdata)
+    
+    # 1 Iteration - Base level
+    base.preds <- predict(object$basemodel, newdata, probability = FALSE, ..., CORES = CORES)
+    
+    # 2 Iteration - Meta level
+    corr <- object$correlation
+    predictions <- utiml_lapply(object$labels, function(labelname) {
+        extracolumns <- base.preds[, colnames(corr)[corr[labelname, ] > object$phi], drop = FALSE]
+        colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
+        br.predict_model(object$models[[labelname]], cbind(newdata, extracolumns), ...)
+    }, CORES)
+    names(predictions) <- object$labels
+    
+    as.multilabelPrediction(predictions, probability)
 }
 
-print.MBRmodel <- function (x, ...) {
-  cat("Classifier Meta-BR (also called 2BR)\n\nCall:\n")
-  print(x$call)
-  cat("\nPhi:", x$phi, "\n")
-  cat("\nCorrelation Table Overview:\n")
-  corr <- x$correlation
-  diag(corr) <- NA
-  tbl <- data.frame(
-    min = apply(corr, 1, min, na.rm = TRUE),
-    mean = apply(corr, 1, mean, na.rm = TRUE),
-    median = apply(corr, 1, median, na.rm = TRUE),
-    max = apply(corr, 1, max, na.rm = TRUE),
-    extra = apply(x$correlation, 1, function (row) sum(row > x$phi))
-  )
-  print(tbl)
+print.MBRmodel <- function(x, ...) {
+    cat("Classifier Meta-BR (also called 2BR)\n\nCall:\n")
+    print(x$call)
+    cat("\nPhi:", x$phi, "\n")
+    cat("\nCorrelation Table Overview:\n")
+    corr <- x$correlation
+    diag(corr) <- NA
+    tbl <- data.frame(min = apply(corr, 1, min, na.rm = TRUE), mean = apply(corr, 1, mean, na.rm = TRUE), median = apply(corr, 1, median, na.rm = TRUE), max = apply(corr, 
+        1, max, na.rm = TRUE), extra = apply(x$correlation, 1, function(row) sum(row > x$phi)))
+    print(tbl)
 }
 
-print.mldMBR <- function (x, ...) {
-  cat("Meta Binary Relevance Transformation Dataset\n\n")
-  cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep="")
-  cat("Dataset info:\n")
-  cat(" ", ncol(x$data) - 1 - length(x$new.features), "Predictive attributes\n")
-  cat(" ", length(x$new.features), " meta features\n")
-  cat(" ", nrow(x$data), "Examples\n")
-  cat("  ", round((sum(x$data[,ncol(x$data)] == 1) / nrow(x$data)) * 100, 1), "% of positive examples\n", sep="")
-}
-
+print.mldMBR <- function(x, ...) {
+    cat("Meta Binary Relevance Transformation Dataset\n\n")
+    cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep = "")
+    cat("Dataset info:\n")
+    cat(" ", ncol(x$data) - 1 - length(x$new.features), "Predictive attributes\n")
+    cat(" ", length(x$new.features), " meta features\n")
+    cat(" ", nrow(x$data), "Examples\n")
+    cat("  ", round((sum(x$data[, ncol(x$data)] == 1)/nrow(x$data)) * 100, 1), "% of positive examples\n", sep = "")
+} 

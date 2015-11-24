@@ -67,85 +67,78 @@
 #' pred <- predict(model, dataset$test)
 #'
 #' # Change default values and use 4 CORES
-#' model <- ctrl(dataset$train, "C4.5", m = 10, validation.size = 0.4, validation.threshold = 0.5, CORES = 4)
+#' model <- ctrl(dataset$train, 'C4.5', m = 10, validation.size = 0.4, validation.threshold = 0.5, CORES = 4)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Set a parameters for all subproblems
-#' model <- ctrl(dataset$train, "KNN", k=5)
+#' model <- ctrl(dataset$train, 'KNN', k=5)
 #' pred <- predict(model, dataset$test)
-ctrl <- function (mdata,
-                  base.method = "SVM",
-                  m = 5,
-                  validation.size = 0.3,
-                  validation.threshold = 0.3,
-                  ...,
-                  predict.params = list(),
-                  CORES = 1) {
-  #Validations
-  if (!requireNamespace("FSelector", quietly = TRUE))
-    stop('There are no installed package "FSelector" to use CTRL multi-label classifier')
-
-  if(class(mdata) != 'mldr')
-    stop('First argument must be an mldr object')
-
-  if(m <= 1)
-    stop('The number of iterations (m) must be greater than 1')
-
-  if (validation.size < 0.1 || validation.size > 0.6)
-    stop("The validation size must be between 0.1 and 0.6")
-
-  if (validation.threshold < 0 || validation.threshold > 1)
-    stop("The validation size must be between 0 and 1")
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  #BR Model class
-  ctrlmodel <- list()
-  ctrlmodel$rounds <- m
-  ctrlmodel$validation.size <- validation.size
-  ctrlmodel$validation.threshold <- validation.threshold
-
-  #Step1 - Split validation data, train and evaluation using F1 measure (1-5)
-  validation.set <- mldr_stratified_holdout(mdata, c(1 - validation.size, validation.size))
-  validation.model <- br(validation.set[[1]], base.method = base.method, ..., CORES = CORES)
-  params <- list(object = validation.model, newdata = validation.set[[2]], probability = FALSE, CORES = CORES)
-  validation.prediction <- do.call(predict, c(params, predict.params))
-  validation.result <- utiml_measure_labels(validation.set[[2]], validation.prediction, utiml_measure_recall)
-  Yc <- names(which(validation.result >= validation.threshold))
-  ctrlmodel$Y <- Yc
-
-  #Step2 - Identify close-related labels within Yc using feature selection technique (6-10)
-  classes <- mdata$dataset[mdata$labels$index][,Yc]
-  Rj <- utiml_lapply(rownames(mdata$labels), function (labelname) {
-    formula <- as.formula(paste("`", labelname, "` ~ .", sep=""))
-    Aj <- mdata$dataset[,mdata$labels$index, drop = FALSE][,unique(c(Yc, labelname)), drop = FALSE]
-    if (ncol(Aj) > 1) {
-      weights <- FSelector::relief(formula, Aj)
-      FSelector::cutoff.k(weights, m)
-    }
-  }, CORES)
-  names(Rj) <- rownames(mdata$labels)
-  ctrlmodel$R <- Rj
-
-  #Build models (11-17)
-  D <- mdata$dataset[mdata$attributesIndexes]
-  ctrlmodel$models <- utiml_lapply(rownames(mdata$labels), function (labelname) {
-    Di <- br.transformation(cbind(D, mdata$dataset[labelname]), "mldBR", base.method)
-    fi <- list(br.create_model(Di, ...))
-    for (k in Rj[[labelname]]) {
-      Di <- br.transformation(cbind(D, mdata$dataset[k], mdata$dataset[labelname]), "mldBR", base.method)
-      fi <- c(fi, list(br.create_model(Di, ...)))
-    }
-    names(fi) <- c(labelname, Rj[[labelname]])
-    fi
-  }, CORES)
-  names(ctrlmodel$models) <- rownames(mdata$labels)
-
-  ctrlmodel$call <- match.call()
-  class(ctrlmodel) <- "CTRLmodel"
-
-  ctrlmodel
+ctrl <- function(mdata, base.method = "SVM", m = 5, validation.size = 0.3, validation.threshold = 0.3, ..., predict.params = list(), CORES = 1) {
+    # Validations
+    if (!requireNamespace("FSelector", quietly = TRUE)) 
+        stop("There are no installed package \"FSelector\" to use CTRL multi-label classifier")
+    
+    if (class(mdata) != "mldr") 
+        stop("First argument must be an mldr object")
+    
+    if (m <= 1) 
+        stop("The number of iterations (m) must be greater than 1")
+    
+    if (validation.size < 0.1 || validation.size > 0.6) 
+        stop("The validation size must be between 0.1 and 0.6")
+    
+    if (validation.threshold < 0 || validation.threshold > 1) 
+        stop("The validation size must be between 0 and 1")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    # BR Model class
+    ctrlmodel <- list()
+    ctrlmodel$rounds <- m
+    ctrlmodel$validation.size <- validation.size
+    ctrlmodel$validation.threshold <- validation.threshold
+    
+    # Step1 - Split validation data, train and evaluation using F1 measure (1-5)
+    validation.set <- mldr_stratified_holdout(mdata, c(1 - validation.size, validation.size))
+    validation.model <- br(validation.set[[1]], base.method = base.method, ..., CORES = CORES)
+    params <- list(object = validation.model, newdata = validation.set[[2]], probability = FALSE, CORES = CORES)
+    validation.prediction <- do.call(predict, c(params, predict.params))
+    validation.result <- utiml_measure_labels(validation.set[[2]], validation.prediction, utiml_measure_recall)
+    Yc <- names(which(validation.result >= validation.threshold))
+    ctrlmodel$Y <- Yc
+    
+    # Step2 - Identify close-related labels within Yc using feature selection technique (6-10)
+    classes <- mdata$dataset[mdata$labels$index][, Yc]
+    Rj <- utiml_lapply(rownames(mdata$labels), function(labelname) {
+        formula <- as.formula(paste("`", labelname, "` ~ .", sep = ""))
+        Aj <- mdata$dataset[, mdata$labels$index, drop = FALSE][, unique(c(Yc, labelname)), drop = FALSE]
+        if (ncol(Aj) > 1) {
+            weights <- FSelector::relief(formula, Aj)
+            FSelector::cutoff.k(weights, m)
+        }
+    }, CORES)
+    names(Rj) <- rownames(mdata$labels)
+    ctrlmodel$R <- Rj
+    
+    # Build models (11-17)
+    D <- mdata$dataset[mdata$attributesIndexes]
+    ctrlmodel$models <- utiml_lapply(rownames(mdata$labels), function(labelname) {
+        Di <- br.transformation(cbind(D, mdata$dataset[labelname]), "mldBR", base.method)
+        fi <- list(br.create_model(Di, ...))
+        for (k in Rj[[labelname]]) {
+            Di <- br.transformation(cbind(D, mdata$dataset[k], mdata$dataset[labelname]), "mldBR", base.method)
+            fi <- c(fi, list(br.create_model(Di, ...)))
+        }
+        names(fi) <- c(labelname, Rj[[labelname]])
+        fi
+    }, CORES)
+    names(ctrlmodel$models) <- rownames(mdata$labels)
+    
+    ctrlmodel$call <- match.call()
+    class(ctrlmodel) <- "CTRLmodel"
+    
+    ctrlmodel
 }
 
 
@@ -153,7 +146,7 @@ ctrl <- function (mdata,
 #' @description This function predicts values based upon a model trained by
 #'  \code{\link{ctrl}}.
 #'
-#' @param object Object of class "\code{CTRLmodel}", created by \code{\link{ctrl}} method.
+#' @param object Object of class '\code{CTRLmodel}', created by \code{\link{ctrl}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema utiml_vote.schema_method(vote.schema)
@@ -184,56 +177,49 @@ ctrl <- function (mdata,
 #' pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
 #'
 #' # Using the Maximum vote schema
-#' pred <- predict(model, dataset$test, vote.schema = "MAX")
-predict.CTRLmodel <- function (object,
-                               newdata,
-                               vote.schema = "MAJ",
-                               probability = TRUE,
-                               ...,
-                               CORES = 1) {
-  #Validations
-  if (class(object) != 'CTRLmodel')
-    stop('First argument must be an CTRLmodel object')
-
-  vote.method <- utiml_vote.schema_method(vote.schema)
-  if (is.null(vote.method))
-    stop("Invalid vote schema")
-
-  if (CORES < 1)
-    stop('Cores must be a positive value')
-
-  newdata <- utiml_newdata(newdata)
-
-  #Predict initial values
-  initial.prediction <- utiml_lapply(object$models, function (models){
-    br.predict_model(models[[1]], newdata, ...)
-  }, CORES)
-  fjk <- as.matrix(as.multilabelPrediction(initial.prediction, FALSE))
-
-  #Predict binary ensemble values
-  predictions <- utiml_lapply(names(object$models), function (labelname){
-    models <- object$models[[labelname]]
-    preds <- list()
-    for (labels in names(models)[-1])
-      preds[[labels]] <- br.predict_model(models[[labels]], cbind(newdata, fjk[, labels]), ...)
-
-    if (length(preds) < 1)
-      initial.prediction[[labelname]]  #No models are found, only first prediction
-    else
-      utiml_compute_binary_ensemble(vote.method, preds)
-  }, CORES)
-
-  names(predictions) <- names(object$models)
-  as.multilabelPrediction(predictions, probability)
+#' pred <- predict(model, dataset$test, vote.schema = 'MAX')
+predict.CTRLmodel <- function(object, newdata, vote.schema = "MAJ", probability = TRUE, ..., CORES = 1) {
+    # Validations
+    if (class(object) != "CTRLmodel") 
+        stop("First argument must be an CTRLmodel object")
+    
+    vote.method <- utiml_vote.schema_method(vote.schema)
+    if (is.null(vote.method)) 
+        stop("Invalid vote schema")
+    
+    if (CORES < 1) 
+        stop("Cores must be a positive value")
+    
+    newdata <- utiml_newdata(newdata)
+    
+    # Predict initial values
+    initial.prediction <- utiml_lapply(object$models, function(models) {
+        br.predict_model(models[[1]], newdata, ...)
+    }, CORES)
+    fjk <- as.matrix(as.multilabelPrediction(initial.prediction, FALSE))
+    
+    # Predict binary ensemble values
+    predictions <- utiml_lapply(names(object$models), function(labelname) {
+        models <- object$models[[labelname]]
+        preds <- list()
+        for (labels in names(models)[-1]) preds[[labels]] <- br.predict_model(models[[labels]], cbind(newdata, fjk[, labels]), ...)
+        
+        if (length(preds) < 1) 
+            initial.prediction[[labelname]]  #No models are found, only first prediction
+ else utiml_compute_binary_ensemble(vote.method, preds)
+    }, CORES)
+    
+    names(predictions) <- names(object$models)
+    as.multilabelPrediction(predictions, probability)
 }
 
-print.CTRLmodel <- function (x, ...) {
-  cat("BR with ConTRolled Label correlation Model (CTRL)\n\nCall:\n")
-  print(x$call)
-  cat("\nDetails:")
-  cat("\n ", x$rounds, "Iterations")
-  cat("\n ", 1 - x$validation.size, "/", x$validation.size, "train/validation size")
-  cat("\n ", x$validation.threshold, "Threshold value")
-  cat("\n\nPruned Labels:", length(x$Y), "\n  ")
-  cat(x$Y, sep = ", ")
-}
+print.CTRLmodel <- function(x, ...) {
+    cat("BR with ConTRolled Label correlation Model (CTRL)\n\nCall:\n")
+    print(x$call)
+    cat("\nDetails:")
+    cat("\n ", x$rounds, "Iterations")
+    cat("\n ", 1 - x$validation.size, "/", x$validation.size, "train/validation size")
+    cat("\n ", x$validation.threshold, "Threshold value")
+    cat("\n\nPruned Labels:", length(x$Y), "\n  ")
+    cat(x$Y, sep = ", ")
+} 
