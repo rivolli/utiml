@@ -139,15 +139,15 @@ mltrain.baseSVM <- function(dataset, ...) {
         labeldata <- dataset$data[, dataset$labelindex]
         model <- e1071::svm(traindata, labeldata, probability = TRUE, ...)
     } else stop("There are no installed package \"e1071\" to use SVM classifier as base method")
-    
+
     model
 }
 
 #' @describeIn mlpredict SVM implementation (require \pkg{e1071} package to use)
 mlpredict.svm <- function(model, newdata, ...) {
-    if (requireNamespace("e1071", quietly = TRUE)) 
+    if (requireNamespace("e1071", quietly = TRUE))
         result <- predict(model, newdata, probability = TRUE, ...) else stop("There are no installed package \"e1071\" to use SVM classifier as base method")
-    
+
     attr(result, "probabilities")
 }
 
@@ -156,12 +156,16 @@ mlpredict.svm <- function(model, newdata, ...) {
 #### J48/C4.5 METHOD #####
 #' @describeIn mltrain J48 implementation (require \pkg{RWeka} package to use)
 mltrain.baseJ48 <- function(dataset, ...) {
-    if (requireNamespace("RWeka", quietly = TRUE)) {
+    #http://r.789695.n4.nabble.com/How-to-save-load-RWeka-models-into-from-a-file-td870876.html
+    #https://github.com/s-u/rJava/issues/25
+    #inspect the JVM log error file in the second execution
+    if (requireNamespace("RWeka", quietly = TRUE) && requireNamespace("rJava", quietly = TRUE)) {
         formula <- as.formula(paste("`", dataset$labelname, "` ~ .", sep = ""))
         model <- RWeka::J48(formula, dataset$data, ...)
+        rJava::.jcache(model$classifier)
     } else stop("There are no installed package \"RWeka\" to use C4.5/J48 classifier as base method")
-    
-    rJava::.jcache(model$classifier)
+
+
     model
 }
 
@@ -170,9 +174,9 @@ mltrain.baseC4.5 <- mltrain.baseJ48
 
 #' @describeIn mlpredict C4.5/J48 implementation (require \pkg{RWeka} package to use)
 mlpredict.J48 <- function(model, newdata, ...) {
-    if (requireNamespace("RWeka", quietly = TRUE)) 
+    if (requireNamespace("RWeka", quietly = TRUE))
         result <- predict(model, newdata, "probability", ...) else stop("There are no installed package \"RWeka\" to use C4.5/J48 classifier as base method")
-    
+
     result
 }
 
@@ -186,15 +190,15 @@ mltrain.baseC5.0 <- function(dataset, ...) {
         labeldata <- dataset$data[, dataset$labelindex]
         model <- C50::C5.0(traindata, labeldata, ...)
     } else stop("There are no installed package \"C50\" to use C5.0 classifier as base method")
-    
+
     model
 }
 
 #' @describeIn mlpredict C5.0 implementation (require \pkg{C50} package to use)
 mlpredict.C5.0 <- function(model, newdata, ...) {
-    if (!requireNamespace("C50", quietly = TRUE)) 
+    if (!requireNamespace("C50", quietly = TRUE))
         stop("There are no installed package \"C50\" to use C5.0 classifier as base method")
-    
+
     predict(model, newdata, type = "prob", ...)
 }
 
@@ -207,15 +211,15 @@ mltrain.baseCART <- function(dataset, ...) {
         formula <- as.formula(paste("`", dataset$labelname, "` ~ .", sep = ""))
         model <- rpart::rpart(formula, dataset$data, ...)
     } else stop("There are no installed package \"rpart\" to use Cart classifier as base method")
-    
+
     model
 }
 
 #' @describeIn mlpredict CART implementation (require \pkg{rpart} package to use)
 mlpredict.rpart <- function(model, newdata, ...) {
-    if (!requireNamespace("rpart", quietly = TRUE)) 
+    if (!requireNamespace("rpart", quietly = TRUE))
         stop("There are no installed package \"rpart\" to use Cart classifier as base method")
-    
+
     predict(model, newdata, type = "prob", ...)
 }
 
@@ -229,15 +233,15 @@ mltrain.baseRF <- function(dataset, ...) {
         labeldata <- dataset$data[, dataset$labelindex]
         model <- randomForest::randomForest(traindata, labeldata, ...)
     } else stop("There are no installed package \"randomForest\" to use randomFores classifier as base method")
-    
+
     model
 }
 
 #' @describeIn mlpredict Random Forest (RF) implementation (require \pkg{randomForest} package to use)
 mlpredict.randomForest <- function(model, newdata, ...) {
-    if (!requireNamespace("randomForest", quietly = TRUE)) 
+    if (!requireNamespace("randomForest", quietly = TRUE))
         stop("There are no installed package \"randomForest\" to use randomFores classifier as base method")
-    
+
     predict(model, newdata, type = "prob", ...)
 }
 
@@ -251,15 +255,15 @@ mltrain.baseNB <- function(dataset, ...) {
         labeldata <- dataset$data[, dataset$labelindex]
         model <- e1071::naiveBayes(traindata, labeldata, type = "raw", ...)
     } else stop("There are no installed package \"e1071\" to use naiveBayes classifier as base method")
-    
+
     model
 }
 
 #' @describeIn mlpredict Naive Bayes (NB) implementation (require \pkg{e1071} package to use)
 mlpredict.naiveBayes <- function(model, newdata, ...) {
-    if (!requireNamespace("e1071", quietly = TRUE)) 
+    if (!requireNamespace("e1071", quietly = TRUE))
         stop("There are no installed package \"e1071\" to use naiveBayes classifier as base method")
-    
+
     result <- predict(model, newdata, type = "raw", ...)
     rownames(result) <- rownames(newdata)
     result
@@ -270,7 +274,7 @@ mlpredict.naiveBayes <- function(model, newdata, ...) {
 #### KNN METHOD #####
 #' @describeIn mltrain kNN implementation (require \pkg{kknn} package to use)
 mltrain.baseKNN <- function(dataset, ...) {
-    if (!requireNamespace("kknn", quietly = TRUE)) 
+    if (!requireNamespace("kknn", quietly = TRUE))
         stop("There are no installed package \"kknn\" to use kNN classifier as base method")
     dataset$extrakNN <- list(...)
     dataset
@@ -278,14 +282,14 @@ mltrain.baseKNN <- function(dataset, ...) {
 
 #' @describeIn mlpredict kNN implementation (require \pkg{kknn} package to use)
 mlpredict.baseKNN <- function(model, newdata, ...) {
-    if (!requireNamespace("kknn", quietly = TRUE)) 
+    if (!requireNamespace("kknn", quietly = TRUE))
         stop("There are no installed package \"kknn\" to use kNN classifier as base method")
-    
+
     formula <- as.formula(paste("`", model$labelname, "` ~ .", sep = ""))
     args <- list(...)
-    result <- if (is.null(model$extrakNN[["k"]]) || !is.null(args[["k"]])) 
+    result <- if (is.null(model$extrakNN[["k"]]) || !is.null(args[["k"]]))
         kknn::kknn(formula, model$data, newdata, ...) else kknn::kknn(formula, model$data, newdata, k = model$extrakNN[["k"]], ...)
-    
+
     result <- as.matrix(result$prob)
     rownames(result) <- rownames(newdata)
     result
@@ -293,4 +297,4 @@ mlpredict.baseKNN <- function(model, newdata, ...) {
 
 summary.mltransformation <- function(x, ...) {
     summary(x$data)
-} 
+}

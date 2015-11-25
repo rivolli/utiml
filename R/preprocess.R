@@ -1,6 +1,3 @@
-# This file contains functions related with pre-process features The all function are available public in the package The functions are sorted in alphabetical
-# order
-
 #' @title Fill sparce dataset with 0 or '' values
 #' @description Transform a sparce dataset filling values, if there is a numeric
 #' column but with text value change this column to numerical.
@@ -33,8 +30,8 @@ mldr_fill_sparce_data <- function(mdata) {
         }
         col
     }))
-    
-    mldr_from_dataframe(dataset, mdata$labels$index, mdata$name)
+
+    mldr::mldr_from_dataframe(dataset, mdata$labels$index, mdata$name)
 }
 
 #' @title Normalize dataset attributes
@@ -55,7 +52,7 @@ mldr_normalize <- function(mdata) {
             data[col] <- utiml_normalize(data[col])
         }
     }
-    mldr_from_dataframe(data, mdata$labels$index, mdata$name)
+    mldr::mldr_from_dataframe(data, mdata$labels$index, mdata$name)
 }
 
 #' @title Remove unique attributes
@@ -82,7 +79,7 @@ mldr_remove_unique_attributes <- function(mdata) {
             }
         }
     }
-    mldr_from_dataframe(mdata$dataset[attributesIndexes], labelsIndexes, mdata$name)
+    mldr::mldr_from_dataframe(mdata$dataset[attributesIndexes], labelsIndexes, mdata$name)
 }
 
 #' @title Remove examples without labels
@@ -99,7 +96,7 @@ mldr_remove_unlabeled_instances <- function(mdata) {
     labelset <- rep(0, mdata$measures$num.labels)
     rows <- !apply(mdata$dataset[mdata$labels$index] == labelset, 1, all)
     cols <- seq(mdata$measures$num.attributes)
-    mldr_from_dataframe(mdata$dataset[rows, cols], mdata$labels$index, mdata$name)
+    mldr::mldr_from_dataframe(mdata$dataset[rows, cols], mdata$labels$index, mdata$name)
 }
 
 #' @title Remove unusual or very common labels
@@ -122,12 +119,12 @@ mldr_remove_labels <- function(mdata, t = 1) {
             labelsIndexes <- c(labelsIndexes, col)
         }
     }
-    
-    if (length(labelsIndexes) <= 1) 
+
+    if (length(labelsIndexes) <= 1)
         stop("The pre process procedure result in a single label")
-    
+
     dataset <- mdata$dataset[sort(c(mdata$attributesIndexes, labelsIndexes))]
-    mldr_from_dataframe(dataset, which(colnames(dataset) %in% rownames(mdata$labels)), mdata$name)
+    mldr::mldr_from_dataframe(dataset, which(colnames(dataset) %in% rownames(mdata$labels)), mdata$name)
 }
 
 #' @title Replace nominal attributes
@@ -155,12 +152,12 @@ mldr_replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) 
             for (i in 1:(length(symbols) - type)) result <- cbind(result, as.double(column == symbols[i]))
             names <- paste(column.name, symbols[1:(length(symbols) - type)], sep = "_")
         }
-        if (column.name != "") 
+        if (column.name != "")
             colnames(result) <- names
-        
+
         result
     }
-    
+
     dataset <- data.frame(row.names = rownames(mdata$dataset))
     labelIndexes <- c()
     for (col in seq(mdata$measures$num.attributes)) {
@@ -173,6 +170,6 @@ mldr_replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) 
             dataset <- cbind(dataset, replace_nominal_column(mdata$dataset[, col], colnames(mdata$dataset[col])))
         }
     }
-    
-    mldr_from_dataframe(dataset, labelIndexes, mdata$name)
-} 
+
+    mldr::mldr_from_dataframe(dataset, labelIndexes, mdata$name)
+}

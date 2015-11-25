@@ -12,7 +12,6 @@
 #'  the real if/else for choice lists, matrices and other composed data.
 #'
 #' @seealso \code{\link{ifelse}}
-#' @export
 #'
 #' @examples
 #' utiml_ifelse(TRUE, dataframe1, dataframe2) #dataframe1
@@ -30,13 +29,12 @@ utiml_ifelse <- function(test, yes, no) {
 #' @param ... Extra arguments to myfnc.
 #'
 #' @return A list with the results of the specified method.
-#' @export
 #'
 #' @examples
 #' utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
 #' utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
 utiml_lapply <- function(mylist, myfnc, cores, ...) {
-    if (cores == 1) 
+    if (cores == 1)
         lapply(mylist, myfnc, ...) else parallel::mclapply(mylist, myfnc, mc.cores = min(cores, length(mylist)), ...)
 }
 
@@ -49,7 +47,6 @@ utiml_lapply <- function(mylist, myfnc, cores, ...) {
 #'   present in the data (default: \code{NULL})
 #'
 #' @return The normalized data
-#' @export
 #'
 #' @examples
 #' utiml_normalize(c(1,2,3,4,5))
@@ -61,4 +58,4 @@ utiml_normalize <- function(data, max.val = NULL, min.val = NULL) {
     max.val <- ifelse(is.null(max.val), max(data, na.rm = TRUE), max.val)
     min.val <- ifelse(is.null(min.val), min(data, na.rm = TRUE), min.val)
     (data - min.val)/(max.val - min.val)
-} 
+}

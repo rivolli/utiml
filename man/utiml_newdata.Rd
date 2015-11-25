@@ -2,9 +2,15 @@
 % Please edit documentation in R/internal.R
 \name{utiml_newdata}
 \alias{utiml_newdata}
+\alias{utiml_newdata.default}
+\alias{utiml_newdata.mldr}
 \title{Return the newdata to a data.frame or matrix}
 \usage{
 utiml_newdata(newdata)
+
+\method{utiml_newdata}{default}(newdata)
+
+\method{utiml_newdata}{mldr}(newdata)
 }
 \arguments{
 \item{newdata}{The data.frame or mldr data}
@@ -12,6 +18,12 @@ utiml_newdata(newdata)
 \value{
 A dataframe or matrix containing only dataset
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{default}: Return the data in the original format
+
+\item \code{mldr}: Return the dataset from the mldr dataset
+}}
 \examples{
 test <- emotions$dataset[,emotions$attributesIndexes]
 all(test == utiml_newdata(emotions)) # TRUE

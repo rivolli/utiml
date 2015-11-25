@@ -29,7 +29,7 @@ as.binaryPrediction <- function(probability, threshold = 0.5) {
     active <- bipartition >= threshold
     bipartition[active] <- 1
     bipartition[!active] <- 0
-    
+
     binary.prediction(bipartition, probability)
 }
 
@@ -66,7 +66,7 @@ as.multilabelPrediction <- function(predictions, probability) {
     probabilities <- sapply(predictions, function(lblres) as.numeric(as.character(lblres$probability)))
     bipartitions <- sapply(predictions, function(lblres) as.numeric(as.character(lblres$bipartition)))
     rownames(probabilities) <- rownames(bipartitions) <- names(predictions[[1]]$bipartition)
-    
+
     multilabel.prediction(bipartitions, probabilities, probability)
 }
 
@@ -83,12 +83,12 @@ as.multilabelPrediction <- function(predictions, probability) {
 #' lapply(datasets, br.create_model, ...)
 br.create_model <- function(dataset, ...) {
     params <- c(list(dataset = dataset), ...)
-    
+
     # Call dynamic multilabel model with merged parameters
     model <- do.call(mltrain, params)
     attr(model, "labelname") <- dataset$labelname
     attr(model, "methodname") <- dataset$methodname
-    
+
     model
 }
 
@@ -128,17 +128,17 @@ br.predict_model <- function(model, newdata, ...) {
 #' ...
 br.transformation <- function(dataset, classname, base.method, ...) {
     label <- colnames(dataset)[length(dataset)]
-    
+
     # Convert the class column as factor
     dataset[, label] <- as.factor(dataset[, label])
-    
+
     # Create data
     dataset <- list(data = dataset, labelname = label, labelindex = ncol(dataset), methodname = base.method)
     class(dataset) <- c(classname, paste("base", base.method, sep = ""), "mltransformation")
-    
+
     extra <- list(...)
     for (nextra in names(extra)) dataset[[nextra]] <- extra[[nextra]]
-    
+
     dataset
 }
 
@@ -169,17 +169,17 @@ binary.prediction <- function(bipartition, probability) {
 multilabel.prediction <- function(bipartitions, probabilities, probability) {
     # At least one label is predict
     for (row in 1:nrow(bipartitions)) bipartitions[row, which.max(probabilities[row, ])] <- 1
-    
+
     only.bipartitions <- bipartitions
     only.probabilities <- probabilities
     attr(probabilities, "classes") <- only.bipartitions
     attr(probabilities, "type") <- "probability"
-    
+
     attr(bipartitions, "probs") <- only.probabilities
     attr(bipartitions, "type") <- "bipartition"
-    
+
     class(probabilities) <- class(bipartitions) <- "mlresult"
-    
+
     utiml_ifelse(probability, probabilities, bipartitions)
 }
 
@@ -196,11 +196,15 @@ multilabel.prediction <- function(bipartitions, probabilities, probability) {
 #' all(test == utiml_newdata(test)) # TRUE
 utiml_newdata <- function(newdata) UseMethod("utiml_newdata")
 
-#' @describeIn utiml_newdata
-utiml_newdata.default <- function(newdata) newdata
+#' @describeIn utiml_newdata Return the data in the original format
+utiml_newdata.default <- function(newdata) {
+  newdata
+}
 
-#' @describeIn utiml_newdata
-utiml_newdata.mldr <- function(newdata) newdata$dataset[, newdata$attributesIndexes]
+#' @describeIn utiml_newdata Return the dataset from the mldr dataset
+utiml_newdata.mldr <- function(newdata) {
+  newdata$dataset[, newdata$attributesIndexes]
+}
 
 as.matrix.mlresult <- function(x) {
     attr.name <- ifelse(attr(x, "type") == "bipartition", "probs", "classes")
@@ -240,4 +244,4 @@ head.mlresult <- function(x, ...) {
 # Tail
 tail.mlresult <- function(x, ...) {
     tail(as.matrix(x), ...)
-} 
+}
