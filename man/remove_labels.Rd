@@ -17,6 +17,9 @@ a new mldr object.
 \description{
 Remove spectified labels generating a new multi-label dataset.
 }
+\note{
+If invalid labels names or indexes were informed, they will be ignored.
+}
 \examples{
 toyml1 <- remove_labels(toyml, c("y1","y5"))
 toyml2 <- remove_labels(toyml, c(11, 15))

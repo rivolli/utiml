@@ -18,7 +18,8 @@ a new mldr object.
 Remove spectified attributes generating a new multi-label dataset.
 }
 \note{
-If invalid names or indexes were informed, they will be ignored.
+If invalid attributes names or indexes were informed, they will be
+ ignored.
 }
 \examples{
 toyml1 <- remove_attributes(toyml, c("iatt8","iatt9", "ratt10"))

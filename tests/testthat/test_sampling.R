@@ -289,3 +289,5 @@ test_that("Alternatives dataset for sampling", {
   expect_equal(colnames(test[[2]]$dataset), colnames(ndata$dataset))
   expect_equal(colnames(test[[3]]$dataset), colnames(ndata$dataset))
 })
+
+#TODO test not complete partitions (using 90% per example)
