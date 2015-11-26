@@ -74,6 +74,8 @@ normalize_mldata <- function(mdata) {
 #' @param mdata The mldr dataset to remove labels.
 #' @param attributes Attributes indexes or attributes names to be removed.
 #' @return a new mldr object.
+#' @note If invalid attributes names or indexes were informed, they will be
+#'  ignored.
 #' @export
 #'
 #' @examples
@@ -82,7 +84,11 @@ normalize_mldata <- function(mdata) {
 remove_attributes <- function (mdata, attributes) {
   if (mode(attributes) == "character") {
     attr.names <- colnames(mdata$dataset[mdata$attributesIndexes])
-    attributes <- which(attributes %in% attr.names)
+    attributes <- which(attr.names %in% attributes)
+  }
+  else {
+    # Only attributes index, not label index
+    attributes <- which(mdata$attributesIndexes %in% attributes)
   }
 
   new.attrs <- setdiff(seq(mdata$measures$num.attributes), attributes)
@@ -100,6 +106,7 @@ remove_attributes <- function (mdata, attributes) {
 #' @param mdata The mldr dataset to remove labels.
 #' @param labels Label indexes or label names to be removed.
 #' @return a new mldr object.
+#' @note If invalid labels names or indexes were informed, they will be ignored.
 #' @export
 #'
 #' @examples
@@ -107,12 +114,21 @@ remove_attributes <- function (mdata, attributes) {
 #' toyml2 <- remove_labels(toyml, c(11, 15))
 remove_labels <- function (mdata, labels) {
   if (mode(labels) == "character") {
-    labels <- which(label %in% rownames(mdata$labels))
+    labels <- mdata$labels[labels, "index"]
+    labels <- labels[!is.na(labels)]
+  }
+  else {
+    # Only labels index, not attributes index
+    labels <- mdata$labels$index[which(mdata$labels$index %in% labels)]
   }
 
   new.attrs <- setdiff(seq(mdata$measures$num.attributes), labels)
   dataset <- mdata$dataset[new.attrs]
   labels <- which(colnames(dataset) %in% rownames(mdata$labels))
+
+  if (length(labels) <= 1) {
+    stop("The pre process procedure result in a single label")
+  }
 
   mldr::mldr_from_dataframe(dataset, labels, mdata$name)
 }
@@ -181,7 +197,7 @@ remove_unlabeled_instances <- function(mdata) {
 #'
 #' @family pre process
 #' @param mdata The mldr dataset to remove the skewness labels.
-#' @param t Threshold value.
+#' @param t Threshold value. Number of minimum examples positive and negative.
 #' @return a new mldr object.
 #' @export
 #'
