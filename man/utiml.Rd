@@ -9,10 +9,11 @@
 The utiml package provides the follow categories of multi-label functions:
 \enumerate{
  \item Classification methods
+ \item Ensemble utilities
+ \item Evaluation measures
  \item Pre-process utilities
  \item Sampling methods
  \item Threshold methods
- \item Evaluation measures
 }
 }
 \section{Notes}{

@@ -29,20 +29,6 @@ This method restrict a multi-label learner prediction to only
  frequency in the training data are preferred. The Hamming loss is used
  to determine the difference between the labelsets.
 }
-\examples{
-
-trainls <- matrix(c(1,1,1, 1,0,1, 1,0,1, 1,0,0, 1,1,1, 1,0,1), ncol = 3, byrow = TRUE)
-colnames(trainls) <- c('c1', 'c2', 'c3')
-
-predict <- matrix(c(1,1,0, 0,0,1, 0,0,0), ncol = 3, byrow = TRUE)
-colnames(predict) <- c('c1', 'c2', 'c3')
-
-ns.subsetcorrection(predict, trainls)
-#       c2 c1 c3
-# [1,]  1  1  1
-# [2,]  1  0  1
-# [3,]  1  0  0
-}
 \references{
 Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
    chains for multi-label classification. In Workshop of Lernen, Wissen &
