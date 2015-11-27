@@ -5,7 +5,7 @@
 \title{Create a holdout partition based on the specified algorithm}
 \usage{
 create_holdout_partition(mdata, partitions = c(train = 0.7, test = 0.3),
-  method = c("random", "interative", "stratification"))
+  method = c("random", "iterative", "stratified"))
 }
 \arguments{
 \item{mdata}{A mldr dataset.}
@@ -20,11 +20,10 @@ they are used to name the return. (Default: \code{c(train=0.7, test=0.3)}).}
 \item{method}{The method to split the data. The default methods are:
 \describe{
   \item{random}{Split randomly the folds.}
-  \item{interative}{Split the folds considering the labels proportions
+  \item{iterative}{Split the folds considering the labels proportions
                     individually. Some specific label can not occurs in all
                     folds.}
-  \item{stratification}{Split the folds considering the labelset
-                        proportions.}
+  \item{stratified}{Split the folds considering the labelset proportions.}
 }
 You can also create your own partition method. See the note and example
 sections to more details. (Default: "random")}

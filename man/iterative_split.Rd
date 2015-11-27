@@ -19,10 +19,10 @@ Create the indexes using the Iterative Stratification algorithm.
 }
 \examples{
 # Create 3 partitions for train, validation and test
-indexes <- utiml_iterative_stratification(emotions, c(0.6,0.1,0.3))
+indexes <- iterative_split(emotions, c(0.6,0.1,0.3))
 
 # Create a stratified 10-fold
-indexes <- utiml_iterative_stratification(emotions, rep(0.1,10))
+indexes <- iterative_split(emotions, rep(0.1,10))
 }
 \references{
 Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the

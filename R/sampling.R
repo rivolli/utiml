@@ -16,11 +16,10 @@
 #' @param method The method to split the data. The default methods are:
 #'  \describe{
 #'    \item{random}{Split randomly the folds.}
-#'    \item{interative}{Split the folds considering the labels proportions
+#'    \item{iterative}{Split the folds considering the labels proportions
 #'                      individually. Some specific label can not occurs in all
 #'                      folds.}
-#'    \item{stratification}{Split the folds considering the labelset
-#'                          proportions.}
+#'    \item{stratified}{Split the folds considering the labelset proportions.}
 #'  }
 #'  You can also create your own partition method. See the note and example
 #'  sections to more details. (Default: "random")
@@ -62,8 +61,8 @@
 #' dataset <- create_holdout_partition(toyml, method="sequencial_split")
 create_holdout_partition <- function (mdata,
                                       partitions = c(train=0.7, test=0.3),
-                                      method = c("random", "interative",
-                                                 "stratification")) {
+                                      method = c("random", "iterative",
+                                                 "stratified")) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
@@ -83,7 +82,7 @@ create_holdout_partition <- function (mdata,
   folds <- do.call(holdout.method, list(mdata = mdata, r = partitions))
   names(folds) <- names(partitions)
   ldata <- lapply(folds, function (fold) {
-    mldr_subset(mdata, fold, mdata$attributesIndexes)
+    create_subset(mdata, fold, mdata$attributesIndexes)
   })
 
   ldata
@@ -100,10 +99,10 @@ create_holdout_partition <- function (mdata,
 #' @param method The method to split the data. The default methods are:
 #'  \describe{
 #'    \item{random}{Split randomly the folds.}
-#'    \item{interative}{Split the folds considering the labels proportions
+#'    \item{iterative}{Split the folds considering the labels proportions
 #'                      individually. Some specific label can not occurs in all
 #'                      folds.}
-#'    \item{stratification}{Split the folds considering the labelset
+#'    \item{stratified}{Split the folds considering the labelset
 #'                          proportions.}
 #'  }
 #'  You can also create your own partition method. See the note and example
@@ -121,7 +120,7 @@ create_holdout_partition <- function (mdata,
 #'
 #' @examples
 #' k10 <- create_kfold_partition(toyml, 10)
-#' k5 <- create_kfold_partition(toyml, 5, "stratification")
+#' k5 <- create_kfold_partition(toyml, 5, "stratified")
 #'
 #' sequencial_split <- function (mdata, r) {
 #'  S <- list()
@@ -139,8 +138,8 @@ create_holdout_partition <- function (mdata,
 #' k3 <- create_kfold_partition(toyml, 3, "sequencial_split")
 create_kfold_partition <- function (mdata,
                                     k = 10,
-                                    method = c("random", "interative",
-                                               "stratification")) {
+                                    method = c("random", "iterative",
+                                               "stratified")) {
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
   }
@@ -242,15 +241,14 @@ create_subset <- function(mdata, rows, cols) {
 #' # Using 3 folds validation
 #' dataset <- partition_fold(folds, 3, TRUE)
 #' # dataset$train, dataset$test, #dataset$validation
-partition_fold <- function(mdata, kfold, n, has.validation = FALSE) {
-    if (class(mdata) != "mldr")
-        stop("First argument must be an mldr object")
+partition_fold <- function(kfold, n, has.validation = FALSE) {
+    if (class(kfold) != "kFoldPartition") {
+        stop("Second argument must be an 'kFoldPartition' object")
+    }
 
-    if (class(kfold) != "mldr_kfolds")
-        stop("Second argument must be an 'mldr_kfolds' object")
-
-    if (n < 1 || n > kfold$k)
+    if (n < 1 || n > kfold$k) {
         stop(cat("The 'n' value must be between 1 and", kfold$k))
+    }
 
     folds <- kfold$fold[-n]
     if (has.validation) {
@@ -258,12 +256,17 @@ partition_fold <- function(mdata, kfold, n, has.validation = FALSE) {
         v <- c(1, n)[c(i, !i)]
         folds <- folds[-v]
     }
-    ldata <- list()
-    ldata$train <- mldr_subset(mdata, unlist(folds), mdata$attributesIndexes)
-    ldata$test <- mldr_subset(mdata, kfold$fold[[n]], mdata$attributesIndexes)
 
-    if (has.validation)
-        ldata$validation <- mldr_subset(mdata, kfold$fold[[v]], mdata$attributesIndexes)
+    mdata <- kfold$dataset
+    ldata <- list(
+      train = create_subset(mdata, unlist(folds), mdata$attributesIndexes),
+      test  = create_subset(mdata, kfold$fold[[n]], mdata$attributesIndexes)
+    )
+
+    if (has.validation) {
+      ldata$validation <- create_subset(mdata, kfold$fold[[v]],
+                                        mdata$attributesIndexes)
+    }
 
     ldata
 }
@@ -275,13 +278,14 @@ partition_fold <- function(mdata, kfold, n, has.validation = FALSE) {
 #' @param method The method name
 #' @return The correct name of split method
 utiml_validate_splitmethod <- function (method) {
-  DEFAULT.METHODS <- c("random", "interative", "stratification")
+  DEFAULT.METHODS <- c("random", "iterative", "stratified")
   method.name <- ifelse(method %in% DEFAULT.METHODS,
                        paste(method, "split", sep = "_"),
                        method)
 
   if(!exists(method.name, mode = "function")) {
-    stop("The partition method is not a valid function")
+    stop(paste("The partition method '", method.name,
+               "' is not a valid function", sep=''))
   }
 
   method.name
@@ -301,10 +305,10 @@ utiml_validate_splitmethod <- function (method) {
 #'
 #' @examples
 #' # Create 3 partitions for train, validation and test
-#' indexes <- utiml_iterative_stratification(emotions, c(0.6,0.1,0.3))
+#' indexes <- iterative_split(emotions, c(0.6,0.1,0.3))
 #'
 #' # Create a stratified 10-fold
-#' indexes <- utiml_iterative_stratification(emotions, rep(0.1,10))
+#' indexes <- iterative_split(emotions, rep(0.1,10))
 iterative_split <- function(mdata, r) {
   D <- rownames(mdata$dataset)
   S <- lapply(seq(length(r)), function(i) character())
@@ -380,7 +384,7 @@ iterative_split <- function(mdata, r) {
 #' @return A list with k disjoint indexes subsets S1, . . .Sk.
 #'
 #' @examples
-#' utiml_random_split(emotions, c(0.6, 0.2, 0.2))
+#' random_split(emotions, c(0.6, 0.2, 0.2))
 random_split <- function(mdata, r) {
   index <- c()
   amount <- round(mdata$measures$num.instances * r)
@@ -415,11 +419,11 @@ random_split <- function(mdata, r) {
 #'
 #' @examples
 #' # Create 3 partitions for train, validation and test
-#' indexes <- utiml_labelset_stratification(emotions, c(0.6,0.1,0.3))
+#' indexes <- stratified_split(emotions, c(0.6,0.1,0.3))
 #'
 #' # Create a stratified 10-fold
-#' indexes <- utiml_labelset_stratification(emotions, rep(0.1,10))
-stratification_split <- function(mdata, r) {
+#' indexes <- stratified_split(emotions, rep(0.1,10))
+stratified_split <- function(mdata, r) {
   D <- sample(mdata$measures$num.instances)
   S <- lapply(1:length(r), function(i) integer())
   labelsets <- apply(mdata$dataset[, mdata$labels$index], 1, paste, collapse="")

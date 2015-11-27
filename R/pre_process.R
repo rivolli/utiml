@@ -83,19 +83,11 @@ normalize_mldata <- function(mdata) {
 #' toyml2 <- remove_attributes(toyml, 10)
 remove_attributes <- function (mdata, attributes) {
   if (mode(attributes) == "character") {
-    attr.names <- colnames(mdata$dataset[mdata$attributesIndexes])
-    attributes <- which(attr.names %in% attributes)
-  }
-  else {
-    # Only attributes index, not label index
-    attributes <- which(mdata$attributesIndexes %in% attributes)
+    attributes <- which(colnames(mdata$dataset) %in% attributes)
   }
 
-  new.attrs <- setdiff(seq(mdata$measures$num.attributes), attributes)
-  dataset <- mdata$dataset[new.attrs]
-  labels <- which(colnames(dataset) %in% rownames(mdata$labels))
-
-  mldr::mldr_from_dataframe(dataset, labels, mdata$name)
+  use.attributes <- setdiff(seq(mdata$measures$num.attributes), attributes)
+  create_subset(mdata, seq(mdata$measures$num.instances), use.attributes)
 }
 
 #' Remove labels from the dataset

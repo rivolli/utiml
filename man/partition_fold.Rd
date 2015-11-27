@@ -4,7 +4,7 @@
 \alias{partition_fold}
 \title{Create the multi-label dataset from folds}
 \usage{
-partition_fold(mdata, kfold, n, has.validation = FALSE)
+partition_fold(kfold, n, has.validation = FALSE)
 }
 \arguments{
 \item{kfold}{A \code{kFoldPartition} object obtained from use of the method

@@ -165,6 +165,16 @@ test_that("Alternatives datasets", {
   expect_equal(ndata$measures, mdata$measures)
   expect_equal(ndata$labels, mdata$labels)
 
+  new.data <- remove_labels(mdata, "Label2")
+  expect_equal(new.data$measures$num.labels, 2)
+  expect_equal(new.data$labels$index, c(1,2))
+  expect_equal(rownames(new.data$labels), c("Label1","Label3"))
+
+  new.data <- remove_attributes(mdata, c("X3","X6","X8"))
+  expect_equal(new.data$measures$num.attributes, 7)
+  expect_equal(new.data$labels[c("index","count","freq")],
+               mdata$labels[c("index","count","freq")])
+
   ndata <- remove_unique_attributes(ndata)
   expect_equal(ndata$measures, mdata$measures)
   expect_equal(ndata$labels, mdata$labels)

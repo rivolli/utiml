@@ -68,37 +68,37 @@
 #' pred <- predict(model, dataset$test, CORES=4)
 ebr <- function(mdata, base.method = "SVM", m = 10, subsample = 0.75, attr.space = 0.5, ..., CORES = 1) {
     # Validations
-    if (class(mdata) != "mldr") 
+    if (class(mdata) != "mldr")
         stop("First argument must be an mldr object")
-    
-    if (m <= 1) 
+
+    if (m <= 1)
         stop("The number of iterations (m) must be greater than 1")
-    
-    if (subsample < 0.1 || subsample > 1) 
+
+    if (subsample < 0.1 || subsample > 1)
         stop("The subset of training instances must be between 0.1 and 1 inclusive")
-    
-    if (attr.space <= 0.1 || attr.space > 1) 
+
+    if (attr.space <= 0.1 || attr.space > 1)
         stop("The attribbute space of training instances must be between 0.1 and 1 inclusive")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     # BR Model class
     ebrmodel <- list()
     ebrmodel$rounds <- m
     ebrmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
     ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
-    
+
     ebrmodel$models <- lapply(1:m, function(iteration) {
-        ndata <- mldr_random_subset(mdata, ebrmodel$nrow, ebrmodel$ncol)
+        ndata <- create_random_subset(mdata, ebrmodel$nrow, ebrmodel$ncol)
         brmodel <- br(ndata, base.method, ..., CORES = CORES)
         brmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
         brmodel
     })
-    
+
     ebrmodel$call <- match.call()
     class(ebrmodel) <- "EBRmodel"
-    
+
     ebrmodel
 }
 
@@ -141,23 +141,23 @@ ebr <- function(mdata, base.method = "SVM", m = 10, subsample = 0.75, attr.space
 #' pred <- predict(model, dataset$test, vote = 'MAX')
 predict.EBRmodel <- function(object, newdata, vote.schema = "MAJ", probability = TRUE, ..., CORES = 1) {
     # Validations
-    if (class(object) != "EBRmodel") 
+    if (class(object) != "EBRmodel")
         stop("First argument must be an EBRmodel object")
-    
+
     if (!is.null(vote.schema)) {
-        if (is.null(utiml_vote.schema_method(vote.schema))) 
+        if (is.null(utiml_vote.schema_method(vote.schema)))
             stop("Invalid vote schema")
     }
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     newdata <- utiml_newdata(newdata)
     allpreds <- lapply(object$models, function(brmodel) {
         predict(brmodel, newdata[, brmodel$attrs], ..., CORES = CORES)
     })
-    
-    if (is.null(vote.schema)) 
+
+    if (is.null(vote.schema))
         allpreds else utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
 }
 
@@ -168,4 +168,4 @@ print.EBRmodel <- function(x, ...) {
     cat("\n ", x$rounds, "Iterations")
     cat("\n ", x$nrow, "Instances")
     cat("\n ", x$ncol, "Attributes\n")
-} 
+}

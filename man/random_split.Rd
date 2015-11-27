@@ -18,6 +18,6 @@ A list with k disjoint indexes subsets S1, . . .Sk.
 Random split of a dataset
 }
 \examples{
-utiml_random_split(emotions, c(0.6, 0.2, 0.2))
+random_split(emotions, c(0.6, 0.2, 0.2))
 }
 

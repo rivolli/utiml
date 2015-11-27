@@ -73,38 +73,38 @@
 #' pred <- predict(model, dataset$test)
 mbr <- function(mdata, base.method = "SVM", folds = 1, phi = 0, ..., predict.params = list(), CORES = 1) {
     # Validations
-    if (class(mdata) != "mldr") 
+    if (class(mdata) != "mldr")
         stop("First argument must be an mldr object")
-    
-    if (folds < 1) 
+
+    if (folds < 1)
         stop("The number of folds must be positive")
-    
-    if (phi < 0 || phi > 1) 
+
+    if (phi < 0 || phi > 1)
         stop("The phi threshold must be between 0 and 1, inclusive")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     # MBR Model class
     mbrmodel <- list()
     mbrmodel$labels <- rownames(mdata$labels)
     mbrmodel$phi <- phi
-    
+
     # 1 Iteration - Base Level
     mbrmodel$basemodel <- br(mdata, base.method, ..., CORES = CORES)
-    
+
     if (folds == 1) {
         params <- list(object = mbrmodel$basemodel, newdata = mdata$dataset[mdata$attributesIndexes], probability = FALSE, CORES = CORES)
         base.preds <- do.call(predict, c(params, predict.params))
     } else {
-        kf <- mldr_iterative_stratification_kfold(mdata, folds)
-        base.preds <- do.call(rbind, lapply(1:folds, function(f) {
-            dataset <- mldr_getfold(mdata, kf, f)
+        kf <- create_kfold_partition(mdata, folds, "iterative")
+        base.preds <- do.call(rbind, lapply(seq(folds), function(f) {
+            dataset <- partition_fold(kf, f)
             classifier <- br(dataset$train, base.method, ..., CORES = CORES)
             predict(classifier, dataset$test, prob = FALSE, CORES = CORES)
         }))
     }
-    
+
     # 2 Iteration - Meta level
     corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)
     br.datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
@@ -116,10 +116,10 @@ mbr <- function(mdata, base.method = "SVM", folds = 1, phi = 0, ..., predict.par
         br.transformation(base, "mldMBR", base.method, new.features = colnames(extracolumns))
     }, CORES)
     mbrmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-    
+
     mbrmodel$call <- match.call()
     class(mbrmodel) <- "MBRmodel"
-    
+
     mbrmodel
 }
 
@@ -158,17 +158,17 @@ mbr <- function(mdata, base.method = "SVM", folds = 1, phi = 0, ..., predict.par
 #' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.MBRmodel <- function(object, newdata, probability = TRUE, ..., CORES = 1) {
     # Validations
-    if (class(object) != "MBRmodel") 
+    if (class(object) != "MBRmodel")
         stop("First argument must be an MBRmodel object")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     newdata <- utiml_newdata(newdata)
-    
+
     # 1 Iteration - Base level
     base.preds <- predict(object$basemodel, newdata, probability = FALSE, ..., CORES = CORES)
-    
+
     # 2 Iteration - Meta level
     corr <- object$correlation
     predictions <- utiml_lapply(object$labels, function(labelname) {
@@ -177,7 +177,7 @@ predict.MBRmodel <- function(object, newdata, probability = TRUE, ..., CORES = 1
         br.predict_model(object$models[[labelname]], cbind(newdata, extracolumns), ...)
     }, CORES)
     names(predictions) <- object$labels
-    
+
     as.multilabelPrediction(predictions, probability)
 }
 
@@ -188,7 +188,7 @@ print.MBRmodel <- function(x, ...) {
     cat("\nCorrelation Table Overview:\n")
     corr <- x$correlation
     diag(corr) <- NA
-    tbl <- data.frame(min = apply(corr, 1, min, na.rm = TRUE), mean = apply(corr, 1, mean, na.rm = TRUE), median = apply(corr, 1, median, na.rm = TRUE), max = apply(corr, 
+    tbl <- data.frame(min = apply(corr, 1, min, na.rm = TRUE), mean = apply(corr, 1, mean, na.rm = TRUE), median = apply(corr, 1, median, na.rm = TRUE), max = apply(corr,
         1, max, na.rm = TRUE), extra = apply(x$correlation, 1, function(row) sum(row > x$phi)))
     print(tbl)
 }
@@ -201,4 +201,4 @@ print.mldMBR <- function(x, ...) {
     cat(" ", length(x$new.features), " meta features\n")
     cat(" ", nrow(x$data), "Examples\n")
     cat("  ", round((sum(x$data[, ncol(x$data)] == 1)/nrow(x$data)) * 100, 1), "% of positive examples\n", sep = "")
-} 
+}

@@ -4,8 +4,8 @@
 \alias{create_kfold_partition}
 \title{Create the k-folds partition based on the specified algorithm}
 \usage{
-create_kfold_partition(mdata, k = 10, method = c("random", "interative",
-  "stratification"))
+create_kfold_partition(mdata, k = 10, method = c("random", "iterative",
+  "stratified"))
 }
 \arguments{
 \item{mdata}{A mldr dataset.}
@@ -15,10 +15,10 @@ create_kfold_partition(mdata, k = 10, method = c("random", "interative",
 \item{method}{The method to split the data. The default methods are:
 \describe{
   \item{random}{Split randomly the folds.}
-  \item{interative}{Split the folds considering the labels proportions
+  \item{iterative}{Split the folds considering the labels proportions
                     individually. Some specific label can not occurs in all
                     folds.}
-  \item{stratification}{Split the folds considering the labelset
+  \item{stratified}{Split the folds considering the labelset
                         proportions.}
 }
 You can also create your own partition method. See the note and example
@@ -38,7 +38,7 @@ To create your own split method, you need to build a function that
 }
 \examples{
 k10 <- create_kfold_partition(toyml, 10)
-k5 <- create_kfold_partition(toyml, 5, "stratification")
+k5 <- create_kfold_partition(toyml, 5, "stratified")
 
 sequencial_split <- function (mdata, r) {
  S <- list()
