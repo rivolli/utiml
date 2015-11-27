@@ -150,7 +150,7 @@ test_that("random kfold", {
   expect_equal(length(f1$fold), 4)
   expect_equal(length(f1$fold[[2]]), 25)
   expect_equal(f1, f2)
-  expect_false(all(f$fold[[1]] == f1$fold[[1]]))
+  expect_false(all(f1$fold[[1]] %in% f$fold[[1]]))
   set.seed(NULL)
 
   f3 <- create_kfold_partition(mdata, 3)
@@ -193,7 +193,7 @@ test_that("stratified kfold", {
   expect_equal(length(f1$fold), 4)
   expect_equal(length(f1$fold[[2]]), 25)
   expect_equal(f1, f2)
-  expect_false(all(f$fold[[1]] == f1$fold[[1]]))
+  expect_false(all(f1$fold[[1]] %in% f$fold[[1]]))
   set.seed(NULL)
 
   f3 <- create_kfold_partition(mdata, 3, "stratified")
@@ -236,7 +236,7 @@ test_that("iterative kfold", {
   expect_equal(length(f1$fold), 4)
   expect_equal(length(f1$fold[[2]]), 25)
   expect_equal(f1, f2)
-  expect_false(all(f$fold[[1]] == f1$fold[[1]]))
+  expect_false(all(f1$fold[[1]] %in% f$fold[[1]]))
   set.seed(NULL)
 
   f3 <- create_kfold_partition(mdata, 3, "iterative")
@@ -272,7 +272,11 @@ test_that("subset and random subset", {
   data2 <- create_subset(mdata, rows, cols)
   expect_equal(data1, data2)
 
-  #TODO test not complete partitions (using 90% per example)
+  data <- create_subset(mdata, seq(200), seq(30))
+  expect_equal(data, mdata)
+
+  data <- create_subset(mdata, c(1,2,3,-5,-4,-10), c(1,2,3,-5,-4,-10))
+  #TODO test values
 
   data <- create_random_subset(mdata, 20, 5)
   expect_equal(data$measures$num.instances, 20)
@@ -307,3 +311,5 @@ test_that("Alternatives dataset for sampling", {
   expect_equal(colnames(test[[2]]$dataset), colnames(ndata$dataset))
   expect_equal(colnames(test[[3]]$dataset), colnames(ndata$dataset))
 })
+
+#TODO test not complete partitions (using 90% per example)
