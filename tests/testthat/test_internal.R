@@ -1,118 +1,25 @@
-context("Internal tests")
-mydata <- data.frame(
-  class1 = runif(10, min = 0, max = 1),
-  class2 = factor(as.numeric(runif(10, min = 0, max = 1) > 0.5), levels = c("0", "1"))
-)
+context("R Internal tests")
 
-test_that("as binary prediction", {
-  probs <- runif(10, 0, 1)
-  result <- as.binaryPrediction(probs)
-  expect_is(result, "binary.prediction")
-  expect_false(is.null(result$bipartition))
-  expect_false(is.null(result$probability))
-  expect_equal(result$probability, probs)
-
-  names(probs) <- 11:20
-  result <- as.binaryPrediction(probs)
-  expect_named(result$bipartition, as.character(11:20))
-  expect_named(result$probability, as.character(11:20))
-
-  probs <- rep(0.5, 10)
-  result <- as.binaryPrediction(probs, 0.4)
-  expect_equal(result$bipartition, rep(1, 10))
-
-  result <- as.binaryPrediction(probs, 0.5)
-  expect_equal(result$bipartition, rep(1, 10))
-
-  result <- as.binaryPrediction(probs, 0.6)
-  expect_equal(result$bipartition, rep(0, 10))
+test_that("Normalize", {
+  expect_equal(utiml_normalize(1:3), c(0.0, 0.5, 1.0))
+  expect_equal(utiml_normalize(1:5), c(0.0, 0.25, 0.5, 0.75, 1.0))
+  expect_equal(utiml_normalize(c(1,2,3,4,5), 10, 0), 1:5/10)
 })
 
-test_that("Result ML prediction", {
-  set.seed(1)
-  predictions <- list(
-    class1 = as.binaryPrediction(runif(10, min = 0, max = 1)),
-    class2 = as.binaryPrediction(runif(10, min = 0, max = 1))
-  )
-  result1 <- as.multilabelPrediction(predictions, TRUE)
-  expect_null(rownames(result1))
-  expect_equal(colnames(result1), c("class1", "class2"))
-
-  expect_equal(predictions$class1$probability, result1[,"class1"])
-  expect_equal(predictions$class2$probability, result1[,"class2"])
-
-  result2 <- as.multilabelPrediction(predictions, FALSE)
-  TP1 <- predictions$class1$bipartition == 1
-  TP2 <- predictions$class2$bipartition == 1
-  expect_equal(predictions$class1$bipartition[TP1], result2[,"class1"][TP1])
-  expect_equal(predictions$class2$bipartition[TP2], result2[,"class2"][TP2])
-  expect_true(all(result2[,"class1"][!TP1] | result2[,"class2"][!TP1]))
-  expect_true(all(result2[,"class1"][TP2] | result2[,"class2"][TP2]))
-  expect_true(all(result2[,"class1"][!TP1 & !TP2] != result2[,"class2"][!TP1 & !TP2]))
-
-  expect_true(all(attr(result1, "classes") == result2))
-  expect_true(all(attr(result2, "probs") == result1))
-  expect_equal(attr(result1, "type"), "probability")
-  expect_equal(attr(result2, "type"), "bipartition")
-
-  values <- runif(10, min = 0, max = 1)
-  names(values) <- 6:15
-  predictions <- list(
-    class1 = as.binaryPrediction(values),
-    class2 = as.binaryPrediction(values)
-  )
-  result <- as.multilabelPrediction(predictions, TRUE)
-  expect_equal(rownames(result), as.character(6:15))
-  expect_equal(result[,"class1"], result[,"class2"])
-  result <- as.multilabelPrediction(predictions, FALSE)
-  expect_equal(rownames(result), as.character(6:15))
-  set.seed(NULL)
-})
-
-test_that("BR transformation", {
-  dataset <- br.transformation(mydata, "testDataset", "SVM")
-  expect_is(dataset, "testDataset")
-  expect_is(dataset, "baseSVM")
-  expect_is(dataset, "mltransformation")
-
-  expect_equal(dataset$data, mydata)
-  expect_equal(dataset$labelname, "class2")
-  expect_equal(dataset$labelindex, 2)
-  expect_equal(dataset$methodname, "SVM")
-
-  dataset <- br.transformation(mydata, "onlytest", "XYZ", extra1="abc", extra2=1:10)
-  expect_is(dataset, "onlytest")
-  expect_is(dataset, "baseXYZ")
-  expect_is(dataset, "mltransformation")
-
-  expect_equal(dataset$data, mydata)
-  expect_equal(dataset$labelname, "class2")
-  expect_equal(dataset$labelindex, 2)
-  expect_equal(dataset$methodname, "XYZ")
-  expect_equal(dataset$extra1, "abc")
-  expect_equal(dataset$extra2, 1:10)
-})
-
-test_that("br.create_model and br.predict_model", {
-  dataset <- br.transformation(mydata, "testdata", "KNN")
-  model <- br.create_model(dataset, k=3)
-  expect_equal(attr(model, "labelname"), "class2")
-  expect_equal(attr(model, "methodname"), "KNN")
-
-  predict1 <- br.predict_model(model, mydata[,1, drop = FALSE])
-  expect_is(predict1, "binary.prediction")
-
-  model <- br.create_model(dataset)
-  predict2 <- br.predict_model(model, mydata[,1, drop = FALSE], k=3)
-  expect_equal(predict1$probability, predict2$probability)
-  expect_true(all(predict1$probability == predict2$probability))
-
-  predict3 <- br.predict_model(model, mydata[,1, drop = FALSE], k=1)
-  expect_false(all(predict2$probability == predict3$probability))
+test_that("Ifelse", {
+  c1 <- rep(1, 10)
+  c2 <- 1:10
+  expect_equal(utiml_ifelse(T, c1, c2), c1)
+  expect_equal(utiml_ifelse(F, c1, c2), c2)
+  expect_equal(utiml_ifelse(T, c1, NA), c1)
+  expect_equal(utiml_ifelse(F, c1, NA), NA)
+  expect_equal(utiml_ifelse(T, NA, c2), NA)
+  expect_equal(utiml_ifelse(F, NA, c2), c2)
+  expect_null(utiml_ifelse(NA, c1, c2))
 })
 
 test_that("New data", {
-  test <- emotions$dataset[,emotions$attributesIndexes]
+  test <- toyml$dataset[,toyml$attributesIndexes]
   expect_equal(utiml_newdata(test), test)
-  expect_equal(utiml_newdata(emotions), test)
+  expect_equal(utiml_newdata(toyml), test)
 })

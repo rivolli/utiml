@@ -52,28 +52,28 @@
 #' pred <- predict(model, dataset$test)
 dbr <- function(mdata, base.method = "SVM", estimate.models = TRUE, ..., CORES = 1) {
     # Validations
-    if (class(mdata) != "mldr") 
+    if (class(mdata) != "mldr")
         stop("First argument must be an mldr object")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     # DBR Model class
     dbrmodel <- list()
-    if (estimate.models) 
+    if (estimate.models)
         dbrmodel$estimation <- br(mdata, base.method, ..., CORES = CORES)
-    
+
     basedata <- mdata$dataset[mdata$attributesIndexes]
     labeldata <- mdata$dataset[mdata$labels$index]
     datasets <- utiml_lapply(1:mdata$measures$num.labels, function(li) {
-        br.transformation(cbind(basedata, labeldata[-li], labeldata[li]), "mldDBR", base.method)
+        transform_br_data(cbind(basedata, labeldata[-li], labeldata[li]), "mldDBR", base.method)
     }, CORES)
     names(datasets) <- rownames(mdata$labels)
-    dbrmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-    
+    dbrmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)
+
     dbrmodel$call <- match.call()
     class(dbrmodel) <- "DBRmodel"
-    
+
     dbrmodel
 }
 
@@ -128,25 +128,25 @@ dbr <- function(mdata, base.method = "SVM", estimate.models = TRUE, ..., CORES =
 #' pred <- predict(model, dataset$test, estimative = estimative)
 predict.DBRmodel <- function(object, newdata, estimative = NULL, probability = TRUE, ..., CORES = 1) {
     # Validations
-    if (class(object) != "DBRmodel") 
+    if (class(object) != "DBRmodel")
         stop("First argument must be an DBRmodel object")
-    
-    if (is.null(object$estimation) && is.null(estimative)) 
+
+    if (is.null(object$estimation) && is.null(estimative))
         stop("The model requires an estimative matrix")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     newdata <- utiml_newdata(newdata)
-    if (is.null(estimative)) 
+    if (is.null(estimative))
         estimative <- predict(object$estimation, newdata, ..., probability = FALSE, CORES = CORES)
-    
+
     labels <- names(object$models)
     predictions <- utiml_lapply(1:length(labels), function(li) {
-        br.predict_model(object$models[[li]], cbind(newdata, estimative[, -li]), ...)
+        predict_br_model(object$models[[li]], cbind(newdata, estimative[, -li]), ...)
     }, CORES)
     names(predictions) <- labels
-    
+
     as.multilabelPrediction(predictions, probability)
 }
 
@@ -155,4 +155,4 @@ print.DBRmodel <- function(x, ...) {
     print(x$call)
     cat("\n", length(x$models), "Models (labels):\n")
     print(names(x$models))
-} 
+}

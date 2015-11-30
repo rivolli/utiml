@@ -125,31 +125,31 @@ rdbr <- function(mdata, base.method = "SVM", ..., estimate.models = TRUE, save.d
 #' pred <- predict(model, testdata, estimative = estimative)
 predict.RDBRmodel <- function(object, newdata, ..., max.iterations = 5, batch.mode = FALSE, estimative = NULL, probability = TRUE, CORES = 1) {
     # Validations
-    if (class(object) != "RDBRmodel") 
+    if (class(object) != "RDBRmodel")
         stop("First argument must be an RDDBRmodel object")
-    
-    if (is.null(object$estimation) && is.null(estimative)) 
+
+    if (is.null(object$estimation) && is.null(estimative))
         stop("The model requires an estimative matrix")
-    
-    if (max.iterations < 1) 
+
+    if (max.iterations < 1)
         stop("The number of iteractions must be positive")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     newdata <- utiml_newdata(newdata)
-    if (is.null(estimative)) 
+    if (is.null(estimative))
         estimative <- predict(object$estimation, newdata, ..., probability = FALSE, CORES = CORES)
-    
+
     labels <- names(object$models)
     if (batch.mode) {
         for (i in 1:max.iterations) {
             predictions <- utiml_lapply(1:length(labels), function(li) {
-                br.predict_model(object$models[[li]], cbind(newdata, estimative[, -li]), ...)
+                predict_br_model(object$models[[li]], cbind(newdata, estimative[, -li]), ...)
             }, CORES)
             names(predictions) <- labels
             new.estimative <- do.call(cbind, lapply(predictions, function(lbl) lbl$bipartition))
-            if (all(new.estimative == estimative)) 
+            if (all(new.estimative == estimative))
                 break
             estimative <- new.estimative
         }
@@ -159,15 +159,15 @@ predict.RDBRmodel <- function(object, newdata, ..., max.iterations = 5, batch.mo
             predictions <- list()
             # the labels needs to be shuffled in each iteraction
             for (li in 1:length(labels)) {
-                predictions[[li]] <- br.predict_model(object$models[[li]], cbind(newdata, estimative[, -li]), ...)
+                predictions[[li]] <- predict_br_model(object$models[[li]], cbind(newdata, estimative[, -li]), ...)
                 estimative[, li] <- predictions[[li]]$bipartition
             }
             names(predictions) <- labels
-            if (all(old.estimative == estimative)) 
+            if (all(old.estimative == estimative))
                 break
         }
     }
-    
+
     as.multilabelPrediction(predictions, probability)
 }
 
@@ -176,4 +176,4 @@ print.RDBRmodel <- function(x, ...) {
     print(x$call)
     cat("\n", length(x$models), "Models (labels):\n")
     print(names(x$models))
-} 
+}

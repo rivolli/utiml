@@ -107,15 +107,15 @@ mbr <- function(mdata, base.method = "SVM", folds = 1, phi = 0, ..., predict.par
 
     # 2 Iteration - Meta level
     corr <- mbrmodel$correlation <- labels_correlation_coefficient(mdata)
-    br.datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
+    br.datasets <- lapply(mldr_transform(mdata), transform_br_data, classname = "mldBR", base.method = base.method)
     names(br.datasets) <- mbrmodel$labels
     datasets <- utiml_lapply(br.datasets, function(dataset) {
         extracolumns <- base.preds[, colnames(corr)[corr[dataset$labelname, ] > phi], drop = FALSE]
         colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
         base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
-        br.transformation(base, "mldMBR", base.method, new.features = colnames(extracolumns))
+        transform_br_data(base, "mldMBR", base.method, new.features = colnames(extracolumns))
     }, CORES)
-    mbrmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
+    mbrmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)
 
     mbrmodel$call <- match.call()
     class(mbrmodel) <- "MBRmodel"
@@ -174,7 +174,7 @@ predict.MBRmodel <- function(object, newdata, probability = TRUE, ..., CORES = 1
     predictions <- utiml_lapply(object$labels, function(labelname) {
         extracolumns <- base.preds[, colnames(corr)[corr[labelname, ] > object$phi], drop = FALSE]
         colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
-        br.predict_model(object$models[[labelname]], cbind(newdata, extracolumns), ...)
+        predict_br_model(object$models[[labelname]], cbind(newdata, extracolumns), ...)
     }, CORES)
     names(predictions) <- object$labels
 

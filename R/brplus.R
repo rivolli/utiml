@@ -67,10 +67,10 @@ brplus <- function(mdata, base.method = "SVM", ..., CORES = 1) {
     basedata <- mdata$dataset[mdata$attributesIndexes]
     labeldata <- mdata$dataset[mdata$labels$index]
     datasets <- utiml_lapply(1:mdata$measures$num.labels, function(li) {
-        br.transformation(cbind(basedata, labeldata[-li], labeldata[li]), "mldBRP", base.method)
+        transform_br_data(cbind(basedata, labeldata[-li], labeldata[li]), "mldBRP", base.method)
     }, CORES)
     names(datasets) <- rownames(mdata$labels)
-    brpmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
+    brpmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)
 
     brpmodel$call <- match.call()
     class(brpmodel) <- "BRPmodel"
@@ -176,7 +176,7 @@ predict.BRPmodel <- function(object, newdata, strategy = c("Dyn", "Stat", "Ord",
     if (strategy[1] == "NU") {
         initial.preds <- predict(object$initial, newdata, probability = FALSE, ..., CORES = CORES)
         predictions <- utiml_lapply(1:length(labels), function(li) {
-            br.predict_model(object$models[[li]], cbind(newdata, initial.preds[, -li]), ...)
+            predict_br_model(object$models[[li]], cbind(newdata, initial.preds[, -li]), ...)
         }, CORES)
         names(predictions) <- labels
     } else {
@@ -188,7 +188,7 @@ predict.BRPmodel <- function(object, newdata, strategy = c("Dyn", "Stat", "Ord",
         for (labelname in orders[[strategy[1]]]) {
             model <- object$models[[labelname]]
             data <- cbind(newdata, initial.preds[, !labels %in% labelname])
-            predictions[[labelname]] <- br.predict_model(model, data, ...)
+            predictions[[labelname]] <- predict_br_model(model, data, ...)
             initial.preds[, labelname] <- predictions[[labelname]]$bipartition
         }
     }

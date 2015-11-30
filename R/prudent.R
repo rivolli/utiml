@@ -94,10 +94,10 @@ prudent <- function(mdata, base.method = "SVM", phi = 0, ..., save.datasets = FA
         if (ncol(extracolumns) > 0) {
             colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
             base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
-            br.transformation(base, "mldPruDent", base.method, new.features = colnames(extracolumns))
+            transform_br_data(base, "mldPruDent", base.method, new.features = colnames(extracolumns))
         }
     }, CORES)
-    pdmodel$metamodels <- utiml_lapply(datasets[!unlist(lapply(datasets, is.null))], br.create_model, CORES, ...)
+    pdmodel$metamodels <- utiml_lapply(datasets[!unlist(lapply(datasets, is.null))], create_br_model, CORES, ...)
 
     if (save.datasets)
         pdmodel$datasets <- list(base = pdmodel$basemodel$datasets, meta = datasets)
@@ -164,7 +164,7 @@ predict.PruDentmodel <- function(object, newdata, ..., probability = TRUE, CORES
         extracolumns <- base.preds[, colnames(corr)[corr[labelname, ] > object$phi], drop = FALSE]
         if (ncol(extracolumns) > 0) {
             colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
-            br.predict_model(object$metamodels[[labelname]], cbind(newdata, extracolumns), ...)
+            predict_br_model(object$metamodels[[labelname]], cbind(newdata, extracolumns), ...)
         } else {
             as.binaryPrediction(base.scores[, labelname])
         }

@@ -47,26 +47,26 @@
 #' pred <- predict(model, dataset$test)
 br <- function(mdata, base.method = "SVM", ..., CORES = 1) {
     # Validations
-    if (class(mdata) != "mldr") 
+    if (class(mdata) != "mldr")
         stop("First argument must be an mldr object")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     # BR Model class
     brmodel <- list()
     brmodel$labels <- rownames(mdata$labels)
-    
+
     # Transformation
-    datasets <- lapply(mldr_transform(mdata), br.transformation, classname = "mldBR", base.method = base.method)
+    datasets <- lapply(mldr_transform(mdata), transform_br_data, classname = "mldBR", base.method = base.method)
     names(datasets) <- brmodel$labels
-    
+
     # Create models
-    brmodel$models <- utiml_lapply(datasets, br.create_model, CORES, ...)
-    
+    brmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)
+
     brmodel$call <- match.call()
     class(brmodel) <- "BRmodel"
-    
+
     brmodel
 }
 
@@ -107,14 +107,14 @@ br <- function(mdata, base.method = "SVM", ..., CORES = 1) {
 #' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.BRmodel <- function(object, newdata, probability = TRUE, ..., CORES = 1) {
     # Validations
-    if (class(object) != "BRmodel") 
+    if (class(object) != "BRmodel")
         stop("First argument must be an BRmodel object")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     # Create models
-    predictions <- utiml_lapply(object$models, br.predict_model, CORES, newdata = utiml_newdata(newdata), ...)
+    predictions <- utiml_lapply(object$models, predict_br_model, CORES, newdata = utiml_newdata(newdata), ...)
     as.multilabelPrediction(predictions, probability)
 }
 
@@ -132,4 +132,4 @@ print.mldBR <- function(x, ...) {
     cat(" ", ncol(x$data) - 1, "Predictive attributes\n")
     cat(" ", nrow(x$data), "Examples\n")
     cat("  ", round((sum(x$data[, ncol(x$data)] == 1)/nrow(x$data)) * 100, 1), "% of positive examples\n", sep = "")
-} 
+}

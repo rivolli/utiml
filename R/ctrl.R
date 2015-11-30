@@ -124,11 +124,11 @@ ctrl <- function(mdata, base.method = "SVM", m = 5, validation.size = 0.3, valid
     # Build models (11-17)
     D <- mdata$dataset[mdata$attributesIndexes]
     ctrlmodel$models <- utiml_lapply(rownames(mdata$labels), function(labelname) {
-        Di <- br.transformation(cbind(D, mdata$dataset[labelname]), "mldBR", base.method)
-        fi <- list(br.create_model(Di, ...))
+        Di <- transform_br_data(cbind(D, mdata$dataset[labelname]), "mldBR", base.method)
+        fi <- list(create_br_model(Di, ...))
         for (k in Rj[[labelname]]) {
-            Di <- br.transformation(cbind(D, mdata$dataset[k], mdata$dataset[labelname]), "mldBR", base.method)
-            fi <- c(fi, list(br.create_model(Di, ...)))
+            Di <- transform_br_data(cbind(D, mdata$dataset[k], mdata$dataset[labelname]), "mldBR", base.method)
+            fi <- c(fi, list(create_br_model(Di, ...)))
         }
         names(fi) <- c(labelname, Rj[[labelname]])
         fi
@@ -194,7 +194,7 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "MAJ", probability 
 
     # Predict initial values
     initial.prediction <- utiml_lapply(object$models, function(models) {
-        br.predict_model(models[[1]], newdata, ...)
+      predict_br_model(models[[1]], newdata, ...)
     }, CORES)
     fjk <- as.matrix(as.multilabelPrediction(initial.prediction, FALSE))
 
@@ -202,7 +202,7 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "MAJ", probability 
     predictions <- utiml_lapply(names(object$models), function(labelname) {
         models <- object$models[[labelname]]
         preds <- list()
-        for (labels in names(models)[-1]) preds[[labels]] <- br.predict_model(models[[labels]], cbind(newdata, fjk[, labels]), ...)
+        for (labels in names(models)[-1]) preds[[labels]] <- predict_br_model(models[[labels]], cbind(newdata, fjk[, labels]), ...)
 
         if (length(preds) < 1)
             initial.prediction[[labelname]]  #No models are found, only first prediction
