@@ -57,48 +57,48 @@
 #' pred <- predict(model, dataset$test)
 ns <- function(mdata, base.method = "SVM", chain = c(), ..., predict.params = list()) {
     # Validations
-    if (class(mdata) != "mldr") 
+    if (class(mdata) != "mldr")
         stop("First argument must be an mldr object")
-    
+
     labels <- rownames(mdata$labels)
-    if (length(chain) == 0) 
+    if (length(chain) == 0)
         chain <- rownames(mdata$labels) else {
         if (length(chain) != mdata$measures$num.labels || length(setdiff(union(chain, labels), intersect(chain, labels))) > 0) {
             stop("Invalid chain (all labels must be on the chain)")
         }
     }
-    
+
     # NS Model class
     nsmodel <- list()
     nsmodel$labels <- labels
     nsmodel$chain <- chain
     nsmodel$models <- list()
     nsmodel$labelsets <- as.matrix(mdata$dataset[, mdata$labels$index])
-    if (save.datasets) 
+    if (save.datasets)
         nsmodel$datasets <- list()
-    
+
     basedata <- mdata$dataset[mdata$attributesIndexes]
     newattrs <- matrix(nrow = mdata$measures$num.instances, ncol = 0)
     for (labelIndex in 1:length(chain)) {
         label <- chain[labelIndex]
-        
+
         # Create data
         dataset <- cbind(basedata, mdata$dataset[label])
         mldCC <- br.transformation(dataset, "mldCC", base.method, chain.order = labelIndex)
-        
+
         # Call dynamic multilabel model with merged parameters
         model <- do.call(mltrain, c(list(dataset = mldCC), ...))
-        
+
         result <- do.call(mlpredict, c(list(model = model, newdata = basedata), predict.params))
         basedata <- cbind(basedata, result$bipartition)
         names(basedata)[ncol(basedata)] <- label
-        
+
         nsmodel$models[[label]] <- model
     }
-    
+
     nsmodel$call <- match.call()
     class(nsmodel) <- "NSmodel"
-    
+
     nsmodel
 }
 
@@ -139,9 +139,9 @@ ns <- function(mdata, base.method = "SVM", chain = c(), ..., predict.params = li
 #' pred <- predict(model, dataset$test, na.action = na.fail)
 predict.NSmodel <- function(object, newdata, probability = TRUE, ...) {
     # Validations
-    if (class(object) != "NSmodel") 
+    if (class(object) != "NSmodel")
         stop("First argument must be an NSmodel object")
-    
+
     newdata <- utiml_newdata(newdata)
     predictions <- list()
     for (label in object$chain) {
@@ -150,9 +150,9 @@ predict.NSmodel <- function(object, newdata, probability = TRUE, ...) {
         newdata <- cbind(newdata, predictions[[label]]$bipartition)
         names(newdata)[ncol(newdata)] <- label
     }
-    
+
     result <- as.multilabelPrediction(predictions[object$labels], probability)
-    subset.corretion(result, object$labelsets)
+    compute_subset_correction(result, object$labelsets)
 }
 
 print.NSmodel <- function(x, ...) {
@@ -160,4 +160,4 @@ print.NSmodel <- function(x, ...) {
     print(x$call)
     cat("\n Chain: (", length(x$chain), "labels )\n")
     print(x$chain)
-} 
+}

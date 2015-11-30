@@ -69,24 +69,24 @@
 #' pred <- predict(model, testdata)
 prudent <- function(mdata, base.method = "SVM", phi = 0, ..., save.datasets = FALSE, CORES = 1) {
     # Validations
-    if (class(mdata) != "mldr") 
+    if (class(mdata) != "mldr")
         stop("First argument must be an mldr object")
-    
-    if (phi < 0) 
+
+    if (phi < 0)
         stop("The phi threshold must be between 0 and 1, inclusive")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     # PruDent Model class
     pdmodel <- list()
     pdmodel$labels <- rownames(mdata$labels)
     pdmodel$phi <- phi
-    
+
     # 1 Iteration - Base Level
     pdmodel$basemodel <- br(mdata, base.method, ..., save.datasets = TRUE, CORES = CORES)
     base.preds <- as.matrix(mdata$dataset[mdata$labels$index])
-    
+
     # 2 Iteration - Meta level
     IG <- pdmodel$IG <- labels_information_gain(mdata)
     datasets <- utiml_lapply(pdmodel$basemodel$datasets, function(dataset) {
@@ -98,14 +98,14 @@ prudent <- function(mdata, base.method = "SVM", phi = 0, ..., save.datasets = FA
         }
     }, CORES)
     pdmodel$metamodels <- utiml_lapply(datasets[!unlist(lapply(datasets, is.null))], br.create_model, CORES, ...)
-    
-    if (save.datasets) 
+
+    if (save.datasets)
         pdmodel$datasets <- list(base = pdmodel$basemodel$datasets, meta = datasets)
     pdmodel$basemodel$datasets <- NULL
-    
+
     pdmodel$call <- match.call()
     class(pdmodel) <- "PruDentmodel"
-    
+
     pdmodel
 }
 
@@ -146,18 +146,18 @@ prudent <- function(mdata, base.method = "SVM", phi = 0, ..., save.datasets = FA
 #' pred <- predict(model, testdata, na.action = na.fail)
 predict.PruDentmodel <- function(object, newdata, ..., probability = TRUE, CORES = 1) {
     # Validations
-    if (class(object) != "PruDentmodel") 
+    if (class(object) != "PruDentmodel")
         stop("First argument must be an PruDentmodel object")
-    
-    if (CORES < 1) 
+
+    if (CORES < 1)
         stop("Cores must be a positive value")
-    
+
     newdata <- utiml_newdata(newdata)
-    
+
     # 1 Iteration - Base level
     base.scores <- predict(object$basemodel, newdata, ..., probability = TRUE, CORES = CORES)
-    base.preds <- simple.threshold(base.scores, 0.5)
-    
+    base.preds <- as.bipartition(base.scores, 0.5)
+
     # 2 Iteration - Meta level
     corr <- object$IG
     predictions <- utiml_lapply(object$labels, function(labelname) {
@@ -170,26 +170,26 @@ predict.PruDentmodel <- function(object, newdata, ..., probability = TRUE, CORES
         }
     }, CORES)
     names(predictions) <- object$labels
-    
+
     original <- predictions
     # Choosing the Final Classification
     for (i in 1:length(predictions)) {
         indexes <- predictions[[i]]$probability >= 0.5
-        
+
         # Positive scores
         predictions[[i]]$probability[indexes] <- unlist(lapply(which(indexes), function(j) {
             max(predictions[[i]]$probability[j], base.scores[j, i])
         }))
-        
+
         # Negative scores
         predictions[[i]]$probability[!indexes] <- unlist(lapply(which(!indexes), function(j) {
             min(predictions[[i]]$probability[j], base.scores[j, i])
         }))
-        
+
         predictions[[i]]$bipartition <- as.numeric(predictions[[i]]$probability >= 0.5)
         names(predictions[[i]]$bipartition) <- names(predictions[[i]]$probability)
     }
-    
+
     as.multilabelPrediction(predictions, probability)
 }
 
@@ -201,7 +201,7 @@ print.PruDentmodel <- function(x, ...) {
     cat("\nInformation Gain Table Overview:\n")
     corr <- x$IG
     diag(corr) <- NA
-    tbl <- data.frame(min = apply(corr, 1, min, na.rm = TRUE), mean = apply(corr, 1, mean, na.rm = TRUE), median = apply(corr, 1, median, na.rm = TRUE), max = apply(corr, 
+    tbl <- data.frame(min = apply(corr, 1, min, na.rm = TRUE), mean = apply(corr, 1, mean, na.rm = TRUE), median = apply(corr, 1, median, na.rm = TRUE), max = apply(corr,
         1, max, na.rm = TRUE), extra = apply(x$IG, 1, function(row) sum(row > x$phi)))
     print(tbl)
 }
@@ -214,4 +214,4 @@ print.mldPruDent <- function(x, ...) {
     cat(" ", length(x$new.features), " meta features\n")
     cat(" ", nrow(x$data), "Examples\n")
     cat("  ", round((sum(x$data[, ncol(x$data)] == 1)/nrow(x$data)) * 100, 1), "% of positive examples\n", sep = "")
-} 
+}
