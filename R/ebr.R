@@ -144,11 +144,6 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "MAJ", probability =
     if (class(object) != "EBRmodel")
         stop("First argument must be an EBRmodel object")
 
-    if (!is.null(vote.schema)) {
-        if (is.null(utiml_vote.schema_method(vote.schema)))
-            stop("Invalid vote schema")
-    }
-
     if (CORES < 1)
         stop("Cores must be a positive value")
 
@@ -157,8 +152,11 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "MAJ", probability =
         predict(brmodel, newdata[, brmodel$attrs], ..., CORES = CORES)
     })
 
-    if (is.null(vote.schema))
-        allpreds else utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
+    if (is.null(vote.schema)) {
+      allpreds
+    } else {
+      compute_multilabel_ensemble_votes(allpreds, vote.schema, probability)
+    }
 }
 
 print.EBRmodel <- function(x, ...) {

@@ -187,6 +187,11 @@ get_multilabel_prediction <- function(bipartitions,
   utiml_ifelse(probability, probabilities, bipartitions)
 }
 
+#' Convert a mlresult to a matrix
+#'
+#' @param x The mlresult object
+#' @return matrix
+#' @export
 as.matrix.mlresult <- function(x) {
   attr.name <- ifelse(attr(x, "type") == "bipartition", "probs", "classes")
   only.expected <- x
@@ -196,37 +201,60 @@ as.matrix.mlresult <- function(x) {
   only.expected
 }
 
+#' Convert a mlresult to a matrix with bipartition values
+#'
+#' @param x The mlresult object
+#' @return matrix with bipartition values
+#' @export
 as.bipartition <- function(mlresult) {
   utiml_ifelse(is.bipartition(mlresult),
                as.matrix(mlresult),
                attr(mlresult, "classes"))
 }
 
+#' Convert a mlresult to a matrix with probabilities values
+#'
+#' @param x The mlresult object
+#' @return matrix with probabilities values
+#' @export
 as.probability <- function(mlresult) {
   utiml_ifelse(is.probability(mlresult),
                as.matrix(mlresult),
                attr(mlresult, "probs"))
 }
 
+#' Test if a mlresult contains crisp values as default
+#'
+#' @param x The mlresult object
+#' @return logical value
+#' @export
 is.bipartition <- function(mlresult) {
   attr(mlresult, "type") == "bipartition"
 }
 
+#' Test if a mlresult contains score values as default
+#'
+#' @param x The mlresult object
+#' @return logical value
+#' @export
 is.probability <- function(mlresult) {
   attr(mlresult, "type") == "probability"
 }
 
-# Print mlresult as matrix
+#' Print the mlresult
+#' @export
 print.mlresult <- function(x, ...) {
   print(as.matrix(x), ...)
 }
 
-# Head mlresult as matrix
+#' Head mlresult as matrix
+#' @export
 head.mlresult <- function(x, ...) {
   head(as.matrix(x), ...)
 }
 
-# Tail
+#' Tail mlresult as matrix
+#' @export
 tail.mlresult <- function(x, ...) {
   tail(as.matrix(x), ...)
 }

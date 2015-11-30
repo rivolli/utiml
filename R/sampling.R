@@ -293,7 +293,7 @@ utiml_validate_splitmethod <- function (method) {
                        paste(method, "split", sep = "_"),
                        method)
 
-  if(!exists(method.name, mode = "function")) {
+  if (!exists(method.name, mode = "function")) {
     stop(paste("The partition method '", method.name,
                "' is not a valid function", sep=''))
   }
