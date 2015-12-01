@@ -80,14 +80,14 @@ as.multilabelPrediction <- function(predictions, probability) {
 #' # Create a model for each dataset in datasets list
 #' lapply(datasets, create_br_model, ...)
 create_br_model <- function(dataset, ...) {
-    params <- c(list(dataset = dataset), ...)
+  params <- c(list(dataset = dataset), ...)
 
-    # Call dynamic multilabel model with merged parameters
-    model <- do.call(mltrain, params)
-    attr(model, "labelname") <- dataset$labelname
-    attr(model, "methodname") <- dataset$methodname
+  # Call dynamic multilabel model with merged parameters
+  model <- do.call(mltrain, params)
+  attr(model, "labelname") <- dataset$labelname
+  attr(model, "methodname") <- dataset$methodname
 
-    model
+  model
 }
 
 #' Dinamically call the prediction function

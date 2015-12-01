@@ -4,53 +4,47 @@
 \alias{br}
 \title{Binary Relevance for multi-label Classification}
 \usage{
-br(mdata, base.method = "SVM", ..., CORES = 1)
+br(mdata, base.method = options("utiml.cores"), ...,
+  CORES = options("utiml.cores"))
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset.}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method.
-
-  Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'})}
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method")})}
 
 \item{...}{Others arguments passed to the base method for all subproblems}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
-than 1 require the \pkg{parallel} package. (default: 1)}
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores")})}
 }
 \value{
 An object of class \code{BRmodel} containing the set of fitted
-  models, including: \describe{
-  \item{labels}{A vector with the label names}
-  \item{models}{A list of the generated models, named by the label names.}
-}
+  models, including:
+  \describe{
+   \item{labels}{A vector with the label names}
+   \item{models}{A list of the generated models, named by the label names.}
+  }
 }
 \description{
 Create a Binary Relevance model for multilabel classification.
-
-  Binary Relevance is a simple and effective transformation method to predict
-  multi-label data. This is based on the one-versus-all approach to build a
-  specific model for each label.
+}
+\details{
+Binary Relevance is a simple and effective transformation method to predict
+multi-label data. This is based on the one-versus-all approach to build a
+specific model for each label.
 }
 \examples{
-# Train and predict emotion multilabel dataset using Binary Relevance
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
 # Use SVM as base method
-model <- br(dataset$train)
-pred <- predict(model, dataset$test)
+model <- br(toyml)
+pred <- predict(model, toyml)
 
 # Change the default base method and use 4 CORES
-model <- br(dataset$train, 'C4.5', CORES = 4)
-pred <- predict(model, dataset$test)
+model <- br(toyml[1:50], 'RF', CORES = 4)
 
 # Set a parameters for all subproblems
-model <- br(dataset$train, 'KNN', k=5)
-pred <- predict(model, dataset$test)
+model <- br(toyml, 'KNN', k=5)
 }
 \references{
 Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning

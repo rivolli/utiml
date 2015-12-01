@@ -1,73 +1,67 @@
-#' @title Binary Relevance for multi-label Classification
+#' Binary Relevance for multi-label Classification
+#'
+#' Create a Binary Relevance model for multilabel classification.
+#'
+#' Binary Relevance is a simple and effective transformation method to predict
+#' multi-label data. This is based on the one-versus-all approach to build a
+#' specific model for each label.
+#'
 #' @family Transformation methods
-#' @description Create a Binary Relevance model for multilabel classification.
-#'
-#'   Binary Relevance is a simple and effective transformation method to predict
-#'   multi-label data. This is based on the one-versus-all approach to build a
-#'   specific model for each label.
-#'
-#' @param mdata Object of class \code{\link[mldr]{mldr}}, a multi-label train
-#'   dataset.
-#' @param base.method A string with the name of the base method.
-#'
-#'   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
-#'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-#'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-#'    \code{'SVM'})
+#' @param mdata A mldr dataset used to train the binary models.
+#' @param base.method A string with the name of the base method. (Default:
+#'  \code{options("utiml.base.method")})
 #' @param ... Others arguments passed to the base method for all subproblems
 #' @param CORES The number of cores to parallelize the training. Values higher
-#'   than 1 require the \pkg{parallel} package. (default: 1)
-#'
+#'  than 1 require the \pkg{parallel} package. (Default:
+#'  \code{options("utiml.cores")})
 #' @return An object of class \code{BRmodel} containing the set of fitted
-#'   models, including: \describe{
-#'   \item{labels}{A vector with the label names}
-#'   \item{models}{A list of the generated models, named by the label names.}
-#' }
-#'
+#'   models, including:
+#'   \describe{
+#'    \item{labels}{A vector with the label names}
+#'    \item{models}{A list of the generated models, named by the label names.}
+#'   }
 #' @references
 #'  Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
 #'    multi-label scene classification. Pattern Recognition, 37(9), 1757–1771.
-#'
 #' @export
 #'
 #' @examples
-#' # Train and predict emotion multilabel dataset using Binary Relevance
-#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-#'
 #' # Use SVM as base method
-#' model <- br(dataset$train)
-#' pred <- predict(model, dataset$test)
+#' model <- br(toyml)
+#' pred <- predict(model, toyml)
 #'
 #' # Change the default base method and use 4 CORES
-#' model <- br(dataset$train, 'C4.5', CORES = 4)
-#' pred <- predict(model, dataset$test)
+#' model <- br(toyml[1:50], 'RF', CORES = 4)
 #'
 #' # Set a parameters for all subproblems
-#' model <- br(dataset$train, 'KNN', k=5)
-#' pred <- predict(model, dataset$test)
-br <- function(mdata, base.method = "SVM", ..., CORES = 1) {
-    # Validations
-    if (class(mdata) != "mldr")
-        stop("First argument must be an mldr object")
+#' model <- br(toyml, 'KNN', k=5)
+br <- function(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
+               CORES = getOption("utiml.cores", 1)) {
+  # Validations
+  if (class(mdata) != "mldr") {
+    stop("First argument must be an mldr object")
+  }
 
-    if (CORES < 1)
-        stop("Cores must be a positive value")
+  if (CORES < 1) {
+    stop("Cores must be a positive value")
+  }
 
-    # BR Model class
-    brmodel <- list()
-    brmodel$labels <- rownames(mdata$labels)
+  # BR Model class
+  brmodel <- list()
+  brmodel$labels <- rownames(mdata$labels)
 
-    # Transformation
-    datasets <- lapply(mldr_transform(mdata), transform_br_data, classname = "mldBR", base.method = base.method)
-    names(datasets) <- brmodel$labels
+  # Transformation
+  datasets <- lapply(mldr_transform(mdata), transform_br_data,
+                     classname = "mldBR", base.method = base.method)
+  names(datasets) <- brmodel$labels
 
-    # Create models
-    brmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)
+  # Create models
+  brmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)
 
-    brmodel$call <- match.call()
-    class(brmodel) <- "BRmodel"
+  brmodel$call <- match.call()
+  class(brmodel) <- "BRmodel"
 
-    brmodel
+  brmodel
 }
 
 #' @title Predict Method for Binary Relevance

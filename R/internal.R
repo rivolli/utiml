@@ -29,12 +29,14 @@ utiml_ifelse <- function(test, yes, no) {
 #' utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
 #' utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
 utiml_lapply <- function(mylist, myfnc, cores, ...) {
-  if (cores == 1) {
-    lapply(mylist, myfnc, ...)
-  } else {
-    parallel::mclapply(mylist, myfnc,
+  if (requireNamespace("parallel", quietly = TRUE)) {
+    parallel::mclapply(mylist,
+                       myfnc,
                        mc.cores = min(cores, length(mylist)),
                        ...)
+  }
+  else {
+    lapply(mylist, myfnc, ...)
   }
 }
 

@@ -149,7 +149,7 @@ ctrl <- function(mdata, base.method = "SVM", m = 5, validation.size = 0.3, valid
 #' @param object Object of class '\code{CTRLmodel}', created by \code{\link{ctrl}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
-#' @param vote.schema
+#' @param vote.schema The way that the method will compute the binary predictions
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param ... Others arguments passed to the base method prediction for all

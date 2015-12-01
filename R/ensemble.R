@@ -217,7 +217,7 @@ compute_multilabel_ensemble_votes <- function(predictions,
 
   prob.predictions <- lapply(predictions, as.probability)
   new.prediction <- list()
-  for (label in colnames(prediutiml_ensemble_majority_votesctions[[1]])) {
+  for (label in colnames(predictions[[1]])) {
     bin.pred <- lapply(prob.predictions, function(prediction) {
       prediction[, label]
     })

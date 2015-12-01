@@ -3,7 +3,8 @@
   op.utiml <- list(
     utiml.base.method = "SVM",
     utiml.cores = 1,
-    utiml.use.probs = TRUE
+    utiml.use.probs = TRUE,
+    utiml.seed = NULL
   )
   toset <- !(names(op.utiml) %in% names(op))
   if (any(toset)) options(op.utiml[toset])
