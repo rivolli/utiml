@@ -112,8 +112,6 @@ ecc <- function(mdata, base.method = "SVM", m = 10, subsample = 0.75, attr.space
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
-#'  The valid options are describe in \link{utiml_vote.schema_method}. If the value is
-#'  NULL then all predictions will be returned instead of a mlresult. (default: 'MAJ')
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
 #' @param probability Logical indicating whether class probabilities should be returned.
@@ -140,16 +138,11 @@ ecc <- function(mdata, base.method = "SVM", m = 10, subsample = 0.75, attr.space
 #' pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
 #'
 #' # Return the classes with the highest score
-#' pred <- predict(model, dataset$test, vote.schema = 'MAX')
-predict.ECCmodel <- function(object, newdata, vote.schema = "MAJ", probability = TRUE, ..., CORES = 1) {
+#' pred <- predict(model, dataset$test, vote.schema = 'max')
+predict.ECCmodel <- function(object, newdata, vote.schema = "maj", probability = TRUE, ..., CORES = 1) {
     # Validations
     if (class(object) != "ECCmodel")
         stop("First argument must be an ECCmodel object")
-
-    if (!is.null(vote.schema)) {
-        if (is.null(utiml_vote.schema_method(vote.schema)))
-            stop("Invalid vote schema")
-    }
 
     if (CORES < 1)
         stop("Cores must be a positive value")
@@ -159,8 +152,7 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "MAJ", probability =
         predict(ccmodel, newdata[, ccmodel$attrs], ...)
     }, CORES)
 
-    if (is.null(vote.schema))
-        allpreds else utiml_compute_multilabel_ensemble(allpreds, vote.schema, probability)
+  compute_multilabel_ensemble_votes(allpreds, vote.schema, probability)
 }
 
 print.ECCmodel <- function(x, ...) {

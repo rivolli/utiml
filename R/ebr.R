@@ -110,8 +110,6 @@ ebr <- function(mdata, base.method = "SVM", m = 10, subsample = 0.75, attr.space
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
-#'  The valid options are describe in \link{utiml_vote.schema_method}. If the value is
-#'  NULL then all predictions will be returned instead of a mlresult. (default: 'MAJ')
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param ... Others arguments passed to the base method prediction for all
@@ -138,8 +136,8 @@ ebr <- function(mdata, base.method = "SVM", m = 10, subsample = 0.75, attr.space
 #' pred <- predict(model, dataset$test, prob = FALSE, CORES = 6)
 #'
 #' # Return the classes with the highest score
-#' pred <- predict(model, dataset$test, vote = 'MAX')
-predict.EBRmodel <- function(object, newdata, vote.schema = "MAJ", probability = TRUE, ..., CORES = 1) {
+#' pred <- predict(model, dataset$test, vote = 'max')
+predict.EBRmodel <- function(object, newdata, vote.schema = "maj", probability = TRUE, ..., CORES = 1) {
     # Validations
     if (class(object) != "EBRmodel")
         stop("First argument must be an EBRmodel object")
@@ -152,11 +150,7 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "MAJ", probability =
         predict(brmodel, newdata[, brmodel$attrs], ..., CORES = CORES)
     })
 
-    if (is.null(vote.schema)) {
-      allpreds
-    } else {
-      compute_multilabel_ensemble_votes(allpreds, vote.schema, probability)
-    }
+    compute_multilabel_ensemble_votes(allpreds, vote.schema, probability)
 }
 
 print.EBRmodel <- function(x, ...) {

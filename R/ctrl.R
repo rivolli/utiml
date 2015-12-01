@@ -149,7 +149,7 @@ ctrl <- function(mdata, base.method = "SVM", m = 5, validation.size = 0.3, valid
 #' @param object Object of class '\code{CTRLmodel}', created by \code{\link{ctrl}} method.
 #' @param newdata An object containing the new input data. This must be a matrix or
 #'          data.frame object containing the same size of training data or a mldr object.
-#' @param vote.schema utiml_vote.schema_method(vote.schema)
+#' @param vote.schema
 #' @param probability Logical indicating whether class probabilities should be returned.
 #'   (default: \code{TRUE})
 #' @param ... Others arguments passed to the base method prediction for all
@@ -177,15 +177,11 @@ ctrl <- function(mdata, base.method = "SVM", m = 5, validation.size = 0.3, valid
 #' pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
 #'
 #' # Using the Maximum vote schema
-#' pred <- predict(model, dataset$test, vote.schema = 'MAX')
-predict.CTRLmodel <- function(object, newdata, vote.schema = "MAJ", probability = TRUE, ..., CORES = 1) {
+#' pred <- predict(model, dataset$test, vote.schema = 'max')
+predict.CTRLmodel <- function(object, newdata, vote.schema = "maj", probability = TRUE, ..., CORES = 1) {
     # Validations
     if (class(object) != "CTRLmodel")
         stop("First argument must be an CTRLmodel object")
-
-    vote.method <- utiml_vote.schema_method(vote.schema)
-    if (is.null(vote.method))
-        stop("Invalid vote schema")
 
     if (CORES < 1)
         stop("Cores must be a positive value")
@@ -204,9 +200,12 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "MAJ", probability 
         preds <- list()
         for (labels in names(models)[-1]) preds[[labels]] <- predict_br_model(models[[labels]], cbind(newdata, fjk[, labels]), ...)
 
-        if (length(preds) < 1)
+        if (length(preds) < 1) {
             initial.prediction[[labelname]]  #No models are found, only first prediction
- else utiml_compute_binary_ensemble(vote.method, preds)
+        }
+        else {
+          compute_binary_ensemble_votes(preds, vote.schema)
+        }
     }, CORES)
 
     names(predictions) <- names(object$models)

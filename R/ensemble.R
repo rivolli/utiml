@@ -211,22 +211,35 @@ product_ensemble_votes <- function(predictions) {
 compute_multilabel_ensemble_votes <- function(predictions,
                                               vote.schema,
                                               probability = TRUE) {
-  custom_ensemble_votes <- function (predictions) {
-    compute_ensemble_votes(predictions, vote.schema)
+  if (is.null(vote.schema)) {
+    return(predictions)
   }
-  method.name <- utiml_get_schema_method(vote.schema)
 
   prob.predictions <- lapply(predictions, as.probability)
   new.prediction <- list()
-  for (label in colnames(predictions[[1]])) {
+  for (label in colnames(prediutiml_ensemble_majority_votesctions[[1]])) {
     bin.pred <- lapply(prob.predictions, function(prediction) {
       prediction[, label]
     })
-    new.prediction[[label]] <- do.call(method.name,
-                                       list(predictions = bin.pred))
+    new.prediction[[label]] <- compute_binary_ensemble_votes(bin.pred,
+                                                             vote.schema)
   }
 
   as.multilabelPrediction(new.prediction, probability)
+}
+
+#' Compute some vote schema for single-label predictions
+#'
+#' @param predictions A list of single-label predictions
+#' @param vote.schema the vote schema name
+#' @return A binary.prediction
+compute_binary_ensemble_votes <- function (predictions, vote.schema) {
+  method.name <- utiml_get_schema_method(vote.schema)
+  custom_ensemble_votes <- function (predictions) {
+    compute_ensemble_votes(predictions, vote.schema)
+  }
+
+  do.call(method.name, list(predictions = predictions))
 }
 
 #' Define the method related with the vote schema
@@ -243,13 +256,12 @@ utiml_get_schema_method <- function(vote.schema) {
     vote.schema = "custom_ensemble_votes"
   )
 
-  if (!exists(votes[[vote.schema]], mode = "function")) {
-    stop(paste("The compute ensemble method '", vote.schema,
-               "' is not a valid function", sep=''))
+  if (votes[[vote.schema]] == 'custom_ensemble_votes') {
+    if (!exists(vote.schema, mode = "function")) {
+      stop(paste("The compute ensemble method '", vote.schema,
+                 "' is not a valid function", sep=''))
+    }
   }
 
   votes[[vote.schema]]
 }
-
-
-#REMOVE method utiml_compute_binary_ensemble and utiml_vote.schema_method
