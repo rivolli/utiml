@@ -33,6 +33,7 @@ utiml_lapply <- function(mylist, myfnc, cores, ...) {
     parallel::mclapply(mylist,
                        myfnc,
                        mc.cores = min(cores, length(mylist)),
+                       #mc.preschedule = FALSE, # Save memory
                        ...)
   }
   else {
@@ -101,4 +102,19 @@ utiml_newdata.mldr <- function(newdata) {
 utiml_renames <- function (X, names = NULL) {
   names(X) <- utiml_ifelse(is.null(names), X, names)
   X
+}
+
+#' Define if two sets are equals independently of the order of the elements
+#'
+#' @param a A list
+#' @param b Other list
+#' @return Logical value where TRUE the sets are equals and FALSE otherwise.
+#' @examples
+#' utiml_is_equal_sets(c(1, 2, 3), c(3, 2, 1))
+#' ## TRUE
+#'
+#' utiml_is_equal_sets(c(1, 2, 3), c(1, 2, 3, 4))
+#' ## FALSE
+utiml_is_equal_sets <- function (a, b) {
+  length(setdiff(union(a, b), intersect(a, b))) == 0
 }

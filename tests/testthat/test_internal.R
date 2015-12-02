@@ -28,3 +28,13 @@ test_that("Rename", {
   expect_equal(utiml_renames(c("a", "b", "c")), c(a="a", b="b", c="c"))
   expect_equal(utiml_renames(c(1, 2, 3), c("a", "b", "c")), c(a=1, b=2, c=3))
 })
+
+test_that("Equals sets", {
+  expect_true(utiml_is_equal_sets(c(1, 2, 3), c(3, 2, 1)))
+  expect_true(utiml_is_equal_sets(c(3, 2, 1), c(1, 2, 3)))
+  expect_true(utiml_is_equal_sets(c(), c()))
+
+  expect_false(utiml_is_equal_sets(c(1, 2, 3), c(1, 2, 3, 4)))
+  expect_false(utiml_is_equal_sets(c(1, 2, 3, 4), c(1, 2, 3)))
+  expect_false(utiml_is_equal_sets(c(1, 2, 3), c()))
+})

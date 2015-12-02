@@ -17,7 +17,7 @@
 #' @return An object of class \code{BRmodel} containing the set of fitted
 #'   models, including:
 #'   \describe{
-#'    \item{labels}{A vector with the label names}
+#'    \item{labels}{A vector with the label names.}
 #'    \item{models}{A list of the generated models, named by the label names.}
 #'   }
 #' @references
@@ -26,7 +26,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun {
+#' \dontrun{
 #' # Use SVM as base method
 #' model <- br(toyml)
 #' pred <- predict(model, toyml)
@@ -37,7 +37,7 @@
 #' # Set a parameters for all subproblems
 #' model <- br(toyml, 'KNN', k=5)
 #' }
-br <- function(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
+br <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
                CORES = getOption("utiml.cores", 1)) {
   # Validations
   if (class(mdata) != "mldr") {
@@ -49,22 +49,21 @@ br <- function(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
   }
 
   # BR Model class
-  brmodel <- list()
-  brmodel$labels <- rownames(mdata$labels)
+  brmodel <- list(labels = rownames(mdata$labels), call = match.call())
 
   # Create models
   labels <- utiml_renames(brmodel$labels)
   brmodel$models <- utiml_lapply(labels, function (label, ...) {
+    cat(label, paste(round(mem_used() / 1024 / 1024, 3), "MB"), "\n")
     brdata  <- create_br_data(mdata, label)
     dataset <- prepare_br_data(brdata,
                                classname = "mldBR",
                                base.method = base.method)
-    create_br_model(dataset, ...)
+    cat(label, paste(round(mem_change(model <- create_br_model(dataset, ...)) / 1024 / 1024, 3), "MB"), "\n")
+    model
   }, CORES, ...)
 
-  brmodel$call <- match.call()
   class(brmodel) <- "BRmodel"
-
   brmodel
 }
 
@@ -87,7 +86,7 @@ br <- function(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
 #' @export
 #'
 #' @examples
-#' \dontrun {
+#' \dontrun{
 #' # Predict SVM scores
 #' model <- br(toyml, "SVM")
 #' pred <- predict(model, toyml)
@@ -119,7 +118,7 @@ predict.BRmodel <- function(object, newdata,
   as.multilabelPrediction(predictions, probability)
 }
 
-#' Print BR models
+#' Print BR model
 #' @export
 print.BRmodel <- function(x, ...) {
   cat("Binary Relevance Model\n\nCall:\n")
