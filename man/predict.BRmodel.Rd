@@ -4,46 +4,44 @@
 \alias{predict.BRmodel}
 \title{Predict Method for Binary Relevance}
 \usage{
-\method{predict}{BRmodel}(object, newdata, probability = TRUE, ...,
-  CORES = 1)
+\method{predict}{BRmodel}(object, newdata,
+  probability = getOption("utiml.use.probs", TRUE), ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{object}{Object of class '\code{BRmodel}', created by \code{\link{br}} method.}
+\item{object}{Object of class '\code{BRmodel}'.}
 
-\item{newdata}{An object containing the new input data. This must be a matrix or
-data.frame object containing the same size of training data or a mldr object.}
+\item{newdata}{An object containing the new input data. This must be a
+matrix, data.frame or a mldr object.}
 
-\item{probability}{Logical indicating whether class probabilities should be returned.
-(default: \code{TRUE})}
+\item{probability}{Logical indicating whether class probabilities should be
+returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{CORES}{The number of cores to parallelize the prediction. Values higher
-than 1 require the \pkg{parallel} package (default: 1).}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
-A matrix containing the probabilistic values or just predictions (only when
-  \code{probability = FALSE}). The rows indicate the predicted object and the
-  columns indicate the labels.
+An object of type mlresult, based on the parameter probability.
 }
 \description{
-This function predicts values based upon a model trained by
- \code{\link{br}}.
+This function predicts values based upon a model trained by \code{\link{br}}.
 }
 \examples{
-# Emotion multi-label dataset using Binary Relevance
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun {
 # Predict SVM scores
-model <- br(dataset$train)
-pred <- predict(model, dataset$test)
+model <- br(toyml, "SVM")
+pred <- predict(model, toyml)
 
-# Predict SVM bipartitions running in 6 cores
-pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
+# Predict SVM bipartitions running in 4 cores
+pred <- predict(model, toyml, probability = FALSE, CORES = 4)
 
 # Passing a specif parameter for SVM predict method
 pred <- predict(model, dataset$test, na.action = na.fail)
+}
 }
 \seealso{
 \code{\link[=br]{Binary Relevance (BR)}}

@@ -9,11 +9,11 @@
 #' @family Transformation methods
 #' @param mdata A mldr dataset used to train the binary models.
 #' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method")})
+#'  \code{options("utiml.base.method", "SVM")})
 #' @param ... Others arguments passed to the base method for all subproblems
 #' @param CORES The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
-#'  \code{options("utiml.cores")})
+#'  \code{options("utiml.cores", 1)})
 #' @return An object of class \code{BRmodel} containing the set of fitted
 #'   models, including:
 #'   \describe{
@@ -26,6 +26,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun {
 #' # Use SVM as base method
 #' model <- br(toyml)
 #' pred <- predict(model, toyml)
@@ -35,6 +36,7 @@
 #'
 #' # Set a parameters for all subproblems
 #' model <- br(toyml, 'KNN', k=5)
+#' }
 br <- function(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
                CORES = getOption("utiml.cores", 1)) {
   # Validations
@@ -66,66 +68,62 @@ br <- function(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
   brmodel
 }
 
-#' @title Predict Method for Binary Relevance
-#' @description This function predicts values based upon a model trained by
-#'  \code{\link{br}}.
+#' Predict Method for Binary Relevance
 #'
-#' @param object Object of class '\code{BRmodel}', created by \code{\link{br}} method.
-#' @param newdata An object containing the new input data. This must be a matrix or
-#'          data.frame object containing the same size of training data or a mldr object.
-#' @param probability Logical indicating whether class probabilities should be returned.
-#'   (default: \code{TRUE})
+#' This function predicts values based upon a model trained by \code{\link{br}}.
+#'
+#' @param object Object of class '\code{BRmodel}'.
+#' @param newdata An object containing the new input data. This must be a
+#'  matrix, data.frame or a mldr object.
+#' @param probability Logical indicating whether class probabilities should be
+#'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
-#' @param CORES The number of cores to parallelize the prediction. Values higher
-#'   than 1 require the \pkg{parallel} package (default: 1).
-#'
-#' @return A matrix containing the probabilistic values or just predictions (only when
-#'   \code{probability = FALSE}). The rows indicate the predicted object and the
-#'   columns indicate the labels.
-#'
+#' @param CORES The number of cores to parallelize the training. Values higher
+#'  than 1 require the \pkg{parallel} package. (Default:
+#'  \code{options("utiml.cores", 1)})
+#' @return An object of type mlresult, based on the parameter probability.
 #' @seealso \code{\link[=br]{Binary Relevance (BR)}}
-#'
 #' @export
 #'
 #' @examples
-#' # Emotion multi-label dataset using Binary Relevance
-#' dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-#'
+#' \dontrun {
 #' # Predict SVM scores
-#' model <- br(dataset$train)
-#' pred <- predict(model, dataset$test)
+#' model <- br(toyml, "SVM")
+#' pred <- predict(model, toyml)
 #'
-#' # Predict SVM bipartitions running in 6 cores
-#' pred <- predict(model, dataset$test, probability = FALSE, CORES = 6)
+#' # Predict SVM bipartitions running in 4 cores
+#' pred <- predict(model, toyml, probability = FALSE, CORES = 4)
 #'
 #' # Passing a specif parameter for SVM predict method
 #' pred <- predict(model, dataset$test, na.action = na.fail)
-predict.BRmodel <- function(object, newdata, probability = TRUE, ..., CORES = 1) {
-    # Validations
-    if (class(object) != "BRmodel")
-        stop("First argument must be an BRmodel object")
+#' }
+predict.BRmodel <- function(object, newdata,
+                            probability = getOption("utiml.use.probs", TRUE),
+                            ..., CORES = getOption("utiml.cores", 1)) {
+  # Validations
+  if (class(object) != "BRmodel") {
+    stop("First argument must be an BRmodel object")
+  }
 
-    if (CORES < 1)
-        stop("Cores must be a positive value")
+  if (CORES < 1) {
+    stop("Cores must be a positive value")
+  }
 
-    # Create models
-    predictions <- utiml_lapply(object$models, predict_br_model, CORES, newdata = utiml_newdata(newdata), ...)
-    as.multilabelPrediction(predictions, probability)
+  # Create models
+  predictions <- utiml_lapply(object$models,
+                              predict_br_model,
+                              CORES,
+                              newdata = utiml_newdata(newdata),
+                              ...)
+  as.multilabelPrediction(predictions, probability)
 }
 
+#' Print BR models
+#' @export
 print.BRmodel <- function(x, ...) {
-    cat("Binary Relevance Model\n\nCall:\n")
-    print(x$call)
-    cat("\n", length(x$labels), "Models (labels):\n")
-    print(x$labels)
-}
-
-print.mldBR <- function(x, ...) {
-    cat("Binary Relevance Transformation Dataset\n\n")
-    cat("Label:\n  ", x$labelname, " (", x$methodname, " method)\n\n", sep = "")
-    cat("Dataset info:\n")
-    cat(" ", ncol(x$data) - 1, "Predictive attributes\n")
-    cat(" ", nrow(x$data), "Examples\n")
-    cat("  ", round((sum(x$data[, ncol(x$data)] == 1)/nrow(x$data)) * 100, 1), "% of positive examples\n", sep = "")
+  cat("Binary Relevance Model\n\nCall:\n")
+  print(x$call)
+  cat("\n", length(x$labels), "Models (labels):\n")
+  print(x$labels)
 }

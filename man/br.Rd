@@ -11,13 +11,13 @@ br(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
 \item{mdata}{A mldr dataset used to train the binary models.}
 
 \item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method")})}
+\code{options("utiml.base.method", "SVM")})}
 
 \item{...}{Others arguments passed to the base method for all subproblems}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
-\code{options("utiml.cores")})}
+\code{options("utiml.cores", 1)})}
 }
 \value{
 An object of class \code{BRmodel} containing the set of fitted
@@ -36,6 +36,7 @@ multi-label data. This is based on the one-versus-all approach to build a
 specific model for each label.
 }
 \examples{
+\dontrun {
 # Use SVM as base method
 model <- br(toyml)
 pred <- predict(model, toyml)
@@ -45,6 +46,7 @@ model <- br(toyml[1:50], 'RF', CORES = 4)
 
 # Set a parameters for all subproblems
 model <- br(toyml, 'KNN', k=5)
+}
 }
 \references{
 Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
