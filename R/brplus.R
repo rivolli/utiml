@@ -67,7 +67,7 @@ brplus <- function(mdata, base.method = "SVM", ..., CORES = 1) {
     basedata <- mdata$dataset[mdata$attributesIndexes]
     labeldata <- mdata$dataset[mdata$labels$index]
     datasets <- utiml_lapply(1:mdata$measures$num.labels, function(li) {
-        transform_br_data(cbind(basedata, labeldata[-li], labeldata[li]), "mldBRP", base.method)
+      prepare_br_data(cbind(basedata, labeldata[-li], labeldata[li]), "mldBRP", base.method)
     }, CORES)
     names(datasets) <- rownames(mdata$labels)
     brpmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)

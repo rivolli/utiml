@@ -4,8 +4,8 @@
 \alias{br}
 \title{Binary Relevance for multi-label Classification}
 \usage{
-br(mdata, base.method = options("utiml.cores"), ...,
-  CORES = options("utiml.cores"))
+br(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}

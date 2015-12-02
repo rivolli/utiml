@@ -124,10 +124,10 @@ ctrl <- function(mdata, base.method = "SVM", m = 5, validation.size = 0.3, valid
     # Build models (11-17)
     D <- mdata$dataset[mdata$attributesIndexes]
     ctrlmodel$models <- utiml_lapply(rownames(mdata$labels), function(labelname) {
-        Di <- transform_br_data(cbind(D, mdata$dataset[labelname]), "mldBR", base.method)
+        Di <- prepare_br_data(cbind(D, mdata$dataset[labelname]), "mldBR", base.method)
         fi <- list(create_br_model(Di, ...))
         for (k in Rj[[labelname]]) {
-            Di <- transform_br_data(cbind(D, mdata$dataset[k], mdata$dataset[labelname]), "mldBR", base.method)
+            Di <- prepare_br_data(cbind(D, mdata$dataset[k], mdata$dataset[labelname]), "mldBR", base.method)
             fi <- c(fi, list(create_br_model(Di, ...)))
         }
         names(fi) <- c(labelname, Rj[[labelname]])

@@ -84,7 +84,7 @@ ns <- function(mdata, base.method = "SVM", chain = c(), ..., predict.params = li
 
         # Create data
         dataset <- cbind(basedata, mdata$dataset[label])
-        mldCC <- transform_br_data(dataset, "mldCC", base.method, chain.order = labelIndex)
+        mldCC <- prepare_br_data(dataset, "mldCC", base.method, chain.order = labelIndex)
 
         # Call dynamic multilabel model with merged parameters
         model <- do.call(mltrain, c(list(dataset = mldCC), ...))

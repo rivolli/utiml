@@ -50,13 +50,15 @@ br <- function(mdata, base.method = getOption("utiml.cores", "SVM"), ...,
   brmodel <- list()
   brmodel$labels <- rownames(mdata$labels)
 
-  # Transformation
-  datasets <- lapply(mldr_transform(mdata), transform_br_data,
-                     classname = "mldBR", base.method = base.method)
-  names(datasets) <- brmodel$labels
-
   # Create models
-  brmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)
+  labels <- utiml_renames(brmodel$labels)
+  brmodel$models <- utiml_lapply(labels, function (label, ...) {
+    brdata  <- create_br_data(mdata, label)
+    dataset <- prepare_br_data(brdata,
+                               classname = "mldBR",
+                               base.method = base.method)
+    create_br_model(dataset, ...)
+  }, CORES, ...)
 
   brmodel$call <- match.call()
   class(brmodel) <- "BRmodel"

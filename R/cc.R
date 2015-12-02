@@ -81,7 +81,7 @@ cc <- function(mdata, base.method = "SVM", chain = c(), ..., CORES = 1) {
     labeldata <- mdata$dataset[mdata$labels$index][chain]
     datasets <- utiml_lapply(1:mdata$measures$num.labels, function(labelIndex) {
         data <- cbind(basedata, labeldata[1:labelIndex])
-        transform_br_data(data, "mldCC", base.method, chain.order = labelIndex)
+        prepare_br_data(data, "mldCC", base.method, chain.order = labelIndex)
     }, CORES)
     names(datasets) <- chain
     ccmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)

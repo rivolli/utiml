@@ -66,7 +66,7 @@ dbr <- function(mdata, base.method = "SVM", estimate.models = TRUE, ..., CORES =
     basedata <- mdata$dataset[mdata$attributesIndexes]
     labeldata <- mdata$dataset[mdata$labels$index]
     datasets <- utiml_lapply(1:mdata$measures$num.labels, function(li) {
-        transform_br_data(cbind(basedata, labeldata[-li], labeldata[li]), "mldDBR", base.method)
+      prepare_br_data(cbind(basedata, labeldata[-li], labeldata[li]), "mldDBR", base.method)
     }, CORES)
     names(datasets) <- rownames(mdata$labels)
     dbrmodel$models <- utiml_lapply(datasets, create_br_model, CORES, ...)

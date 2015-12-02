@@ -83,3 +83,22 @@ utiml_newdata.default <- function(newdata) {
 utiml_newdata.mldr <- function(newdata) {
   newdata$dataset[, newdata$attributesIndexes]
 }
+
+
+#' Rename the list using the names values or its own content
+#'
+#' @param X A list
+#' @param names The list names, If empty the content of X is used
+#' @return A list with the new names
+#' @export
+#'
+#' @examples
+#' utiml_renames(c("a", "b", "c"))
+#' ## c(a="a", b="b", c="c")
+#'
+#' utiml_renames(c(1, 2, 3), c("a", "b", "c"))
+#' ## c(a=1, b=2, c=3)
+utiml_renames <- function (X, names = NULL) {
+  names(X) <- utiml_ifelse(is.null(names), X, names)
+  X
+}

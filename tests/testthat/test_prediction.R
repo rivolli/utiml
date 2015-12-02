@@ -71,8 +71,8 @@ test_that("Result ML prediction", {
   set.seed(NULL)
 })
 
-test_that("BR transformation", {
-  dataset <- transform_br_data(mydata, "testDataset", "SVM")
+test_that("BR prepare", {
+  dataset <- prepare_br_data(mydata, "testDataset", "SVM")
   expect_is(dataset, "testDataset")
   expect_is(dataset, "baseSVM")
   expect_is(dataset, "mltransformation")
@@ -82,7 +82,7 @@ test_that("BR transformation", {
   expect_equal(dataset$labelindex, 2)
   expect_equal(dataset$methodname, "SVM")
 
-  dataset <- transform_br_data(mydata, "onlytest", "XYZ",
+  dataset <- prepare_br_data(mydata, "onlytest", "XYZ",
                                extra1="abc", extra2=1:10)
   expect_is(dataset, "onlytest")
   expect_is(dataset, "baseXYZ")
@@ -97,7 +97,7 @@ test_that("BR transformation", {
 })
 
 test_that("br.create_model and br.predict_model", {
-  dataset <- transform_br_data(mydata, "testdata", "KNN")
+  dataset <- prepare_br_data(mydata, "testdata", "KNN")
   model <- create_br_model(dataset, k=3)
   expect_equal(attr(model, "labelname"), "class2")
   expect_equal(attr(model, "methodname"), "KNN")
@@ -112,4 +112,30 @@ test_that("br.create_model and br.predict_model", {
 
   predict3 <- predict_br_model(model, mydata[,1, drop = FALSE], k=1)
   expect_false(all(predict2$probability == predict3$probability))
+})
+
+test_that("create_br_data", {
+  dataset <- create_br_data(toyml, "y1")
+  expect_equal(ncol(dataset), toyml$measures$num.inputs + 1)
+  expect_equal(dataset[seq(toyml$measures$num.inputs)],
+               toyml$dataset[toyml$attributesIndexes])
+  expect_equal(dataset["y1"], toyml$dataset["y1"])
+
+  dataset <- create_br_data(toyml, "y2")
+  expect_equal(ncol(dataset), toyml$measures$num.inputs + 1)
+  expect_equal(dataset[seq(toyml$measures$num.inputs)],
+               toyml$dataset[toyml$attributesIndexes])
+  expect_equal(dataset["y2"], toyml$dataset["y2"])
+
+  one.column <- rep(1, toyml$measures$num.instances)
+  dataset <- create_br_data(toyml, "y3", one.column)
+  expect_equal(ncol(dataset), toyml$measures$num.inputs + 2)
+  expect_equal(dataset[, length(dataset)-1], one.column)
+  expect_equal(dataset["y3"], toyml$dataset["y3"])
+
+  extra.columns <- cbind(a=one.column, b=rnorm(toyml$measures$num.instances))
+  dataset <- create_br_data(toyml, "y4", extra.columns)
+  expect_equal(ncol(dataset), toyml$measures$num.inputs + 3)
+  expect_equal(dataset[c("a", "b")], as.data.frame(extra.columns))
+  expect_equal(dataset["y4"], toyml$dataset["y4"])
 })

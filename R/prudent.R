@@ -94,7 +94,7 @@ prudent <- function(mdata, base.method = "SVM", phi = 0, ..., save.datasets = FA
         if (ncol(extracolumns) > 0) {
             colnames(extracolumns) <- paste("extra", colnames(extracolumns), sep = ".")
             base <- cbind(dataset$data[-dataset$labelindex], extracolumns, dataset$data[dataset$labelindex])
-            transform_br_data(base, "mldPruDent", base.method, new.features = colnames(extracolumns))
+            prepare_br_data(base, "mldPruDent", base.method, new.features = colnames(extracolumns))
         }
     }, CORES)
     pdmodel$metamodels <- utiml_lapply(datasets[!unlist(lapply(datasets, is.null))], create_br_model, CORES, ...)
