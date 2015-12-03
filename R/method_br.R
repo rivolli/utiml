@@ -54,13 +54,11 @@ br <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
   # Create models
   labels <- utiml_renames(brmodel$labels)
   brmodel$models <- utiml_lapply(labels, function (label, ...) {
-    cat(label, paste(round(mem_used() / 1024 / 1024, 3), "MB"), "\n")
     brdata  <- create_br_data(mdata, label)
     dataset <- prepare_br_data(brdata,
                                classname = "mldBR",
                                base.method = base.method)
-    cat(label, paste(round(mem_change(model <- create_br_model(dataset, ...)) / 1024 / 1024, 3), "MB"), "\n")
-    model
+    create_br_model(dataset, ...)
   }, CORES, ...)
 
   class(brmodel) <- "BRmodel"

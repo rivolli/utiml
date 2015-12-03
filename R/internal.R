@@ -33,7 +33,8 @@ utiml_lapply <- function(mylist, myfnc, cores, ...) {
     parallel::mclapply(mylist,
                        myfnc,
                        mc.cores = min(cores, length(mylist)),
-                       #mc.preschedule = FALSE, # Save memory
+                       # When FALSE the allocation occurs on demand
+                       mc.preschedule = length(mylist) / cores > 2,
                        ...)
   }
   else {
