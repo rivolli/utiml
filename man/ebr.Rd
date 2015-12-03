@@ -4,73 +4,71 @@
 \alias{ebr}
 \title{Ensemble of Binary Relevance for multi-label Classification}
 \usage{
-ebr(mdata, base.method = "SVM", m = 10, subsample = 0.75,
-  attr.space = 0.5, ..., CORES = 1)
+ebr(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 10,
+  subsample = 0.75, attr.space = 0.5, ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset (provided by \pkg{mldr} package).}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of base method. The same base method
-  will be used for train all subproblems.
-
-  Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'})}
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method", "SVM")})}
 
 \item{m}{The number of Binary Relevance models used in the ensemble.}
 
 \item{subsample}{A value between 0.1 and 1 to determine the percentage of
-training instances must be used for each interation. (default: 0.75)}
+training instances that must be used for each classifier. (Default: 0.75)}
 
 \item{attr.space}{A value between 0.1 and 1 to determine the percentage of
-attributes must be used for each interation. (default: 0.50)}
+attributes that must be used for each classifier. (Default: 0.50)}
 
 \item{...}{Others arguments passed to the base method for all subproblems}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
-than 1 require the \pkg{parallel} package. (default: 1)}
-
-\item{SEED}{A single value, interpreted as an integer to allow obtain the
-same results again. (default: \code{NULL})}
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
 An object of class \code{EBRmodel} containing the set of fitted
   BR models, including: \describe{
-  \item{rounds}{The number of interations}
   \item{models}{A list of BR models.}
-  \item{nrow}{The number of instances used in each training dataset}
-  \item{ncol}{The number of attributes used in each training dataset}
+  \item{nrow}{The number of instances used in each training dataset.}
+  \item{ncol}{The number of attributes used in each training dataset.}
+  \item{rounds}{The number of interations.}
 }
 }
 \description{
-Create an Ensemble of Binary Relevance model for
-  multilabel classification.
-
-  This model is composed by a set of Binary Relevance models.
-  Binary Relevance is a simple and effective transformation method
-  to predict multi-label data.
+Create an Ensemble of Binary Relevance model for multilabel classification.
+}
+\details{
+This model is composed by a set of Binary Relevance models. Binary Relevance
+is a simple and effective transformation method to predict multi-label data.
+}
+\note{
+If you want to reproduce the same classification and obtain the same
+ result will be necessary set a flag utiml.mc.set.seed to FALSE. See more
+ details in \code{\link{mclapply}}.
 }
 \examples{
-# Train and predict emotion multilabel dataset using Ensemble of Binary Relevance
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Use all default values
-model <- ebr(dataset$train)
-pred <- predict(model, dataset$test)
+model <- ebr(toyml)
+pred <- predict(model, toyml)
 
-# Use C4.5 with 100\% of instances and only 5 rounds
-model <- ebr(dataset$train, 'C4.5', m = 5, subsample = 1)
-pred <- predict(model, dataset$test)
+# Use C4.5 with 90\% of instances and only 5 rounds
+model <- ebr(toyml, 'C4.5', m = 5, subsample = 0.9)
 
 # Use 75\% of attributes
 model <- ebr(dataset$train, attr.space = 0.75)
-pred <- predict(model, dataset$test)
 
-# Running in 4 cores
-model <- ebr(dataset$train, CORES=4)
-pred <- predict(model, dataset$test, CORES=4)
+# Running in 4 cores and define a specific seed
+options(utiml.mc.set.seed = FALSE)
+set.seed(91179631)
+model1 <- ebr(toyml, CORES=4)
+
+set.seed(91179631)
+model2 <- ebr(toyml, CORES=4)
+}
 }
 \references{
 Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier

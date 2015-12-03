@@ -5,47 +5,57 @@
 \title{Predict Method for Ensemble of Binary Relevance}
 \usage{
 \method{predict}{EBRmodel}(object, newdata, vote.schema = "maj",
-  probability = TRUE, ..., CORES = 1)
+  probability = getOption("utiml.use.probs", TRUE), ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{object}{Object of class '\code{EBRmodel}', created by \code{\link{ebr}} method.}
+\item{object}{Object of class '\code{EBRmodel}'.}
 
-\item{newdata}{An object containing the new input data. This must be a matrix or
-data.frame object containing the same size of training data or a mldr object.}
+\item{newdata}{An object containing the new input data. This must be a
+matrix, data.frame or a mldr object.}
 
-\item{vote.schema}{Define the way that ensemble must compute the predictions.}
+\item{vote.schema}{Define the way that ensemble must compute the predictions.
+The default valid options are:
+\describe{
+  \code{'avg'}{Compute the proportion of votes, scale data between min and
+    max of votes}
+  \code{'maj'}{Compute the averages of probabilities},
+  \code{'max'}{Compute the votes scaled between 0 and \code{m}
+    (number of interations)},
+  \code{'min'}{Compute the proportion of votes, scale data between min and
+    max of votes}
+  \code{'prod'}{Compute the product of all votes for each instance}
+}
+If \code{NULL} then all predictions are returned. (Default: \code{'maj'})}
 
-\item{probability}{Logical indicating whether class probabilities should be returned.
-(default: \code{TRUE})}
+\item{probability}{Logical indicating whether class probabilities should be
+returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{CORES}{The number of cores to parallelize the prediction. Values higher
-than 1 require the \pkg{parallel} package (default: 1).}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
-A matrix containing the probabilistic values or just predictions (only when
-  \code{probability = FALSE}). The rows indicate the predicted object and the
-  columns indicate the labels.
+An object of type mlresult, based on the parameter probability.
 }
 \description{
-This function predicts values based upon a model trained
- by \code{\link{ebr}}.
+This method predicts values based upon a model trained by \code{\link{ebr}}.
 }
 \examples{
-# Emotion multi-label dataset using Ensemble of Binary Relevance
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Predict SVM scores
-model <- ebr(dataset$train)
-pred <- predict(model, dataset$test)
+model <- ebr(toyml)
+pred <- predict(model, toyml)
 
 # Predict SVM bipartitions running in 6 cores
-pred <- predict(model, dataset$test, prob = FALSE, CORES = 6)
+pred <- predict(model, toyml, prob = FALSE, CORES = 6)
 
 # Return the classes with the highest score
-pred <- predict(model, dataset$test, vote = 'max')
+pred <- predict(model, toyml, vote = 'max')
+}
 }
 \seealso{
 \code{\link[=ebr]{Ensemble of Binary Relevance (EBR)}}

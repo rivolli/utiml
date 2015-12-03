@@ -35,6 +35,7 @@ utiml_lapply <- function(mylist, myfnc, cores, ...) {
                        mc.cores = min(cores, length(mylist)),
                        # When FALSE the allocation occurs on demand
                        mc.preschedule = length(mylist) / cores > 2,
+                       mc.set.seed = getOption("utiml.mc.set.seed", TRUE),
                        ...)
   }
   else {

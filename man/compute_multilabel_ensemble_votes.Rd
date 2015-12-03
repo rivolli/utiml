@@ -21,7 +21,8 @@ The default valid options are:
   \code{'min'}{Compute the proportion of votes, scale data between min and
     max of votes}
   \code{'prod'}{Compute the product of all votes for each instance}
-}}
+}
+If NULL then all predictions are returned.}
 
 \item{probability}{A logical value. If \code{TRUE} the predicted values are
 the score between 0 and 1, otherwise the values are bipartition 0 or 1.}

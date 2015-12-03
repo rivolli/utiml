@@ -191,6 +191,7 @@ product_ensemble_votes <- function(predictions) {
 #'      max of votes}
 #'    \code{'prod'}{Compute the product of all votes for each instance}
 #'  }
+#'  If NULL then all predictions are returned.
 #' @param probability A logical value. If \code{TRUE} the predicted values are
 #'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 #' @return A new mlresult that final result
