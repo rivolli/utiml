@@ -166,7 +166,7 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
   compute_multilabel_ensemble_votes(allpreds, vote.schema, probability)
 }
 
-#' Print EBR model
+#' Print ECC model
 #' @export
 print.ECCmodel <- function(x, ...) {
     cat("Ensemble of Classifier Chains Model\n\nCall:\n")
