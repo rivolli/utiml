@@ -20,7 +20,8 @@
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
 #' @return An object of class \code{EBRmodel} containing the set of fitted
-#'   BR models, including: \describe{
+#'   BR models, including:
+#' \describe{
 #'   \item{models}{A list of BR models.}
 #'   \item{nrow}{The number of instances used in each training dataset.}
 #'   \item{ncol}{The number of attributes used in each training dataset.}
@@ -35,8 +36,7 @@
 #'    Knowledge Discovery in Databases, Lecture Notes in Computer Science,
 #'    5782, 254–269.
 #' @note If you want to reproduce the same classification and obtain the same
-#'  result will be necessary set a flag utiml.mc.set.seed to FALSE. See more
-#'  details in \code{\link{mclapply}}.
+#'  result will be necessary set a flag utiml.mc.set.seed to FALSE.
 #' @export
 #'
 #' @examples
@@ -83,7 +83,7 @@ ebr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     stop("Cores must be a positive value")
   }
 
-  # BR Model class
+  # EBR Model class
   ebrmodel <- list(rounds = m, call = match.call())
   ebrmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
