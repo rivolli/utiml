@@ -4,8 +4,8 @@ testdataset <- list(data = iris[1:100,], labelindex = 5, labelname = "Species")
 testdataset$data[,5] <- as.factor(as.numeric(testdataset$data[,5] == "versicolor"))
 
 test_that("test train/prediction base learner methods", {
-  methods <- c("baseSVM", "baseJ48", "baseC4.5", "baseC5.0", "baseCART", "baseRF", "baseNB", "baseKNN")
-  names(methods) <- c("svm", "J48", "J48", "C5.0", "rpart", "randomForest", "naiveBayes", "baseKNN")
+  methods <- c("baseSVM", "baseJ48", "baseC5.0", "baseCART", "baseRF", "baseNB", "baseKNN")
+  names(methods) <- c("svm", "J48", "C5.0", "rpart", "randomForest", "naiveBayes", "baseKNN")
   for (i in 1:length(methods)) {
     class(testdataset) <- methods[i]
     model <- mltrain(testdataset)

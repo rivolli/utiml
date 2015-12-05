@@ -118,6 +118,7 @@ dbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' estimative <- predict(ebr(toyml), toyml)
 #' model <- dbr(toyml, estimate.models = FALSE)
 #' pred <- predict(model, toyml, estimative = estimative)
+#' }
 predict.DBRmodel <- function(object, newdata, estimative = NULL,
                              probability = getOption("utiml.use.probs", TRUE),
                              ..., CORES = getOption("utiml.cores", 1)) {

@@ -2,11 +2,11 @@
 % Please edit documentation in R/method_ecc.R
 \name{print.ECCmodel}
 \alias{print.ECCmodel}
-\title{Print EBR model}
+\title{Print ECC model}
 \usage{
 \method{print}{ECCmodel}(x, ...)
 }
 \description{
-Print EBR model
+Print ECC model
 }
 

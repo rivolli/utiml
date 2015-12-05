@@ -44,12 +44,12 @@ A matrix with the probabilities of each class value for each example,
 }
 \description{
 To extend a base classifier, two steps are necessary:
- \enumerate{
-   \item Create a train method
-   \item Create a prediction method
- }
- This section is about how to create a prediction method. To create a new train
- method see \code{\link{mltrain}} documentation.
+\enumerate{
+  \item Create a train method
+  \item Create a prediction method
+}
+This section is about how to create a prediction method. To create a new
+train method see \code{\link{mltrain}} documentation.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -57,35 +57,37 @@ To extend a base classifier, two steps are necessary:
 
 \item \code{svm}: SVM implementation (require \pkg{e1071} package to use)
 
-\item \code{J48}: C4.5/J48 implementation (require \pkg{RWeka} package to use)
+\item \code{J48}: J48 implementation (require \pkg{RWeka} package to use)
 
 \item \code{C5.0}: C5.0 implementation (require \pkg{C50} package to use)
 
-\item \code{rpart}: CART implementation (require \pkg{rpart} package to use)
+\item \code{rpart}: CART implementation (require \pkg{rpart} package)
 
-\item \code{randomForest}: Random Forest (RF) implementation (require \pkg{randomForest} package to use)
+\item \code{randomForest}: Random Forest (RF) implementation (require
+\pkg{randomForest} package to use)
 
-\item \code{naiveBayes}: Naive Bayes (NB) implementation (require \pkg{e1071} package to use)
+\item \code{naiveBayes}: Naive Bayes (NB) implementation (require
+\pkg{e1071} package to use)
 
 \item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
 }}
 \section{How to create a new prediction base method}{
 
-Fist is necessary to know the class of model generate by respective train method
-because this name determine the method name, that must start with mlpredict.
-followed by the model class name, e.g. a model with class 'foomodel' must be
-\code{mlpredict.foomodel}.
+Fist is necessary to know the class of model generate by respective train
+method because this name determine the method name, that must start with
+'mlpredict.' followed by the model class name, e.g. a model with class
+'foomodel' must be \code{mlpredict.foomodel}.
 
-After defined the name, you need to implement your prediction base method. The
-model is available on \code{model} parameter and the new data to predict
+After defined the name, you need to implement your prediction base method.
+The model is available on \code{model} parameter and the new data to predict
 \code{newdata}. In the examples there are some ways to implement this method.
 
-The return of this method must be a matrix with the probabilities of each class
-value for each examples. The rows represents the examples and the columns the
-class values.
+The return of this method must be a matrix with the probabilities of each
+class value for each examples. The rows represents the examples and the
+columns the class values.
 
-Remember that the prediction may be binary or multi-class, then the number and
-the column names may vary depending on the problem.
+Remember that the prediction may be binary or multi-class, then the number
+and the column names may vary depending on the problem.
 }
 \examples{
 # Create a method that predict always the negative class
@@ -100,7 +102,8 @@ mlpredict.negativemodel <- function (model, newdata, ...) {
    )
 }
 
-# Create a SVM predict method using the e1071 package (the class of SVM model from e1071 package is 'svm')
+# Create a SVM predict method using the e1071 package (the class of SVM model
+# from e1071 package is 'svm')
 library(e1071)
 mlpredict.svm <- function (dataset, newdata, ...) {
    result <- predict(model, newdata, probability = TRUE, ...)

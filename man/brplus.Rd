@@ -13,7 +13,7 @@ dataset (provided by \pkg{mldr} package).}
 \item{base.method}{A string with the name of base method. The same base method
   will be used for train all subproblems and the BR classifers
 
-  Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
+  Default valid options are: \code{'SVM'}, \code{'C5.0'},
   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
    \code{'SVM'}).}

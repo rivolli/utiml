@@ -4,89 +4,79 @@
 \alias{mbr}
 \title{Meta-BR or 2BR for multi-label Classification}
 \usage{
-mbr(mdata, base.method = "SVM", folds = 1, phi = 0, ...,
-  predict.params = list(), CORES = 1)
+mbr(mdata, base.method = getOption("utiml.base.method", "SVM"), folds = 1,
+  phi = 0, ..., predict.params = list(), CORES = getOption("utiml.cores",
+  1))
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset (provided by \pkg{mldr} package).}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of base method. The same base method
-  will be used for train all subproblems in the two rounds. This is slightly
-  different from the original paper that uses two distinct values from this
-  parameter.
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method", "SVM")})}
 
-  Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'})}
-
-\item{folds}{the number of folds used in internal prediction. If this value is
-1 all dataset will be used to predict the first prediction. (default: 1)}
+\item{folds}{The number of folds used in internal prediction. If this value
+is 1 all dataset will be used in the first prediction. (Default: 1)}
 
 \item{phi}{A value between 0 and 1 to determine the correlation coefficient,
 The value 0 include all labels in the second phase and the 1 only the
-predicted label. A good value for this argument is 0.3 as suggest in
-original paper. (default: 0)}
+predicted label. (Default: 0)}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
 \item{predict.params}{A list of default arguments passed to the predictor
-method. (default: \code{list()})}
+method. (Default: \code{list()})}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
-  than 1 require the \pkg{parallel} package. (default: 1)}
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
 An object of class \code{MBRmodel} containing the set of fitted
-  models, including: \describe{
+  models, including:
+  \describe{
      \item{labels}{A vector with the label names.}
      \item{phi}{The value of \code{phi} parameter.}
      \item{correlation}{The matrix of label correlations used in combination
-       with \code{phi} parameter to define the labels used in the second step.
-     }
+       with \code{phi} parameter to define the labels used in the second
+       step. }
      \item{basemodel}{The BRModel used in the first iteration.}
      \item{models}{A list of models named by the label names used in the
-       second iteration.
-     }
- }
+       second iteration. }
+  }
 }
 \description{
-Create a Meta-BR (MBR) classifier to predic multi-label
- data. To this, two round of Binary Relevance is executed, such that,
- the first iteraction generates new attributes to enrich the second
- prediction.
-
- This implementation use complete training set for both training and
- prediction steps of 2BR. However, the \code{phi} parameter may be used
- to remove low label correlations on the second step.
+Create a Meta-BR (MBR) classifier to predic multi-label data. To this, two
+round of Binary Relevance is executed, such that, the first step generates
+new attributes to enrich the second prediction.
+}
+\details{
+This implementation use complete training set for both training and
+prediction steps of 2BR. However, the \code{phi} parameter may be used to
+remove labels with low correlations on the second step.
 }
 \examples{
-# Train and predict emotion multilabel dataset using Meta-BR
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Use SVM as base method
-model <- mbr(dataset$train)
-pred <- predict(model, dataset$test)
+model <- mbr(toyml)
+pred <- predict(model, toyml)
 
-# Use 10 folds and different phi correlation with C4.5 classifier
-model <- mbr(dataset$train, 'C4.5', 10, 0.3)
-pred <- predict(model, dataset$test)
+# Use 10 folds and different phi correlation with J48 classifier
+model <- mbr(toyml, 'J48', 10, 0.2)
 
 # Set a specific parameter
-model <- mbr(dataset$train, 'KNN', k=5)
-pred <- predict(model, dataset$test)
+model <- mbr(toyml, 'KNN', k=5)
+}
 }
 \references{
 Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
-   Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance models
-   for multi-label learning. In Proceedings of the Workshop on Learning from
-   Multi-Label Data (MLD’09) (pp. 22–30).
+   Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance
+   models for multi-label learning. In Proceedings of the Workshop on
+   Learning from Multi-Label Data (MLD’09) (pp. 22–30).
  Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for Multi-labeled
    Classification. In Data Mining and Knowledge Discovery (pp. 1–26).
 }
 \seealso{
-\code{\link{labels_correlation_coefficient}}
+\code{\link{calculate_labels_correlation}}
 
 Other Stacking methods: \code{\link{brplus}};
   \code{\link{dbr}}

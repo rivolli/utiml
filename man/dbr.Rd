@@ -4,57 +4,52 @@
 \alias{dbr}
 \title{Dependent Binary Relevance (DBR) for multi-label Classification}
 \usage{
-dbr(mdata, base.method = "SVM", estimate.models = TRUE, ..., CORES = 1)
+dbr(mdata, base.method = getOption("utiml.base.method", "SVM"),
+  estimate.models = TRUE, ..., CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset (provided by \pkg{mldr} package).}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of base method. The same base method
-  will be used for train all subproblems and the BR classifers
-
-  Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'}).}
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method", "SVM")})}
 
 \item{estimate.models}{Logical value indicatind whether is necessary build
 Binary Relevance classifier for estimate process. The default implementaion
 use BR as estimators, however when other classifier is desirable then use
-the value \code{FALSE} to skip this process. (default: \code{TRUE}).}
+the value \code{FALSE} to skip this process. (Default: \code{TRUE}).}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{he number of cores to parallelize the training. Values higher
-  than 1 require the \pkg{parallel} package. (default: 1)}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
 An object of class \code{DBRmodel} containing the set of fitted
-  models, including: \describe{
+ models, including:
+ \describe{
+   \item{labels}{A vector with the label names.}
    \item{estimation}{The BR model to estimate the values for the labels.
      Only when the \code{estimate.models = TRUE}.}
    \item{models}{A list of final models named by the label names.}
-}
+ }
 }
 \description{
-Create a DBR classifier to predic multi-label data.
- This is a simple approach that enables the binary classifiers to
- discover existing label dependency by themselves. The idea of DBR
- is exactly the same used in BR+ (the training method is the same,
- excepted by the argument \code{estimate.models} that indicate if the
- estimated models must be created).
+Create a DBR classifier to predic multi-label data. This is a simple approach
+that enables the binary classifiers to discover existing label dependency by
+themselves. The idea of DBR is exactly the same used in BR+ (the training
+method is the same, excepted by the argument \code{estimate.models} that
+indicate if the estimated models must be created).
 }
 \examples{
-# Train and predict emotion multilabel dataset using DBR
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Use SVM as base method
-model <- dbr(dataset$train)
-pred <- predict(model, dataset$test)
+model <- dbr(toyml)
+pred <- predict(model, toyml)
 
 # Use Random Forest as base method and 4 cores
-model <- dbr(dataset$train, 'RF', CORES = 4)
-pred <- predict(model, dataset$test)
+model <- dbr(toyml, 'RF', CORES = 4)
+}
 }
 \references{
 Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,

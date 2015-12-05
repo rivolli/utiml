@@ -14,7 +14,7 @@
 #'   dataset.
 #' @param base.method A string with the name of the base method.
 #'
-#'   Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
+#'   Default valid options are: \code{'SVM'}, \code{'C5.0'},
 #'   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
 #'   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
 #'    \code{'SVM'})
@@ -67,7 +67,7 @@
 #' pred <- predict(model, dataset$test)
 #'
 #' # Change default values and use 4 CORES
-#' model <- ctrl(dataset$train, 'C4.5', m = 10, validation.size = 0.4, validation.threshold = 0.5, CORES = 4)
+#' model <- ctrl(dataset$train, 'J48', m = 10, validation.size = 0.4, validation.threshold = 0.5, CORES = 4)
 #' pred <- predict(model, dataset$test)
 #'
 #' # Set a parameters for all subproblems

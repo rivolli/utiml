@@ -13,7 +13,7 @@ dataset (provided by \pkg{mldr} package).}
 \item{base.method}{A string with the name of base method. The same base method
   will be used for train all subproblems.
 
-  Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
+  Default valid options are: \code{'SVM'}, \code{'C5.0'},
   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
    \code{'SVM'})}
@@ -53,9 +53,9 @@ dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
 model <- ns(dataset$train)
 pred <- predict(model, dataset$test)
 
-# Use a specific chain with C4.5 classifier
+# Use a specific chain with J48 classifier
 mychain <- sample(rownames(dataset$train$labels))
-model <- ns(dataset$train, 'C4.5', mychain)
+model <- ns(dataset$train, 'J48', mychain)
 pred <- predict(model, dataset$test)
 
 # Set a specific parameter

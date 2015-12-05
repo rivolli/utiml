@@ -4,45 +4,44 @@
 \alias{predict.MBRmodel}
 \title{Predict Method for Meta-BR/2BR}
 \usage{
-\method{predict}{MBRmodel}(object, newdata, probability = TRUE, ...,
-  CORES = 1)
+\method{predict}{MBRmodel}(object, newdata,
+  probability = getOption("utiml.use.probs", TRUE), ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{object}{Object of class '\code{MBRmodel}', created by \code{\link{mbr}} method.}
+\item{object}{Object of class '\code{MBRmodel}'.}
 
-\item{newdata}{An object containing the new input data. This must be a matrix or
-data.frame object containing the same size of training data or a mldr object.}
+\item{newdata}{An object containing the new input data. This must be a
+matrix, data.frame or a mldr object.}
 
-\item{probability}{Logical indicating whether class probabilities should be returned.
-(default: \code{TRUE})}
+\item{probability}{Logical indicating whether class probabilities should be
+returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{CORES}{The number of cores to parallelize the prediction. Values higher
-  than 1 require the \pkg{parallel} package (default: 1).}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
-A matrix containing the probabilistic values or just predictions (only when
-  \code{probability = FALSE}). The rows indicate the predicted object and the
-  columns indicate the labels.
+An object of type mlresult, based on the parameter probability.
 }
 \description{
 This function predicts values based upon a model trained by \code{mbr}.
 }
 \examples{
-# Emotion multi-label dataset using Meta-BR or 2BR
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Predict SVM scores
-model <- mbr(dataset$train)
-pred <- predict(model, dataset$test)
+model <- mbr(toyml)
+pred <- predict(model, toyml)
 
 # Predict SVM bipartitions
-pred <- predict(model, dataset$test, probability = FALSE)
+pred <- predict(model, toyml, probability = FALSE)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, dataset$test, na.action = na.fail)
+pred <- predict(model, toyml, na.action = na.fail)
+}
 }
 \seealso{
 \code{\link[=mbr]{Meta-BR (MBR or 2BR)}}

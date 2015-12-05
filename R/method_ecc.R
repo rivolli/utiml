@@ -48,8 +48,8 @@
 #' model <- ecc(toyml)
 #' pred <- predict(model, toyml)
 #'
-#' # Use C4.5 with 100% of instances and only 5 rounds
-#' model <- ecc(toyml, 'C4.5', m = 5, subsample = 1)
+#' # Use J48 with 100% of instances and only 5 rounds
+#' model <- ecc(toyml, 'J48', m = 5, subsample = 1)
 #'
 #' # Use 75% of attributes
 #' model <- ecc(toyml, attr.space = 0.75)

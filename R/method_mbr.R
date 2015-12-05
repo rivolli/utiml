@@ -52,8 +52,8 @@
 #' model <- mbr(toyml)
 #' pred <- predict(model, toyml)
 #'
-#' # Use 10 folds and different phi correlation with C4.5 classifier
-#' model <- mbr(toyml, 'C4.5', 10, 0.2)
+#' # Use 10 folds and different phi correlation with J48 classifier
+#' model <- mbr(toyml, 'J48', 10, 0.2)
 #'
 #' # Set a specific parameter
 #' model <- mbr(toyml, 'KNN', k=5)

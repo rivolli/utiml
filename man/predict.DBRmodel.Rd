@@ -5,56 +5,56 @@
 \title{Predict Method for DBR}
 \usage{
 \method{predict}{DBRmodel}(object, newdata, estimative = NULL,
-  probability = TRUE, ..., CORES = 1)
+  probability = getOption("utiml.use.probs", TRUE), ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{object}{Object of class '\code{DBRmodel}', created by \code{\link{dbr}} method.}
+\item{object}{Object of class '\code{DBRmodel}'.}
 
-\item{newdata}{An object containing the new input data. This must be a matrix or
-data.frame object containing the same size of training data or a mldr object.}
+\item{newdata}{An object containing the new input data. This must be a
+matrix, data.frame or a mldr object.}
 
-\item{estimative}{A matrix containing the result of other multi-label classification
-algorithm. This table must contain only 0 or 1 predictions and it must be a
-multi-label prediction result.}
+\item{estimative}{A matrix containing the bipartition result of other
+multi-label classification algorithm or an mlresult object with the
+predictions.}
 
-\item{probability}{Logical indicating whether class probabilities should be returned.
-(default: \code{TRUE})}
+\item{probability}{Logical indicating whether class probabilities should be
+returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{CORES}{The number of cores to parallelize the prediction. Values higher
-  than 1 require the \pkg{parallel} package (default: 1).}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
-A matrix containing the probabilistic values or just predictions (only when
-  \code{probability = FALSE}). The rows indicate the predicted object and the
-  columns indicate the labels.
+An object of type mlresult, based on the parameter probability.
 }
 \description{
 This function predicts values based upon a model trained by \code{dbr}.
-In general this method is a restricted version of \code{\link{predict.BRPmodel}}
-using the 'NU' strategy.
-
-As new feature is possible to use other multi-label classifier to predict the estimate
-values of each label. To this use the prediction argument to inform a result of other
-multi-label algorithm.
+In general this method is a restricted version of
+\code{\link{predict.BRPmodel}} using the 'NU' strategy.
+}
+\details{
+As new feature is possible to use other multi-label classifier to predict the
+estimate values of each label. To this use the prediction argument to inform
+a result of other multi-label algorithm.
 }
 \examples{
-# Emotion multi-label dataset using DBR
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Predict SVM scores
-model <- dbr(dataset$train)
-pred <- predict(model, dataset$test)
+model <- dbr(toyml)
+pred <- predict(model, toyml)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, dataset$test, na.action = na.fail)
+pred <- predict(model, toyml, na.action = na.fail)
 
 # Using other classifier (EBR) to made the labels estimatives
-estimative <- predict(ebr(dataset$train), dataset$test, prob = FALSE)
-model <- dbr(dataset$train, estimate.models = FALSE)
-pred <- predict(model, dataset$test, estimative = estimative)
+estimative <- predict(ebr(toyml), toyml)
+model <- dbr(toyml, estimate.models = FALSE)
+pred <- predict(model, toyml, estimative = estimative)
+}
 }
 \references{
 Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,

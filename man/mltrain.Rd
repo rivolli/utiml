@@ -2,7 +2,6 @@
 % Please edit documentation in R/base_learner.R
 \name{mltrain}
 \alias{mltrain}
-\alias{mltrain.baseC4.5}
 \alias{mltrain.baseC5.0}
 \alias{mltrain.baseCART}
 \alias{mltrain.baseJ48}
@@ -20,8 +19,6 @@ mltrain(dataset, ...)
 \method{mltrain}{baseSVM}(dataset, ...)
 
 \method{mltrain}{baseJ48}(dataset, ...)
-
-\method{mltrain}{baseC4.5}(dataset, ...)
 
 \method{mltrain}{baseC5.0}(dataset, ...)
 
@@ -49,12 +46,12 @@ A model object. The class of this model can be of any type, however,
 }
 \description{
 To extend a base classifier, two steps are necessary:
- \enumerate{
-   \item Create a train method
-   \item Create a prediction method
- }
- This section is about how to create a train method. To create a new predict
- model see \code{\link{mlpredict}} documentation.
+\enumerate{
+  \item Create a train method
+  \item Create a prediction method
+}
+This section is about how to create a train method. To create a new predict
+model see \code{\link{mlpredict}} documentation.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -64,15 +61,15 @@ To extend a base classifier, two steps are necessary:
 
 \item \code{baseJ48}: J48 implementation (require \pkg{RWeka} package to use)
 
-\item \code{baseC4.5}: C4.5 implementation (require \pkg{RWeka} package to use)
-
 \item \code{baseC5.0}: C5.0 implementation (require \pkg{C50} package to use)
 
 \item \code{baseCART}: CART implementation (require \pkg{rpart} package to use)
 
-\item \code{baseRF}: Random Forest (RF) implementation (require \pkg{randomForest} package to use)
+\item \code{baseRF}: Random Forest (RF) implementation (require
+\pkg{randomForest} package to use)
 
-\item \code{baseNB}: Naive Bayes (NB) implementation (require \pkg{e1071} package to use)
+\item \code{baseNB}: Naive Bayes (NB) implementation (require
+\pkg{e1071} package to use)
 
 \item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
 }}

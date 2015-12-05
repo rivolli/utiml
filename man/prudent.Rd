@@ -16,7 +16,7 @@ dataset (provided by \pkg{mldr} package).}
   different from the original paper that uses two distinct values from this
   parameter.
 
-  Default valid options are: \code{'SVM'}, \code{'C4.5'}, \code{'C5.0'},
+  Default valid options are: \code{'SVM'}, \code{'C5.0'},
   \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
   \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
    \code{'SVM'})}
@@ -68,8 +68,8 @@ testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
 model <- prudent(emotions)
 pred <- predict(model, testdata)
 
-# Use different phi correlation with C4.5 classifier
-model <- prudent(emotions, 'C4.5', 0.3)
+# Use different phi correlation with J48 classifier
+model <- prudent(emotions, 'J48', 0.3)
 pred <- predict(model, testdata)
 
 # Set a specific parameter

@@ -40,9 +40,9 @@
 #' model <- cc(toyml)
 #' pred <- predict(model, toyml)
 #'
-#' # Use a specific chain with C4.5 classifier
+#' # Use a specific chain with J48 classifier
 #' mychain <- sample(rownames(toyml$labels))
-#' model <- cc(toyml, 'C4.5', mychain)
+#' model <- cc(toyml, 'J48', mychain)
 #'
 #' # Set a specific parameter
 #' model <- cc(toyml, 'KNN', k=5)

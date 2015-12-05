@@ -45,8 +45,8 @@
 #' model <- ebr(toyml)
 #' pred <- predict(model, toyml)
 #'
-#' # Use C4.5 with 90% of instances and only 5 rounds
-#' model <- ebr(toyml, 'C4.5', m = 5, subsample = 0.9)
+#' # Use J48 with 90% of instances and only 5 rounds
+#' model <- ebr(toyml, 'J48', m = 5, subsample = 0.9)
 #'
 #' # Use 75% of attributes
 #' model <- ebr(dataset$train, attr.space = 0.75)
