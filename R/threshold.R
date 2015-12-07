@@ -81,7 +81,7 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
 #'    chains for multi-label classification. In Workshop of Lernen, Wissen &
 #'    Adaptivität (LWA 2013) (pp. 162–169). Bamberg, Germany.
 #' @export
-compute_subset_correction <- function(mlresult, train_y, threshold = 0.5) {
+subset_correction <- function(mlresult, train_y, threshold = 0.5) {
   bipartition <- as.bipartition(mlresult)
   probability <- as.probability(mlresult)
 

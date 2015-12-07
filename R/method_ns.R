@@ -152,7 +152,7 @@ predict.NSmodel <- function(object, newdata, probability = TRUE, ...) {
     }
 
     result <- as.multilabelPrediction(predictions[object$labels], probability)
-    compute_subset_correction(result, object$labelsets)
+    subset_correction(result, object$labelsets)
 }
 
 print.NSmodel <- function(x, ...) {
