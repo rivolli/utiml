@@ -86,7 +86,7 @@ majority_ensemble_votes <- function(predictions) {
   }
   else {
     probabilities <- do.call(cbind, predictions)
-    bipartitions <- compute_fixed_threshold(probabilities)
+    bipartitions <- fixed_threshold(probabilities)
   }
 
   votes <- apply(bipartitions, 1, mean)

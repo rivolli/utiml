@@ -1,8 +1,8 @@
 #' Apply a fixed threshold in the results
 #'
 #' Transfom a prediction matrix with scores/probabilities in a bipartion
-#' prediction matrix. It is possible use a single value for all labels or
-#' define a specific threshold for each label.
+#' prediction matrix. A global fixed threshold can be used of all labels or
+#' different fixed thresholds, one for each label.
 #'
 #' @family threshold
 #' @param prediction A matrix with scores/probabilities where the columns
@@ -10,6 +10,10 @@
 #' @param threshold A single value between 0 and 1 or a list with threshold
 #'    values contained one value per label.
 #' @return A matrix with bipartition results
+#' @references
+#'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
+#'  Comparative Study on Threshold Selection Methods. In First International
+#'  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
 #' @export
 #'
 #' @examples
@@ -21,11 +25,11 @@
 #' )
 #'
 #' # Use 0.5 as threshold
-#' compute_fixed_threshold(result)
+#' fixed_threshold(result)
 #'
 #' # Use an threshold for each label
-#' compute_fixed_threshold(result, c(0.4, 0.6, 0.7))
-compute_fixed_threshold <- function(prediction, threshold = 0.5) {
+#' fixed_threshold(result, c(0.4, 0.6, 0.7))
+fixed_threshold <- function(prediction, threshold = 0.5) {
   if (length(threshold) == 1) {
     threshold <- rep(threshold, ncol(prediction))
   } else if (length(threshold) != ncol(prediction)) {
