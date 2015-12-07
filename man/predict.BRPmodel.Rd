@@ -5,80 +5,81 @@
 \title{Predict Method for BR+ (brplus)}
 \usage{
 \method{predict}{BRPmodel}(object, newdata, strategy = c("Dyn", "Stat", "Ord",
-  "NU"), order = list(), probability = TRUE, ..., CORES = 1)
+  "NU"), order = list(), probability = getOption("utiml.use.probs", TRUE),
+  ..., CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{object}{Object of class '\code{BRPmodel}', created by \code{\link{brplus}} method.}
+\item{object}{Object of class '\code{BRPmodel}'.}
 
-\item{newdata}{An object containing the new input data. This must be a matrix or
-data.frame object containing the same size of training data or a mldr object.}
+\item{newdata}{An object containing the new input data. This must be a
+matrix, data.frame or a mldr object.}
 
-\item{strategy}{The strategy prefix to determine how to estimate the values of
-         the augmented features of unlabeled examples.
+\item{strategy}{The strategy prefix to determine how to estimate the values
+ of the augmented features of unlabeled examples.
 
-       The possible values are: \code{'Dyn'}, \code{'Stat'}, \code{'Ord'} or \code{'NU'}.
-       See the description for more details. (default: \code{'Dyn'}).}
+ The possible values are: \code{'Dyn'}, \code{'Stat'}, \code{'Ord'} or
+ \code{'NU'}. See the description for more details. (Default: \code{'Dyn'}).}
 
-\item{order}{The label sequence used to update the initial labels results based on the
-final results. This argument is used only when the \code{strategy = 'Ord'}
-(default: \code{list()})}
+\item{order}{The label sequence used to update the initial labels results
+based on the final results. This argument is used only when the
+\code{strategy = 'Ord'} (Default: \code{list()})}
 
-\item{probability}{Logical indicating whether class probabilities should be returned.
-(default: \code{TRUE})}
+\item{probability}{Logical indicating whether class probabilities should be
+returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{CORES}{The number of cores to parallelize the prediction. Values higher
-  than 1 require the \pkg{parallel} package (default: 1).}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
-A matrix containing the probabilistic values or just predictions (only when
-  \code{probability = FALSE}). The rows indicate the predicted object and the
-  columns indicate the labels.
+An object of type mlresult, based on the parameter probability.
 }
 \description{
 This function predicts values based upon a model trained by \code{brplus}.
-
-The strategies of estimate the values of the new features are separeted in two groups:
+}
+\details{
+The strategies of estimate the values of the new features are separeted in
+two groups:
 \describe{
- \item{No Update (\code{NU})}{This use the initial prediction of BR to all labels. This
-   name is because no modification is made to the initial estimates of the augmented
-   features during the prediction phase}
- \item{With Update}{This strategy update the initial prediction in that the final
-   predict occurs. There are three possibilities to define the order of label sequences:
+ \item{No Update (\code{NU})}{This use the initial prediction of BR to all
+  labels. This name is because no modification is made to the initial
+  estimates of the augmented features during the prediction phase}
+ \item{With Update}{This strategy update the initial prediction in that the
+  final predict occurs. There are three possibilities to define the order of
+  label sequences:
    \describe{
-     \item{Specific order (\code{Ord})}{The order is define by the user, require a
-       new argument  called \code{order}.}
-     \item{Static order (\code{Stat})}{Use the frequency of single labels in the
-       training set to define the sequence, where the least frequent labels are
-       predicted first}
-     \item{Dinamic order (\code{Dyn})}{Takes into account the confidence of the
-       initial prediction for each independent single label, to define a sequence,
-       where the labels predicted with less confidence are updated first.}
+     \item{Specific order (\code{Ord})}{The order is define by the user,
+      require a new argument  called \code{order}.}
+     \item{Static order (\code{Stat})}{Use the frequency of single labels in
+      the training set to define the sequence, where the least frequent
+      labels are predicted first}
+     \item{Dinamic order (\code{Dyn})}{Takes into account the confidence of
+      the initial prediction for each independent single label, to define a
+      sequence, where the labels predicted with less confidence are updated
+      first.}
    }
  }
 }
 }
 \examples{
-#' library(utiml)
-
-# Emotion multi-label dataset using BR+
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Predict SVM scores
-model <- brplus(dataset$train)
+model <- brplus(toyml)
 pred <- predict(model, dataset$test)
 
 # Predict SVM bipartitions and change the method to use No Update strategy
-pred <- predict(model, dataset$test, strategy = 'NU', probability = FALSE)
+pred <- predict(model, toyml, strategy = 'NU', probability = FALSE)
 
 # Predict using a random sequence to update the labels
 labels <- sample(rownames(dataset$train$labels))
-pred <- predict(model, dataset$test, strategy = 'Ord', order = labels)
+pred <- predict(model, toyml, strategy = 'Ord', order = labels)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, dataset$test, na.action = na.fail)
+pred <- predict(model, toyml, na.action = na.fail)
+}
 }
 \references{
 Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label

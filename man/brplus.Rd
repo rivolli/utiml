@@ -4,55 +4,51 @@
 \alias{brplus}
 \title{BR+ or BRplus for multi-label Classification}
 \usage{
-brplus(mdata, base.method = "SVM", ..., CORES = 1)
+brplus(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset (provided by \pkg{mldr} package).}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of base method. The same base method
-  will be used for train all subproblems and the BR classifers
-
-  Default valid options are: \code{'SVM'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'}).}
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method", "SVM")})}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{he number of cores to parallelize the training. Values higher
-  than 1 require the \pkg{parallel} package. (default: 1)}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
 An object of class \code{BRPmodel} containing the set of fitted
-  models, including: \describe{
+ models, including:
+ \describe{
    \item{freq}{The label frequencies to use with the 'Stat' strategy}
-   \item{initial}{The BR model to predict the values for the labels to initial step}
+   \item{initial}{The BR model to predict the values for the labels to
+     initial step}
    \item{models}{A list of final models named by the label names.}
-   }
+ }
 }
 \description{
-Create a BR+ classifier to predic multi-label data.
- This is a simple approach that enables the binary classifiers to
- discover existing label dependency by themselves. The main idea of
- BR+ is to increment the feature space of the binary classifiers to
- let them discover exist- ing label dependency by themselves.
-
- This implementation has different strategy to predict the final
- set of labels for unlabeled examples, as proposed in original
- paper.
+Create a BR+ classifier to predic multi-label data. This is a simple approach
+that enables the binary classifiers to discover existing label dependency by
+themselves. The main idea of BR+ is to increment the feature space of the
+binary classifiers to let them discover existing label dependency by
+themselves.
+}
+\details{
+This implementation has different strategy to predict the final set of labels
+for unlabeled examples, as proposed in original paper.
 }
 \examples{
-# Train and predict emotion multilabel dataset using BRPlus
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Use SVM as base method
-model <- brplus(dataset$train)
-pred <- predict(model, testdata)
+model <- brplus(toyml)
+pred <- predict(model, toyml)
 
 # Use Random Forest as base method and 4 cores
-model <- brplus(dataset$train, 'RF', CORES = 4)
-pred <- predict(model, testdata)
+model <- brplus(toyml, 'RF', CORES = 4)
+}
 }
 \references{
 Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
