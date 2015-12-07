@@ -44,6 +44,6 @@ Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
    Adaptivität (LWA 2013) (pp. 162–169). Bamberg, Germany.
 }
 \seealso{
-Other threshold: \code{\link{compute_simple_threshold}}
+Other threshold: \code{\link{compute_fixed_threshold}}
 }
 

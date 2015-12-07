@@ -15,17 +15,17 @@
 #' @examples
 #' # Create a prediction matrix with scores
 #' result <- matrix(
-#'    data = rnorm(9, 0.5, 0.2),
-#'    ncol = 3,
-#'    dimnames = list(NULL, c('lbl1',  'lb2', 'lb3'))
+#'  data = rnorm(9, 0.5, 0.2),
+#'  ncol = 3,
+#'  dimnames = list(NULL, c('lbl1',  'lb2', 'lb3'))
 #' )
 #'
 #' # Use 0.5 as threshold
-#' compute_simple_threshold(result)
+#' compute_fixed_threshold(result)
 #'
 #' # Use an threshold for each label
-#' compute_simple_threshold(result, c(0.4, 0.6, 0.7))
-compute_simple_threshold <- function(prediction, threshold = 0.5) {
+#' compute_fixed_threshold(result, c(0.4, 0.6, 0.7))
+compute_fixed_threshold <- function(prediction, threshold = 0.5) {
   if (length(threshold) == 1) {
     threshold <- rep(threshold, ncol(prediction))
   } else if (length(threshold) != ncol(prediction)) {

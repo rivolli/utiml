@@ -42,4 +42,39 @@ utiml_measure_labels <- function(mdata, predicted, measure) {
     })
     names(values) <- rownames(mdata$labels)
     unlist(values)
-} 
+}
+
+#' Cost-based loss function for multi-label classification
+#'
+#' @param mdata A mldr dataset containing the test data.
+#' @param mlresult An object of mlresult that contain the scores and bipartition
+#'  values.
+#' @param cost The cost of classification each positive label. If a single value
+#'  is informed then the all labels have tha same cost.
+#' @references
+#'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
+#'  Comparative Study on Threshold Selection Methods. In First International
+#'  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
+#' @export
+multilabel_loss_function <- function (mdata, mlresult, cost = 0.5) {
+  if (length(cost) == 1) {
+    cost <- rep(cost, mdata$measures$num.labels)
+    names(cost) <- rownames(mdata$labels)
+  }
+  else if (is.null(names(cost))) {
+    names(cost) <- rownames(mdata$label)
+  }
+
+  prediction <- as.bipartition(mlresult)
+  labels <- utiml_renames(rownames(mdata$labels))
+  partial.results <- lapply(labels, function (lname) {
+    FN <- sum(mdata$dataset[,lname] == 1 & prediction [,lname] == 0) /
+      mdata$measures$num.instances
+    FP <- sum(mdata$dataset[,lname] == 0 & prediction [,lname] == 1) /
+      mdata$measures$num.instances
+    freq <- mdata$labels[lname, "freq"]
+    2 * ((cost[lname] * freq * FN) + ((1 - cost[lname]) * (1 - freq) * FP))
+  })
+
+  mean(unlist(partial.results))
+}

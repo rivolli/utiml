@@ -18,15 +18,15 @@ mlresult <- as.multilabelPrediction(predictions, F)
 # 15 0.81 0.24 0.35
 
 test_that("Simple threshold", {
-   expect_equal(compute_simple_threshold(result), as.bipartition(mlresult))
+   expect_equal(compute_fixed_threshold(result), as.bipartition(mlresult))
 
-   new.data <- compute_simple_threshold(result, max(result))
+   new.data <- compute_fixed_threshold(result, max(result))
    expect_equal(apply(new.data, 1, sum),
                 c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
-   new.data <- compute_simple_threshold(result, min(result))
+   new.data <- compute_fixed_threshold(result, min(result))
    expect_equal(apply(new.data, 1, sum),
                 c('11'=3, '12'=3, '13'=3, '14'=3, '15'=3))
-   new.data <- compute_simple_threshold(result, c(0.8, 0.2, 0.5))
+   new.data <- compute_fixed_threshold(result, c(0.8, 0.2, 0.5))
    expect_equal(new.data[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
    expect_equal(new.data[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=1))
    expect_equal(new.data[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
