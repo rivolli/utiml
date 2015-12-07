@@ -32,9 +32,10 @@
 fixed_threshold <- function(prediction, threshold = 0.5) {
   if (length(threshold) == 1) {
     threshold <- rep(threshold, ncol(prediction))
-  } else if (length(threshold) != ncol(prediction)) {
-    stop("The threshold values must be a single value or the same number of
-         labels")
+  }
+  else if (length(threshold) != ncol(prediction)) {
+    stop(paste("The threshold values must be a single value or the same",
+               "number of labels"))
   }
 
   # Making the prediction discriminative
@@ -50,6 +51,76 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
   result
 }
 
+#' Proportional Thresholding (PCut)
+#'
+#' Define the proportion of examples for each label will be positive.
+#' The Proportion Cut (PCut) method can be a label-wise or global method that
+#' calibrates the threshold(s) from the training data globally or per label.
+#'
+#' @family threshold
+#' @param prediction A matrix or mlresult.
+#' @param ratio A single value between 0 and 1 or a list with ratio values
+#'  contained one value per label.
+#' @return A matrix or mlresult based as the type of prediction parameter.
+#' @references
+#'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
+#'  Comparative Study on Threshold Selection Methods. In First International
+#'  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
+#'
+#'  Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
+#'  for Multi-label Classification. In 11th International Symposium, IDA 2012
+#'  (pp. 172–183).
+#' @export
+#'
+#' @examples
+#' prediction <- matrix(runif(16), ncol = 4)
+#' pcut_threshold(prediction, .45)
+pcut_threshold <- function (prediction, ratio) {
+  UseMethod("pcut_threshold")
+}
+
+#' @describeIn pcut_threshold Proportional Thresholding (PCut) method for matrix
+#' @export
+pcut_threshold.default <- function (prediction, ratio) {
+  n <- nrow(prediction)
+  num.elem <- ceiling(ratio * n)
+  if (length(num.elem) == 1) {
+    num.elem <- rep(num.elem, ncol(prediction))
+    names(num.elem) <- colnames(prediction)
+  }
+  else if (length(num.elem) != ncol(prediction)) {
+    stop(paste("The number of elements values must be a single value or the",
+               "same number of labels"))
+  }
+  else if (is.null(names(num.elem))) {
+    names(num.elem) <- colnames(prediction)
+  }
+
+  indexes <- utiml_renames(seq(ncol(prediction)), colnames(prediction))
+  result <- do.call(cbind, lapply(indexes, function (ncol) {
+    values <- c(rep(1, num.elem[ncol]), rep(0, n - num.elem[ncol]))
+    prediction[order(prediction[,ncol], decreasing=TRUE), ncol] <- values
+    prediction[,ncol]
+  }))
+
+  # Fill empty instance predictions
+  empty.instances <- apply(result, 1, sum)
+  for (row in which(empty.instances == 0)) {
+    result[[which.max(prediction[row, ])]] <- 1
+  }
+
+  result
+}
+
+#' @describeIn pcut_threshold Proportional Thresholding (PCut) method for
+#'  mlresult
+#' @export
+pcut_threshold.mlresult <- function (prediction, ratio) {
+  probs   <- as.probability(prediction)
+  classes <- pcut_threshold.default(probs, ratio)
+  get_multilabel_prediction(classes, probs, is.probability(prediction))
+}
+
 score_driven_threshold <- function () {
 
 }
@@ -63,7 +134,11 @@ score_driven_threshold <- function () {
 #' @param prediction A matrix or mlresult.
 #' @param k The number of elements that will be positive.
 #' @return A matrix or mlresult based as the type of prediction parameter.
-#' @export threshold
+#' @references
+#'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
+#'  Comparative Study on Threshold Selection Methods. In First International
+#'  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
+#' @export
 #'
 #' @examples
 #' prediction <- matrix(runif(16), ncol = 4)
@@ -83,7 +158,7 @@ rcut_threshold.default <- function (prediction, k) {
   t(result)
 }
 
-#' @describeIn rcut_threshold Rank Cut (RCut) threshold method for mlresul
+#' @describeIn rcut_threshold Rank Cut (RCut) threshold method for mlresult
 #' @export
 rcut_threshold.mlresult <- function (prediction, k) {
   probs   <- as.probability(prediction)

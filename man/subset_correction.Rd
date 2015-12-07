@@ -45,6 +45,9 @@ Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
 }
 \seealso{
 Other threshold: \code{\link{fixed_threshold}};
+  \code{\link{pcut_threshold}},
+  \code{\link{pcut_threshold.default}},
+  \code{\link{pcut_threshold.mlresult}};
   \code{\link{rcut_threshold}},
   \code{\link{rcut_threshold.default}},
   \code{\link{rcut_threshold.mlresult}}
