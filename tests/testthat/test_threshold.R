@@ -17,7 +17,7 @@ mlresult <- as.multilabelPrediction(predictions, F)
 # 14 0.20 0.80 0.68
 # 15 0.81 0.24 0.35
 
-test_that("Simple threshold", {
+test_that("Fixed threshold", {
    expect_equal(fixed_threshold(result), as.bipartition(mlresult))
 
    new.data <- fixed_threshold(result, max(result))
@@ -30,4 +30,31 @@ test_that("Simple threshold", {
    expect_equal(new.data[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
    expect_equal(new.data[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=1))
    expect_equal(new.data[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
+})
+
+test_that("RCut threshold", {
+  crisp <- rcut_threshold(result, 1)
+  expect_equal(dimnames(crisp), dimnames(result))
+  expect_equal(crisp[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
+  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=0, '15'=0))
+
+  crisp <- rcut_threshold(result, 2)
+  expect_equal(dimnames(crisp), dimnames(result))
+  expect_equal(crisp[,"lbl1"], c('11'=1, '12'=1, '13'=1, '14'=0, '15'=1))
+  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=1))
+
+  crisp <- rcut_threshold(result, 3)
+  expect_equal(dimnames(crisp), dimnames(result))
+  expect_equal(crisp[,"lbl1"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
+  expect_equal(crisp[,"lbl2"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
+  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
+
+  bipartition <- rcut_threshold(mlresult, 2)
+  expect_is(bipartition, "mlresult")
+  expect_equal(as.probability(bipartition), as.probability(mlresult))
+  expect_equal(rcut_threshold(as.bipartition(bipartition), 2),
+               as.bipartition(bipartition))
+
 })

@@ -50,6 +50,51 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
   result
 }
 
+score_driven_threshold <- function () {
+
+}
+
+#' Rank Cut (RCut) threshold method
+#'
+#' The Rank Cut (RCut) method is an instance-wise strategy, which outputs the k
+#' labels with the highest scores for each instance at the deployment.
+#'
+#' @family threshold
+#' @param prediction A matrix or mlresult.
+#' @param k The number of elements that will be positive.
+#' @return A matrix or mlresult based as the type of prediction parameter.
+#' @export threshold
+#'
+#' @examples
+#' prediction <- matrix(runif(16), ncol = 4)
+#' rcut_threshold(prediction, 2)
+rcut_threshold <- function (prediction, k) {
+  UseMethod("rcut_threshold")
+}
+
+#' @describeIn rcut_threshold Rank Cut (RCut) threshold method for matrix
+#' @export
+rcut_threshold.default <- function (prediction, k) {
+  values <- c(rep(1, k), rep(0, ncol(prediction) - k))
+  result <- apply(prediction, 1, function (row) {
+    row[order(row, decreasing=TRUE)] <- values
+    row
+  })
+  t(result)
+}
+
+#' @describeIn rcut_threshold Rank Cut (RCut) threshold method for mlresul
+#' @export
+rcut_threshold.mlresult <- function (prediction, k) {
+  probs   <- as.probability(prediction)
+  classes <- rcut_threshold.default(probs, k)
+  get_multilabel_prediction(classes, probs, is.probability(prediction))
+}
+
+scut_threshold <- function () {
+
+}
+
 #' Subset Correction of a predicted result
 #'
 #' This method restrict a multi-label learner prediction to only label

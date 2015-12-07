@@ -47,7 +47,9 @@
 #'    model <- svm(traindata, labeldata, probability = TRUE, ...)
 #'    model
 #' }
-mltrain <- function(dataset, ...) UseMethod("mltrain")
+mltrain <- function(dataset, ...) {
+  UseMethod("mltrain")
+}
 
 #' Prediction function to extend base classifiers
 #'
@@ -104,7 +106,9 @@ mltrain <- function(dataset, ...) UseMethod("mltrain")
 #'    result <- predict(model, newdata, probability = TRUE, ...)
 #'    attr(result, 'probabilities')
 #' }
-mlpredict <- function(model, newdata, ...) UseMethod("mlpredict")
+mlpredict <- function(model, newdata, ...) {
+  UseMethod("mlpredict")
+}
 
 # DEFAULT METHOD -------------------------------------------------------------
 #' @describeIn mltrain Default S3 method
