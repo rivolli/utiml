@@ -30,8 +30,7 @@ calibrates the threshold(s) from the training data globally or per label.
 \itemize{
 \item \code{default}: Proportional Thresholding (PCut) method for matrix
 
-\item \code{mlresult}: Proportional Thresholding (PCut) method for
-mlresult
+\item \code{mlresult}: Proportional Thresholding (PCut) for mlresult
 }}
 \examples{
 prediction <- matrix(runif(16), ncol = 4)
@@ -42,12 +41,15 @@ Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
  Comparative Study on Threshold Selection Methods. In First International
  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
 
- Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
+Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
  for Multi-label Classification. In 11th International Symposium, IDA 2012
  (pp. 172–183).
 }
 \seealso{
 Other threshold: \code{\link{fixed_threshold}};
+  \code{\link{mcut_threshold}},
+  \code{\link{mcut_threshold.default}},
+  \code{\link{mcut_threshold.mlresult}};
   \code{\link{rcut_threshold}},
   \code{\link{rcut_threshold.default}},
   \code{\link{rcut_threshold.mlresult}};

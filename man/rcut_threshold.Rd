@@ -41,6 +41,9 @@ Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
 }
 \seealso{
 Other threshold: \code{\link{fixed_threshold}};
+  \code{\link{mcut_threshold}},
+  \code{\link{mcut_threshold.default}},
+  \code{\link{mcut_threshold.mlresult}};
   \code{\link{pcut_threshold}},
   \code{\link{pcut_threshold.default}},
   \code{\link{pcut_threshold.mlresult}};

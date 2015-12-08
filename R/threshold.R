@@ -51,6 +51,53 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
   result
 }
 
+#' Maximum Cut Thresholding (MCut)
+#'
+#' The Maximum Cut (MCut) automatically determines a threshold for each instance
+#' that selects a subset of labels with higher scores than others. This leads to
+#' the selection of the middle of the interval defined by these two scores as
+#' the threshold.
+#'
+#' @family threshold
+#' @param prediction A matrix or mlresult.
+#' @return A matrix or mlresult based as the type of prediction parameter.
+#' @references
+#' Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
+#'  for Multi-label Classification. In 11th International Symposium, IDA 2012
+#'  (pp. 172–183).
+#' @export
+#'
+#' @examples
+#' prediction <- matrix(runif(16), ncol = 4)
+#' mcut_threshold(prediction)
+mcut_threshold <- function (prediction) {
+  UseMethod("mcut_threshold")
+}
+
+#' @describeIn mcut_threshold Maximum Cut Thresholding (MCut) method for matrix
+#' @export
+mcut_threshold.default <- function (prediction) {
+  result <- apply(prediction, 1, function (row) {
+    sorted.row <- sort(row, decreasing = T)
+    difs <- unlist(lapply(seq(length(row)-1), function (i) {
+      sorted.row[i] - sorted.row[i+1]
+    }))
+    t <- which.max(difs)
+    mcut <- (sorted.row[t] + sorted.row[t+1]) / 2
+    row <- ifelse(row > mcut, 1, 0)
+    row
+  })
+  t(result)
+}
+
+#' @describeIn mcut_threshold Maximum Cut Thresholding (MCut) for mlresult
+#' @export
+mcut_threshold.mlresult <- function (prediction) {
+  probs   <- as.probability(prediction)
+  classes <- mcut_threshold.default(probs)
+  get_multilabel_prediction(classes, probs, is.probability(prediction))
+}
+
 #' Proportional Thresholding (PCut)
 #'
 #' Define the proportion of examples for each label will be positive.
@@ -63,11 +110,11 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
 #'  contained one value per label.
 #' @return A matrix or mlresult based as the type of prediction parameter.
 #' @references
-#'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
+#' Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
 #'  Comparative Study on Threshold Selection Methods. In First International
 #'  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
 #'
-#'  Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
+#' Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
 #'  for Multi-label Classification. In 11th International Symposium, IDA 2012
 #'  (pp. 172–183).
 #' @export
@@ -112,17 +159,12 @@ pcut_threshold.default <- function (prediction, ratio) {
   result
 }
 
-#' @describeIn pcut_threshold Proportional Thresholding (PCut) method for
-#'  mlresult
+#' @describeIn pcut_threshold Proportional Thresholding (PCut) for mlresult
 #' @export
 pcut_threshold.mlresult <- function (prediction, ratio) {
   probs   <- as.probability(prediction)
   classes <- pcut_threshold.default(probs, ratio)
   get_multilabel_prediction(classes, probs, is.probability(prediction))
-}
-
-score_driven_threshold <- function () {
-
 }
 
 #' Rank Cut (RCut) threshold method
@@ -164,6 +206,10 @@ rcut_threshold.mlresult <- function (prediction, k) {
   probs   <- as.probability(prediction)
   classes <- rcut_threshold.default(probs, k)
   get_multilabel_prediction(classes, probs, is.probability(prediction))
+}
+
+score_driven_threshold <- function () {
+
 }
 
 scut_threshold <- function () {

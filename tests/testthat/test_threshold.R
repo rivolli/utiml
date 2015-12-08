@@ -32,6 +32,20 @@ test_that("Fixed threshold", {
    expect_equal(new.data[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
 })
 
+test_that("MCut threshold", {
+  crisp <- mcut_threshold(result)
+  expect_equal(dimnames(crisp), dimnames(result))
+  expect_equal(crisp[,"lbl1"], c('11'=1, '12'=0, '13'=1, '14'=0, '15'=1))
+  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
+
+  bipartition <- mcut_threshold(mlresult)
+  expect_is(bipartition, "mlresult")
+  expect_equal(as.probability(bipartition), as.probability(mlresult))
+  expect_equal(as.bipartition(mcut_threshold(bipartition)),
+               as.bipartition(bipartition))
+})
+
 test_that("PCut threshold", {
   crisp <- pcut_threshold(result, 0.20)
   expect_equal(dimnames(crisp), dimnames(result))
