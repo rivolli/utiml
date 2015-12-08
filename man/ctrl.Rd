@@ -4,29 +4,25 @@
 \alias{ctrl}
 \title{CTRL model for multi-label Classification}
 \usage{
-ctrl(mdata, base.method = "SVM", m = 5, validation.size = 0.3,
-  validation.threshold = 0.3, ..., predict.params = list(), CORES = 1)
+ctrl(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 5,
+  validation.size = 0.3, validation.threshold = 0.3, ...,
+  predict.params = list(), CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset.}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method.
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method", "SVM")})}
 
-  Default valid options are: \code{'SVM'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'})}
+\item{m}{The max number of Binary Relevance models used in the binary
+ensemble. (Default: 5)}
 
-\item{m}{The max number of Binary Relevance models used in the ensemble.
-(default: 5)}
-
-\item{validation.size}{The size of validation set, used internally to
-prunes error-prone class labels. The value must be between 0.1 and 0.6.
-(default: 0.3)}
+\item{validation.size}{The size of validation set, used internally to prunes
+error-prone class labels. The value must be between 0.1 and 0.5.
+(Default: 0.3)}
 
 \item{validation.threshold}{Thresholding parameter determining whether any
-class label in Y is regarded as error-prone or not. (default: 0.3)}
+class label in Y is regarded as error-prone or not. (Default: 0.3)}
 
 \item{...}{Others arguments passed to the base method for all subproblems}
 
@@ -34,7 +30,8 @@ class label in Y is regarded as error-prone or not. (default: 0.3)}
 method. (default: \code{list()})}
 
 \item{CORES}{The number of cores to parallelize the training. Values higher
-  than 1 require the \pkg{parallel} package. (default: 1)}
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
 An object of class \code{CTRLmodel} containing the set of fitted
@@ -52,36 +49,35 @@ An object of class \code{CTRLmodel} containing the set of fitted
 }
 }
 \description{
-Create a binary relevance with ConTRolled Label correlation
-  exploitation (CTRL) model for multilabel classification.
-
-  CTRL employs a two-stage filtering procedure to exploit label correlations
-  in a controlled manner. In the first stage, error-prone class labels are
-  pruned from Y to generate the candidate label set for correlation exploitation.
-  In the second stage, classification models are built for each class label by
-  exploiting its closely-related labels in the candidate label set.
+Create a binary relevance with ConTRolled Label correlation exploitation
+(CTRL) model for multilabel classification.
 }
 \details{
+CTRL employs a two-stage filtering procedure to exploit label correlations
+in a controlled manner. In the first stage, error-prone class labels are
+pruned from Y to generate the candidate label set for correlation
+exploitation. In the second stage, classification models are built for each
+class label by exploiting its closely-related labels in the candidate
+label set.
+
 Dependencies:
  The degree of label correlations are estimated via supervised feature
    selection techniques. Thus, this implementation use the \link{relief}
    method available in \pkg{FSelector} package.
 }
 \examples{
-# Train and predict emotion multilabel dataset using Binary Relevance
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Use SVM as base method
-model <- ctrl(dataset$train)
-pred <- predict(model, dataset$test)
+model <- ctrl(toyml)
+pred <- predict(model, toyml)
 
 # Change default values and use 4 CORES
-model <- ctrl(dataset$train, 'J48', m = 10, validation.size = 0.4, validation.threshold = 0.5, CORES = 4)
-pred <- predict(model, dataset$test)
+model <- ctrl(toyml, 'C5.0', m = 10, validation.size = 0.4,
+              validation.threshold = 0.5, CORES = 4)
 
 # Set a parameters for all subproblems
 model <- ctrl(dataset$train, 'KNN', k=5)
-pred <- predict(model, dataset$test)
+}
 }
 \references{
 Li, Y., & Zhang, M. (2014). Enhancing Binary Relevance for Multi-label
@@ -90,9 +86,6 @@ Li, Y., & Zhang, M. (2014). Enhancing Binary Relevance for Multi-label
    Gold Coast, Australia.
 }
 \seealso{
-Other Ensemble methods: \code{\link{ebr}};
-  \code{\link{ecc}}
-
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{dbr}};
   \code{\link{ebr}}; \code{\link{ecc}}; \code{\link{mbr}};

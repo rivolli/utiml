@@ -158,6 +158,8 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
     stop("Cores must be a positive value")
   }
 
+  check_ensemble_vote(vote.schema)
+
   newdata <- utiml_newdata(newdata)
   allpreds <- utiml_lapply(object$models, function(ccmodel) {
     predict(ccmodel, newdata[, ccmodel$attrs], ...)

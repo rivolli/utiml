@@ -154,6 +154,8 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "maj",
     stop("Cores must be a positive value")
   }
 
+  check_ensemble_vote(vote.schema)
+
   newdata <- utiml_newdata(newdata)
   allpreds <- lapply(object$models, function(brmodel) {
     predict(brmodel, newdata[, brmodel$attrs], ..., CORES = CORES)

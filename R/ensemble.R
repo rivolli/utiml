@@ -253,16 +253,25 @@ utiml_get_schema_method <- function(vote.schema) {
     maj  = "majority_ensemble_votes",
     max  = "maximum_ensemble_votes",
     min  = "minimum_ensemble_votes",
-    prod = "product_ensemble_votes",
-    vote.schema = "custom_ensemble_votes"
+    prod = "product_ensemble_votes"
   )
 
-  if (votes[[vote.schema]] == 'custom_ensemble_votes') {
+  ifelse(is.null(votes[vote.schema]), "custom_ensemble_votes",
+         votes[vote.schema])
+}
+
+#' Verify if a schema vote name is valid
+check_ensemble_vote <- function (vote.schema, accept.null = TRUE) {
+  if (is.null(vote.schema)) {
+    if (!accept.null) {
+      stop("The enseble vote schema can not be NULL")
+    }
+  }
+  else if (!vote.schema %in% c("avg", "maj", "max", "min", "prod")) {
     if (!exists(vote.schema, mode = "function")) {
       stop(paste("The compute ensemble method '", vote.schema,
                  "' is not a valid function", sep=''))
     }
   }
-
-  votes[[vote.schema]]
+  TRUE
 }

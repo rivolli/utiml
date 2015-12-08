@@ -80,8 +80,7 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
    5782, 254–269.
 }
 \seealso{
-Other Ensemble methods: \code{\link{ctrl}};
-  \code{\link{ecc}}
+Other Ensemble methods: \code{\link{ecc}}
 
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};

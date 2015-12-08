@@ -189,7 +189,8 @@ predict.BRPmodel <- function(object, newdata,
     predictions <- list()
     for (labelname in orders[[strategy[1]]]) {
       model <- object$models[[labelname]]
-      data <- cbind(newdata, initial.preds[, !labels %in% labelname])
+      new.columns <- initial.preds[, !labels %in% labelname, drop = FALSE]
+      data <- cbind(newdata, new.columns)
       predictions[[labelname]] <- predict_br_model(model, data, ...)
       initial.preds[, labelname] <- predictions[[labelname]]$bipartition
     }

@@ -57,12 +57,12 @@ as.binaryPrediction <- function(probability, threshold = 0.5) {
 #' all(result2 == attr(result1, 'classes')) # TRUE
 #' ...
 as.multilabelPrediction <- function(predictions, probability) {
-  probabilities <- sapply(predictions, function(lblres) {
+  probabilities <- do.call(cbind, lapply(predictions, function(lblres) {
     as.numeric(as.character(lblres$probability))
-  })
-  bipartitions <- sapply(predictions, function(lblres) {
+  }))
+  bipartitions <- do.call(cbind, lapply(predictions, function(lblres) {
     as.numeric(as.character(lblres$bipartition))
-  })
+  }))
   rownames(probabilities) <- rownames(bipartitions) <-
     names(predictions[[1]]$bipartition)
 
@@ -123,9 +123,10 @@ create_br_model <- function(dataset, ...) {
 #' #Use all models to predict newdata
 #' lapply(models, predict_br_model, newdata = newdata, ...)
 predict_br_model <- function(model, newdata, ...) {
-    label <- attr(model, "labelname")
-    params <- c(list(model = model, newdata = newdata), ...)
-    as.binaryPrediction(do.call(mlpredict, params)[, "1"])
+  label <- attr(model, "labelname")
+  params <- c(list(model = model, newdata = newdata), ...)
+  result <- utiml_renames(do.call(mlpredict, params)[, "1"], rownames(newdata))
+  as.binaryPrediction(result)
 }
 
 #' Prepare a Binary MultiLabel Data to be processed

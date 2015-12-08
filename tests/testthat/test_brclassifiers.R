@@ -20,6 +20,9 @@ predictionTest <- function (model) {
   expect_equal(as.matrix(pred1), attr(pred, "classes"))
   expect_equal(as.matrix(pred), attr(pred1, "probs"))
 
+  onepred <- predict(model, test[1,], prob = FALSE)
+  #expect_equal(onepred, pred1[1,])
+
   pred
 }
 
@@ -108,6 +111,7 @@ test_that("CTRL", {
   expect_error(ctrl(train, "test", validation.size=1))
   expect_error(ctrl(train, "test", validation.threshold=1.1))
   expect_error(predict(model, test, "ABC"))
+  expect_error(predict(model, test, NULL))
 })
 
 test_that("DBR", {
