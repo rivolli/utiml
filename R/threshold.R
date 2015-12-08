@@ -106,7 +106,7 @@ pcut_threshold.default <- function (prediction, ratio) {
   # Fill empty instance predictions
   empty.instances <- apply(result, 1, sum)
   for (row in which(empty.instances == 0)) {
-    result[[which.max(prediction[row, ])]] <- 1
+    result[row, which.max(prediction[row, ])] <- 1
   }
 
   result

@@ -33,7 +33,23 @@ test_that("Fixed threshold", {
 })
 
 test_that("PCut threshold", {
-  expect_true(FALSE)
+  crisp <- pcut_threshold(result, 0.20)
+  expect_equal(dimnames(crisp), dimnames(result))
+  expect_equal(crisp[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
+  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=0, '15'=0))
+
+  crisp <- pcut_threshold(result, c(0.2, 0.3, 0.5))
+  expect_equal(dimnames(crisp), dimnames(result))
+  expect_equal(crisp[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
+  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=1))
+
+  bipartition <- pcut_threshold(mlresult, 0.3)
+  expect_is(bipartition, "mlresult")
+  expect_equal(as.probability(bipartition), as.probability(mlresult))
+  expect_equal(as.bipartition(pcut_threshold(bipartition, 0.3)),
+               as.bipartition(bipartition))
 })
 
 test_that("RCut threshold", {
@@ -58,6 +74,6 @@ test_that("RCut threshold", {
   bipartition <- rcut_threshold(mlresult, 2)
   expect_is(bipartition, "mlresult")
   expect_equal(as.probability(bipartition), as.probability(mlresult))
-  expect_equal(rcut_threshold(as.bipartition(bipartition), 2),
+  expect_equal(as.bipartition(rcut_threshold(bipartition, 2)),
                as.bipartition(bipartition))
 })
