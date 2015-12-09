@@ -19,7 +19,7 @@ empty the chain is the default label sequence of the dataset. (Default:
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{he number of cores to parallelize the training. Values higher
+\item{CORES}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
 }

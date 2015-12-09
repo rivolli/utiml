@@ -4,28 +4,23 @@
 \alias{ns}
 \title{Nested Stacking for multi-label Classification}
 \usage{
-ns(mdata, base.method = "SVM", chain = c(), ..., predict.params = list())
+ns(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = c(),
+  ..., predict.params = list())
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset (provided by \pkg{mldr} package).}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of base method. The same base method
-  will be used for train all subproblems.
-
-  Default valid options are: \code{'SVM'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'})}
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method", "SVM")})}
 
 \item{chain}{A vector with the label names to define the chain order. If
-empty the chain is the default label sequence of the dataset. (default:
+empty the chain is the default label sequence of the dataset. (Default:
 \code{list()})}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
 \item{predict.params}{A list of default arguments passed to the predict
- method. (default: \code{list()})}
+method. (default: \code{list()})}
 }
 \value{
 An object of class \code{NSmodel} containing the set of fitted
@@ -39,28 +34,26 @@ An object of class \code{NSmodel} containing the set of fitted
 }
 \description{
 Create a Nested Stacking model for multilabel classification.
-
-  Nested Stacking is based on Classifier Chains transformation method to predict
-  multi-label data. It differs from CC to predict the labels values in the
-  training step and to regularize the output based on the labelsets available
-  on training data.
+}
+\details{
+Nested Stacking is based on Classifier Chains transformation method to
+predict multi-label data. It differs from CC to predict the labels values in
+the training step and to regularize the output based on the labelsets
+available on training data.
 }
 \examples{
-# Train and predict emotion multilabel dataset using Nested Stacking
-dataset <- mldr_random_holdout(emotions, c(train=0.9, test=0.1))
-
+\dontrun{
 # Use SVM as base method
-model <- ns(dataset$train)
-pred <- predict(model, dataset$test)
+model <- ns(toyml)
+pred <- predict(model, toyml)
 
 # Use a specific chain with J48 classifier
-mychain <- sample(rownames(dataset$train$labels))
-model <- ns(dataset$train, 'J48', mychain)
-pred <- predict(model, dataset$test)
+mychain <- sample(rownames(toyml$labels))
+model <- ns(toyml, 'J48', mychain)
 
 # Set a specific parameter
-model <- ns(dataset$train, 'KNN', k=5)
-pred <- predict(model, dataset$test)
+model <- ns(toyml, 'KNN', k=5)
+}
 }
 \references{
 Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier

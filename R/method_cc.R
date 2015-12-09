@@ -16,7 +16,7 @@
 #'   empty the chain is the default label sequence of the dataset. (Default:
 #'   \code{list()})
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param CORES he number of cores to parallelize the training. Values higher
+#' @param CORES The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
 #' @return An object of class \code{CCmodel} containing the set of fitted

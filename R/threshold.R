@@ -212,8 +212,31 @@ score_driven_threshold <- function () {
 
 }
 
-scut_threshold <- function () {
+scut_threshold <- function (mdata, prediction, loss.function, CORES=1) {
+  labels <- utiml_renames(colnames(prediction))
+  thresholds <- utiml_lapply(labels, function (col) {
+    scores <- prediction[, col]
+    index <- order(scores)
+    expected <- mdata$dataset[index, col]
+    ones <- which(expected == 1)
+    difs <- c(Inf)
+    for (i in seq(length(ones)-1)) {
+      difs <- c(difs, ones[i+1] - ones[i])
+    }
 
+    evaluated.thresholds <- c()
+    result <- c()
+    for (i in which(difs > 1)) {
+      thr <- scores[index[i]]
+      res <- loss.function(mdata[,col], ifelse(scores < thr, 0, 1))
+      evaluated.thresholds <- c(evaluated.thresholds, thr)
+      result <- c(result, res)
+    }
+
+    evaluated.thresholds[which.min(result)]
+  }, CORES)
+
+  fixed_threshold(prediction, thresholds)
 }
 
 #' Subset Correction of a predicted result
