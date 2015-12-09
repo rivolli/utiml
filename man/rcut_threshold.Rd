@@ -47,6 +47,7 @@ Other threshold: \code{\link{fixed_threshold}};
   \code{\link{pcut_threshold}},
   \code{\link{pcut_threshold.default}},
   \code{\link{pcut_threshold.mlresult}};
+  \code{\link{scut_threshold}};
   \code{\link{subset_correction}}
 }
 

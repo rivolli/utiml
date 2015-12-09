@@ -38,6 +38,10 @@ The original paper describes a method to create only bipartitions, but
  scores higher than the threshold value, but must be lower are changed to
  respect this restriction.
 }
+\examples{
+\dontrun{
+}
+}
 \references{
 Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
    chains for multi-label classification. In Workshop of Lernen, Wissen &
@@ -53,6 +57,7 @@ Other threshold: \code{\link{fixed_threshold}};
   \code{\link{pcut_threshold.mlresult}};
   \code{\link{rcut_threshold}},
   \code{\link{rcut_threshold.default}},
-  \code{\link{rcut_threshold.mlresult}}
+  \code{\link{rcut_threshold.mlresult}};
+  \code{\link{scut_threshold}}
 }
 

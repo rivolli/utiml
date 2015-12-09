@@ -38,15 +38,15 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
                "number of labels"))
   }
 
-  # Making the prediction discriminative
-  for (row in seq(nrow(prediction))){
-    prediction[row, which.max(prediction[row, ])] <- 1
-  }
-
   result <- do.call(cbind, lapply(seq(ncol(prediction)), function(col) {
     as.integer(prediction[, col] >= threshold[col])
   }))
   dimnames(result) <- dimnames(prediction)
+
+  # Avoid instances without labels
+  for (row in which(apply(result, 1, sum) < 1)) {
+    result[row, which.max(prediction[row, ])] <- 1
+  }
 
   result
 }
@@ -95,7 +95,7 @@ mcut_threshold.default <- function (prediction) {
 mcut_threshold.mlresult <- function (prediction) {
   probs   <- as.probability(prediction)
   classes <- mcut_threshold.default(probs)
-  get_multilabel_prediction(classes, probs, is.probability(prediction))
+  get_multilabel_prediction(classes, probs, FALSE)
 }
 
 #' Proportional Thresholding (PCut)
@@ -164,7 +164,7 @@ pcut_threshold.default <- function (prediction, ratio) {
 pcut_threshold.mlresult <- function (prediction, ratio) {
   probs   <- as.probability(prediction)
   classes <- pcut_threshold.default(probs, ratio)
-  get_multilabel_prediction(classes, probs, is.probability(prediction))
+  get_multilabel_prediction(classes, probs, FALSE)
 }
 
 #' Rank Cut (RCut) threshold method
@@ -194,7 +194,7 @@ rcut_threshold <- function (prediction, k) {
 rcut_threshold.default <- function (prediction, k) {
   values <- c(rep(1, k), rep(0, ncol(prediction) - k))
   result <- apply(prediction, 1, function (row) {
-    row[order(row, decreasing=TRUE)] <- values
+    row[order(row, decreasing = TRUE)] <- values
     row
   })
   t(result)
@@ -205,20 +205,82 @@ rcut_threshold.default <- function (prediction, k) {
 rcut_threshold.mlresult <- function (prediction, k) {
   probs   <- as.probability(prediction)
   classes <- rcut_threshold.default(probs, k)
-  get_multilabel_prediction(classes, probs, is.probability(prediction))
+  get_multilabel_prediction(classes, probs, FALSE)
 }
 
 score_driven_threshold <- function () {
 
 }
 
-scut_threshold <- function (mdata, prediction, loss.function, CORES=1) {
+#' SCut Score-based method
+#'
+#' This is a label-wise method that adjusts the threshold for each label to
+#' achieve a specific loss function using a validation set or cross validation.
+#'
+#' Different from the others threshold methods instead of return the bipartition
+#' results it returs the threshold values for each label.
+#'
+#' @family threshold
+#' @param prediction A matrix or mlresult.
+#' @param expected The expected labels for the prediction. May be a matrix with
+#'  the label values or a mldr object.
+#' @param loss.function A loss function to be optmized. If you want to use your
+#'  own error function see the notes and example. (Default: mse)
+#' @param CORES The number of cores to parallelize the computation Values higher
+#'  than 1 require the \pkg{parallel} package. (Default:
+#'  \code{options("utiml.cores", 1)})
+#' @return A numeric vector with the threshold values for each label
+#' @note The loss function is a R method that receive two lists, the expected
+#'  values of the label and the predicted values, respectively. Positive values
+#'  are represented by the 1 and the negative by the 0.
+#' @references
+#'  Fan, R.-E., & Lin, C.-J. (2007). A study on threshold selection for
+#'   multi-label classification. Department of Computer Science, National
+#'   Taiwan University.
+#'
+#'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
+#'   Comparative Study on Threshold Selection Methods. In First International
+#'   Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
+#' @export
+#'
+#' @examples
+#' names <- list(1:10, c("a", "b", "c"))
+#' prediction <- matrix(runif(30), ncol = 3, dimnames = names)
+#' classes <- matrix(sample(0:1, 30, rep = T), ncol = 3, dimnames = names)
+#' thresholds <- scut_threshold(prediction, classes)
+#' bipartition <- fixed_threshold(prediction, thresholds)
+#'
+#' \dontrun{
+#' # Penalizes only FP predictions
+#' mylossfunc <- function (real, predicted) {
+#'    mean(predicted - real * predicted)
+#' }
+#' prediction <- predict(br(toyml), toyml)
+#' scut_threshold(prediction, toyml, loss.function = mylossfunc, CORES = 5)
+#' }
+scut_threshold <- function (prediction, ...) {
+  UseMethod("scut_threshold")
+}
+
+scut_threshold.default <- function (prediction, expected, loss.function = mse,
+                                    CORES = getOption("utiml.cores", 1)) {
+  if (mode(loss.function) != "function") {
+    stop("Invalid loss function")
+  }
+
+  if (CORES < 1) {
+    stop("Cores must be a positive value")
+  }
+
+  if (class(expected) == "mldr") {
+    expected <- expected$dataset[expected$labels$index]
+  }
+
   labels <- utiml_renames(colnames(prediction))
   thresholds <- utiml_lapply(labels, function (col) {
     scores <- prediction[, col]
     index <- order(scores)
-    expected <- mdata$dataset[index, col]
-    ones <- which(expected == 1)
+    ones <- which(expected[index, col] == 1)
     difs <- c(Inf)
     for (i in seq(length(ones)-1)) {
       difs <- c(difs, ones[i+1] - ones[i])
@@ -226,17 +288,25 @@ scut_threshold <- function (mdata, prediction, loss.function, CORES=1) {
 
     evaluated.thresholds <- c()
     result <- c()
-    for (i in which(difs > 1)) {
+    for (i in ones[which(difs > 1)]) {
       thr <- scores[index[i]]
-      res <- loss.function(mdata[,col], ifelse(scores < thr, 0, 1))
+      res <- loss.function(expected[, col], ifelse(scores < thr, 0, 1))
       evaluated.thresholds <- c(evaluated.thresholds, thr)
       result <- c(result, res)
     }
 
-    evaluated.thresholds[which.min(result)]
+    ifelse(length(ones) > 0,
+           as.numeric(evaluated.thresholds[which.min(result)]),
+           max(scores) + 0.0001) # All expected values are in the negative class
   }, CORES)
 
-  fixed_threshold(prediction, thresholds)
+  unlist(thresholds)
+}
+
+scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
+                                    CORES = getOption("utiml.cores", 1)) {
+  probs   <- as.probability(prediction)
+  scut_threshold.default(probs, expected, loss.function, CORES)
 }
 
 #' Subset Correction of a predicted result
@@ -264,12 +334,15 @@ scut_threshold <- function (mdata, prediction, loss.function, CORES=1) {
 #'  we adapeted the method to use also scores. Based on the threshold values the
 #'  scores higher than the threshold value, but must be lower are changed to
 #'  respect this restriction.
-#'
 #' @references
 #'  Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
 #'    chains for multi-label classification. In Workshop of Lernen, Wissen &
 #'    Adaptivität (LWA 2013) (pp. 162–169). Bamberg, Germany.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' }
 subset_correction <- function(mlresult, train_y, threshold = 0.5) {
   bipartition <- as.bipartition(mlresult)
   probability <- as.probability(mlresult)

@@ -78,3 +78,9 @@ multilabel_loss_function <- function (mdata, mlresult, cost = 0.5) {
 
   mean(unlist(partial.results))
 }
+
+#' Mean Squared Error
+#' @export
+mse <- function(real, predicted) {
+  mean((real - predicted) ^ 2)
+}
