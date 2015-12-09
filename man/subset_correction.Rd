@@ -4,7 +4,7 @@
 \alias{subset_correction}
 \title{Subset Correction of a predicted result}
 \usage{
-subset_correction(mlresult, train_y, threshold = 0.5)
+subset_correction(mlresult, train_y, base.threshold = 0.5)
 }
 \arguments{
 \item{mlresult}{An object of mlresult that contain the scores and bipartition
@@ -13,19 +13,19 @@ values.}
 \item{train_y}{A matrix/data.frame with all labels values of the training
 dataset.}
 
-\item{threshold}{A numeric value between 0 and 1 to use as base to determine
-which values needs be reescaled to preserve the corrected labelsets.
-(default: 0.5)}
+\item{base.threshold}{A numeric value between 0 and 1 to use as base to
+determine which values needs be reescaled to preserve the corrected
+labelsets. (Default: 0.5)}
 }
 \value{
 A new mlresult where all results are present in the training
  labelsets.
 }
 \description{
-This method restrict a multi-label learner prediction to only label
-combinations whose existence is testified by the (training) data. To this all
-labelsets that are predicted but are not found on training data is replaced
-by the most similar labelset.
+This method restrict a multi-label learner to predict only label combinations
+whose existence is present in the (training) data. To this all labelsets
+that are predicted but are not found on training data is replaced by the most
+similar labelset.
 }
 \details{
 If the most simillar is not unique, those label combinations with higher
@@ -33,13 +33,15 @@ frequency in the training data are preferred. The Hamming loss distance is
 used to determine the difference between the labelsets.
 }
 \note{
-The original paper describes a method to create only bipartitions, but
- we adapeted the method to use also scores. Based on the threshold values the
- scores higher than the threshold value, but must be lower are changed to
- respect this restriction.
+The original paper describes a method to create only bipartitions
+ result, but we adapeted the method to change the scores. Based on the
+ base.threshold value the scores higher than the threshold value, but must be
+ lower are changed to respect this restriction.
 }
 \examples{
 \dontrun{
+prediction <- predict(br(toyml), toyml)
+subset_correction(prediction, toyml$dataset[toyml$labels$index])
 }
 }
 \references{

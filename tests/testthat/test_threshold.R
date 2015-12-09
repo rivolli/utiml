@@ -110,3 +110,14 @@ test_that("SCut threshold", {
   expect_error(scut_threshold(result, mlresult, NULL))
   expect_error(scut_threshold(result, mlresult, CORES = 0))
 })
+
+test_that("Subset correction", {
+  prediction <- subset_correction(mlresult, as.bipartition(mlresult))
+  expect_is(prediction, "mlresult")
+  scores <- as.probability(prediction)
+  expect_equal(scores[, 1], result[, 1])
+  expect_equal(scores[, 2], result[, 2])
+  expect_more_than(scores[2, 3], 0.5)
+  expect_more_than(scores[2, 3], result[c(2, 3, 5), 3])
+  expect_less_than(scores[2, 3], result[c(1, 4), 3])
+})

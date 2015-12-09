@@ -209,7 +209,7 @@ rcut_threshold.mlresult <- function (prediction, k) {
 }
 
 score_driven_threshold <- function () {
-
+  #TODO
 }
 
 #' SCut Score-based method
@@ -311,10 +311,10 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
 
 #' Subset Correction of a predicted result
 #'
-#' This method restrict a multi-label learner prediction to only label
-#' combinations whose existence is testified by the (training) data. To this all
-#' labelsets that are predicted but are not found on training data is replaced
-#' by the most similar labelset.
+#' This method restrict a multi-label learner to predict only label combinations
+#' whose existence is present in the (training) data. To this all labelsets
+#' that are predicted but are not found on training data is replaced by the most
+#' similar labelset.
 #'
 #' If the most simillar is not unique, those label combinations with higher
 #' frequency in the training data are preferred. The Hamming loss distance is
@@ -325,15 +325,15 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
 #'  values.
 #' @param train_y A matrix/data.frame with all labels values of the training
 #'  dataset.
-#' @param threshold A numeric value between 0 and 1 to use as base to determine
-#'  which values needs be reescaled to preserve the corrected labelsets.
-#'  (default: 0.5)
+#' @param base.threshold A numeric value between 0 and 1 to use as base to
+#'  determine which values needs be reescaled to preserve the corrected
+#'  labelsets. (Default: 0.5)
 #' @return A new mlresult where all results are present in the training
 #'  labelsets.
-#' @note The original paper describes a method to create only bipartitions, but
-#'  we adapeted the method to use also scores. Based on the threshold values the
-#'  scores higher than the threshold value, but must be lower are changed to
-#'  respect this restriction.
+#' @note The original paper describes a method to create only bipartitions
+#'  result, but we adapeted the method to change the scores. Based on the
+#'  base.threshold value the scores higher than the threshold value, but must be
+#'  lower are changed to respect this restriction.
 #' @references
 #'  Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
 #'    chains for multi-label classification. In Workshop of Lernen, Wissen &
@@ -342,8 +342,10 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
 #'
 #' @examples
 #' \dontrun{
+#' prediction <- predict(br(toyml), toyml)
+#' subset_correction(prediction, toyml$dataset[toyml$labels$index])
 #' }
-subset_correction <- function(mlresult, train_y, threshold = 0.5) {
+subset_correction <- function(mlresult, train_y, base.threshold = 0.5) {
   bipartition <- as.bipartition(mlresult)
   probability <- as.probability(mlresult)
 
@@ -371,20 +373,20 @@ subset_correction <- function(mlresult, train_y, threshold = 0.5) {
   for (r in seq(nrow(probability))) {
     row <- probability[r, ]
 
-    max_index <- new.prediction[r, ] - row > threshold
-    min_index <- new.prediction[r, ] - row <= -threshold
+    max_index <- new.prediction[r, ] - row > base.threshold
+    min_index <- new.prediction[r, ] - row <= -base.threshold
 
     indexes <- min_index | max_index
-    max_v <- min(c(row[row > threshold & !indexes], threshold + 0.1))
-    min_v <- max(c(row[row < threshold & !indexes], threshold - 0.1))
+    max_v <- min(c(row[row > base.threshold & !indexes], base.threshold + 0.1))
+    min_v <- max(c(row[row < base.threshold & !indexes], base.threshold - 0.1))
 
     # Normalize values
-    new.probability[r, max_index] = row[max_index] * (max_v - threshold)
-      + threshold
-    new.probability[r, min_index] = row[min_index] * (threshold - min_v)
-      + min_v
+    new.probability[r, max_index] = row[max_index] * (max_v - base.threshold) +
+      base.threshold
+    new.probability[r, min_index] = row[min_index] * (base.threshold - min_v) +
+      min_v
   }
 
-  multilabel.prediction(new.prediction, new.probability,
-                        is.probability(mlresult))
+  get_multilabel_prediction(new.prediction, new.probability,
+                            is.probability(mlresult))
 }
