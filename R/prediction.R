@@ -57,6 +57,11 @@ as.binaryPrediction <- function(probability, threshold = 0.5) {
 #' all(result2 == attr(result1, 'classes')) # TRUE
 #' ...
 as.multilabelPrediction <- function(predictions, probability) {
+  save(predictions, file = "prediction.RData")
+  if (!is.recursive(predictions)) {
+    cat("Prediction is not recursive:", mode(prediction), "\n")
+  }
+
   probabilities <- do.call(cbind, lapply(predictions, function(lblres) {
     as.numeric(as.character(lblres$probability))
   }))
