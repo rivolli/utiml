@@ -45,3 +45,43 @@ calculate_labels_correlation <- function(mdata) {
   }
   cor
 }
+
+#' Calculate the Information Gain for each pair of labels
+#'
+#' @param mdata A mldr dataset containing the label information.
+#' @return A matrix where the rows and columns represents the labels.
+#' @references
+#'  Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
+#'   Approach for Multi-Label Classification. IEEE Transactions on Knowledge
+#'   and Data Engineering, 27(9), 2480–2493.
+#' @export
+#'
+#' @examples
+#' calculate_labels_information_gain(toyml)
+calculate_labels_information_gain <- function (mdata) {
+  entropy <- function (prob) {
+    res <- c(0, -prob * log2(prob) - (1 - prob) * log2(1 - prob))
+    zero <- prob == 0 || prob == 1
+    res[c(zero, !zero)]
+  }
+
+  labelnames <- rownames(mdata$labels)
+  classes <- mdata$dataset[,mdata$labels$index]
+  q <- length(labelnames)
+  ig <- matrix(nrow = q, ncol = q, dimnames = list(labelnames, labelnames))
+  for (i in 1:q) {
+    for (j in i:q) {
+      Hya <- entropy(mdata$labels$freq[i])
+      hasJ <- classes[j] == 1
+      Hyab <- mdata$labels$freq[j] *
+        entropy(sum(classes[hasJ, i] == 1) / sum(hasJ)) +
+        (1 - mdata$labels$freq[j]) *
+        entropy(sum(classes[classes[j] == 0, i] == 1) / sum(!hasJ))
+
+      ig[i,j] <- Hya  - Hyab
+      ig[j,i] <- ig[i,j]
+    }
+    ig[i,i] <- 0
+  }
+  ig
+}
