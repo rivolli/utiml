@@ -4,75 +4,63 @@
 \alias{rdbr}
 \title{Recursive Dependent Binary Relevance (RDBR) for multi-label Classification}
 \usage{
-rdbr(mdata, base.method = "SVM", ..., estimate.models = TRUE,
-  save.datasets = FALSE, CORES = 1)
+rdbr(mdata, base.method = getOption("utiml.base.method", "SVM"),
+  estimate.models = TRUE, ..., CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset (provided by \pkg{mldr} package).}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of base method. The same base method
-  will be used for train all subproblems and the BR classifers
-
-  Default valid options are: \code{'SVM'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'}).}
-
-\item{...}{Others arguments passed to the base method for all subproblems.}
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method", "SVM")})}
 
 \item{estimate.models}{Logical value indicatind whether is necessary build
 Binary Relevance classifier for estimate process. The default implementaion
 use BR as estimators, however when other classifier is desirable then use
-the value \code{FALSE} to skip this process. (default: \code{TRUE}).}
+the value \code{FALSE} to skip this process. (Default: \code{TRUE}).}
 
-\item{save.datasets}{Logical indicating whether the binary datasets must be
-saved in the model or not. (default: FALSE)}
+\item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{he number of cores to parallelize the training. Values higher
-  than 1 require the \pkg{parallel} package. (default: 1)}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
-An object of class \code{DBRmodel} containing the set of fitted
-  models, including: \describe{
+An object of class \code{RDBRmodel} containing the set of fitted
+ models, including:
+ \describe{
+   \item{labels}{A vector with the label names.}
    \item{estimation}{The BR model to estimate the values for the labels.
      Only when the \code{estimate.models = TRUE}.}
    \item{models}{A list of final models named by the label names.}
-   \item{datasets}{A list with \code{estimation} and \code{final} datasets of
-     type \code{mldDBR} named by the label names. Only when the
-     \code{save.datasets = TRUE}.
-   }
-}
+ }
 }
 \description{
-Create a RDBR classifier to predic multi-label data.
- This is a recursive approach that enables the binary classifiers to
- discover existing label dependency by themselves. The idea of RDBR
- is running DBR recursivelly until the results stabilization of the
- result.
- The train method is exactly the same of DBR the recursivity is in the
- predict method.
+Create a RDBR classifier to predic multi-label data. This is a recursive
+approach that enables the binary classifiers to discover existing label
+dependency by themselves. The idea of RDBR is running DBR recursivelly until
+the results stabilization of the result.
+}
+\details{
+The train method is exactly the same of DBR the recursivity is in the predict
+method.
 }
 \examples{
-# Train and predict emotion multilabel dataset using RDBR
-library(utiml)
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
-
+\dontrun{
 # Use SVM as base method
-model <- rdbr(emotions)
-pred <- predict(model, testdata)
+model <- rdbr(toyml)
+pred <- predict(model, toyml)
 
 # Use Random Forest as base method and 4 cores
-model <- rdbr(emotions, 'RF', CORES = 4)
-pred <- predict(model, testdata)
+model <- rdbr(toyml, 'RF', CORES = 4)
+}
 }
 \references{
-Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejão, F. M. (2014).
-   Recursive Dependent Binary Relevance Model for Multi-label Classification.
-   In Advances in Artificial Intelligence - IBERAMIA 2014 (pp. 206–217).
+Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejão, F. M.
+  (2014). Recursive Dependent Binary Relevance Model for Multi-label
+  Classification. In Advances in Artificial Intelligence - IBERAMIA, 206–217.
 }
 \seealso{
-\code{\link{dbr}}
+\code{\link[=dbr]{Dependent Binary Relevance (DBR)}}
 
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};

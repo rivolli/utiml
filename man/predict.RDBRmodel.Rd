@@ -4,76 +4,77 @@
 \alias{predict.RDBRmodel}
 \title{Predict Method for RDBR}
 \usage{
-\method{predict}{RDBRmodel}(object, newdata, ..., max.iterations = 5,
-  batch.mode = FALSE, estimative = NULL, probability = TRUE, CORES = 1)
+\method{predict}{RDBRmodel}(object, newdata, estimative = NULL,
+  max.iterations = 5, batch.mode = FALSE,
+  probability = getOption("utiml.use.probs", TRUE), ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{object}{Object of class '\code{DBRmodel}', created by \code{\link{dbr}} method.}
+\item{object}{Object of class '\code{DBRmodel}'.}
 
-\item{newdata}{An object containing the new input data. This must be a matrix or
-data.frame object containing the same size of training data or a mldr object.}
+\item{newdata}{An object containing the new input data. This must be a
+matrix, data.frame or a mldr object.}
+
+\item{estimative}{A matrix containing the bipartition result of other
+multi-label classification algorithm or an mlresult object with the
+predictions.}
+
+\item{max.iterations}{The maximum allowed iterations of the RDBR technique.
+(Default: 5)}
+
+\item{batch.mode}{Logical value to determine if use the batch re-estimation.
+If \code{FALSE} then use the stochastic re-estimation strategy.
+(Default: \code{FALSE})}
+
+\item{probability}{Logical indicating whether class probabilities should be
+returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{max.iterations}{The maximum allowed iterations of the RDBR technique.
-(default: 5)}
-
-\item{batch.mode}{Logical value to determine if use the batch re-estimation. If
-\code{FALSE} then use the stochastic re-estimation strategy. (default: \code{FALSE})}
-
-\item{estimative}{A matrix containing the result of other multi-label classification
-algorithm. This table must contain only 0 or 1 predictions and it must be a
-multi-label prediction result.}
-
-\item{probability}{Logical indicating whether class probabilities should be returned.
-(default: \code{TRUE})}
-
-\item{CORES}{The number of cores to parallelize the prediction. Values higher
-  than 1 require the \pkg{parallel} package (default: 1).}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
-A matrix containing the probabilistic values or just predictions (only when
-  \code{probability = FALSE}). The rows indicate the predicted object and the
-  columns indicate the labels.
+An object of type mlresult, based on the parameter probability.
 }
 \description{
 This function predicts values based upon a model trained by \code{rdbr}.
-In general this method is a recursive version of \code{\link{predict.DBRmodel}}.
-
-Two versions of the update strategy of the estimated labels are implemented. The batch
-re-estimates the labels only when a complete current label vector is available. The
-stochastic uses re-estimated labels as soon as they become available. This second
-does not support parallelize the prediction, however stabilizes earlier than batch
-mode.
+In general this method is a recursive version of
+\code{\link{predict.DBRmodel}}.
+}
+\details{
+Two versions of the update strategy of the estimated labels are implemented.
+The batch re-estimates the labels only when a complete current label vector
+is available. The stochastic uses re-estimated labels as soon as they become
+available. This second does not support parallelize the prediction, however
+stabilizes earlier than batch mode.
 }
 \examples{
-#' library(utiml)
-
-# Emotion multi-label dataset using DBR
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
-
+\dontrun{
 # Predict SVM scores
-model <- rdbr(emotions)
-pred <- predict(model, testdata)
+model <- rdbr(toyml)
+pred <- predict(model, toyml)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, testdata, na.action = na.fail)
+pred <- predict(model, toyml, na.action = na.fail)
 
 # Use the batch mode and increase the max number of iteration to 10
-pred <- predict(model, testdata, max.iterations = 10, batch.mode = TRUE)
+pred <- predict(model, toyml, max.iterations = 10, batch.mode = TRUE)
 
 # Using other classifier (EBR) to made the labels estimatives
-estimative <- predict(ebr(emotions), testdata, probability = FALSE)
-model <- rdbr(emotions, estimate.models = FALSE)
-pred <- predict(model, testdata, estimative = estimative)
+estimative <- predict(ebr(toyml), toyml, probability = FALSE)
+model <- rdbr(toyml, estimate.models = FALSE)
+pred <- predict(model, toyml, estimative = estimative)
+}
 }
 \references{
-Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejão, F. M. (2014).
-   Recursive Dependent Binary Relevance Model for Multi-label Classification.
-   In Advances in Artificial Intelligence - IBERAMIA 2014 (pp. 206–217).
+Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejão, F. M.
+  (2014). Recursive Dependent Binary Relevance Model for Multi-label
+  Classification. In Advances in Artificial Intelligence - IBERAMIA, 206–217.
 }
 \seealso{
-\code{\link[=rdbr]{Recursive Dependent Binary Relevance (DBR)}}
+\code{\link[=rdbr]{Recursive Dependent Binary Relevance (RDBR)}}
 }
 

@@ -4,47 +4,44 @@
 \alias{predict.PruDentmodel}
 \title{Predict Method for PruDent}
 \usage{
-\method{predict}{PruDentmodel}(object, newdata, ..., probability = TRUE,
-  CORES = 1)
+\method{predict}{PruDentmodel}(object, newdata,
+  probability = getOption("utiml.use.probs", TRUE), ...,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{object}{Object of class '\code{PruDentmodel}', created by \code{\link{prudent}} method.}
+\item{object}{Object of class '\code{PruDentmodel}'.}
 
-\item{newdata}{An object containing the new input data. This must be a matrix or
-data.frame object containing the same size of training data or a mldr object.}
+\item{newdata}{An object containing the new input data. This must be a
+matrix, data.frame or a mldr object.}
+
+\item{probability}{Logical indicating whether class probabilities should be
+returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{probability}{Logical indicating whether class probabilities should be returned.
-(default: \code{TRUE})}
-
-\item{CORES}{The number of cores to parallelize the prediction. Values higher
-  than 1 require the \pkg{parallel} package (default: 1).}
+\item{CORES}{The number of cores to parallelize the training. Values higher
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
-A matrix containing the probabilistic values or just predictions (only when
-  \code{probability = FALSE}). The rows indicate the predicted object and the
-  columns indicate the labels.
+An object of type mlresult, based on the parameter probability.
 }
 \description{
 This function predicts values based upon a model trained by \code{prudent}.
 }
 \examples{
-#' library(utiml)
-
-# Emotion multi-label dataset using PruDent
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
-
+\dontrun{
 # Predict SVM scores
-model <- prudent(emotions)
-pred <- predict(model, testdata)
+model <- prudent(toyml)
+pred <- predict(model, toyml)
 
 # Predict SVM bipartitions
-pred <- predict(model, testdata, probability = FALSE)
+pred <- predict(model, toyml, probability = FALSE)
 
 # Passing a specif parameter for SVM predict method
-pred <- predict(model, testdata, na.action = na.fail)
+pred <- predict(model, toyml, na.action = na.fail)
+}
 }
 \seealso{
 \code{\link[=prudent]{PruDent}}

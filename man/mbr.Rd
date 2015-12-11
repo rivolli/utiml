@@ -78,8 +78,7 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
 \seealso{
 \code{\link{calculate_labels_correlation}}
 
-Other Stacking methods: \code{\link{brplus}};
-  \code{\link{dbr}}
+Other Stacking methods: \code{\link{brplus}}
 
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};

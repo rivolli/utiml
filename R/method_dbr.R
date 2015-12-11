@@ -7,7 +7,6 @@
 #' indicate if the estimated models must be created).
 #'
 #' @family Transformation methods
-#' @family Stacking methods
 #' @param mdata A mldr dataset used to train the binary models.
 #' @param base.method A string with the name of the base method. (Default:
 #'  \code{options("utiml.base.method", "SVM")})

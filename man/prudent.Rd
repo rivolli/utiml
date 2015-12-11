@@ -4,77 +4,60 @@
 \alias{prudent}
 \title{PruDent classifier for multi-label Classification}
 \usage{
-prudent(mdata, base.method = "SVM", phi = 0, ..., save.datasets = FALSE,
-  CORES = 1)
+prudent(mdata, base.method = getOption("utiml.base.method", "SVM"), phi = 0,
+  ..., CORES = getOption("utiml.cores", 1))
 }
 \arguments{
-\item{mdata}{Object of class \code{\link[mldr]{mldr}}, a multi-label train
-dataset (provided by \pkg{mldr} package).}
+\item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of base method. The same base method
-  will be used for train all subproblems in the two rounds. This is slightly
-  different from the original paper that uses two distinct values from this
-  parameter.
+\item{base.method}{A string with the name of the base method. (Default:
+\code{options("utiml.base.method", "SVM")})}
 
-  Default valid options are: \code{'SVM'}, \code{'C5.0'},
-  \code{'RF'}, \code{'NB'} and \code{'KNN'}. To use other base method see
-  \code{\link{mltrain}} and \code{\link{mlpredict}} instructions. (default:
-   \code{'SVM'})}
-
-\item{phi}{A value between 0 and 1 to determine the information gain,
-The value 0 include all labels in the second phase and the none.}
+\item{phi}{A value between 0 and 1 to determine the information gain. The
+value 0 include all labels in the second phase and the 1 none.}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{save.datasets}{Logical indicating whether the binary datasets must be
-saved in the model or not. (default: \code{FALSE})}
-
 \item{CORES}{The number of cores to parallelize the training. Values higher
-  than 1 require the \pkg{parallel} package. (default: 1)}
+than 1 require the \pkg{parallel} package. (Default:
+\code{options("utiml.cores", 1)})}
 }
 \value{
 An object of class \code{PruDentmodel} containing the set of fitted
-  models, including: \describe{
-     \item{labels}{A vector with the label names.}
-     \item{phi}{The value of \code{phi} parameter.}
-     \item{IG}{The matrix of Information Gain used in combination
-       with \code{phi} parameter to define the labels used in the second step.
-     }
-     \item{basemodel}{The BRModel used in the first iteration.}
-     \item{metamodels}{A list of models named by the label names used in the
-       second iteration.
-     }
-     \item{datasets}{A list with \code{base} and \code{meta} datasets of
-       type \code{mldBR} named by the label names. Only when the
-       \code{save.datasets = TRUE}.
-     }
- }
+  models, including:
+  \describe{
+   \item{labels}{A vector with the label names.}
+   \item{phi}{The value of \code{phi} parameter.}
+   \item{IG}{The matrix of Information Gain used in combination
+     with \code{phi} parameter to define the labels used in the second step.
+   }
+   \item{basemodel}{The BRModel used in the first iteration.}
+   \item{metamodels}{A list of models named by the label names used in the
+     second iteration.
+   }
+}
 }
 \description{
-Create a PruDent (MBR) classifier to predic multi-label
- data. To this, two round of Binary Relevance is executed, such that,
- the first iteraction generates new attributes to enrich the second
- prediction.
-
- In the second phase only labels whose information gain is greater than
- a specific phi value is added.
+Create a PruDent (MBR) classifier to predic multi-label data. To this, two
+round of Binary Relevance is executed, such that, the first iteraction
+generates new attributes to enrich the second prediction.
+}
+\details{
+In the second phase only labels whose information gain is greater than a
+specific phi value is added.
 }
 \examples{
-# Train and predict emotion multilabel dataset using Meta-BR
-library(utiml)
-testdata <- emotions$dataset[sample(1:100, 10), emotions$attributesIndexes]
-
+\dontrun{
 # Use SVM as base method
-model <- prudent(emotions)
-pred <- predict(model, testdata)
+model <- prudent(toyml)
+pred <- predict(model, toyml)
 
 # Use different phi correlation with J48 classifier
-model <- prudent(emotions, 'J48', 0.3)
-pred <- predict(model, testdata)
+model <- prudent(toyml, 'J48', 0.3)
 
 # Set a specific parameter
-model <- prudent(emotions, 'KNN', k=5)
-pred <- predict(model, testdata)
+model <- prudent(toyml, 'KNN', k=5)
+}
 }
 \references{
 Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
@@ -82,7 +65,7 @@ Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
    and Data Engineering, 27(9), 2480–2493.
 }
 \seealso{
-\code{\link{labels_information_gain}}
+\code{\link{calculate_labels_information_gain}}
 
 Other Transformation methods: \code{\link{brplus}};
   \code{\link{br}}; \code{\link{cc}}; \code{\link{ctrl}};
