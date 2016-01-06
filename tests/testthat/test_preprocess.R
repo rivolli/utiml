@@ -21,6 +21,7 @@ test_that("Sparce data", {
   expect_equal(as.character(new.data$dataset[, 5]),  c("a", "b", rep("", 98)))
   expect_equal(as.character(new.data$dataset[, 6]),
                c("alfa", "beta", rep("", 98)))
+  expect_equal(new.data$name, mdata$name)
 })
 
 test_that("Normalize data", {
@@ -45,6 +46,7 @@ test_that("Normalize data", {
     expect_equal(which.min(new.col), which.min(df[, i]))
   }
   expect_equal(new.data$dataset[, 6], mdata$dataset[, 6])
+  expect_equal(new.data$name, mdata$name)
 })
 
 test_that("Remove examples and attributes", {
@@ -77,17 +79,21 @@ test_that("Remove examples and attributes", {
   expect_equal(same.data$dataset, new.data$dataset)
   same.data <- remove_attributes(new.data, c(5,7,10))
   expect_equal(same.data$dataset, new.data$dataset)
+  expect_equal(new.data$name, mdata$name)
+  expect_equal(same.data$name, mdata$name)
 
   new.data <- remove_unique_attributes(mdata)
   expect_equal(new.data$measures$num.attributes, 8)
   expect_named(new.data$dataset[new.data$attributesIndexes],
                c("X2", "X3", "X5", "X6", "X7", "X8"))
+  expect_equal(new.data$name, mdata$name)
 
   new.data <- remove_unlabeled_instances(mdata)
   has.label <- mdata$dataset$Label2 == 1
   expect_equal(new.data$measures$num.instances, sum(has.label))
   expect_equal(new.data$dataset[mdata$attributesIndexes],
                mdata$dataset[has.label, mdata$attributesIndexes])
+  expect_equal(new.data$name, mdata$name)
 
   df$Label3 <- c(c(1, 1), rep(0, 98))
   df$Label4 <- c(c(0, 0), rep(1, 98))
@@ -108,19 +114,24 @@ test_that("Remove examples and attributes", {
   expect_equal(same.data$dataset, new.data$dataset)
   same.data <- remove_labels(new.data, c(2,12))
   expect_equal(same.data$dataset, new.data$dataset)
+  expect_equal(new.data$name, mdata$name)
+  expect_equal(same.data$name, mdata$name)
 
   new.data <- remove_skewness_labels(mdata)
   expect_equal(new.data$measures$num.labels, 4)
   expect_equal(rownames(new.data$labels),
                c("Label2", "Label3", "Label4", "Label6"))
+  expect_equal(new.data$name, mdata$name)
 
   new.data <- remove_skewness_labels(mdata, 2)
   expect_equal(new.data$measures$num.labels, 2)
   expect_equal(rownames(new.data$labels), c("Label2", "Label6"))
+  expect_equal(new.data$name, mdata$name)
 
   new.data <- remove_skewness_labels(mdata, 10)
   expect_equal(new.data$measures$num.labels, 2)
   expect_equal(rownames(new.data$labels), c("Label2", "Label6"))
+  expect_equal(new.data$name, mdata$name)
 
   expect_error(remove_skewness_labels(mdata, 11))
 })
@@ -144,6 +155,7 @@ test_that("Replace nominal attributes", {
                c("X1_abc", "X1_bcd", "X2", "X3_a", "X4_1", "X5_alfa"))
   expect_equal(new.data$dataset[,"X1_abc"], as.numeric(df$X1 == "abc"))
   expect_equal(new.data$dataset[,"X1_bcd"], as.numeric(df$X1 == "bcd"))
+  expect_equal(new.data$name, mdata$name)
 })
 
 test_that("Alternatives datasets", {
@@ -164,32 +176,39 @@ test_that("Alternatives datasets", {
   ndata <- fill_sparce_mldata(mdata)
   expect_equal(ndata$measures, mdata$measures)
   expect_equal(ndata$labels, mdata$labels)
+  expect_equal(ndata$name, mdata$name)
 
   new.data <- remove_labels(mdata, "Label2")
   expect_equal(new.data$measures$num.labels, 2)
   expect_equal(new.data$labels$index, c(1,2))
   expect_equal(rownames(new.data$labels), c("Label1","Label3"))
+  expect_equal(new.data$name, mdata$name)
 
   new.data <- remove_attributes(mdata, c("X3","X6","X8"))
   expect_equal(new.data$measures$num.attributes, 7)
   expect_equal(new.data$labels[c("index","count","freq")],
                mdata$labels[c("index","count","freq")])
+  expect_equal(new.data$name, mdata$name)
 
   ndata <- remove_unique_attributes(ndata)
   expect_equal(ndata$measures, mdata$measures)
   expect_equal(ndata$labels, mdata$labels)
+  expect_equal(ndata$name, mdata$name)
 
   ndata <- remove_skewness_labels(ndata)
   expect_equal(ndata$measures, mdata$measures)
   expect_equal(ndata$labels, mdata$labels)
+  expect_equal(ndata$name, mdata$name)
 
   ndata <- remove_unlabeled_instances(ndata)
   expect_equal(ndata$measures, mdata$measures)
   expect_equal(ndata$labels, mdata$labels)
+  expect_equal(ndata$name, mdata$name)
 
   ndata <- normalize_mldata(ndata)
   expect_equal(ndata$measures, mdata$measures)
   expect_equal(ndata$labels, mdata$labels)
+  expect_equal(ndata$name, mdata$name)
 
   ndata <- replace_nominal_attributes(ndata)
   attrs <- c("num.instances", "num.labels",
@@ -197,4 +216,5 @@ test_that("Alternatives datasets", {
              "max.frequency", "cardinality", "density")
   expect_equal(ndata$measures[attrs], mdata$measures[attrs])
   expect_equal(ndata$labels, mdata$labels)
+  expect_equal(ndata$name, mdata$name)
 })

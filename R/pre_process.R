@@ -41,7 +41,7 @@ fill_sparce_mldata <- function(mdata) {
 
   dataset <- data.frame(row.names = rownames(mdata$dataset))
   dataset <- cbind(dataset, new.cols)
-  mldr::mldr_from_dataframe(dataset, mdata$labels$index, mdata$name)
+  mldr::mldr_from_dataframe(dataset, mdata$labels$index, name = mdata$name)
 }
 
 #' Normalize numerical attributes
@@ -63,7 +63,7 @@ normalize_mldata <- function(mdata) {
       data[col] <- utiml_normalize(data[col])
     }
   }
-  mldr::mldr_from_dataframe(data, mdata$labels$index, mdata$name)
+  mldr::mldr_from_dataframe(data, mdata$labels$index, name = mdata$name)
 }
 
 #' Remove attributes from the dataset
@@ -122,7 +122,7 @@ remove_labels <- function (mdata, labels) {
     stop("The pre process procedure result in a single label")
   }
 
-  mldr::mldr_from_dataframe(dataset, labels, mdata$name)
+  mldr::mldr_from_dataframe(dataset, labels, name = mdata$name)
 }
 
 #' Remove unique attributes
@@ -157,7 +157,7 @@ remove_unique_attributes <- function(mdata) {
 
   mldr::mldr_from_dataframe(mdata$dataset[attributesIndexes],
                             labelsIndexes,
-                            mdata$name)
+                            name = mdata$name)
 }
 
 #' Remove examples without labels
@@ -179,7 +179,7 @@ remove_unlabeled_instances <- function(mdata) {
 
   mldr::mldr_from_dataframe(mdata$dataset[rows, cols],
                             mdata$labels$index,
-                            mdata$name)
+                            name = mdata$name)
 }
 
 #' Remove unusual or very common labels
@@ -212,7 +212,7 @@ remove_skewness_labels <- function(mdata, t = 1) {
   dataset <- mdata$dataset[sort(c(mdata$attributesIndexes, labelsIndexes))]
   labels <- which(colnames(dataset) %in% rownames(mdata$labels))
 
-  mldr::mldr_from_dataframe(dataset, labels, mdata$name)
+  mldr::mldr_from_dataframe(dataset, labels, name = mdata$name)
 }
 
 #' Replace nominal attributes
@@ -270,5 +270,5 @@ replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) {
     }
   }
 
-  mldr::mldr_from_dataframe(dataset, labelIndexes, mdata$name)
+  mldr::mldr_from_dataframe(dataset, labelIndexes, name = mdata$name)
 }
