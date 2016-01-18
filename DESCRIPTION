@@ -15,6 +15,7 @@ Suggests:
     C50,
     e1071,
     FSelector,
+    infotheo,
     kknn,
     parallel,
     randomForest,
