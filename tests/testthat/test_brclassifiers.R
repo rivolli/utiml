@@ -9,19 +9,16 @@ test <- train$dataset[, train$attributesIndexes]
 
 predictionTest <- function (model) {
   pred <- predict(model, test)
-  expect_is(pred, "mlresult")
-  expect_equal(nrow(pred), nrow(test))
-  expect_equal(ncol(pred), train$measures$num.labels)
-  expect_equal(colnames(pred), rownames(train$labels))
-  expect_equal(rownames(pred), rownames(test))
+   expect_is(pred, "mlresult")
+   expect_equal(nrow(pred), nrow(test))
+   expect_equal(ncol(pred), train$measures$num.labels)
+   expect_equal(colnames(pred), rownames(train$labels))
+   expect_equal(rownames(pred), rownames(test))
 
-  pred1 <- predict(model, test, prob = FALSE)
-  expect_is(pred1, "mlresult")
-  expect_equal(as.matrix(pred1), attr(pred, "classes"))
-  expect_equal(as.matrix(pred), attr(pred1, "probs"))
-
-  onepred <- predict(model, test[1,], prob = FALSE)
-  #expect_equal(onepred, pred1[1,])
+   pred1 <- predict(model, test, prob = FALSE)
+   expect_is(pred1, "mlresult")
+   expect_equal(as.matrix(pred1), attr(pred, "classes"))
+   expect_equal(as.matrix(pred), attr(pred1, "probs"))
 
   pred
 }
@@ -119,12 +116,12 @@ test_that("DBR", {
   pred <- baseTest(model, "DBRmodel")
   expect_is(model$estimation, "BRmodel")
 
-  estimative <- predict(model$estimation, test, prob = FALSE)
-  pred1 <- predict(model, test, estimative)
-  expect_equal(pred1, pred)
+   estimative <- predict(model$estimation, test, prob = FALSE)
+   pred1 <- predict(model, test, estimative)
+   expect_equal(pred1, pred)
 
-  model <- dbr(train, "test", estimate = FALSE)
-  expect_error(predict(model, test))
+   model <- dbr(train, "test", estimate = FALSE)
+   expect_error(predict(model, test))
 })
 
 test_that("EBR", {
