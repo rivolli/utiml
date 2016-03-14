@@ -280,6 +280,7 @@ test_that("Evaluate", {
 
   expect_error(multilabel_evaluate(parts$test))
   expect_error(multilabel_evaluate(parts$test, as.matrix(result)))
+  expect_error(multilabel_evaluate(parts$test, result, "mymeasure"))
 })
 
 test_that("Mulan Measures", {

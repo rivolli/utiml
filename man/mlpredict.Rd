@@ -90,6 +90,7 @@ Remember that the prediction may be binary or multi-class, then the number
 and the column names may vary depending on the problem.
 }
 \examples{
+\dontrun{
 # Create a method that predict always the negative class
 # We consider a binary scenario (The model must be the class 'negativemodel')
 mlpredict.negativemodel <- function (model, newdata, ...) {
@@ -108,6 +109,7 @@ library(e1071)
 mlpredict.svm <- function (dataset, newdata, ...) {
    result <- predict(model, newdata, probability = TRUE, ...)
    attr(result, 'probabilities')
+}
 }
 }
 

@@ -4,7 +4,7 @@
 \alias{create_subset}
 \title{Create a subset of a dataset}
 \usage{
-create_subset(mdata, rows, cols)
+create_subset(mdata, rows, cols = NULL)
 }
 \arguments{
 \item{mdata}{A mldr dataset}

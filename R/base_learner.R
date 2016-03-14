@@ -29,6 +29,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Create a empty model of type foo
 #' mltrain.basefoo <- function (dataset, ...) {
 #'    mymodel <- list()
@@ -46,6 +47,7 @@
 #'    labeldata <- dataset$data[, dataset$labelindex]
 #'    model <- svm(traindata, labeldata, probability = TRUE, ...)
 #'    model
+#' }
 #' }
 mltrain <- function(dataset, ...) {
   UseMethod("mltrain")
@@ -87,6 +89,7 @@ mltrain <- function(dataset, ...) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Create a method that predict always the negative class
 #' # We consider a binary scenario (The model must be the class 'negativemodel')
 #' mlpredict.negativemodel <- function (model, newdata, ...) {
@@ -105,6 +108,7 @@ mltrain <- function(dataset, ...) {
 #' mlpredict.svm <- function (dataset, newdata, ...) {
 #'    result <- predict(model, newdata, probability = TRUE, ...)
 #'    attr(result, 'probabilities')
+#' }
 #' }
 mlpredict <- function(model, newdata, ...) {
   UseMethod("mlpredict")

@@ -84,6 +84,7 @@ is available on \code{dataset$base}. In the examples there are some ways to
 implement this method.
 }
 \examples{
+\dontrun{
 # Create a empty model of type foo
 mltrain.basefoo <- function (dataset, ...) {
    mymodel <- list()
@@ -101,6 +102,7 @@ mltrain.baseSVM <- function (dataset, ...) {
    labeldata <- dataset$data[, dataset$labelindex]
    model <- svm(traindata, labeldata, probability = TRUE, ...)
    model
+}
 }
 }
 
