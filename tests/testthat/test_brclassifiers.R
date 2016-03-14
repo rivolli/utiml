@@ -72,12 +72,13 @@ test_that("BR Plus", {
 test_that("Classifier Chain", {
   model <- cc(train, "test")
   pred <- baseTest(model, "CCmodel")
+  mpred <- as.matrix(pred)
 
   pred1 <- predict(model, test, prob = FALSE)
   expect_is(pred1, "mlresult")
   expect_equal(as.matrix(pred1), attr(pred, "classes"))
   expect_equal(as.matrix(pred), attr(pred1, "probs"))
-  expect_equal(pred[,1], model$models[[1]]$predictions, check.names=FALSE)
+  expect_equal(mpred[,1], model$models[[1]]$predictions, check.names=FALSE)
 
   new.chain <- c("Label3", "Label2", "Label1")
   model2 <- cc(train, "test", new.chain)

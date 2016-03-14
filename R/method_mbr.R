@@ -100,6 +100,7 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
       do.call(predict, c(params, predict.params))
     }))
   }
+  base.preds <- as.matrix(base.preds)
 
   # 2 Iteration - Meta level -------------------------------------------------
   corr <- mbrmodel$correlation <- calculate_labels_correlation(mdata)
@@ -162,8 +163,8 @@ predict.MBRmodel <- function(object, newdata,
   newdata <- utiml_newdata(newdata)
 
   # 1 Iteration - Base level -------------------------------------------------
-  base.preds <- predict(object$basemodel, newdata, probability = FALSE, ...,
-                        CORES = CORES)
+  base.preds <- as.matrix(predict(object$basemodel, newdata,
+                                  probability = FALSE, ..., CORES = CORES))
 
   # 2 Iteration - Meta level -------------------------------------------------
   corr <- object$correlation

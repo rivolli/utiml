@@ -36,24 +36,26 @@ test_that("Result ML prediction", {
     class2 = as.binaryPrediction(runif(10, min = 0, max = 1))
   )
   result1 <- as.multilabelPrediction(predictions, TRUE)
+  mresult1 <- as.matrix(result1)
   expect_null(rownames(result1))
   expect_equal(colnames(result1), c("class1", "class2"))
 
-  expect_equal(predictions$class1$probability, result1[,"class1"])
-  expect_equal(predictions$class2$probability, result1[,"class2"])
+  expect_equal(predictions$class1$probability, mresult1[,"class1"])
+  expect_equal(predictions$class2$probability, mresult1[,"class2"])
 
   result2 <- as.multilabelPrediction(predictions, FALSE)
+  mresult2 <- as.matrix(result2)
   TP1 <- predictions$class1$bipartition == 1
   TP2 <- predictions$class2$bipartition == 1
-  expect_equal(predictions$class1$bipartition[TP1], result2[,"class1"][TP1])
-  expect_equal(predictions$class2$bipartition[TP2], result2[,"class2"][TP2])
-  expect_true(all(result2[,"class1"][!TP1] | result2[,"class2"][!TP1]))
-  expect_true(all(result2[,"class1"][TP2] | result2[,"class2"][TP2]))
+  expect_equal(predictions$class1$bipartition[TP1], mresult2[,"class1"][TP1])
+  expect_equal(predictions$class2$bipartition[TP2], mresult2[,"class2"][TP2])
+  expect_true(all(mresult2[,"class1"][!TP1] | mresult2[,"class2"][!TP1]))
+  expect_true(all(mresult2[,"class1"][TP2] | mresult2[,"class2"][TP2]))
   filter <- !TP1 & !TP2
-  expect_true(all(result2[,"class1"][filter] != result2[,"class2"][filter]))
+  expect_true(all(mresult2[,"class1"][filter] != mresult2[,"class2"][filter]))
 
-  expect_true(all(attr(result1, "classes") == result2))
-  expect_true(all(attr(result2, "probs") == result1))
+  expect_true(all(attr(result1, "classes") == mresult2))
+  expect_true(all(attr(result2, "probs") == mresult1))
   expect_equal(attr(result1, "type"), "probability")
   expect_equal(attr(result2, "type"), "bipartition")
 
@@ -64,11 +66,45 @@ test_that("Result ML prediction", {
     class2 = as.binaryPrediction(values)
   )
   result <- as.multilabelPrediction(predictions, TRUE)
+  mresult <- as.matrix(result)
   expect_equal(rownames(result), as.character(6:15))
-  expect_equal(result[,"class1"], result[,"class2"])
+  expect_equal(mresult[,"class1"], mresult[,"class2"])
   result <- as.multilabelPrediction(predictions, FALSE)
   expect_equal(rownames(result), as.character(6:15))
   set.seed(NULL)
+})
+
+test_that("Filter ML Result", {
+  set.seed(1234)
+  labels <- matrix(utiml_normalize(rnorm(150)), ncol = 10)
+  bipartition <- fixed_threshold(labels, 0.5)
+  colnames(labels) <- colnames(bipartition) <- paste("label", 1:10, sep='')
+  mlresult1 <- get_multilabel_prediction(bipartition, labels, TRUE)
+  mlresult2 <- get_multilabel_prediction(bipartition, labels, FALSE)
+
+  expect_is(mlresult1[1:3, ], "mlresult")
+  expect_is(mlresult1[1:3], "mlresult")
+  expect_equal(mlresult1[1:3, ], mlresult1[1:3])
+  expect_is(mlresult1[1:3, 1:3], "matrix")
+  expect_is(mlresult1[, 1:5], "matrix")
+  expect_is(mlresult1[, 1, drop = FALSE], "matrix")
+  expect_is(mlresult1[, 1], "numeric")
+
+  expect_true(is.probability(mlresult1[1:3, ]))
+  expect_true(is.bipartition(mlresult2[1:3, ]))
+
+  expect_equal(mlresult1[, c("label1", "label3")],
+               labels[, c("label1", "label3")])
+  expect_equal(mlresult2[, c("label1", "label3")],
+               bipartition[, c("label1", "label3")])
+  expect_equal(mlresult1[, 3:6], labels[, 3:6])
+  expect_equal(mlresult2[, 2:8], bipartition[, 2:8])
+  expect_equal(mlresult1[1:5, 1:5], labels[1:5, 1:5])
+  expect_equal(mlresult2[2:8, 2:8], bipartition[2:8, 2:8])
+
+  mlresult3 <- mlresult1[1:8]
+  expect_equal(as.probability(mlresult3), labels[1:8, ])
+  expect_equal(as.bipartition(mlresult3), bipartition[1:8, ])
 })
 
 test_that("BR prepare", {

@@ -262,6 +262,7 @@ test_that("subset and random subset", {
   data <- create_subset(mdata, rows, 1:10)
   expect_is(data, "mldr")
   expect_equal(data$measures$num.attributes, mdata$measures$num.attributes)
+  expect_equal(create_subset(mdata, rows), data)
 
   data <- create_subset(mdata, 1:100, cols)
   expect_equal(data$measures$num.instances, mdata$measures$num.instances)

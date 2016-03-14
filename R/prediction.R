@@ -195,6 +195,9 @@ get_multilabel_prediction <- function(bipartitions,
     bipartitions[row, which.max(probabilities[row, ])] <- 1
   }
 
+  bipartitions <- as.matrix(bipartitions)
+  probabilities <- as.matrix(probabilities)
+
   only.bipartitions <- bipartitions
   only.probabilities <- probabilities
   attr(probabilities, "classes") <- only.bipartitions
@@ -206,6 +209,19 @@ get_multilabel_prediction <- function(bipartitions,
   class(probabilities) <- class(bipartitions) <- "mlresult"
 
   utiml_ifelse(probability, probabilities, bipartitions)
+}
+
+`[.mlresult` <- function (mlresult, rowFilter = T, colFilter, ...) {
+  if (missing(colFilter)) {
+    bipartition <- as.bipartition(mlresult)
+    probability <- as.probability(mlresult)
+
+    get_multilabel_prediction(bipartition[rowFilter, ],
+                              probability[rowFilter, ],
+                              is.probability(mlresult))
+  } else {
+    as.matrix(mlresult)[rowFilter, colFilter, ...]
+  }
 }
 
 #' Convert a mlresult to a matrix

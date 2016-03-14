@@ -192,9 +192,12 @@ create_random_subset <- function(mdata, instances, attributes) {
 #'
 #' ## Create a random dataset with 50 examples and 5 attributes
 #' random.toy <- create_subset(toyml, sample(100, 50), sample(10, 5))
-create_subset <- function(mdata, rows, cols) {
+create_subset <- function(mdata, rows, cols = NULL) {
   if (mode(cols) == "character") {
     cols <- which(colnames(mdata$dataset[mdata$attributesIndexes]) %in% cols)
+  }
+  else if (is.null(cols)) {
+    cols <- mdata$attributesIndexes
   }
   else {
     cols <- intersect(cols, seq(mdata$measures$num.attributes))

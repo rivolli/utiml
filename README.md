@@ -6,3 +6,6 @@ See more about memory:
 - http://stackoverflow.com/questions/15561331/release-memory-in-r
 - http://stackoverflow.com/questions/1467201/forcing-garbage-collection-to-run-in-r-with-the-gc-command
 - http://adv-r.had.co.nz/memory.html
+
+Maybe use it to set test methods: 
+assign("last.warning", NULL, envir = baseenv())

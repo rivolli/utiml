@@ -92,12 +92,14 @@ test_that("Multilabel ensemble", {
                                                "maj", FALSE)
   expect_true(all(result1 == attr(result2, "probs")))
   expect_true(all(result2 == attr(result1, "classes")))
+  result2 <- as.matrix(result2)
   expect_equal(result2[,1], c(1,1,1,1))
   expect_equal(result2[,2], c(1,0,1,0))
   expect_equal(result2[,3], c(1,0,0,0))
 
   rownames(pred1) <- rownames(pred2) <- rownames(pred3) <- c(11:14)
   result <- compute_multilabel_ensemble_votes(list(pred1, pred2, pred3), "max")
+  result <- as.matrix(result)
   expect_equal(dimnames(result), dimnames(pred1))
   expected <- matrix(c(1, 0.6, 0.8, 1, 0.6, 0.7, 1, 0.8, 0.7, 1, 0.6, 0.7),
                      ncol = 3, byrow = T)

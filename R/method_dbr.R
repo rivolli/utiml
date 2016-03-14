@@ -143,6 +143,7 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
     estimative <- as.bipartition(estimative)
   }
 
+  estimative <- as.matrix(estimative)
   labels <- utiml_renames(seq(object$labels), object$labels)
   predictions <- utiml_lapply(labels, function(li) {
     predict_br_model(object$models[[li]], cbind(newdata, estimative[, -li]),

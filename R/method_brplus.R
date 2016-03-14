@@ -170,8 +170,8 @@ predict.BRPmodel <- function(object, newdata,
   newdata <- utiml_newdata(newdata)
 
   if (strategy[1] == "NU") {
-    initial.preds <- predict(object$initial, newdata,
-                             probability = FALSE, ..., CORES = CORES)
+    initial.preds <- as.matrix(predict(object$initial, newdata,
+                             probability = FALSE, ..., CORES = CORES))
     indices <- utiml_renames(seq(length(labels)), labels)
     predictions <- utiml_lapply(indices, function(li) {
       predict_br_model(object$models[[li]], cbind(newdata,
@@ -181,7 +181,7 @@ predict.BRPmodel <- function(object, newdata,
   else {
     initial.probs <- predict(object$initial, newdata,
                              probability = TRUE, ..., CORES = CORES)
-    initial.preds <- as.bipartition(initial.probs)
+    initial.preds <- as.matrix(as.bipartition(initial.probs))
     orders <- list(Dyn = names(sort(apply(initial.preds, 2, mean))),
                    Stat = names(object$freq),
                    Ord = order)
