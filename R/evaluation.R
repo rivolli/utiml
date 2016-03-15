@@ -10,6 +10,7 @@
 #' @return A mlconfmat object that contains:
 #' \describe{
 #'    \item{Z}{The bipartition matrix prediction.}
+#'    \item{Fx}{The score/probability matrix prediction.}
 #'    \item{R}{The ranking matrix prediction.}
 #'    \item{Y}{The expected matrix bipartition.}
 #'    \item{TP}{The True Positive matrix values.}
@@ -56,8 +57,8 @@
 multilabel_confusion_matrix <- function (mdata, mlresult) {
   expected <- mdata$dataset[, mdata$labels$index]
   bipartition <- as.bipartition(mlresult)
-  ranking <- t(apply(1 - as.probability(mlresult), 1, rank,
-                     ties.method = "first"))
+  scores <- as.probability(mlresult)
+  ranking <- t(apply(1 - scores, 1, rank, ties.method = "first"))
 
   predict_and_expected <- expected & bipartition
   predict_and_nexpected <- !expected & bipartition
@@ -67,6 +68,7 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
   cm <- list(
     Z = bipartition,
     Y = expected,
+    Fx = scores,
     R = ranking,
     TP = predict_and_expected,
     FP = predict_and_nexpected,
@@ -103,6 +105,7 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
 
   mlcm1$Z <- rbind(mlcm1$Z, mlcm2$Z)
   mlcm1$Y <- rbind(mlcm1$Y, mlcm2$Y)
+  mlcm1$Fx <- rbind(mlcm1$Fx, mlcm2$Fx)
   mlcm1$R <- rbind(mlcm1$R, mlcm2$R)
   mlcm1$TP <- rbind(mlcm1$TP, mlcm2$TP)
   mlcm1$FP <- rbind(mlcm1$FP, mlcm2$FP)
@@ -140,6 +143,16 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
 #' include a set of measures. (Default: "all").
 #'
 #' @return a vector with the expected measures
+#' @references
+#'  Madjarov, G., Kocev, D., Gjorgjevikj, D., & Džeroski, S. (2012). An
+#'    extensive experimental comparison of methods for multi-label learning.
+#'    Pattern Recognition, 45(9), 3084–3104.
+#'  Zhang, M.-L., & Zhou, Z.-H. (2014). A Review on Multi-Label Learning
+#'    Algorithms. IEEE Transactions on Knowledge and Data Engineering, 26(8),
+#'    1819–1837.
+#'  Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel Learning.
+#'    ACM Comput. Surv., 47(3), 52:1–52:38.
+#'
 #' @export
 #'
 #' @examples
@@ -190,27 +203,27 @@ multilabel_evaluate.mlconfmat <- function (mlconfmat, measures = c("all"),
   }
 
   default.methods <- list(
-    'accuracy' = "multilabel_accuracy",
-    'average-precision' = "multilabel_average_precision",
-    'coverage' = "multilabel_coverage",
-    'F1' = "multilabel_f1",
-    'hamming-loss' = "multilabel_hamming_loss",
-    'is-error' = "multilabel_is_error",
-    'macro-accuracy' = "multilabel_macro_accuracy",
-    'macro-F1' = "multilabel_macro_f1",
-    'macro-precision' = "multilabel_macro_precision",
-    'macro-recall' = "multilabel_macro_recall",
-    'margin-loss' = "multilabel_margin_loss",
-    'micro-accuracy' = "multilabel_micro_accuracy",
-    'micro-F1' = "multilabel_micro_f1",
-    'micro-precision' = "multilabel_micro_precision",
-    'micro-recall' = "multilabel_micro_recall",
-    'one-error' = "multilabel_one_error",
-    'precision' = "multilabel_precision",
-    'ranking-error' = "multilabel_ranking_error",
-    'ranking-loss' = "multilabel_ranking_loss",
-    'recall' = "multilabel_recall",
-    'subset-accuracy' = "multilabel_subset_accuracy"
+    'accuracy' = "mlmeasure_accuracy",
+    'average-precision' = "mlmeasure_average_precision",
+    'coverage' = "mlmeasure_coverage",
+    'F1' = "mlmeasure_f1",
+    'hamming-loss' = "mlmeasure_hamming_loss",
+    'is-error' = "mlmeasure_is_error",
+    'macro-accuracy' = "mlmeasure_macro_accuracy",
+    'macro-F1' = "mlmeasure_macro_f1",
+    'macro-precision' = "mlmeasure_macro_precision",
+    'macro-recall' = "mlmeasure_macro_recall",
+    'margin-loss' = "mlmeasure_margin_loss",
+    'micro-accuracy' = "mlmeasure_micro_accuracy",
+    'micro-F1' = "mlmeasure_micro_f1",
+    'micro-precision' = "mlmeasure_micro_precision",
+    'micro-recall' = "mlmeasure_micro_recall",
+    'one-error' = "mlmeasure_one_error",
+    'precision' = "mlmeasure_precision",
+    'ranking-error' = "mlmeasure_ranking_error",
+    'ranking-loss' = "mlmeasure_ranking_loss",
+    'recall' = "mlmeasure_recall",
+    'subset-accuracy' = "mlmeasure_subset_accuracy"
   )
 
   #Extra methods
@@ -233,58 +246,110 @@ multilabel_evaluate.mlconfmat <- function (mlconfmat, measures = c("all"),
 }
 
 #' MULTILABEL MEASURES -------------------------------------------------------
-multilabel_accuracy <- function (mlconfmat, ...) {
+
+#' Multi-label Accuracy Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_accuracy <- function (mlconfmat, ...) {
   sum(mlconfmat$TPi / rowSums(mlconfmat$Z | mlconfmat$Y), na.rm = TRUE) /
     nrow(mlconfmat$Y)
 }
 
-multilabel_average_precision <- function (mlconfmat, ...) {
+#' Multi-label Average Precision Measure
+#' @param mlconfmat Confusion matrix
+#' @references Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
+#' based system for text categorization. Machine Learning, 39(2), 135–168.
+mlmeasure_average_precision <- function (mlconfmat, ...) {
   mean(sapply(seq(nrow(mlconfmat$Y)), function (i){
     rks <- mlconfmat$R[i, mlconfmat$Y[i,] == 1]
     sum(sapply(rks, function (r) sum(rks <= r) / r))
   }) / mlconfmat$Yi)
 }
 
-multilabel_coverage <- function (mlconfmat, ...) {
+#' Multi-label Coverage Measure
+#' @param mlconfmat Confusion matrix
+#' @references Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
+#' based system for text categorization. Machine Learning, 39(2), 135–168.
+mlmeasure_coverage <- function (mlconfmat, ...) {
   mean(sapply(seq(nrow(mlconfmat$Y)), function (i) {
     max(mlconfmat$R[i, mlconfmat$Y[i,] == 1]) - 1
   }))
 }
 
-multilabel_f1 <- function (mlconfmat, ...) {
+#' Multi-label F1 Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_f1 <- function (mlconfmat, ...) {
   sum((2 * mlconfmat$TPi) / (mlconfmat$Zi + mlconfmat$Yi), na.rm = TRUE) /
     nrow(mlconfmat$Y)
 }
 
-multilabel_hamming_loss <- function (mlconfmat, ...) {
+#' Multi-label Hamming Loss Measure
+#' @param mlconfmat Confusion matrix
+#' @references Schapire, R. E., & Singer, Y. (1999). Improved boosting
+#'  algorithm using confidence-rated predictions. Machine Learning, 297–336.
+mlmeasure_hamming_loss <- function (mlconfmat, ...) {
   mean(apply(xor(mlconfmat$Z, mlconfmat$Y), 1, sum) / ncol(mlconfmat$Y))
 }
 
-multilabel_is_error <- function (mlconfmat, ranking, ...) {
+#' Multi-label Is Error Measure
+#' @param mlconfmat Confusion matrix
+#' @param ranking The expected matrix ranking
+#' @references Crammer, K., & Singer, Y. (2003). A Family of Additive Online
+#'  Algorithms for Category Ranking. Journal of Machine Learning Research, 3(6),
+#'  1025–1058.
+mlmeasure_is_error <- function (mlconfmat, ranking, ...) {
+  if (missing(ranking)) {
+    stop("Argument ranking not informed for measure 'is-error'")
+  }
+
   mean(rowSums(mlconfmat$R != ranking) != 0)
 }
 
-multilabel_macro_accuracy <- function (mlconfmat, ...) {
-  mean(multilabel_binary_accuracy(mlconfmat$TPl, mlconfmat$FPl, mlconfmat$TNl,
+#' Multi-label Macro-Accuracy Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_macro_accuracy <- function (mlconfmat, ...) {
+  mean(mlmeasure_binary_accuracy(mlconfmat$TPl, mlconfmat$FPl, mlconfmat$TNl,
                                   mlconfmat$FNl))
 }
 
-multilabel_macro_f1 <- function (mlconfmat, ...) {
-  mean(multilabel_binary_f1(mlconfmat$TPl, mlconfmat$FPl,
+#' Multi-label Macro-F1 Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_macro_f1 <- function (mlconfmat, ...) {
+  mean(mlmeasure_binary_f1(mlconfmat$TPl, mlconfmat$FPl,
                             mlconfmat$TNl, mlconfmat$FNl))
 }
 
-multilabel_macro_precision <- function (mlconfmat, ...) {
-  mean(multilabel_binary_precision(mlconfmat$TPl, mlconfmat$FPl,
+#' Multi-label Macro-Precision Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_macro_precision <- function (mlconfmat, ...) {
+  mean(mlmeasure_binary_precision(mlconfmat$TPl, mlconfmat$FPl,
                                    mlconfmat$TNl, mlconfmat$FNl))
 }
 
-multilabel_macro_recall <- function (mlconfmat, ...) {
-  mean(multilabel_binary_recall(mlconfmat$TPl, mlconfmat$FPl,
+#' Multi-label Macro-Recall Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_macro_recall <- function (mlconfmat, ...) {
+  mean(mlmeasure_binary_recall(mlconfmat$TPl, mlconfmat$FPl,
                                 mlconfmat$TNl, mlconfmat$FNl))
 }
 
-multilabel_margin_loss <- function (mlconfmat, ...) {
+#' Multi-label Margin Loss Measure
+#' @param mlconfmat Confusion matrix
+#' @references Loza Mencía, E., & Fürnkranz, J. (2010). Efficient Multilabel
+#' Classification Algorithms for Large-Scale Problems in the Legal Domain.
+#' In Semantic Processing of Legal Texts (pp. 192–215).
+mlmeasure_margin_loss <- function (mlconfmat, ...) {
   mean(sapply(seq(nrow(mlconfmat$Y)), function (i){
     idxY <- mlconfmat$Y[i,] == 1
     max(0, max(mlconfmat$R[i, idxY], 0) -
@@ -292,40 +357,77 @@ multilabel_margin_loss <- function (mlconfmat, ...) {
   }))
 }
 
-multilabel_micro_accuracy <- function (mlconfmat, ...) {
-  multilabel_binary_accuracy(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
+#' Multi-label Micro-Accuracy Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_micro_accuracy <- function (mlconfmat, ...) {
+  mlmeasure_binary_accuracy(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
                              sum(mlconfmat$TNl), sum(mlconfmat$FNl))
 }
 
-multilabel_micro_f1 <- function (mlconfmat, ...) {
-  multilabel_binary_f1(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
+#' Multi-label Micro-F1 Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_micro_f1 <- function (mlconfmat, ...) {
+  mlmeasure_binary_f1(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
                        sum(mlconfmat$TNl), sum(mlconfmat$FNl))
 }
 
-multilabel_micro_precision <- function (mlconfmat, ...) {
-  multilabel_binary_precision(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
+#' Multi-label Micro-Precision Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_micro_precision <- function (mlconfmat, ...) {
+  mlmeasure_binary_precision(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
                               sum(mlconfmat$TNl), sum(mlconfmat$FNl))
 }
 
-multilabel_micro_recall <- function (mlconfmat, ...) {
-  multilabel_binary_recall(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
+#' Multi-label Micro-Recall Measure
+#' @param mlconfmat Confusion matrix
+#' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
+#'  Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+mlmeasure_micro_recall <- function (mlconfmat, ...) {
+  mlmeasure_binary_recall(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
                            sum(mlconfmat$TNl), sum(mlconfmat$FNl))
 }
 
-multilabel_one_error <- function (mlconfmat, ...) {
+#' Multi-label One Error Measure
+#' @param mlconfmat Confusion matrix
+#' @references Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
+#' based system for text categorization. Machine Learning, 39(2), 135–168.
+mlmeasure_one_error <- function (mlconfmat, ...) {
   rowcol <- cbind(seq(nrow(mlconfmat$Y)), apply(mlconfmat$R, 1, which.min))
   mean(1 - mlconfmat$Y[rowcol])
 }
 
-multilabel_precision <- function (mlconfmat, ...) {
+#' Multi-label Precision Measure
+#' @param mlconfmat Confusion matrix
+#' @references Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for
+#' Multi-labeled Classification. In Proceedings of the 8th Pacific-Asia
+#' Conference on Knowledge Discovery and Data Mining (PAKDD 2004) (pp. 22–30).
+mlmeasure_precision <- function (mlconfmat, ...) {
   sum(mlconfmat$TPi / mlconfmat$Zi, na.rm = TRUE) / nrow(mlconfmat$Y)
 }
 
-multilabel_ranking_error <- function (mlconfmat, ranking, ...) {
-  #TODO mean(rowSums(abs(mlconfmat$R - ranking)))
+#' Multi-label Ranking Error Measure
+#' @param mlconfmat Confusion matrix
+#' @references Park, S.-H., & Fürnkranz, J. (2008). Multi-Label Classification
+#'  with Label Constraints. Proceedings of the ECML PKDD 2008 Workshop on
+#'  Preference Learning (PL-08, Antwerp, Belgium), 157–171.
+mlmeasure_ranking_error <- function (mlconfmat, ranking, ...) {
+  if (missing(ranking)) {
+    stop("Argument ranking not informed for measure 'is-error'")
+  }
+  #TODO
 }
 
-multilabel_ranking_loss <- function (mlconfmat, ...) {
+#' Multi-label Hamming Loss Measure
+#' @param mlconfmat Confusion matrix
+#' @references Schapire, R. E., & Singer, Y. (1999). Improved boosting
+#'  algorithm using confidence-rated predictions. Machine Learning, 297–336.
+mlmeasure_ranking_loss <- function (mlconfmat, ...) {
   weight <- 1 / (mlconfmat$Yi * (length(mlconfmat$Yl) - mlconfmat$Yi))
   weight <- ifelse(weight == Inf, 0, weight)
   E <- sapply(seq(nrow(mlconfmat$Y)), function (i) {
@@ -336,11 +438,22 @@ multilabel_ranking_loss <- function (mlconfmat, ...) {
   mean(weight * E)
 }
 
-multilabel_recall <- function (mlconfmat, ...) {
+#' Multi-label Recall Measure
+#' @param mlconfmat Confusion matrix
+#' @references Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for
+#' Multi-labeled Classification. In Proceedings of the 8th Pacific-Asia
+#' Conference on Knowledge Discovery and Data Mining (PAKDD 2004) (pp. 22–30).
+mlmeasure_recall <- function (mlconfmat, ...) {
   sum(mlconfmat$TPi / mlconfmat$Yi, na.rm = TRUE) / nrow(mlconfmat$Y)
 }
 
-multilabel_subset_accuracy <- function (mlconfmat, ...) {
+#' Multi-label Subset Accuracy Measure
+#' @param mlconfmat Confusion matrix
+#' @references Zhu, S., Ji, X., Xu, W., & Gong, Y. (2005). Multilabelled
+#'  Classification Using Maximum Entropy Method. In Proceedings of the 28th
+#'  Annual International ACM SIGIR Conference on Research and Development in
+#'  Information Retrieval (SIGIR’05) (pp. 274–281).
+mlmeasure_subset_accuracy <- function (mlconfmat, ...) {
   mean(apply(mlconfmat$Z == mlconfmat$Y, 1, all))
 }
 
@@ -353,7 +466,7 @@ multilabel_subset_accuracy <- function (mlconfmat, ...) {
 #' @param FN The number of False Negative values
 #'
 #' @return Accuracy value between 0 and 1
-multilabel_binary_accuracy <- function (TP, FP, TN, FN) {
+mlmeasure_binary_accuracy <- function (TP, FP, TN, FN) {
   (TP + TN) / (TP + FP + TN + FN)
 }
 
@@ -364,7 +477,7 @@ multilabel_binary_accuracy <- function (TP, FP, TN, FN) {
 #' @param FN The number of False Negative values
 #'
 #' @return Precision value between 0 and 1
-multilabel_binary_precision <- function (TP, FP, TN, FN) {
+mlmeasure_binary_precision <- function (TP, FP, TN, FN) {
   ifelse(TP + FP == 0, 0, TP / (TP + FP))
 }
 
@@ -375,7 +488,7 @@ multilabel_binary_precision <- function (TP, FP, TN, FN) {
 #' @param FN The number of False Negative values
 #'
 #' @return Recall value between 0 and 1
-multilabel_binary_recall <- function (TP, FP, TN, FN) {
+mlmeasure_binary_recall <- function (TP, FP, TN, FN) {
   ifelse(TP + FN == 0, 0, TP / (TP + FN))
 }
 
@@ -386,9 +499,9 @@ multilabel_binary_recall <- function (TP, FP, TN, FN) {
 #' @param FN The number of False Negative values
 #'
 #' @return F1 measure value between 0 and 1
-multilabel_binary_f1 <- function (TP, FP, TN, FN) {
-  prec <-  multilabel_binary_precision(TP, FP, TN, FN)
-  rec  <- multilabel_binary_recall(TP, FP, TN, FN)
+mlmeasure_binary_f1 <- function (TP, FP, TN, FN) {
+  prec <-  mlmeasure_binary_precision(TP, FP, TN, FN)
+  rec  <- mlmeasure_binary_recall(TP, FP, TN, FN)
   ifelse(prec + rec == 0, 0, 2 * prec * rec / (prec + rec))
 }
 
@@ -472,6 +585,41 @@ multilabel_measures <- function () {
   sort(c(multilabel_measure_names(), names(multilabel_all_measures_names())))
 }
 
-mlconfmat.print <- function (x) {
-  #TODO
+print.mlconfmat <- function (x) {
+  cat("Multi-label Confusion Matrix\n\n")
+
+  cat("Absolute Matrix:\n-------------------------------------\n")
+  TP <- sum(x$TPi)
+  FP <- sum(x$FPi)
+  FN <- sum(x$FNi)
+  TN <- sum(x$TNi)
+  cm <-  matrix(c(TP, FN, TP + FN,
+                  FP, TN, FP + TN,
+                  TP + FP, FN + TN, TP + FP + FN + TN), ncol=3,
+                dimnames = list(c("Prediction_1", "Predicion_0", "TOTAL"),
+                                c("Expected_1", "Expected_0", "TOTAL")))
+  print(cm)
+
+  cat("\nProportinal Matrix:\n-------------------------------------\n")
+  cm[1:2, 1:2] <- prop.table(cm[1:2, 1:2])
+  cm[1:2, 3] <- apply(cm[1:2, 1:2], 1, sum)
+  cm[3, ] <- apply(cm[1:2, ], 2, sum)
+  print(cm)
+
+  cm <- cbind(x$TPl, x$FPl, x$FNl, x$TNl)
+  correct <- x$TPl + x$TNl
+  wrong <- x$FPl + x$FNl
+
+  cat("\nLabel Matrix\n-------------------------------------\n")
+  cm <- cbind(
+    cm, correct, wrong,
+    round(prop.table(cm, 1), 2),
+    round(prop.table(cbind(correct, wrong), 1), 2),
+    round(apply(mlconfmat$R, 2, mean), 2),
+    round(apply(mlconfmat$Fx, 2, mean), 2)
+  )
+  colnames(cm) <- c("TP", "FP", "FN", "TN", "Correct", "Wrong",
+                    "%TP", "%FP", "%FN", "%TN", "%Correct", "%Wrong",
+                    "MeanRanking", "MeanScore")
+  print(as.data.frame(cm))
 }

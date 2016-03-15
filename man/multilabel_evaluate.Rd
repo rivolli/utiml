@@ -52,4 +52,14 @@ multilabel_evaluate(cm, "example-based")
 multilabel_evaluate(cm, c("hamming-loss", "subset-accuracy", "F1"))
 }
 }
+\references{
+Madjarov, G., Kocev, D., Gjorgjevikj, D., & Džeroski, S. (2012). An
+   extensive experimental comparison of methods for multi-label learning.
+   Pattern Recognition, 45(9), 3084–3104.
+ Zhang, M.-L., & Zhou, Z.-H. (2014). A Review on Multi-Label Learning
+   Algorithms. IEEE Transactions on Knowledge and Data Engineering, 26(8),
+   1819–1837.
+ Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel Learning.
+   ACM Comput. Surv., 47(3), 52:1–52:38.
+}
 

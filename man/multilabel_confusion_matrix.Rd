@@ -15,6 +15,7 @@ multilabel_confusion_matrix(mdata, mlresult)
 A mlconfmat object that contains:
 \describe{
    \item{Z}{The bipartition matrix prediction.}
+   \item{Fx}{The score/probability matrix prediction.}
    \item{R}{The ranking matrix prediction.}
    \item{Y}{The expected matrix bipartition.}
    \item{TP}{The True Positive matrix values.}

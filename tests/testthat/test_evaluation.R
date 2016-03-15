@@ -52,19 +52,19 @@ test_that("Bipartition measures", {
   #100% correct
   test.result <- get_multilabel_prediction(labels, labels, TRUE)
   mlconfmat <- multilabel_confusion_matrix(parts$test, test.result)
-  expect_equal(multilabel_accuracy(mlconfmat), 1)
-  expect_equal(multilabel_f1(mlconfmat), 1)
-  expect_equal(multilabel_subset_accuracy(mlconfmat), 1)
-  expect_equal(multilabel_precision(mlconfmat), 1)
-  expect_equal(multilabel_recall(mlconfmat), 1)
-  expect_equal(multilabel_hamming_loss(mlconfmat), 0)
+  expect_equal(mlmeasure_accuracy(mlconfmat), 1)
+  expect_equal(mlmeasure_f1(mlconfmat), 1)
+  expect_equal(mlmeasure_subset_accuracy(mlconfmat), 1)
+  expect_equal(mlmeasure_precision(mlconfmat), 1)
+  expect_equal(mlmeasure_recall(mlconfmat), 1)
+  expect_equal(mlmeasure_hamming_loss(mlconfmat), 0)
 
-  expect_equal(multilabel_macro_precision(mlconfmat), 1)
-  expect_equal(multilabel_micro_precision(mlconfmat), 1)
-  expect_equal(multilabel_macro_recall(mlconfmat), 1)
-  expect_equal(multilabel_micro_recall(mlconfmat), 1)
-  expect_equal(multilabel_macro_f1(mlconfmat), 1)
-  expect_equal(multilabel_micro_f1(mlconfmat), 1)
+  expect_equal(mlmeasure_macro_precision(mlconfmat), 1)
+  expect_equal(mlmeasure_micro_precision(mlconfmat), 1)
+  expect_equal(mlmeasure_macro_recall(mlconfmat), 1)
+  expect_equal(mlmeasure_micro_recall(mlconfmat), 1)
+  expect_equal(mlmeasure_macro_f1(mlconfmat), 1)
+  expect_equal(mlmeasure_micro_f1(mlconfmat), 1)
 
   #100% incorrect
   for (i in seq(ncol(labels))) {
@@ -75,19 +75,19 @@ test_that("Bipartition measures", {
   }
   test.result <- get_multilabel_prediction(labels, labels, TRUE)
   mlconfmat <- multilabel_confusion_matrix(parts$test, test.result)
-  expect_equal(multilabel_accuracy(mlconfmat), 0)
-  expect_equal(multilabel_f1(mlconfmat), 0)
-  expect_equal(multilabel_subset_accuracy(mlconfmat), 0)
-  expect_equal(multilabel_precision(mlconfmat), 0)
-  expect_equal(multilabel_recall(mlconfmat), 0)
-  expect_equal(multilabel_hamming_loss(mlconfmat), 1)
+  expect_equal(mlmeasure_accuracy(mlconfmat), 0)
+  expect_equal(mlmeasure_f1(mlconfmat), 0)
+  expect_equal(mlmeasure_subset_accuracy(mlconfmat), 0)
+  expect_equal(mlmeasure_precision(mlconfmat), 0)
+  expect_equal(mlmeasure_recall(mlconfmat), 0)
+  expect_equal(mlmeasure_hamming_loss(mlconfmat), 1)
 
-  expect_equal(multilabel_macro_precision(mlconfmat), 0)
-  expect_equal(multilabel_micro_precision(mlconfmat), 0)
-  expect_equal(multilabel_macro_recall(mlconfmat), 0)
-  expect_equal(multilabel_micro_recall(mlconfmat), 0)
-  expect_equal(multilabel_macro_f1(mlconfmat), 0)
-  expect_equal(multilabel_micro_f1(mlconfmat), 0)
+  expect_equal(mlmeasure_macro_precision(mlconfmat), 0)
+  expect_equal(mlmeasure_micro_precision(mlconfmat), 0)
+  expect_equal(mlmeasure_macro_recall(mlconfmat), 0)
+  expect_equal(mlmeasure_micro_recall(mlconfmat), 0)
+  expect_equal(mlmeasure_macro_f1(mlconfmat), 0)
+  expect_equal(mlmeasure_micro_f1(mlconfmat), 0)
 
   #Random
   set.seed(1234)
@@ -130,19 +130,19 @@ test_that("Bipartition measures", {
       2 * prec * rec / (prec + rec)
     })()
   )
-  expect_equal(multilabel_accuracy(mlconfmat), measures$Accuracy)
-  expect_equal(multilabel_f1(mlconfmat), measures$FMeasure)
-  expect_equal(multilabel_subset_accuracy(mlconfmat), measures$SubsetAccuracy)
-  expect_equal(multilabel_precision(mlconfmat), measures$Precision)
-  expect_equal(multilabel_recall(mlconfmat), measures$Recall)
-  expect_equal(multilabel_hamming_loss(mlconfmat), measures$HammingLoss)
+  expect_equal(mlmeasure_accuracy(mlconfmat), measures$Accuracy)
+  expect_equal(mlmeasure_f1(mlconfmat), measures$FMeasure)
+  expect_equal(mlmeasure_subset_accuracy(mlconfmat), measures$SubsetAccuracy)
+  expect_equal(mlmeasure_precision(mlconfmat), measures$Precision)
+  expect_equal(mlmeasure_recall(mlconfmat), measures$Recall)
+  expect_equal(mlmeasure_hamming_loss(mlconfmat), measures$HammingLoss)
 
-  expect_equal(multilabel_macro_precision(mlconfmat), measures$MacroPrecision)
-  expect_equal(multilabel_micro_precision(mlconfmat), measures$MicroPrecision)
-  expect_equal(multilabel_macro_recall(mlconfmat), measures$MacroRecall)
-  expect_equal(multilabel_micro_recall(mlconfmat), measures$MicroRecall)
-  expect_equal(multilabel_macro_f1(mlconfmat), measures$MacroFMeasure)
-  expect_equal(multilabel_micro_f1(mlconfmat), measures$MicroFMeasure)
+  expect_equal(mlmeasure_macro_precision(mlconfmat), measures$MacroPrecision)
+  expect_equal(mlmeasure_micro_precision(mlconfmat), measures$MicroPrecision)
+  expect_equal(mlmeasure_macro_recall(mlconfmat), measures$MacroRecall)
+  expect_equal(mlmeasure_micro_recall(mlconfmat), measures$MicroRecall)
+  expect_equal(mlmeasure_macro_f1(mlconfmat), measures$MacroFMeasure)
+  expect_equal(mlmeasure_micro_f1(mlconfmat), measures$MicroFMeasure)
 })
 
 test_that("Ranking measures", {
@@ -153,13 +153,13 @@ test_that("Ranking measures", {
   test.result <- get_multilabel_prediction(labels, labels, TRUE)
   mlconfmat <- multilabel_confusion_matrix(parts$test, test.result)
 
-  expect_equal(multilabel_one_error(mlconfmat), 0)
-  expect_equal(multilabel_coverage(mlconfmat),
+  expect_equal(mlmeasure_one_error(mlconfmat), 0)
+  expect_equal(mlmeasure_coverage(mlconfmat),
                parts$test$measures$cardinality - 1)
-  expect_equal(multilabel_ranking_loss(mlconfmat), 0)
-  expect_equal(multilabel_average_precision(mlconfmat), 1)
-  expect_equal(multilabel_margin_loss(mlconfmat), 0)
-  expect_equal(multilabel_is_error(mlconfmat, mlconfmat$R), 0)
+  expect_equal(mlmeasure_ranking_loss(mlconfmat), 0)
+  expect_equal(mlmeasure_average_precision(mlconfmat), 1)
+  expect_equal(mlmeasure_margin_loss(mlconfmat), 0)
+  expect_equal(mlmeasure_is_error(mlconfmat, mlconfmat$R), 0)
 
   #100% incorrect
   for (i in seq(ncol(labels))) {
@@ -171,9 +171,9 @@ test_that("Ranking measures", {
   test.result <- get_multilabel_prediction(labels, labels, TRUE)
   mlconfmat <- multilabel_confusion_matrix(parts$test, test.result)
 
-  expect_equal(multilabel_one_error(mlconfmat), 1)
-  expect_equal(multilabel_coverage(mlconfmat), 4)
-  expect_equal(multilabel_ranking_loss(mlconfmat), 1)
+  expect_equal(mlmeasure_one_error(mlconfmat), 1)
+  expect_equal(mlmeasure_coverage(mlconfmat), 4)
+  expect_equal(mlmeasure_ranking_loss(mlconfmat), 1)
   #TODO study how to determine the worst case
   average.precision <- mean(sapply(seq(nrow(labels)), function (row) {
     Y <- mlconfmat$R[row, expected[row, ] == 1]
@@ -181,11 +181,11 @@ test_that("Ranking measures", {
       sum(Y <= y) / y
     })) / length(Y)
   }))
-  expect_equal(multilabel_average_precision(mlconfmat), average.precision)
-  expect_equal(multilabel_margin_loss(mlconfmat), 4)
+  expect_equal(mlmeasure_average_precision(mlconfmat), average.precision)
+  expect_equal(mlmeasure_margin_loss(mlconfmat), 4)
   dif.rank <- mlconfmat$R[, 5:1]
   colnames(dif.rank) <- colnames(mlconfmat$R)
-  expect_equal(multilabel_is_error(mlconfmat, dif.rank), 1)
+  expect_equal(mlmeasure_is_error(mlconfmat, dif.rank), 1)
 
   #Random
   set.seed(1234)
@@ -229,12 +229,12 @@ test_that("Ranking measures", {
     }))
   )
 
-  expect_equal(multilabel_one_error(mlconfmat), measures$OneError)
-  expect_equal(multilabel_coverage(mlconfmat), measures$Coverage)
-  expect_equal(multilabel_ranking_loss(mlconfmat), measures$RankingLoss)
-  expect_equal(multilabel_average_precision(mlconfmat), measures$AvgPrecision)
-  expect_equal(multilabel_margin_loss(mlconfmat), measures$MarginLoss)
-  expect_equal(multilabel_is_error(mlconfmat, dif.rank), measures$IsError)
+  expect_equal(mlmeasure_one_error(mlconfmat), measures$OneError)
+  expect_equal(mlmeasure_coverage(mlconfmat), measures$Coverage)
+  expect_equal(mlmeasure_ranking_loss(mlconfmat), measures$RankingLoss)
+  expect_equal(mlmeasure_average_precision(mlconfmat), measures$AvgPrecision)
+  expect_equal(mlmeasure_margin_loss(mlconfmat), measures$MarginLoss)
+  expect_equal(mlmeasure_is_error(mlconfmat, dif.rank), measures$IsError)
 })
 
 test_that("Measures names", {
