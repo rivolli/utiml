@@ -247,18 +247,21 @@ as.mlresult <- function(predictions, probability = T, ...) {
 }
 
 #' @describeIn as.mlresult Default mlresult transform method
+#' @export
 as.mlresult.default <- function (predictions, probability = T, ...) {
   as.mlresult.matrix(as.matrix(predictions), probability)
 }
 
 #' @describeIn as.mlresult Matrix mlresult transform method
 #' @param threshold Threshold value for create bipartition (Default: 0.5)
+#' @export
 as.mlresult.matrix <- function (predictions, probability = T, threshold = 0.5) {
   bipartition <- fixed_threshold(predictions, threshold)
   get_multilabel_prediction(bipartition, predictions, probability)
 }
 
 #' @describeIn as.mlresult change the mlresult type
+#' @export
 as.mlresult.mlresult <- function (predictions, probability = T, ...) {
   bipartition <- as.bipartition(predictions)
   probabilities <- as.probability(predictions)
