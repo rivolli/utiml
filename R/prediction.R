@@ -211,6 +211,8 @@ get_multilabel_prediction <- function(bipartitions,
   utiml_ifelse(probability, probabilities, bipartitions)
 }
 
+#' Filter a Multi-Label Result
+#' @export
 `[.mlresult` <- function (mlresult, rowFilter = T, colFilter, ...) {
   if (missing(colFilter)) {
     bipartition <- as.bipartition(mlresult)
@@ -222,6 +224,45 @@ get_multilabel_prediction <- function(bipartitions,
   } else {
     as.matrix(mlresult)[rowFilter, colFilter, ...]
   }
+}
+
+#' Convert a matrix prediction in a multi label prediction
+#' @param predictions a Matrix or data.frame contained the scores/probabilities
+#' values
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#' @param ... Others parameters passed to the method as threshold
+#' @return An object of type mlresult
+#' @export
+#'
+#' @examples
+#' predictions <- matrix(sample(1:1000, 100, replace = TRUE) / 1000, ncol = 10)
+#' colnames(predictions) <- paste('label', 1:10, sep='')
+#'
+#' as.mlresult(predictions)
+#' as.mlresult(predictions, probability = FALSE)
+#' as.mlresult(predictions, threshold = 0.6)
+as.mlresult <- function(predictions, probability = T, ...) {
+  UseMethod("as.mlresult")
+}
+
+#' @describeIn as.mlresult Default mlresult transform method
+as.mlresult.default <- function (predictions, probability = T, ...) {
+  as.mlresult.matrix(as.matrix(predictions), probability)
+}
+
+#' @describeIn as.mlresult Matrix mlresult transform method
+#' @param threshold Threshold value for create bipartition (Default: 0.5)
+as.mlresult.matrix <- function (predictions, probability = T, threshold = 0.5) {
+  bipartition <- fixed_threshold(predictions, threshold)
+  get_multilabel_prediction(bipartition, predictions, probability)
+}
+
+#' @describeIn as.mlresult change the mlresult type
+as.mlresult.mlresult <- function (predictions, probability = T, ...) {
+  bipartition <- as.bipartition(predictions)
+  probabilities <- as.probability(predictions)
+  get_multilabel_prediction(bipartition, probabilities, probability)
 }
 
 #' Convert a mlresult to a matrix

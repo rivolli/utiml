@@ -6,7 +6,7 @@
 \alias{multilabel_evaluate.mldr}
 \title{Evaluate multi-label predictions}
 \usage{
-multilabel_evaluate(object, ...)
+multilabel_evaluate(object, mlresult = NULL, measures = c("all"), ...)
 
 \method{multilabel_evaluate}{mldr}(mdata, mlresult, measures = c("all"), ...)
 
@@ -17,6 +17,12 @@ multilabel_evaluate(object, ...)
 
 \item{mlresult}{The prediction result (Optional, required only when the
 mldr is used).}
+
+\item{measures}{The measures names to be computed. Call
+\code{multilabel_measures()} to see the expected measures. You also can
+use \code{"bipartition"}, \code{"ranking"}, \code{"label-based"},
+\code{"example-based"}, \code{"macro-based"} and \code{"micro-based"} to
+include a set of measures. (Default: "all").}
 }
 \value{
 a vector with the expected measures

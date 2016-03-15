@@ -175,3 +175,24 @@ test_that("create_br_data", {
   expect_equal(dataset[c("a", "b")], as.data.frame(extra.columns))
   expect_equal(dataset["y4"], toyml$dataset["y4"])
 })
+
+test_that("as.mlresult", {
+  predictions <- matrix(sample(1:1000, 100, replace = TRUE) / 1000, ncol = 10)
+  colnames(predictions) <- paste('label', 1:10, sep='')
+
+  mlresult <- as.mlresult(predictions)
+  mlresult2 <- as.mlresult(mlresult, prob = FALSE)
+  mlresult3 <- as.mlresult(predictions, threshold = 0.3)
+
+  expect_is(mlresult, "mlresult")
+  expect_is(mlresult2, "mlresult")
+  expect_is(mlresult3, "mlresult")
+  expect_equal(as.probability(mlresult), predictions)
+  expect_equal(as.mlresult(as.data.frame(predictions)), mlresult)
+  expect_equal(as.mlresult(mlresult), mlresult)
+  expect_true(attr(mlresult, "type") == attr(mlresult3, "type"))
+  expect_false(attr(mlresult, "type") == attr(mlresult2, "type"))
+
+  expect_equal(as.bipartition(mlresult), fixed_threshold(predictions, 0.5))
+  expect_equal(as.bipartition(mlresult3), fixed_threshold(predictions, 0.3))
+})

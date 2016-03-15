@@ -136,11 +136,11 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
 #' @param object A mldr dataset or a mlconfmat confusion matrix
 #' @param mlresult The prediction result (Optional, required only when the
 #'  mldr is used).
-#' @params measures The measures names to be computed. Call
-#' \code{multilabel_measures()} to see the expected measures. You also can
-#' use \code{"bipartition"}, \code{"ranking"}, \code{"label-based"},
-#' \code{"example-based"}, \code{"macro-based"} and \code{"micro-based"} to
-#' include a set of measures. (Default: "all").
+#' @param measures The measures names to be computed. Call
+#'  \code{multilabel_measures()} to see the expected measures. You also can
+#'  use \code{"bipartition"}, \code{"ranking"}, \code{"label-based"},
+#'  \code{"example-based"}, \code{"macro-based"} and \code{"micro-based"} to
+#'  include a set of measures. (Default: "all").
 #'
 #' @return a vector with the expected measures
 #' @references
@@ -174,12 +174,12 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
 #' multilabel_evaluate(cm, "example-based")
 #' multilabel_evaluate(cm, c("hamming-loss", "subset-accuracy", "F1"))
 #' }
-multilabel_evaluate <- function(object, ...) {
+multilabel_evaluate <- function(object, mlresult=NULL,
+                                measures = c("all"), ...) {
   UseMethod("multilabel_evaluate")
 }
 
 #' @describeIn multilabel_evaluate Default S3 method
-#' @export
 multilabel_evaluate.mldr <- function (mdata, mlresult, measures = c("all"),
                                       ...) {
   if (class(mdata) != "mldr") {
@@ -195,7 +195,6 @@ multilabel_evaluate.mldr <- function (mdata, mlresult, measures = c("all"),
 }
 
 #' @describeIn multilabel_evaluate Default S3 method
-#' @export
 multilabel_evaluate.mlconfmat <- function (mlconfmat, measures = c("all"),
                                            ...) {
   if (class(mlconfmat) != "mlconfmat") {
