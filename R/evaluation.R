@@ -503,7 +503,12 @@ mlmeasure_binary_AUC <- function (scores, labels) {
   Zidx <- labels == 1
   Zj <- scores[Zidx]
   Znj <- scores[!Zidx]
-  sum(sapply(Zj, function (x) sum(x >= Znj))) / (length(Zj) * length(Znj))
+
+  if (all(Zidx) || all(!Zidx)) {
+    1   #All are positive or negative
+  } else {
+    sum(sapply(Zj, function (x) sum(x >= Znj))) / (length(Zj) * length(Znj))
+  }
 }
 
 #' Compute the binary precision
@@ -623,6 +628,8 @@ multilabel_measures <- function () {
   sort(c(multilabel_measure_names(), names(multilabel_all_measures_names())))
 }
 
+#' Print a Multi-label Confusion Matrix
+#' @export
 print.mlconfmat <- function (x) {
   cat("Multi-label Confusion Matrix\n\n")
 
@@ -642,7 +649,7 @@ print.mlconfmat <- function (x) {
   cm[1:2, 1:2] <- prop.table(cm[1:2, 1:2])
   cm[1:2, 3] <- apply(cm[1:2, 1:2], 1, sum)
   cm[3, ] <- apply(cm[1:2, ], 2, sum)
-  print(cm)
+  print(round(cm, 3))
 
   cm <- cbind(x$TPl, x$FPl, x$FNl, x$TNl)
   correct <- x$TPl + x$TNl
@@ -653,8 +660,8 @@ print.mlconfmat <- function (x) {
     cm, correct, wrong,
     round(prop.table(cm, 1), 2),
     round(prop.table(cbind(correct, wrong), 1), 2),
-    round(apply(mlconfmat$R, 2, mean), 2),
-    round(apply(mlconfmat$Fx, 2, mean), 2)
+    round(apply(x$R, 2, mean), 2),
+    round(apply(x$Fx, 2, mean), 2)
   )
   colnames(cm) <- c("TP", "FP", "FN", "TN", "Correct", "Wrong",
                     "%TP", "%FP", "%FN", "%TN", "%Correct", "%Wrong",
