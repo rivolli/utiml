@@ -180,6 +180,7 @@ multilabel_evaluate <- function(object, mlresult=NULL,
 }
 
 #' @describeIn multilabel_evaluate Default S3 method
+#' @export
 multilabel_evaluate.mldr <- function (mdata, mlresult, measures = c("all"),
                                       ...) {
   if (class(mdata) != "mldr") {
@@ -195,6 +196,7 @@ multilabel_evaluate.mldr <- function (mdata, mlresult, measures = c("all"),
 }
 
 #' @describeIn multilabel_evaluate Default S3 method
+#' @export
 multilabel_evaluate.mlconfmat <- function (mlconfmat, measures = c("all"),
                                            ...) {
   if (class(mlconfmat) != "mlconfmat") {
