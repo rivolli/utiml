@@ -211,11 +211,13 @@ multilabel_evaluate.mlconfmat <- function (mlconfmat, measures = c("all"),
     'hamming-loss' = "mlmeasure_hamming_loss",
     'is-error' = "mlmeasure_is_error",
     'macro-accuracy' = "mlmeasure_macro_accuracy",
+    'macro-AUC' = "mlmeasure_macro_AUC",
     'macro-F1' = "mlmeasure_macro_f1",
     'macro-precision' = "mlmeasure_macro_precision",
     'macro-recall' = "mlmeasure_macro_recall",
     'margin-loss' = "mlmeasure_margin_loss",
     'micro-accuracy' = "mlmeasure_micro_accuracy",
+    'micro-AUC' = "mlmeasure_micro_AUC",
     'micro-F1' = "mlmeasure_micro_f1",
     'micro-precision' = "mlmeasure_micro_precision",
     'micro-recall' = "mlmeasure_micro_recall",
@@ -318,6 +320,17 @@ mlmeasure_macro_accuracy <- function (mlconfmat, ...) {
                                   mlconfmat$FNl))
 }
 
+#' Multi-label Macro-AUC Measure
+#' @param mlconfmat Confusion matrix
+#' @references Zhang, M.-L., & Zhou, Z.-H. (2014). A Review on Multi-Label
+#'  Learning Algorithms. IEEE Transactions on Knowledge and Data Engineering,
+#'  26(8), 1819–1837.
+mlmeasure_macro_AUC <- function (mlconfmat, ...) {
+  mean(sapply(seq(ncol(mlconfmat$Y)), function (col){
+    mlmeasure_binary_AUC(mlconfmat$Fx[, col], mlconfmat$Y[, col])
+  }))
+}
+
 #' Multi-label Macro-F1 Measure
 #' @param mlconfmat Confusion matrix
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
@@ -365,6 +378,16 @@ mlmeasure_margin_loss <- function (mlconfmat, ...) {
 mlmeasure_micro_accuracy <- function (mlconfmat, ...) {
   mlmeasure_binary_accuracy(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
                              sum(mlconfmat$TNl), sum(mlconfmat$FNl))
+}
+
+#' Multi-label Macro-AUC Measure
+#' @param mlconfmat Confusion matrix
+#' @references Zhang, M.-L., & Zhou, Z.-H. (2014). A Review on Multi-Label
+#'  Learning Algorithms. IEEE Transactions on Knowledge and Data Engineering,
+#'  26(8), 1819–1837.
+mlmeasure_micro_AUC <- function (mlconfmat, ...) {
+  mlmeasure_binary_AUC(as.numeric(mlconfmat$Fx),
+                       as.numeric(as.matrix(mlconfmat$Y)))
 }
 
 #' Multi-label Micro-F1 Measure
@@ -471,6 +494,18 @@ mlmeasure_binary_accuracy <- function (TP, FP, TN, FN) {
   (TP + TN) / (TP + FP + TN + FN)
 }
 
+#' Compute the binary AUC
+#' @param scores The probability/score from a single label
+#' @param labels The expected label predictions
+#'
+#' @return AUC value between 0 and 1
+mlmeasure_binary_AUC <- function (scores, labels) {
+  Zidx <- labels == 1
+  Zj <- scores[Zidx]
+  Znj <- scores[!Zidx]
+  sum(sapply(Zj, function (x) sum(x >= Znj))) / (length(Zj) * length(Znj))
+}
+
 #' Compute the binary precision
 #' @param TP The number of True Positive values
 #' @param FP The number of False Positive values
@@ -539,15 +574,17 @@ multilabel_all_measures_names <- function (){
       "accuracy",
       "F1"
     ),
-    'micro-based' = c(
-      "micro-precision",
-      "micro-recall",
-      "micro-F1"
-    ),
     'macro-based' = c(
+      "macro-AUC",
       "macro-precision",
       "macro-recall",
       "macro-F1"
+    ),
+    'micro-based' = c(
+      "micro-AUC",
+      "micro-precision",
+      "micro-recall",
+      "micro-F1"
     )
   )
 }

@@ -59,9 +59,11 @@ test_that("Bipartition measures", {
   expect_equal(mlmeasure_recall(mlconfmat), 1)
   expect_equal(mlmeasure_hamming_loss(mlconfmat), 0)
 
+  expect_equal(mlmeasure_macro_AUC(mlconfmat), 1)
   expect_equal(mlmeasure_macro_precision(mlconfmat), 1)
   expect_equal(mlmeasure_micro_precision(mlconfmat), 1)
   expect_equal(mlmeasure_macro_recall(mlconfmat), 1)
+  expect_equal(mlmeasure_micro_AUC(mlconfmat), 1)
   expect_equal(mlmeasure_micro_recall(mlconfmat), 1)
   expect_equal(mlmeasure_macro_f1(mlconfmat), 1)
   expect_equal(mlmeasure_micro_f1(mlconfmat), 1)
@@ -82,9 +84,11 @@ test_that("Bipartition measures", {
   expect_equal(mlmeasure_recall(mlconfmat), 0)
   expect_equal(mlmeasure_hamming_loss(mlconfmat), 1)
 
+  expect_equal(mlmeasure_macro_AUC(mlconfmat), 0)
   expect_equal(mlmeasure_macro_precision(mlconfmat), 0)
   expect_equal(mlmeasure_micro_precision(mlconfmat), 0)
   expect_equal(mlmeasure_macro_recall(mlconfmat), 0)
+  expect_equal(mlmeasure_micro_AUC(mlconfmat), 0)
   expect_equal(mlmeasure_micro_recall(mlconfmat), 0)
   expect_equal(mlmeasure_macro_f1(mlconfmat), 0)
   expect_equal(mlmeasure_micro_f1(mlconfmat), 0)
@@ -248,8 +252,8 @@ test_that("Measures names", {
   expect_equal(multilabel_measure_names(c("ranking", "xyz")),
                c(rankings, "xyz"))
 
-  macro <- c("macro-F1", "macro-precision", "macro-recall")
-  micro <- c("micro-F1", "micro-precision", "micro-recall")
+  macro <- c("macro-AUC", "macro-F1", "macro-precision", "macro-recall")
+  micro <- c("micro-AUC", "micro-F1", "micro-precision", "micro-recall")
   expect_equal(multilabel_measure_names("macro-based"), macro)
   expect_equal(multilabel_measure_names("micro-based"), micro)
   expect_equal(multilabel_measure_names("label-based"), sort(c(micro, macro)))
@@ -311,18 +315,23 @@ test_that("Mulan Measures", {
   expect_equal(evaluation["subset-accuracy"], measures["Subset-Accuracy"],
                check.attributes = FALSE, tolerance = 1e-3)
 
-  expect_equal(evaluation["micro-precision"], measures["Micro-Precision"],
-               check.attributes = FALSE, tolerance = 1e-3)
-  expect_equal(evaluation["macro-precision"], measures["Macro-Precision"],
-               check.attributes = FALSE, tolerance = 1e-3)
-  expect_equal(evaluation["micro-recall"], measures["Micro-Recall"],
-               check.attributes = FALSE, tolerance = 1e-3)
+  #expect_equal(evaluation["macro-AUC"], measures["Macro-AUC"],
+  #             check.attributes = FALSE, tolerance = 1e-3)
   expect_equal(evaluation["macro-recall"], measures["Macro-Recall"],
                check.attributes = FALSE, tolerance = 1e-3)
   expect_equal(evaluation["micro-F1"], measures["Micro-F-Measure"],
                check.attributes = FALSE, tolerance = 1e-3)
   expect_equal(evaluation["macro-F1"], measures["Macro-F-Measure"],
                check.attributes = FALSE, tolerance = 1e-3)
+  #expect_equal(evaluation["micro-AUC"], measures["Micro-AUC"],
+  #             check.attributes = FALSE, tolerance = 1e-3)
+  expect_equal(evaluation["micro-precision"], measures["Micro-Precision"],
+               check.attributes = FALSE, tolerance = 1e-3)
+  expect_equal(evaluation["macro-precision"], measures["Macro-Precision"],
+               check.attributes = FALSE, tolerance = 1e-3)
+  expect_equal(evaluation["micro-recall"], measures["Micro-Recall"],
+               check.attributes = FALSE, tolerance = 1e-3)
+
 
   expect_equal(evaluation["average-precision"], measures["Average-Precision"],
                check.attributes = FALSE, tolerance = 1e-3)
