@@ -91,9 +91,18 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   eccmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   eccmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
 
+  idx <- lapply(seq(m), function(iteration) {
+    list(
+      rows = sample(mdata$measures$num.instances, eccmodel$nrow),
+      cols = sample(mdata$attributesIndexes, eccmodel$ncol),
+      chain = sample(rownames(mdata$labels))
+    )
+  })
+
   eccmodel$models <- lapply(seq(m), function(iteration) {
-    ndata <- create_random_subset(mdata, eccmodel$nrow, eccmodel$ncol)
-    chain <- sample(rownames(ndata$labels))
+    ndata <- create_subset(mdata, idx[[iteration]]$rows, idx[[iteration]]$cols)
+    chain <- idx[[iteration]]$chain
+
     ccmodel <- cc(ndata, base.method, chain, ..., CORES = CORES)
     ccmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
     ccmodel

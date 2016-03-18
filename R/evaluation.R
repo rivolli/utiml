@@ -55,6 +55,10 @@
 #' mlconfmat <- confmatp1 + confmatp2
 #' }
 multilabel_confusion_matrix <- function (mdata, mlresult) {
+  mdim <- c(mdata$measures$num.instances, mdata$measures$num.labels)
+  if (any(mdim != dim(mlresult))) {
+    stop("Wrong dimension between the real and expected data")
+  }
   expected <- mdata$dataset[, mdata$labels$index]
   bipartition <- as.bipartition(mlresult)
   scores <- as.probability(mlresult)

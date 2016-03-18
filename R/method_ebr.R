@@ -88,8 +88,16 @@ ebr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   ebrmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
 
+  idx <- lapply(seq(m), function(iteration) {
+    list(
+      rows = sample(mdata$measures$num.instances, ebrmodel$nrow),
+      cols = sample(mdata$attributesIndexes, ebrmodel$ncol)
+    )
+  })
+
   ebrmodel$models <- lapply(seq(m), function(iteration) {
-    ndata <- create_random_subset(mdata, ebrmodel$nrow, ebrmodel$ncol)
+    ndata <- create_subset(mdata, idx[[iteration]]$rows, idx[[iteration]]$cols)
+
     brmodel <- br(ndata, base.method, ..., CORES = CORES)
     brmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
     brmodel

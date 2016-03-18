@@ -43,6 +43,8 @@ test_that("Multi-label confusion matrix", {
   expect_equal(mlconfmat$TNl, apply(!expected & !predicted, 2, sum))
   expect_equal(mlconfmat$FPl, apply(!expected & predicted, 2, sum))
   expect_equal(mlconfmat$FNl, apply(expected & !predicted, 2, sum))
+
+  expect_error(multilabel_confusion_matrix(parts$train, result))
 })
 
 test_that("Bipartition measures", {

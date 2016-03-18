@@ -310,6 +310,7 @@ mltrain.baseKNN <- function(dataset, ...) {
     stop(paste("There are no installed package 'kknn' to use kNN classifier as",
                "base method"))
   }
+
   dataset$extrakNN <- list(...)
   dataset
 }
