@@ -8,9 +8,11 @@
 \usage{
 multilabel_evaluate(object, mlresult = NULL, measures = c("all"), ...)
 
-\method{multilabel_evaluate}{mldr}(mdata, mlresult, measures = c("all"), ...)
+\method{multilabel_evaluate}{mldr}(object, mlresult = NULL,
+  measures = c("all"), ...)
 
-\method{multilabel_evaluate}{mlconfmat}(mlconfmat, measures = c("all"), ...)
+\method{multilabel_evaluate}{mlconfmat}(object, mlresult = NULL,
+  measures = c("all"), ...)
 }
 \arguments{
 \item{object}{A mldr dataset or a mlconfmat confusion matrix}

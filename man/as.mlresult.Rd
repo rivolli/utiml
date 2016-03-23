@@ -7,11 +7,13 @@
 \alias{as.mlresult.mlresult}
 \title{Convert a matrix prediction in a multi label prediction}
 \usage{
-as.mlresult(predictions, probability = T, ...)
+as.mlresult(predictions, ...)
 
-\method{as.mlresult}{default}(predictions, probability = T, ...)
+\method{as.mlresult}{default}(predictions, probability = T, threshold = 0.5,
+  ...)
 
-\method{as.mlresult}{matrix}(predictions, probability = T, threshold = 0.5)
+\method{as.mlresult}{matrix}(predictions, probability = T, threshold = 0.5,
+  ...)
 
 \method{as.mlresult}{mlresult}(predictions, probability = T, ...)
 }
@@ -19,10 +21,10 @@ as.mlresult(predictions, probability = T, ...)
 \item{predictions}{a Matrix or data.frame contained the scores/probabilities
 values}
 
+\item{...}{Others parameters passed to the method as threshold}
+
 \item{probability}{A logical value. If \code{TRUE} the predicted values are
 the score between 0 and 1, otherwise the values are bipartition 0 or 1.}
-
-\item{...}{Others parameters passed to the method as threshold}
 
 \item{threshold}{Threshold value for create bipartition (Default: 0.5)}
 }

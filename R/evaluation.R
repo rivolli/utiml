@@ -178,15 +178,16 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
 #' multilabel_evaluate(cm, "example-based")
 #' multilabel_evaluate(cm, c("hamming-loss", "subset-accuracy", "F1"))
 #' }
-multilabel_evaluate <- function(object, mlresult=NULL,
-                                measures = c("all"), ...) {
+multilabel_evaluate <- function(object, mlresult = NULL, measures = c("all"),
+                                ...) {
   UseMethod("multilabel_evaluate")
 }
 
 #' @describeIn multilabel_evaluate Default S3 method
 #' @export
-multilabel_evaluate.mldr <- function (mdata, mlresult, measures = c("all"),
-                                      ...) {
+multilabel_evaluate.mldr <- function (object, mlresult = NULL,
+                                      measures = c("all"), ...) {
+  mdata <- object
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
   }
@@ -201,8 +202,9 @@ multilabel_evaluate.mldr <- function (mdata, mlresult, measures = c("all"),
 
 #' @describeIn multilabel_evaluate Default S3 method
 #' @export
-multilabel_evaluate.mlconfmat <- function (mlconfmat, measures = c("all"),
-                                           ...) {
+multilabel_evaluate.mlconfmat <- function (object, mlresult = NULL,
+                                           measures = c("all"), ...) {
+  mlconfmat <- object
   if (class(mlconfmat) != "mlconfmat") {
     stop("First argument must be an mlconfmat object")
   }

@@ -242,20 +242,22 @@ get_multilabel_prediction <- function(bipartitions,
 #' as.mlresult(predictions)
 #' as.mlresult(predictions, probability = FALSE)
 #' as.mlresult(predictions, threshold = 0.6)
-as.mlresult <- function(predictions, probability = T, ...) {
+as.mlresult <- function(predictions, ...) {
   UseMethod("as.mlresult")
 }
 
 #' @describeIn as.mlresult Default mlresult transform method
 #' @export
-as.mlresult.default <- function (predictions, probability = T, ...) {
+as.mlresult.default <- function (predictions, probability = T, threshold = 0.5,
+                                 ...) {
   as.mlresult.matrix(as.matrix(predictions), probability)
 }
 
 #' @describeIn as.mlresult Matrix mlresult transform method
 #' @param threshold Threshold value for create bipartition (Default: 0.5)
 #' @export
-as.mlresult.matrix <- function (predictions, probability = T, threshold = 0.5) {
+as.mlresult.matrix <- function (predictions, probability = T, threshold = 0.5,
+                                ...) {
   bipartition <- fixed_threshold(predictions, threshold)
   get_multilabel_prediction(bipartition, predictions, probability)
 }
@@ -328,14 +330,14 @@ print.mlresult <- function(x, ...) {
   print(as.matrix(x), ...)
 }
 
-#' Head mlresult as matrix
-#' @export
-head.mlresult <- function(x, ...) {
-  head(as.matrix(x), ...)
-}
-
-#' Tail mlresult as matrix
-#' @export
-tail.mlresult <- function(x, ...) {
-  tail(as.matrix(x), ...)
-}
+# #' Head mlresult as matrix
+# #' @export
+# head.mlresult <- function(x, n = 6L, ...) {
+#   head(as.matrix(x), n, ...)
+# }
+#
+# #' Tail mlresult as matrix
+# #' @export
+# tail.mlresult <- function(x, n = 6L, ...) {
+#   tail(as.matrix(x), n, ...)
+# }
