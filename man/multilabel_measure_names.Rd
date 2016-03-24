@@ -16,8 +16,10 @@ array of character contained the measures names.
 Return the name of measures
 }
 \examples{
+\dontrun{
 multilabel_measure_names()
 multilabel_measure_names("bipartition")
 multilabel_measure_names(c("micro-based", "macro-based"))
+}
 }
 

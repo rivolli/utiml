@@ -6,6 +6,15 @@
 \usage{
 check_ensemble_vote(vote.schema, accept.null = TRUE)
 }
+\arguments{
+\item{vote.schema}{The name of schema vote}
+
+\item{accept.null}{Logical value determine if the vote.schema = NULL is
+also valid. (Default: TRUE)}
+}
+\value{
+TRUE or throw an error message otherwise
+}
 \description{
 Verify if a schema vote name is valid
 }

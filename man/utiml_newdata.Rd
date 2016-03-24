@@ -28,8 +28,10 @@ Return the newdata to a data.frame or matrix
 \item \code{mldr}: Return the dataset from the mldr dataset
 }}
 \examples{
+\dontrun{
 test <- emotions$dataset[,emotions$attributesIndexes]
 all(test == utiml_newdata(emotions)) # TRUE
 all(test == utiml_newdata(test)) # TRUE
+}
 }
 

@@ -4,7 +4,12 @@
 \alias{summary.mltransformation}
 \title{Summary method for mltransformation}
 \usage{
-\method{summary}{mltransformation}(x, ...)
+\method{summary}{mltransformation}(object, ...)
+}
+\arguments{
+\item{object}{A transformed dataset}
+
+\item{...}{additional arguments affecting the summary produced.}
 }
 \description{
 Summary method for mltransformation

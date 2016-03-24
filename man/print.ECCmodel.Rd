@@ -6,6 +6,11 @@
 \usage{
 \method{print}{ECCmodel}(x, ...)
 }
+\arguments{
+\item{x}{The ecc model}
+
+\item{...}{ignored}
+}
 \description{
 Print ECC model
 }

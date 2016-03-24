@@ -6,6 +6,11 @@
 \usage{
 \method{print}{DBRmodel}(x, ...)
 }
+\arguments{
+\item{x}{The dbr model}
+
+\item{...}{ignored}
+}
 \description{
 Print DBR model
 }

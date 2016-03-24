@@ -27,11 +27,11 @@
 #' }
 #' @references
 #'  Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
-#'    for multi-label classification. Machine Learning, 85(3), 333–359.
+#'    for multi-label classification. Machine Learning, 85(3), 333-359.
 #'
 #'  Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2009). Classifier Chains
 #'    for Multi-label Classification. Machine Learning and Knowledge Discovery
-#'    in Databases, Lecture Notes in Computer Science, 5782, 254–269.
+#'    in Databases, Lecture Notes in Computer Science, 5782, 254-269.
 #' @export
 #'
 #' @examples
@@ -126,6 +126,8 @@ predict.CCmodel <- function(object, newdata,
 }
 
 #' Print CC model
+#' @param x The cc model
+#' @param ... ignored
 #' @export
 print.CCmodel <- function(x, ...) {
   cat("Classifier Chains Model\n\nCall:\n")

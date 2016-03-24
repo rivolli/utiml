@@ -6,6 +6,11 @@
 \usage{
 \method{print}{BRPmodel}(x, ...)
 }
+\arguments{
+\item{x}{The brp model}
+
+\item{...}{ignored}
+}
 \description{
 Print BRP model
 }

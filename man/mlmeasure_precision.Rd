@@ -8,6 +8,8 @@ mlmeasure_precision(mlconfmat, ...)
 }
 \arguments{
 \item{mlconfmat}{Confusion matrix}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label Precision Measure
@@ -15,6 +17,6 @@ Multi-label Precision Measure
 \references{
 Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for
 Multi-labeled Classification. In Proceedings of the 8th Pacific-Asia
-Conference on Knowledge Discovery and Data Mining (PAKDD 2004) (pp. 22–30).
+Conference on Knowledge Discovery and Data Mining (PAKDD 2004) (pp. 22-30).
 }
 

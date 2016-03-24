@@ -8,6 +8,8 @@ mlmeasure_micro_AUC(mlconfmat, ...)
 }
 \arguments{
 \item{mlconfmat}{Confusion matrix}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label Macro-AUC Measure
@@ -15,6 +17,6 @@ Multi-label Macro-AUC Measure
 \references{
 Zhang, M.-L., & Zhou, Z.-H. (2014). A Review on Multi-Label
  Learning Algorithms. IEEE Transactions on Knowledge and Data Engineering,
- 26(8), 1819–1837.
+ 26(8), 1819-1837.
 }
 

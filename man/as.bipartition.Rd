@@ -7,7 +7,7 @@
 as.bipartition(mlresult)
 }
 \arguments{
-\item{x}{The mlresult object}
+\item{mlresult}{The mlresult object}
 }
 \value{
 matrix with bipartition values

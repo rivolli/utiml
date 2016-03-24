@@ -17,6 +17,7 @@ Compute the single-label prediction using the maximum votes schema. The
 probabilities result is computed using the maximum value.
 }
 \examples{
+\dontrun{
 model <- br(toyml, "KNN")
 predictions <- list(
  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -25,6 +26,7 @@ predictions <- list(
 )
 
 result <- maximum_ensemble_votes(predictions)
+}
 }
 \seealso{
 Other Ensemble utilites: \code{\link{average_ensemble_votes}},

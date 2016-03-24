@@ -10,6 +10,8 @@ mlmeasure_is_error(mlconfmat, ranking, ...)
 \item{mlconfmat}{Confusion matrix}
 
 \item{ranking}{The expected matrix ranking}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label Is Error Measure
@@ -17,6 +19,6 @@ Multi-label Is Error Measure
 \references{
 Crammer, K., & Singer, Y. (2003). A Family of Additive Online
  Algorithms for Category Ranking. Journal of Machine Learning Research, 3(6),
- 1025–1058.
+ 1025-1058.
 }
 

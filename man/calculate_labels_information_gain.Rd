@@ -21,6 +21,6 @@ calculate_labels_information_gain(toyml)
 \references{
 Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
   Approach for Multi-Label Classification. IEEE Transactions on Knowledge
-  and Data Engineering, 27(9), 2480–2493.
+  and Data Engineering, 27(9), 2480-2493.
 }
 

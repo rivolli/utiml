@@ -6,6 +6,11 @@
 \usage{
 \method{print}{mlresult}(x, ...)
 }
+\arguments{
+\item{x}{The mlresult to print}
+
+\item{...}{Extra parameters for print method}
+}
 \description{
 Print the mlresult
 }

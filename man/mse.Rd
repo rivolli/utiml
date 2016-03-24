@@ -6,6 +6,14 @@
 \usage{
 mse(real, predicted)
 }
+\arguments{
+\item{real}{A list with the expected values}
+
+\item{predicted}{A list with the predicted values}
+}
+\value{
+The calculed mean squared error
+}
 \description{
 Mean Squared Error
 }

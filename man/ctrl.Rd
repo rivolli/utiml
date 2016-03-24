@@ -62,8 +62,8 @@ label set.
 
 Dependencies:
  The degree of label correlations are estimated via supervised feature
-   selection techniques. Thus, this implementation use the \link{relief}
-   method available in \pkg{FSelector} package.
+   selection techniques. Thus, this implementation use the
+   \link[FSelector]{relief} method available in \pkg{FSelector} package.
 }
 \examples{
 \dontrun{
@@ -82,7 +82,7 @@ model <- ctrl(dataset$train, 'KNN', k=5)
 \references{
 Li, Y., & Zhang, M. (2014). Enhancing Binary Relevance for Multi-label
    Learning with Controlled Label Correlations Exploitation. In 13th Pacific
-   Rim International Conference on Artificial Intelligence (pp. 91–103).
+   Rim International Conference on Artificial Intelligence (pp. 91-103).
    Gold Coast, Australia.
 }
 \seealso{

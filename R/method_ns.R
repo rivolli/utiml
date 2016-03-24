@@ -26,9 +26,9 @@
 #'    \item{models}{A list of models named by the label names.}
 #'   }
 #' @references
-#'  Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
+#'  Senge, R., Coz, J. J. del, & Hullermeier, E. (2013). Rectifying classifier
 #'    chains for multi-label classification. In Workshop of Lernen, Wissen &
-#'    Adaptivität (LWA 2013) (pp. 162–169). Bamberg, Germany.
+#'    Adaptivitat (LWA 2013) (pp. 162-169). Bamberg, Germany.
 #' @export
 #'
 #' @examples
@@ -140,6 +140,8 @@ predict.NSmodel <- function(object, newdata,
 }
 
 #' Print NS model
+#' @param x The ns model
+#' @param ... ignored
 #' @export
 print.NSmodel <- function(x, ...) {
     cat("Nested Stacking Model\n\nCall:\n")

@@ -8,6 +8,8 @@ mlmeasure_subset_accuracy(mlconfmat, ...)
 }
 \arguments{
 \item{mlconfmat}{Confusion matrix}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label Subset Accuracy Measure
@@ -16,6 +18,6 @@ Multi-label Subset Accuracy Measure
 Zhu, S., Ji, X., Xu, W., & Gong, Y. (2005). Multilabelled
  Classification Using Maximum Entropy Method. In Proceedings of the 28th
  Annual International ACM SIGIR Conference on Research and Development in
- Information Retrieval (SIGIR’05) (pp. 274–281).
+ Information Retrieval (SIGIR'05) (pp. 274-281).
 }
 

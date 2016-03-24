@@ -22,8 +22,9 @@ Replace the nominal attributes by binary attributes.
 }
 \examples{
 new.toy <- toyml
-new.toy$dataset$ratt10 <- as.factor(sample(c("a","b","c"), 100, replace=T))
-replace_nominal_attributes(new.toy)
+new.column <- as.factor(sample(c("a","b","c"), 100, replace = TRUE))
+new.toy$dataset$ratt10 <- new.column
+head(replace_nominal_attributes(new.toy))
 }
 \seealso{
 Other pre process: \code{\link{fill_sparce_mldata}},

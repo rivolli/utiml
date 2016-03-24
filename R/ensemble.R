@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- br(toyml, "KNN")
 #' predictions <- list(
 #'  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -16,6 +17,7 @@
 #'  predict(model, toyml[1:10], k=5)[, "y1"]
 #' )
 #' result <- average_ensemble_votes(predictions)
+#' }
 average_ensemble_votes <- function(predictions) {
   compute_ensemble_votes(predictions, mean)
 }
@@ -30,6 +32,7 @@ average_ensemble_votes <- function(predictions) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- br(toyml, "KNN")
 #' predictions <- list(
 #'  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -39,6 +42,7 @@ average_ensemble_votes <- function(predictions) {
 #'
 #' ## Return the max value for each example
 #' result <- compute_ensemble_votes(predictions, max)
+#' }
 compute_ensemble_votes <- function(predictions, method) {
   if (length(predictions) == 0) {
     stop("Predictions can not be empty")
@@ -67,6 +71,7 @@ compute_ensemble_votes <- function(predictions, method) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- br(toyml, "KNN")
 #' predictions <- list(
 #'  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -75,6 +80,7 @@ compute_ensemble_votes <- function(predictions, method) {
 #' )
 #'
 #' result <- majority_ensemble_votes(predictions)
+#' }
 majority_ensemble_votes <- function(predictions) {
   if (length(predictions) == 0) {
     stop("Predictions can not be empty")
@@ -118,6 +124,7 @@ majority_ensemble_votes <- function(predictions) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- br(toyml, "KNN")
 #' predictions <- list(
 #'  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -126,6 +133,7 @@ majority_ensemble_votes <- function(predictions) {
 #' )
 #'
 #' result <- maximum_ensemble_votes(predictions)
+#' }
 maximum_ensemble_votes <- function(predictions) {
   compute_ensemble_votes(predictions, max)
 }
@@ -141,6 +149,7 @@ maximum_ensemble_votes <- function(predictions) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- br(toyml, "KNN")
 #' predictions <- list(
 #'  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -149,6 +158,7 @@ maximum_ensemble_votes <- function(predictions) {
 #' )
 #'
 #' result <- minimum_ensemble_votes(predictions)
+#' }
 minimum_ensemble_votes <- function(predictions) {
   compute_ensemble_votes(predictions, min)
 }
@@ -164,6 +174,7 @@ minimum_ensemble_votes <- function(predictions) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- br(toyml, "KNN")
 #' predictions <- list(
 #'  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -171,7 +182,8 @@ minimum_ensemble_votes <- function(predictions) {
 #'  predict(model, toyml[1:10], k=5)[, "y1"]
 #' )
 #'
-#' result <- product_ensemble_votes(predictions)
+#' result <- product_ensemble_votes
+#' }
 product_ensemble_votes <- function(predictions) {
   compute_ensemble_votes(predictions, prod)
 }
@@ -201,6 +213,7 @@ product_ensemble_votes <- function(predictions) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- br(toyml, "KNN")
 #' predictions <- list(
 #'  predict(model, toyml[1:10], k=1),
@@ -209,6 +222,7 @@ product_ensemble_votes <- function(predictions) {
 #' )
 #'
 #' result <- compute_multilabel_ensemble_votes(predictions, "avg")
+#' }
 compute_multilabel_ensemble_votes <- function(predictions,
                                               vote.schema,
                                               probability = TRUE) {
@@ -261,6 +275,11 @@ utiml_get_schema_method <- function(vote.schema) {
 }
 
 #' Verify if a schema vote name is valid
+#'
+#' @param vote.schema The name of schema vote
+#' @param accept.null Logical value determine if the vote.schema = NULL is
+#'  also valid. (Default: TRUE)
+#' @return TRUE or throw an error message otherwise
 check_ensemble_vote <- function (vote.schema, accept.null = TRUE) {
   if (is.null(vote.schema)) {
     if (!accept.null) {

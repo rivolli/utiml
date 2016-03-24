@@ -27,7 +27,7 @@ This function select the correct result and organize them in a prediction
  otherwise the values are the predictive value '0' or '1'.
 }
 \examples{
-...
+\dontrun{
 predictions <- list()
 predictions$class1 <- mlpredict(model1, testdata)
 predictions$class2 <- mlpredict(model2, testdata)
@@ -36,6 +36,6 @@ result2 <- as.multilabelPrediction(predictions, FALSE)
 
 all(result1 == attr(result2, 'probs')) # TRUE
 all(result2 == attr(result1, 'classes')) # TRUE
-...
+}
 }
 

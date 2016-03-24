@@ -52,9 +52,9 @@ model <- dbr(toyml, 'RF', CORES = 4)
 }
 }
 \references{
-Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,
-   J., & Hüllermeier, E. (2014). Dependent binary relevance models for
-   multi-label classification. Pattern Recognition, 47(3), 1494–1508.
+Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
+   J., & Hullermeier, E. (2014). Dependent binary relevance models for
+   multi-label classification. Pattern Recognition, 47(3), 1494-1508.
 }
 \seealso{
 \code{\link{rdbr}}

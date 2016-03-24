@@ -4,7 +4,7 @@ df <- data.frame(matrix(rnorm(50), ncol = 5))
 df$Label1 <- c(sample(c(0,1), 10, replace = TRUE))
 df$Label2 <- c(sample(c(0,1), 10, replace = TRUE))
 df$Label3 <- c(sample(c(0,1), 10, replace = TRUE))
-train <- mldr_from_dataframe(df, labelIndices = c(6, 7, 8), name = "testMLDR")
+train <- mldr::mldr_from_dataframe(df, labelIndices = c(6, 7, 8), name = "testMLDR")
 test <- train$dataset[, train$attributesIndexes]
 
 predictionTest <- function (model) {

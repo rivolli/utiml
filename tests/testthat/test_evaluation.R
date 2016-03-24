@@ -260,8 +260,8 @@ test_that("Measures names", {
   expect_equal(multilabel_measure_names("micro-based"), micro)
   expect_equal(multilabel_measure_names("label-based"), sort(c(micro, macro)))
 
-  example <- c("accuracy", "F1", "hamming-loss", "precision", "recall",
-               "subset-accuracy")
+  example <- sort(c("accuracy", "F1", "hamming-loss", "precision", "recall",
+               "subset-accuracy"))
   expect_equal(multilabel_measure_names("example-based"), example)
 
   expect_equal(multilabel_measure_names(),
@@ -300,7 +300,7 @@ test_that("Mulan Measures", {
 
   dataset <- cbind(attr1=rep(1, nrow(expected)), expected)
   indexes <- seq(ncol(expected)) + 1
-  mdata <- mldr_from_dataframe(dataset, indexes, name="flags")
+  mdata <- mldr::mldr_from_dataframe(dataset, indexes, name="flags")
   mlresult <- get_multilabel_prediction(bipartition, probability, TRUE)
 
   evaluation <- multilabel_evaluate(mdata, mlresult)
@@ -389,7 +389,7 @@ test_that("Sum mlconfmat", {
   bipartition <- read.csv("../testfiles/flags-bipartition.csv")
   probability <- read.csv("../testfiles/flags-scores.csv")
   dataset <- cbind(attr1=rep(1, nrow(expected)), expected)
-  mdata <- mldr_from_dataframe(dataset, seq(ncol(expected)) + 1, name="flags")
+  mdata <- mldr::mldr_from_dataframe(dataset, seq(ncol(expected)) + 1, name="flags")
   mlresult <- get_multilabel_prediction(bipartition, probability, TRUE)
   mlconfmat2 <- multilabel_confusion_matrix(mdata, mlresult)
   expect_error(mlconfmat + mlconfmat2)

@@ -25,8 +25,8 @@ A list with data, labelname, labelindex and methodname.
 Prepare a Binary MultiLabel Data to be processed
 }
 \examples{
-# ...
+\dontrun{
 tbl <- prepare_br_data(dataframe, 'mldBR', 'SVM')
-# ...
+}
 }
 

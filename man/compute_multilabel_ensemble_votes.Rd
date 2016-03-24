@@ -39,6 +39,7 @@ You can create your own vote schema, just create a method that receive
  Your method must be like the methods mean, max and min.
 }
 \examples{
+\dontrun{
 model <- br(toyml, "KNN")
 predictions <- list(
  predict(model, toyml[1:10], k=1),
@@ -47,5 +48,6 @@ predictions <- list(
 )
 
 result <- compute_multilabel_ensemble_votes(predictions, "avg")
+}
 }
 

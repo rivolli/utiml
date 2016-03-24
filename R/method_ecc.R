@@ -32,12 +32,12 @@
 #' }
 #' @references
 #'    Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
-#'    chains for multi-label classification. Machine Learning, 85(3), 333–359.
+#'    chains for multi-label classification. Machine Learning, 85(3), 333-359.
 #'
 #'    Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2009).
 #'    Classifier Chains for Multi-label Classification. Machine Learning and
 #'    Knowledge Discovery in Databases, Lecture Notes in Computer Science,
-#'    5782, 254–269.
+#'    5782, 254-269.
 #' @note If you want to reproduce the same classification and obtain the same
 #'  result will be necessary set a flag utiml.mc.set.seed to FALSE.
 #' @export
@@ -178,6 +178,8 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
 }
 
 #' Print ECC model
+#' @param x The ecc model
+#' @param ... ignored
 #' @export
 print.ECCmodel <- function(x, ...) {
     cat("Ensemble of Classifier Chains Model\n\nCall:\n")

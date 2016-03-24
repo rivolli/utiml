@@ -8,12 +8,14 @@ mlmeasure_ranking_loss(mlconfmat, ...)
 }
 \arguments{
 \item{mlconfmat}{Confusion matrix}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label Hamming Loss Measure
 }
 \references{
 Schapire, R. E., & Singer, Y. (1999). Improved boosting
- algorithm using confidence-rated predictions. Machine Learning, 297–336.
+ algorithm using confidence-rated predictions. Machine Learning, 297-336.
 }
 

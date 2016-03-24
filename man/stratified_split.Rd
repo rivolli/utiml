@@ -20,16 +20,18 @@ Labelsets Stratification
 Create the indexes using the Labelsets Stratification approach.
 }
 \examples{
+\dontrun{
 # Create 3 partitions for train, validation and test
 indexes <- stratified_split(emotions, c(0.6,0.1,0.3))
 
 # Create a stratified 10-fold
 indexes <- stratified_split(emotions, rep(0.1,10))
 }
+}
 \references{
 Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
  stratification of multi-label data. In Proceedings of the Machine
  Learningand Knowledge Discovery in Databases - European Conference,
- ECML PKDD (pp. 145–158).
+ ECML PKDD (pp. 145-158).
 }
 

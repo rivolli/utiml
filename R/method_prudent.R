@@ -33,7 +33,7 @@
 #' @references
 #'  Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
 #'    Approach for Multi-Label Classification. IEEE Transactions on Knowledge
-#'    and Data Engineering, 27(9), 2480–2493.
+#'    and Data Engineering, 27(9), 2480-2493.
 #' @seealso \code{\link{calculate_labels_information_gain}}
 #' @export
 #'
@@ -181,6 +181,8 @@ predict.PruDentmodel <- function(object, newdata,
 }
 
 #' Print PruDent model
+#' @param x The prudent model
+#' @param ... ignored
 #' @export
 print.PruDentmodel <- function(x, ...) {
   cat("Classifier PruDent\n\nCall:\n")

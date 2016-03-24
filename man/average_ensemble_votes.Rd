@@ -17,6 +17,7 @@ Compute the prediction for a single-label using the average votes schema.
 The probabilities result is computed using the averaged values.
 }
 \examples{
+\dontrun{
 model <- br(toyml, "KNN")
 predictions <- list(
  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -24,6 +25,7 @@ predictions <- list(
  predict(model, toyml[1:10], k=5)[, "y1"]
 )
 result <- average_ensemble_votes(predictions)
+}
 }
 \seealso{
 Other Ensemble utilites: \code{\link{majority_ensemble_votes}},

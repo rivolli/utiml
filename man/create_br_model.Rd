@@ -15,8 +15,7 @@ method}
 \value{
 The model dinamically generated
 }
-\examples{
-# Create a model for each dataset in datasets list
-lapply(datasets, create_br_model, ...)
+\description{
+This method is used in the methods to call dinamicaly the base classifier
 }
 

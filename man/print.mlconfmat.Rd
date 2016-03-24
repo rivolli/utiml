@@ -4,7 +4,12 @@
 \alias{print.mlconfmat}
 \title{Print a Multi-label Confusion Matrix}
 \usage{
-\method{print}{mlconfmat}(x)
+\method{print}{mlconfmat}(x, ...)
+}
+\arguments{
+\item{x}{The mlconfmat}
+
+\item{...}{ignored}
 }
 \description{
 Print a Multi-label Confusion Matrix

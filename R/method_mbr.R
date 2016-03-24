@@ -40,9 +40,9 @@
 #'  Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
 #'    Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance
 #'    models for multi-label learning. In Proceedings of the Workshop on
-#'    Learning from Multi-Label Data (MLD’09) (pp. 22–30).
+#'    Learning from Multi-Label Data (MLD'09) (pp. 22-30).
 #'  Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for Multi-labeled
-#'    Classification. In Data Mining and Knowledge Discovery (pp. 1–26).
+#'    Classification. In Data Mining and Knowledge Discovery (pp. 1-26).
 #' @seealso \code{\link{calculate_labels_correlation}}
 #' @export
 #'
@@ -180,6 +180,8 @@ predict.MBRmodel <- function(object, newdata,
 }
 
 #' Print MBR model
+#' @param x The mbr model
+#' @param ... ignored
 #' @export
 print.MBRmodel <- function(x, ...) {
   cat("Classifier Meta-BR (also called 2BR)\n\nCall:\n")

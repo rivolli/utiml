@@ -22,10 +22,12 @@ The normalized data
 Internal normalize data function
 }
 \examples{
+\dontrun{
 utiml_normalize(c(1,2,3,4,5))
 #--> 0 0.25 0.5 0.75 1
 
 utiml_normalize(c(1,2,3,4,5), 10, 0)
 #--> 0.1 0.2 0.3 0.4 0.5
+}
 }
 

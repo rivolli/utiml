@@ -42,12 +42,12 @@
 #' }
 #' @details Dependencies:
 #'  The degree of label correlations are estimated via supervised feature
-#'    selection techniques. Thus, this implementation use the \link{relief}
-#'    method available in \pkg{FSelector} package.
+#'    selection techniques. Thus, this implementation use the
+#'    \link[FSelector]{relief} method available in \pkg{FSelector} package.
 #' @references
 #'  Li, Y., & Zhang, M. (2014). Enhancing Binary Relevance for Multi-label
 #'    Learning with Controlled Label Correlations Exploitation. In 13th Pacific
-#'    Rim International Conference on Artificial Intelligence (pp. 91–103).
+#'    Rim International Conference on Artificial Intelligence (pp. 91-103).
 #'    Gold Coast, Australia.
 #' @export
 #'
@@ -239,6 +239,8 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
 }
 
 #' Print CTRL model
+#' @param x The ctrlmodel
+#' @param ... ignored
 #' @export
 print.CTRLmodel <- function(x, ...) {
   cat("BR with ConTRolled Label correlation Model (CTRL)\n\nCall:\n")

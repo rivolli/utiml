@@ -22,7 +22,7 @@
 #'   }
 #' @references
 #'  Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
-#'    multi-label scene classification. Pattern Recognition, 37(9), 1757–1771.
+#'    multi-label scene classification. Pattern Recognition, 37(9), 1757-1771.
 #' @export
 #'
 #' @examples
@@ -115,6 +115,8 @@ predict.BRmodel <- function(object, newdata,
 }
 
 #' Print BR model
+#' @param x The br model
+#' @param ... ignored
 #' @export
 print.BRmodel <- function(x, ...) {
   cat("Binary Relevance Model\n\nCall:\n")

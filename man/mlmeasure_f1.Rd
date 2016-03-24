@@ -8,12 +8,14 @@ mlmeasure_f1(mlconfmat, ...)
 }
 \arguments{
 \item{mlconfmat}{Confusion matrix}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label F1 Measure
 }
 \references{
 Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
- Learning. ACM Comput. Surv., 47(3), 52:1–52:38.
+ Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
 }
 

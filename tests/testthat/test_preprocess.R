@@ -11,7 +11,7 @@ test_that("Sparce data", {
   )
   df$Label1 <- c(sample(c(0,1), 100, replace = TRUE))
   df$Label2 <- c(sample(c(0,1), 100, replace = TRUE))
-  mdata <- mldr_from_dataframe(df, labelIndices = c(7, 8), name = "testMLDR")
+  mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(7, 8), name = "testMLDR")
 
   new.data <- fill_sparce_mldata(mdata)
   expect_equal(as.numeric(new.data$dataset[, 1]),  c(1, 2, rep(0, 98)))
@@ -35,7 +35,7 @@ test_that("Normalize data", {
   )
   df$Label1 <- c(sample(c(0,1), 100, replace = TRUE))
   df$Label2 <- c(sample(c(0,1), 100, replace = TRUE))
-  mdata <- mldr_from_dataframe(df, labelIndices = c(7, 8), name = "testMLDR")
+  mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(7, 8), name = "testMLDR")
 
   new.data <- normalize_mldata(mdata)
   for (i in seq(5)) {
@@ -63,7 +63,7 @@ test_that("Remove examples and attributes", {
   df$Label1 <- rep(0, 100)
   df$Label2 <- sample(c(rep(1, 30), rep(0, 30),
                         sample(c(0,1), 40, replace = TRUE)))
-  mdata <- mldr_from_dataframe(df, labelIndices = c(9, 10), name = "testMLDR")
+  mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(9, 10), name = "testMLDR")
 
   new.data <- remove_attributes(mdata, 2)
   expect_equal(new.data$measures$num.attributes, 9)
@@ -99,7 +99,7 @@ test_that("Remove examples and attributes", {
   df$Label4 <- c(c(0, 0), rep(1, 98))
   df$Label5 <- rep(1, 100)
   df$Label6 <- c(rep(1, 11), rep(0, 89))
-  mdata <- mldr_from_dataframe(df, labelIndices = 9:14, name = "testMLDR")
+  mdata <- mldr::mldr_from_dataframe(df, labelIndices = 9:14, name = "testMLDR")
 
   new.data <- remove_labels(mdata, 9)
   expect_equal(new.data$measures$num.labels, 5)
@@ -147,7 +147,7 @@ test_that("Replace nominal attributes", {
   zero.um <- c(rep(1, 30), rep(0, 30))
   df$Label1 <- sample(c(zero.um, sample(c(0,1), 40, replace = TRUE)))
   df$Label2 <- sample(c(zero.um, sample(c(0,1), 40, replace = TRUE)))
-  mdata <- mldr_from_dataframe(df, labelIndices = c(6, 7), name = "testMLDR")
+  mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(6, 7), name = "testMLDR")
 
   new.data <- replace_nominal_attributes(mdata)
   expect_equal(new.data$measures$num.attributes, 8)
@@ -171,7 +171,7 @@ test_that("Alternatives datasets", {
     X6 = c("alfa", "beta", rep(NA, 98))
   )
   df[df$Label1 == 0 & df$Label2 == 0,"Label3"] <- 1
-  mdata <- mldr_from_dataframe(df, labelIndices = c(1, 2, 3), name = "testMLDR")
+  mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(1, 2, 3), name = "testMLDR")
 
   ndata <- fill_sparce_mldata(mdata)
   expect_equal(ndata$measures, mdata$measures)

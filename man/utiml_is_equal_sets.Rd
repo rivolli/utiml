@@ -18,10 +18,12 @@ Logical value where TRUE the sets are equals and FALSE otherwise.
 Define if two sets are equals independently of the order of the elements
 }
 \examples{
+\dontrun{
 utiml_is_equal_sets(c(1, 2, 3), c(3, 2, 1))
 ## TRUE
 
 utiml_is_equal_sets(c(1, 2, 3), c(1, 2, 3, 4))
 ## FALSE
+}
 }
 

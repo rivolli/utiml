@@ -8,13 +8,15 @@ mlmeasure_margin_loss(mlconfmat, ...)
 }
 \arguments{
 \item{mlconfmat}{Confusion matrix}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label Margin Loss Measure
 }
 \references{
-Loza Mencía, E., & Fürnkranz, J. (2010). Efficient Multilabel
+Loza Mencia, E., & Furnkranz, J. (2010). Efficient Multilabel
 Classification Algorithms for Large-Scale Problems in the Legal Domain.
-In Semantic Processing of Legal Texts (pp. 192–215).
+In Semantic Processing of Legal Texts (pp. 192-215).
 }
 

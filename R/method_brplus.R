@@ -29,7 +29,7 @@
 #' @references
 #'  Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
 #'    dependency into the binary relevance framework for multi-label
-#'    classification. Expert Systems with Applications, 39(2), 1647–1655.
+#'    classification. Expert Systems with Applications, 39(2), 1647-1655.
 #' @export
 #'
 #' @examples
@@ -120,7 +120,7 @@ brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' @references
 #'  Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
 #'    dependency into the binary relevance framework for multi-label
-#'    classification. Expert Systems with Applications, 39(2), 1647–1655.
+#'    classification. Expert Systems with Applications, 39(2), 1647-1655.
 #' @seealso \code{\link[=brplus]{BR+}}
 #' @export
 #'
@@ -200,6 +200,8 @@ predict.BRPmodel <- function(object, newdata,
 }
 
 #' Print BRP model
+#' @param x The brp model
+#' @param ... ignored
 #' @export
 print.BRPmodel <- function(x, ...) {
   cat("Classifier BRplus (also called BR+)\n\nCall:\n")

@@ -6,6 +6,11 @@
 \usage{
 \method{print}{NSmodel}(x, ...)
 }
+\arguments{
+\item{x}{The ns model}
+
+\item{...}{ignored}
+}
 \description{
 Print NS model
 }

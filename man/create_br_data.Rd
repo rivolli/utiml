@@ -19,7 +19,4 @@ a data.frame where the label is the last column
 \description{
 Create a data.frame from original mldr data for a single label
 }
-\examples{
-create_br_data(toyml, "y1")
-}
 

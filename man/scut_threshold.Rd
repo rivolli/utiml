@@ -2,9 +2,18 @@
 % Please edit documentation in R/threshold.R
 \name{scut_threshold}
 \alias{scut_threshold}
+\alias{scut_threshold.default}
+\alias{scut_threshold.mlresult}
 \title{SCut Score-based method}
 \usage{
-scut_threshold(prediction, ...)
+scut_threshold(prediction, expected, loss.function = mse,
+  CORES = getOption("utiml.cores", 1))
+
+\method{scut_threshold}{default}(prediction, expected, loss.function = mse,
+  CORES = getOption("utiml.cores", 1))
+
+\method{scut_threshold}{mlresult}(prediction, expected, loss.function = mse,
+  CORES = getOption("utiml.cores", 1))
 }
 \arguments{
 \item{prediction}{A matrix or mlresult.}
@@ -30,6 +39,12 @@ achieve a specific loss function using a validation set or cross validation.
 Different from the others threshold methods instead of return the bipartition
 results it returs the threshold values for each label.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{default}: Default scut_threshold
+
+\item \code{mlresult}: Mlresult scut_threshold
+}}
 \note{
 The loss function is a R method that receive two lists, the expected
  values of the label and the predicted values, respectively. Positive values
@@ -38,7 +53,7 @@ The loss function is a R method that receive two lists, the expected
 \examples{
 names <- list(1:10, c("a", "b", "c"))
 prediction <- matrix(runif(30), ncol = 3, dimnames = names)
-classes <- matrix(sample(0:1, 30, rep = T), ncol = 3, dimnames = names)
+classes <- matrix(sample(0:1, 30, rep = TRUE), ncol = 3, dimnames = names)
 thresholds <- scut_threshold(prediction, classes)
 bipartition <- fixed_threshold(prediction, thresholds)
 

@@ -28,7 +28,7 @@
 #' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
 #'  stratification of multi-label data. In Proceedings of the Machine
 #'  Learning and Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145–158).
+#'  ECML PKDD (pp. 145-158).
 #' @note To create your own split method, you need to build a function that
 #'  receive a mldr object and a list with the proportions of examples in each
 #'  fold and return an other list with the index of the elements for each fold.
@@ -111,7 +111,7 @@ create_holdout_partition <- function (mdata,
 #' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
 #'  stratification of multi-label data. In Proceedings of the Machine
 #'  Learning and Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145–158).
+#'  ECML PKDD (pp. 145-158).
 #' @note To create your own split method, you need to build a function that
 #'  receive a mldr object and a list with the proportions of examples in each
 #'  fold and return an other list with the index of the elements for each fold.
@@ -314,14 +314,16 @@ utiml_validate_splitmethod <- function (method) {
 #' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
 #'  stratification of multi-label data. In Proceedings of the Machine
 #'  Learningand Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145–158).
+#'  ECML PKDD (pp. 145-158).
 #'
 #' @examples
+#' \dontrun{
 #' # Create 3 partitions for train, validation and test
 #' indexes <- iterative_split(emotions, c(0.6,0.1,0.3))
 #'
 #' # Create a stratified 10-fold
 #' indexes <- iterative_split(emotions, rep(0.1,10))
+#' }
 iterative_split <- function(mdata, r) {
   D <- rownames(mdata$dataset)
   S <- lapply(seq(length(r)), function(i) character())
@@ -397,7 +399,9 @@ iterative_split <- function(mdata, r) {
 #' @return A list with k disjoint indexes subsets S1, . . .Sk.
 #'
 #' @examples
+#' \dontrun{
 #' random_split(emotions, c(0.6, 0.2, 0.2))
+#' }
 random_split <- function(mdata, r) {
   index <- c()
   amount <- round(mdata$measures$num.instances * r)
@@ -428,14 +432,16 @@ random_split <- function(mdata, r) {
 #' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
 #'  stratification of multi-label data. In Proceedings of the Machine
 #'  Learningand Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145–158).
+#'  ECML PKDD (pp. 145-158).
 #'
 #' @examples
+#' \dontrun{
 #' # Create 3 partitions for train, validation and test
 #' indexes <- stratified_split(emotions, c(0.6,0.1,0.3))
 #'
 #' # Create a stratified 10-fold
 #' indexes <- stratified_split(emotions, rep(0.1,10))
+#' }
 stratified_split <- function(mdata, r) {
   D <- sample(mdata$measures$num.instances)
   S <- lapply(1:length(r), function(i) integer())
@@ -473,6 +479,11 @@ stratified_split <- function(mdata, r) {
   S
 }
 
+#' Print a kFoldPartition object
+#'
+#' @param x The kFoldPartition object
+#' @param ... ignored
+#' @export
 print.kFoldPartition <- function (x, ...) {
   cat("K Fold Partition", paste("(k = ",x$k,")", sep=''), "\n\n")
 

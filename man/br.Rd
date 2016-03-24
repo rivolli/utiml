@@ -50,7 +50,7 @@ model <- br(toyml, 'KNN', k=5)
 }
 \references{
 Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
-   multi-label scene classification. Pattern Recognition, 37(9), 1757–1771.
+   multi-label scene classification. Pattern Recognition, 37(9), 1757-1771.
 }
 \seealso{
 Other Transformation methods: \code{\link{brplus}},

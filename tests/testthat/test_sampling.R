@@ -5,10 +5,11 @@ df$Label1 <- c(sample(c(0,1), 100, replace = TRUE))
 df$Label2 <- c(sample(c(0,1), 100, replace = TRUE))
 df$Label3 <- c(sample(c(0,1), 100, replace = TRUE))
 df$Label4 <- as.numeric(df$Label1 == 0 | df$Label2 == 0 | df$Label3 == 0)
-mdata <- mldr_from_dataframe(df, labelIndices = c(11, 12, 13, 14),
+mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(11, 12, 13, 14),
                              name = "testMLDR")
-empty.mdata <- mldr_from_dataframe(df[, 1:13], labelIndices = c(11, 12, 13),
-                                   name = "testMLDR")
+empty.mdata <- mldr::mldr_from_dataframe(df[, 1:13],
+                                         labelIndices = c(11, 12, 13),
+                                         name = "testMLDR")
 set.seed(NULL)
 
 testFolds <- function (kfold, original, msg) {
@@ -287,8 +288,10 @@ test_that("subset and random subset", {
 })
 
 test_that("Alternatives dataset for sampling", {
-  dataset <- cbind(mdata$dataset[mdata$labels$index], mdata$dataset[mdata$attributesIndexes])
-  ndata <- mldr_from_dataframe(dataset, labelIndices = 1:4, name = "testMLDR")
+  dataset <- cbind(mdata$dataset[mdata$labels$index],
+                   mdata$dataset[mdata$attributesIndexes])
+  ndata <- mldr::mldr_from_dataframe(dataset, labelIndices = 1:4,
+                                     name = "testMLDR")
 
   test <- create_holdout_partition(ndata)
   expect_equal(colnames(test[[1]]$dataset), colnames(ndata$dataset))

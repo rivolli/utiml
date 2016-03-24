@@ -6,6 +6,15 @@
 \usage{
 \method{[}{mlresult}(mlresult, rowFilter = T, colFilter, ...)
 }
+\arguments{
+\item{mlresult}{A mlresult object}
+
+\item{rowFilter}{A list of rows to filter}
+
+\item{colFilter}{A list of columns to filter}
+
+\item{...}{Extra parameters to be used as the filter}
+}
 \description{
 Filter a Multi-Label Result
 }

@@ -339,7 +339,9 @@ mlpredict.baseKNN <- function(model, newdata, ...) {
 }
 
 #' Summary method for mltransformation
+#' @param object A transformed dataset
+#' @param ... additional arguments affecting the summary produced.
 #' @export
-summary.mltransformation <- function(x, ...) {
-  summary(x$data)
+summary.mltransformation <- function(object, ...) {
+  summary(object$data, ...)
 }

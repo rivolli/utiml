@@ -227,8 +227,9 @@ remove_skewness_labels <- function(mdata, t = 1) {
 #'
 #' @examples
 #' new.toy <- toyml
-#' new.toy$dataset$ratt10 <- as.factor(sample(c("a","b","c"), 100, replace=T))
-#' replace_nominal_attributes(new.toy)
+#' new.column <- as.factor(sample(c("a","b","c"), 100, replace = TRUE))
+#' new.toy$dataset$ratt10 <- new.column
+#' head(replace_nominal_attributes(new.toy))
 replace_nominal_attributes <- function(mdata, ordinal.attributes = list()) {
   # TODO ordinal.attributes
   replace_nominal_column <- function(column, column.name = "", type = 1) {

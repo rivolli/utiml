@@ -17,6 +17,7 @@ Compute the ensemble prediction using the product votes schema. The
 probabilities result is computed using the product of all values.
 }
 \examples{
+\dontrun{
 model <- br(toyml, "KNN")
 predictions <- list(
  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -24,7 +25,8 @@ predictions <- list(
  predict(model, toyml[1:10], k=5)[, "y1"]
 )
 
-result <- product_ensemble_votes(predictions)
+result <- product_ensemble_votes
+}
 }
 \seealso{
 Other Ensemble utilites: \code{\link{average_ensemble_votes}},

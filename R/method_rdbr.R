@@ -29,9 +29,9 @@
 #'    \item{models}{A list of final models named by the label names.}
 #'  }
 #' @references
-#'  Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejão, F. M.
+#'  Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejao, F. M.
 #'   (2014). Recursive Dependent Binary Relevance Model for Multi-label
-#'   Classification. In Advances in Artificial Intelligence - IBERAMIA, 206–217.
+#'   Classification. In Advances in Artificial Intelligence - IBERAMIA, 206-217.
 #' @seealso \code{\link[=dbr]{Dependent Binary Relevance (DBR)}}
 #' @export
 #'
@@ -84,9 +84,9 @@ rdbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  \code{options("utiml.cores", 1)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @references
-#'  Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejão, F. M.
+#'  Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejao, F. M.
 #'   (2014). Recursive Dependent Binary Relevance Model for Multi-label
-#'   Classification. In Advances in Artificial Intelligence - IBERAMIA, 206–217.
+#'   Classification. In Advances in Artificial Intelligence - IBERAMIA, 206-217.
 #' @seealso \code{\link[=rdbr]{Recursive Dependent Binary Relevance (RDBR)}}
 #' @export
 #'
@@ -170,6 +170,8 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
 }
 
 #' Print RDBR model
+#' @param x The rdbr model
+#' @param ... ignored
 #' @export
 print.RDBRmodel <- function(x, ...) {
     cat("Classifier RDBR\n\nCall:\n")

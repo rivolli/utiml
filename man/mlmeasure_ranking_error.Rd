@@ -8,13 +8,17 @@ mlmeasure_ranking_error(mlconfmat, ranking, ...)
 }
 \arguments{
 \item{mlconfmat}{Confusion matrix}
+
+\item{ranking}{A matriz ranking}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label Ranking Error Measure
 }
 \references{
-Park, S.-H., & Fürnkranz, J. (2008). Multi-Label Classification
+Park, S.-H., & Furnkranz, J. (2008). Multi-Label Classification
  with Label Constraints. Proceedings of the ECML PKDD 2008 Workshop on
- Preference Learning (PL-08, Antwerp, Belgium), 157–171.
+ Preference Learning (PL-08, Antwerp, Belgium), 157-171.
 }
 

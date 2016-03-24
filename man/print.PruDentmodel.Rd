@@ -6,6 +6,11 @@
 \usage{
 \method{print}{PruDentmodel}(x, ...)
 }
+\arguments{
+\item{x}{The prudent model}
+
+\item{...}{ignored}
+}
 \description{
 Print PruDent model
 }

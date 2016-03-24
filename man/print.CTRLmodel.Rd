@@ -6,6 +6,11 @@
 \usage{
 \method{print}{CTRLmodel}(x, ...)
 }
+\arguments{
+\item{x}{The ctrlmodel}
+
+\item{...}{ignored}
+}
 \description{
 Print CTRL model
 }

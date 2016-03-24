@@ -6,6 +6,11 @@
 \usage{
 \method{print}{RDBRmodel}(x, ...)
 }
+\arguments{
+\item{x}{The rdbr model}
+
+\item{...}{ignored}
+}
 \description{
 Print RDBR model
 }

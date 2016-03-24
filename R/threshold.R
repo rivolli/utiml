@@ -62,9 +62,9 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
 #' @param prediction A matrix or mlresult.
 #' @return A matrix or mlresult based as the type of prediction parameter.
 #' @references
-#' Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
+#' Largeron, C., Moulin, C., & Gery, M. (2012). MCut: A Thresholding Strategy
 #'  for Multi-label Classification. In 11th International Symposium, IDA 2012
-#'  (pp. 172–183).
+#'  (pp. 172-183).
 #' @export
 #'
 #' @examples
@@ -114,9 +114,9 @@ mcut_threshold.mlresult <- function (prediction) {
 #'  Comparative Study on Threshold Selection Methods. In First International
 #'  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
 #'
-#' Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
+#' Largeron, C., Moulin, C., & Gery, M. (2012). MCut: A Thresholding Strategy
 #'  for Multi-label Classification. In 11th International Symposium, IDA 2012
-#'  (pp. 172–183).
+#'  (pp. 172-183).
 #' @export
 #'
 #' @examples
@@ -246,7 +246,7 @@ score_driven_threshold <- function () {
 #' @examples
 #' names <- list(1:10, c("a", "b", "c"))
 #' prediction <- matrix(runif(30), ncol = 3, dimnames = names)
-#' classes <- matrix(sample(0:1, 30, rep = T), ncol = 3, dimnames = names)
+#' classes <- matrix(sample(0:1, 30, rep = TRUE), ncol = 3, dimnames = names)
 #' thresholds <- scut_threshold(prediction, classes)
 #' bipartition <- fixed_threshold(prediction, thresholds)
 #'
@@ -258,10 +258,13 @@ score_driven_threshold <- function () {
 #' prediction <- predict(br(toyml), toyml)
 #' scut_threshold(prediction, toyml, loss.function = mylossfunc, CORES = 5)
 #' }
-scut_threshold <- function (prediction, ...) {
+scut_threshold <- function (prediction, expected, loss.function = mse,
+                            CORES = getOption("utiml.cores", 1)) {
   UseMethod("scut_threshold")
 }
 
+#' @describeIn scut_threshold Default scut_threshold
+#' @export
 scut_threshold.default <- function (prediction, expected, loss.function = mse,
                                     CORES = getOption("utiml.cores", 1)) {
   if (mode(loss.function) != "function") {
@@ -303,8 +306,10 @@ scut_threshold.default <- function (prediction, expected, loss.function = mse,
   unlist(thresholds)
 }
 
+#' @describeIn scut_threshold Mlresult scut_threshold
+#' @export
 scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
-                                    CORES = getOption("utiml.cores", 1)) {
+                                     CORES = getOption("utiml.cores", 1)) {
   probs   <- as.probability(prediction)
   scut_threshold.default(probs, expected, loss.function, CORES)
 }
@@ -335,9 +340,9 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
 #'  base.threshold value the scores higher than the threshold value, but must be
 #'  lower are changed to respect this restriction.
 #' @references
-#'  Senge, R., Coz, J. J. del, & Hüllermeier, E. (2013). Rectifying classifier
+#'  Senge, R., Coz, J. J. del, & Hullermeier, E. (2013). Rectifying classifier
 #'    chains for multi-label classification. In Workshop of Lernen, Wissen &
-#'    Adaptivität (LWA 2013) (pp. 162–169). Bamberg, Germany.
+#'    Adaptivitat (LWA 2013) (pp. 162-169). Bamberg, Germany.
 #' @export
 #'
 #' @examples

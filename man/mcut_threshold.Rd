@@ -35,9 +35,9 @@ prediction <- matrix(runif(16), ncol = 4)
 mcut_threshold(prediction)
 }
 \references{
-Largeron, C., Moulin, C., & Géry, M. (2012). MCut: A Thresholding Strategy
+Largeron, C., Moulin, C., & Gery, M. (2012). MCut: A Thresholding Strategy
  for Multi-label Classification. In 11th International Symposium, IDA 2012
- (pp. 172–183).
+ (pp. 172-183).
 }
 \seealso{
 Other threshold: \code{\link{fixed_threshold}},

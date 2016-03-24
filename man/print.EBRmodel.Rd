@@ -6,6 +6,11 @@
 \usage{
 \method{print}{EBRmodel}(x, ...)
 }
+\arguments{
+\item{x}{The ebr model}
+
+\item{...}{ignored}
+}
 \description{
 Print EBR model
 }

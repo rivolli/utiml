@@ -24,11 +24,13 @@ classifiers prediction this is used to transform the result from the base
 methods.
 }
 \examples{
+\dontrun{
 probs <- runif(10, 0, 1)
 as.binaryPrediction(probs)
 
-# Use different threshold value
+## Use different threshold value
 probs <- runif(10, 0, 1)
 result <- as.binaryPrediction(probs, 0.6)
+}
 }
 

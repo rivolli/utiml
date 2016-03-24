@@ -27,9 +27,9 @@
 #'    \item{models}{A list of final models named by the label names.}
 #'  }
 #' @references
-#'  Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,
-#'    J., & Hüllermeier, E. (2014). Dependent binary relevance models for
-#'    multi-label classification. Pattern Recognition, 47(3), 1494–1508.
+#'  Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
+#'    J., & Hullermeier, E. (2014). Dependent binary relevance models for
+#'    multi-label classification. Pattern Recognition, 47(3), 1494-1508.
 #' @seealso \code{\link{rdbr}}
 #' @export
 #'
@@ -98,9 +98,9 @@ dbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  \code{options("utiml.cores", 1)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @references
-#'  Montañes, E., Senge, R., Barranquero, J., Ramón Quevedo, J., José Del Coz,
-#'    J., & Hüllermeier, E. (2014). Dependent binary relevance models for
-#'    multi-label classification. Pattern Recognition, 47(3), 1494–1508.
+#'  Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
+#'    J., & Hullermeier, E. (2014). Dependent binary relevance models for
+#'    multi-label classification. Pattern Recognition, 47(3), 1494-1508.
 #' @seealso \code{\link[=dbr]{Dependent Binary Relevance (DBR)}}
 #' @export
 #'
@@ -154,6 +154,8 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
 }
 
 #' Print DBR model
+#' @param x The dbr model
+#' @param ... ignored
 #' @export
 print.DBRmodel <- function(x, ...) {
   cat("Classifier DBR\n\nCall:\n")

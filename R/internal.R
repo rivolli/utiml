@@ -10,8 +10,10 @@
 #' @seealso \code{\link{ifelse}}
 #'
 #' @examples
+#' \dontrun{
 #' utiml_ifelse(TRUE, dataframe1, dataframe2) ## dataframe1
 #' utiml_ifelse(length(my.list) > 10, my.list[1:10], my.list)
+#' }
 utiml_ifelse <- function(test, yes, no) {
   list(yes, no)[c(test, !test)][[1]]
 }
@@ -26,8 +28,10 @@ utiml_ifelse <- function(test, yes, no) {
 #' @return A list with the results of the specified method.
 #'
 #' @examples
+#' \dontrun{
 #' utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
 #' utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
+#' }
 utiml_lapply <- function(mylist, myfnc, cores, ...) {
   if (requireNamespace("parallel", quietly = TRUE)) {
     parallel::mclapply(mylist,
@@ -53,11 +57,13 @@ utiml_lapply <- function(mylist, myfnc, cores, ...) {
 #' @return The normalized data
 #'
 #' @examples
+#' \dontrun{
 #' utiml_normalize(c(1,2,3,4,5))
 #' #--> 0 0.25 0.5 0.75 1
 #'
 #' utiml_normalize(c(1,2,3,4,5), 10, 0)
 #' #--> 0.1 0.2 0.3 0.4 0.5
+#' }
 utiml_normalize <- function(data, max.val = NULL, min.val = NULL) {
   max.val <- ifelse(is.null(max.val), max(data, na.rm = TRUE), max.val)
   min.val <- ifelse(is.null(min.val), min(data, na.rm = TRUE), min.val)
@@ -70,9 +76,11 @@ utiml_normalize <- function(data, max.val = NULL, min.val = NULL) {
 #' @return A dataframe or matrix containing only dataset
 #'
 #' @examples
+#' \dontrun{
 #' test <- emotions$dataset[,emotions$attributesIndexes]
 #' all(test == utiml_newdata(emotions)) # TRUE
 #' all(test == utiml_newdata(test)) # TRUE
+#' }
 utiml_newdata <- function(newdata) {
   UseMethod("utiml_newdata")
 }
@@ -86,7 +94,6 @@ utiml_newdata.default <- function(newdata) {
 utiml_newdata.mldr <- function(newdata) {
   newdata$dataset[, newdata$attributesIndexes]
 }
-
 
 #' Rename the list using the names values or its own content
 #'
@@ -112,11 +119,13 @@ utiml_renames <- function (X, names = NULL) {
 #' @param b Other list
 #' @return Logical value where TRUE the sets are equals and FALSE otherwise.
 #' @examples
+#' \dontrun{
 #' utiml_is_equal_sets(c(1, 2, 3), c(3, 2, 1))
 #' ## TRUE
 #'
 #' utiml_is_equal_sets(c(1, 2, 3), c(1, 2, 3, 4))
 #' ## FALSE
+#' }
 utiml_is_equal_sets <- function (a, b) {
   length(setdiff(union(a, b), intersect(a, b))) == 0
 }

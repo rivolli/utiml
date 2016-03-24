@@ -73,7 +73,7 @@ dataset <- create_holdout_partition(toyml, method="sequencial_split")
 Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
  stratification of multi-label data. In Proceedings of the Machine
  Learning and Knowledge Discovery in Databases - European Conference,
- ECML PKDD (pp. 145–158).
+ ECML PKDD (pp. 145-158).
 }
 \seealso{
 Other sampling: \code{\link{create_kfold_partition}},

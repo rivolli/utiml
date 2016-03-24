@@ -20,6 +20,7 @@ A single-label prediction (a mlprediction object).
 Generic vote combination for ensemble prediction
 }
 \examples{
+\dontrun{
 model <- br(toyml, "KNN")
 predictions <- list(
  predict(model, toyml[1:10], k=1)[, "y1"],
@@ -29,5 +30,6 @@ predictions <- list(
 
 ## Return the max value for each example
 result <- compute_ensemble_votes(predictions, max)
+}
 }
 

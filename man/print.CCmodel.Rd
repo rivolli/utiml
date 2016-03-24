@@ -6,6 +6,11 @@
 \usage{
 \method{print}{CCmodel}(x, ...)
 }
+\arguments{
+\item{x}{The cc model}
+
+\item{...}{ignored}
+}
 \description{
 Print CC model
 }

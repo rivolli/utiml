@@ -23,7 +23,9 @@ A list with the results of the specified method.
 Select the suitable method lapply or mclaplly
 }
 \examples{
+\dontrun{
 utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
 utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
+}
 }
 

@@ -34,7 +34,7 @@ result[4, -4]
 Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
  Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance
  models for multi-label learning. In Proceedings of the Workshop on Learning
- from Multi-Label Data (MLD’09) (pp. 22–30).
+ from Multi-Label Data (MLD'09) (pp. 22-30).
 }
 \seealso{
 \code{\link[=mbr]{Meta-BR (MBR or 2BR)}}

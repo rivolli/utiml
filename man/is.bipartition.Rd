@@ -7,7 +7,7 @@
 is.bipartition(mlresult)
 }
 \arguments{
-\item{x}{The mlresult object}
+\item{mlresult}{The mlresult object}
 }
 \value{
 logical value

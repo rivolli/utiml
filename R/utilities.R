@@ -14,7 +14,7 @@
 #' Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
 #'  Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance
 #'  models for multi-label learning. In Proceedings of the Workshop on Learning
-#'  from Multi-Label Data (MLD’09) (pp. 22–30).
+#'  from Multi-Label Data (MLD'09) (pp. 22-30).
 #' @seealso \code{\link[=mbr]{Meta-BR (MBR or 2BR)}}
 #' @export
 #'
@@ -53,7 +53,7 @@ calculate_labels_correlation <- function(mdata) {
 #' @references
 #'  Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
 #'   Approach for Multi-Label Classification. IEEE Transactions on Knowledge
-#'   and Data Engineering, 27(9), 2480–2493.
+#'   and Data Engineering, 27(9), 2480-2493.
 #' @export
 #'
 #' @examples

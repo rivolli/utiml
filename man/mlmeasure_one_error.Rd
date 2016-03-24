@@ -8,12 +8,14 @@ mlmeasure_one_error(mlconfmat, ...)
 }
 \arguments{
 \item{mlconfmat}{Confusion matrix}
+
+\item{...}{ignored}
 }
 \description{
 Multi-label One Error Measure
 }
 \references{
 Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
-based system for text categorization. Machine Learning, 39(2), 135–168.
+based system for text categorization. Machine Learning, 39(2), 135-168.
 }
 

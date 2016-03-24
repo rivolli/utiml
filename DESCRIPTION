@@ -22,7 +22,8 @@ Suggests:
     randomForest,
     rJava,
     rpart,
-    RWeka
+    RWeka,
+    testthat
 License: GPL | file LICENSE
 LazyData: true
 BugReports: https://github.com/rivolli/utiml

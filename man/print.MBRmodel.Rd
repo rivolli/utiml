@@ -6,6 +6,11 @@
 \usage{
 \method{print}{MBRmodel}(x, ...)
 }
+\arguments{
+\item{x}{The mbr model}
+
+\item{...}{ignored}
+}
 \description{
 Print MBR model
 }

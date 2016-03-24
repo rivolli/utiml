@@ -4,10 +4,12 @@
 \alias{as.matrix.mlresult}
 \title{Convert a mlresult to a matrix}
 \usage{
-\method{as.matrix}{mlresult}(x)
+\method{as.matrix}{mlresult}(x, ...)
 }
 \arguments{
 \item{x}{The mlresult object}
+
+\item{...}{ignored}
 }
 \value{
 matrix
