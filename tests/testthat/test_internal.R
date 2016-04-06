@@ -25,8 +25,8 @@ test_that("New data", {
 })
 
 test_that("Rename", {
-  expect_equal(utiml_renames(c("a", "b", "c")), c(a="a", b="b", c="c"))
-  expect_equal(utiml_renames(c(1, 2, 3), c("a", "b", "c")), c(a=1, b=2, c=3))
+  expect_equal(utiml_rename(c("a", "b", "c")), c(a="a", b="b", c="c"))
+  expect_equal(utiml_rename(c(1, 2, 3), c("a", "b", "c")), c(a=1, b=2, c=3))
 })
 
 test_that("Equals sets", {

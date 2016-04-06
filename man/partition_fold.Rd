@@ -16,7 +16,7 @@ partition_fold(kfold, n, has.validation = FALSE)
 dataset will be used. (Defaul: \code{FALSE})}
 }
 \value{
-A list contained train and test dataset:
+A list contained train and test mldr dataset:
  \describe{
    \code{train}{The mldr dataset with train examples, that inclue all
      examples except those that are in test and validation samples}

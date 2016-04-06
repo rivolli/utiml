@@ -6,7 +6,7 @@
 \usage{
 ebr(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 10,
   subsample = 0.75, attr.space = 0.5, ...,
-  CORES = getOption("utiml.cores", 1))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -24,9 +24,12 @@ attributes that must be used for each classifier. (Default: 0.50)}
 
 \item{...}{Others arguments passed to the base method for all subproblems}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{EBRmodel} containing the set of fitted
@@ -50,11 +53,10 @@ If you want to reproduce the same classification and obtain the same
  result will be necessary set a flag utiml.mc.set.seed to FALSE.
 }
 \examples{
-\dontrun{
-# Use all default values
-model <- ebr(toyml)
+model <- ebr(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Use J48 with 90\% of instances and only 5 rounds
 model <- ebr(toyml, 'J48', m = 5, subsample = 0.9)
 
@@ -62,12 +64,7 @@ model <- ebr(toyml, 'J48', m = 5, subsample = 0.9)
 model <- ebr(dataset$train, attr.space = 0.75)
 
 # Running in 4 cores and define a specific seed
-options(utiml.mc.set.seed = FALSE)
-set.seed(91179631)
-model1 <- ebr(toyml, CORES=4)
-
-set.seed(91179631)
-model2 <- ebr(toyml, CORES=4)
+model1 <- ebr(toyml, cores=4, seed = 312)
 }
 }
 \references{

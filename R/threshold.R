@@ -1,7 +1,8 @@
+# FIXED ------------------------------------------------------------------------
 #' Apply a fixed threshold in the results
 #'
-#' Transfom a prediction matrix with scores/probabilities in a bipartion
-#' prediction matrix. A global fixed threshold can be used of all labels or
+#' Transfom a prediction matrix with scores/probabilities in a mlresult applying
+#' a fixed threshold. A global fixed threshold can be used of all labels or
 #' different fixed thresholds, one for each label.
 #'
 #' @family threshold
@@ -9,7 +10,10 @@
 #'    are the labels and the rows are the instances.
 #' @param threshold A single value between 0 and 1 or a list with threshold
 #'    values contained one value per label.
-#' @return A matrix with bipartition results
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#'  (Default: \code{FALSE})
+#' @return A mlresult object.
 #' @references
 #'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
 #'  Comparative Study on Threshold Selection Methods. In First International
@@ -29,7 +33,14 @@
 #'
 #' # Use an threshold for each label
 #' fixed_threshold(result, c(0.4, 0.6, 0.7))
-fixed_threshold <- function(prediction, threshold = 0.5) {
+fixed_threshold <- function (prediction, threshold = 0.5, probability = FALSE) {
+  UseMethod("fixed_threshold")
+}
+
+#' @describeIn fixed_threshold Fixed Threshold for matrix or data.frame
+#' @export
+fixed_threshold.default <- function(prediction, threshold = 0.5,
+                                    probability = FALSE) {
   if (length(threshold) == 1) {
     threshold <- rep(threshold, ncol(prediction))
   }
@@ -38,19 +49,22 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
                "number of labels"))
   }
 
-  result <- do.call(cbind, lapply(seq(ncol(prediction)), function(col) {
+  bipartition <- do.call(cbind, lapply(seq(ncol(prediction)), function(col) {
     as.integer(prediction[, col] >= threshold[col])
   }))
-  dimnames(result) <- dimnames(prediction)
+  dimnames(bipartition) <- dimnames(prediction)
 
-  # Avoid instances without labels
-  for (row in which(apply(result, 1, sum) < 1)) {
-    result[row, which.max(prediction[row, ])] <- 1
-  }
-
-  result
+  multilabel_prediction(bipartition, prediction, probability)
 }
 
+#' @describeIn fixed_threshold Fixed Threshold for mlresult
+#' @export
+fixed_threshold.mlresult <- function (prediction, threshold = 0.5,
+                                      probability = FALSE) {
+  fixed_threshold.default(as.probability(prediction), threshold, probability)
+}
+
+# MCUT -------------------------------------------------------------------------
 #' Maximum Cut Thresholding (MCut)
 #'
 #' The Maximum Cut (MCut) automatically determines a threshold for each instance
@@ -60,7 +74,10 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
 #'
 #' @family threshold
 #' @param prediction A matrix or mlresult.
-#' @return A matrix or mlresult based as the type of prediction parameter.
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#'  (Default: \code{FALSE})
+#' @return A mlresult object.
 #' @references
 #' Largeron, C., Moulin, C., & Gery, M. (2012). MCut: A Thresholding Strategy
 #'  for Multi-label Classification. In 11th International Symposium, IDA 2012
@@ -70,15 +87,15 @@ fixed_threshold <- function(prediction, threshold = 0.5) {
 #' @examples
 #' prediction <- matrix(runif(16), ncol = 4)
 #' mcut_threshold(prediction)
-mcut_threshold <- function (prediction) {
+mcut_threshold <- function (prediction, probability = FALSE) {
   UseMethod("mcut_threshold")
 }
 
 #' @describeIn mcut_threshold Maximum Cut Thresholding (MCut) method for matrix
 #' @export
-mcut_threshold.default <- function (prediction) {
+mcut_threshold.default <- function (prediction, probability = FALSE) {
   result <- apply(prediction, 1, function (row) {
-    sorted.row <- sort(row, decreasing = T)
+    sorted.row <- sort(row, decreasing = TRUE)
     difs <- unlist(lapply(seq(length(row)-1), function (i) {
       sorted.row[i] - sorted.row[i+1]
     }))
@@ -87,17 +104,17 @@ mcut_threshold.default <- function (prediction) {
     row <- ifelse(row > mcut, 1, 0)
     row
   })
-  t(result)
+
+  multilabel_prediction(t(result), prediction, probability)
 }
 
 #' @describeIn mcut_threshold Maximum Cut Thresholding (MCut) for mlresult
 #' @export
-mcut_threshold.mlresult <- function (prediction) {
-  probs   <- as.probability(prediction)
-  classes <- mcut_threshold.default(probs)
-  get_multilabel_prediction(classes, probs, FALSE)
+mcut_threshold.mlresult <- function (prediction, probability = FALSE) {
+  mcut_threshold.default(as.probability(prediction), probability)
 }
 
+# PCUT -------------------------------------------------------------------------
 #' Proportional Thresholding (PCut)
 #'
 #' Define the proportion of examples for each label will be positive.
@@ -108,7 +125,10 @@ mcut_threshold.mlresult <- function (prediction) {
 #' @param prediction A matrix or mlresult.
 #' @param ratio A single value between 0 and 1 or a list with ratio values
 #'  contained one value per label.
-#' @return A matrix or mlresult based as the type of prediction parameter.
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#'  (Default: \code{FALSE})
+#' @return A mlresult object.
 #' @references
 #' Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
 #'  Comparative Study on Threshold Selection Methods. In First International
@@ -122,13 +142,13 @@ mcut_threshold.mlresult <- function (prediction) {
 #' @examples
 #' prediction <- matrix(runif(16), ncol = 4)
 #' pcut_threshold(prediction, .45)
-pcut_threshold <- function (prediction, ratio) {
+pcut_threshold <- function (prediction, ratio, probability = FALSE) {
   UseMethod("pcut_threshold")
 }
 
 #' @describeIn pcut_threshold Proportional Thresholding (PCut) method for matrix
 #' @export
-pcut_threshold.default <- function (prediction, ratio) {
+pcut_threshold.default <- function (prediction, ratio, probability = FALSE) {
   n <- nrow(prediction)
   num.elem <- ceiling(ratio * n)
   if (length(num.elem) == 1) {
@@ -143,30 +163,23 @@ pcut_threshold.default <- function (prediction, ratio) {
     names(num.elem) <- colnames(prediction)
   }
 
-  indexes <- utiml_renames(seq(ncol(prediction)), colnames(prediction))
+  indexes <- utiml_rename(seq(ncol(prediction)), colnames(prediction))
   result <- do.call(cbind, lapply(indexes, function (ncol) {
     values <- c(rep(1, num.elem[ncol]), rep(0, n - num.elem[ncol]))
-    prediction[order(prediction[,ncol], decreasing=TRUE), ncol] <- values
-    prediction[,ncol]
+    prediction[order(prediction[, ncol], decreasing=TRUE), ncol] <- values
+    prediction[, ncol]
   }))
 
-  # Fill empty instance predictions
-  empty.instances <- apply(result, 1, sum)
-  for (row in which(empty.instances == 0)) {
-    result[row, which.max(prediction[row, ])] <- 1
-  }
-
-  result
+  multilabel_prediction(result, prediction, probability)
 }
 
 #' @describeIn pcut_threshold Proportional Thresholding (PCut) for mlresult
 #' @export
-pcut_threshold.mlresult <- function (prediction, ratio) {
-  probs   <- as.probability(prediction)
-  classes <- pcut_threshold.default(probs, ratio)
-  get_multilabel_prediction(classes, probs, FALSE)
+pcut_threshold.mlresult <- function (prediction, ratio, probability = FALSE) {
+  pcut_threshold.default(as.probability(prediction), ratio, probability)
 }
 
+# RCUT -------------------------------------------------------------------------
 #' Rank Cut (RCut) threshold method
 #'
 #' The Rank Cut (RCut) method is an instance-wise strategy, which outputs the k
@@ -175,7 +188,10 @@ pcut_threshold.mlresult <- function (prediction, ratio) {
 #' @family threshold
 #' @param prediction A matrix or mlresult.
 #' @param k The number of elements that will be positive.
-#' @return A matrix or mlresult based as the type of prediction parameter.
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#'  (Default: \code{FALSE})
+#' @return A mlresult object.
 #' @references
 #'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
 #'  Comparative Study on Threshold Selection Methods. In First International
@@ -185,33 +201,66 @@ pcut_threshold.mlresult <- function (prediction, ratio) {
 #' @examples
 #' prediction <- matrix(runif(16), ncol = 4)
 #' rcut_threshold(prediction, 2)
-rcut_threshold <- function (prediction, k) {
+rcut_threshold <- function (prediction, k, probability = FALSE) {
   UseMethod("rcut_threshold")
 }
 
 #' @describeIn rcut_threshold Rank Cut (RCut) threshold method for matrix
 #' @export
-rcut_threshold.default <- function (prediction, k) {
+rcut_threshold.default <- function (prediction, k, probability = FALSE) {
   values <- c(rep(1, k), rep(0, ncol(prediction) - k))
   result <- apply(prediction, 1, function (row) {
     row[order(row, decreasing = TRUE)] <- values
     row
   })
-  t(result)
+  multilabel_prediction(t(result), prediction, probability)
 }
 
 #' @describeIn rcut_threshold Rank Cut (RCut) threshold method for mlresult
 #' @export
-rcut_threshold.mlresult <- function (prediction, k) {
-  probs   <- as.probability(prediction)
-  classes <- rcut_threshold.default(probs, k)
-  get_multilabel_prediction(classes, probs, FALSE)
+rcut_threshold.mlresult <- function (prediction, k, probability = FALSE) {
+  rcut_threshold.default(as.probability(prediction), k, probability)
 }
 
+# SCORE DRIVEN -----------------------------------------------------------------
 score_driven_threshold <- function () {
   #TODO
 }
+# #' Cost-based loss function for multi-label classification
+# #'
+# #' @param mdata A mldr dataset containing the test data.
+# #' @param mlresult An object of mlresult that contain the scores and bipartition
+# #'  values.
+# #' @param cost The cost of classification each positive label. If a single value
+# #'  is informed then the all labels have tha same cost.
+# #' @references
+# #'  Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
+# #'  Comparative Study on Threshold Selection Methods. In First International
+# #'  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
+# multilabel_loss_function <- function (mdata, mlresult, cost = 0.5) {
+#   if (length(cost) == 1) {
+#     cost <- rep(cost, mdata$measures$num.labels)
+#     names(cost) <- rownames(mdata$labels)
+#   }
+#   else if (is.null(names(cost))) {
+#     names(cost) <- rownames(mdata$label)
+#   }
+#
+#   prediction <- as.bipartition(mlresult)
+#   labels <- utiml_rename(rownames(mdata$labels))
+#   partial.results <- lapply(labels, function (lname) {
+#     FN <- sum(mdata$dataset[,lname] == 1 & prediction [,lname] == 0) /
+#       mdata$measures$num.instances
+#     FP <- sum(mdata$dataset[,lname] == 0 & prediction [,lname] == 1) /
+#       mdata$measures$num.instances
+#     freq <- mdata$labels[lname, "freq"]
+#     2 * ((cost[lname] * freq * FN) + ((1 - cost[lname]) * (1 - freq) * FP))
+#   })
+#
+#   mean(unlist(partial.results))
+# }
 
+# SCUT -------------------------------------------------------------------------
 #' SCut Score-based method
 #'
 #' This is a label-wise method that adjusts the threshold for each label to
@@ -225,12 +274,12 @@ score_driven_threshold <- function () {
 #' @param expected The expected labels for the prediction. May be a matrix with
 #'  the label values or a mldr object.
 #' @param loss.function A loss function to be optmized. If you want to use your
-#'  own error function see the notes and example. (Default: mse)
-#' @param CORES The number of cores to parallelize the computation Values higher
+#'  own error function see the notes and example. (Default: Mean Squared Error)
+#' @param cores The number of cores to parallelize the computation Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
 #' @return A numeric vector with the threshold values for each label
-#' @note The loss function is a R method that receive two lists, the expected
+#' @note The loss function is a R method that receive two vectors, the expected
 #'  values of the label and the predicted values, respectively. Positive values
 #'  are represented by the 1 and the negative by the 0.
 #' @references
@@ -248,38 +297,41 @@ score_driven_threshold <- function () {
 #' prediction <- matrix(runif(30), ncol = 3, dimnames = names)
 #' classes <- matrix(sample(0:1, 30, rep = TRUE), ncol = 3, dimnames = names)
 #' thresholds <- scut_threshold(prediction, classes)
-#' bipartition <- fixed_threshold(prediction, thresholds)
+#' fixed_threshold(prediction, thresholds)
 #'
 #' \dontrun{
 #' # Penalizes only FP predictions
 #' mylossfunc <- function (real, predicted) {
 #'    mean(predicted - real * predicted)
 #' }
-#' prediction <- predict(br(toyml), toyml)
-#' scut_threshold(prediction, toyml, loss.function = mylossfunc, CORES = 5)
+#' prediction <- predict(br(toyml, "RANDOM"), toyml)
+#' scut_threshold(prediction, toyml, loss.function = mylossfunc, cores = 5)
 #' }
-scut_threshold <- function (prediction, expected, loss.function = mse,
-                            CORES = getOption("utiml.cores", 1)) {
+scut_threshold <- function (prediction, expected, loss.function = NA,
+                            cores = getOption("utiml.cores", 1)) {
   UseMethod("scut_threshold")
 }
 
 #' @describeIn scut_threshold Default scut_threshold
 #' @export
-scut_threshold.default <- function (prediction, expected, loss.function = mse,
-                                    CORES = getOption("utiml.cores", 1)) {
-  if (mode(loss.function) != "function") {
-    stop("Invalid loss function")
+scut_threshold.default <- function (prediction, expected, loss.function = NA,
+                                    cores = getOption("utiml.cores", 1)) {
+  if (cores < 1) {
+    stop("Cores must be a positive value")
   }
 
-  if (CORES < 1) {
-    stop("Cores must be a positive value")
+  if (!is.function(loss.function)) {
+    # Mean Squared Error
+    loss.function <- function(real, predicted) {
+      mean((real - predicted) ^ 2)
+    }
   }
 
   if (class(expected) == "mldr") {
     expected <- expected$dataset[expected$labels$index]
   }
 
-  labels <- utiml_renames(colnames(prediction))
+  labels <- utiml_rename(colnames(prediction))
   thresholds <- utiml_lapply(labels, function (col) {
     scores <- prediction[, col]
     index <- order(scores)
@@ -301,19 +353,20 @@ scut_threshold.default <- function (prediction, expected, loss.function = mse,
     ifelse(length(ones) > 0,
            as.numeric(evaluated.thresholds[which.min(result)]),
            max(scores) + 0.0001) # All expected values are in the negative class
-  }, CORES)
+  }, cores)
 
   unlist(thresholds)
 }
 
 #' @describeIn scut_threshold Mlresult scut_threshold
 #' @export
-scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
-                                     CORES = getOption("utiml.cores", 1)) {
-  probs   <- as.probability(prediction)
-  scut_threshold.default(probs, expected, loss.function, CORES)
+scut_threshold.mlresult <- function (prediction, expected, loss.function = NA,
+                                     cores = getOption("utiml.cores", 1)) {
+  scut_threshold.default(as.probability(prediction), expected,
+                         loss.function, cores)
 }
 
+# SUBSET CORRECTION ------------------------------------------------------------
 #' Subset Correction of a predicted result
 #'
 #' This method restrict a multi-label learner to predict only label combinations
@@ -329,16 +382,17 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
 #' @param mlresult An object of mlresult that contain the scores and bipartition
 #'  values.
 #' @param train_y A matrix/data.frame with all labels values of the training
-#'  dataset.
+#'  dataset or a mldr train dataset.
 #' @param base.threshold A numeric value between 0 and 1 to use as base to
 #'  determine which values needs be reescaled to preserve the corrected
-#'  labelsets. (Default: 0.5)
+#'  labelsets. If \code{NULL} the score correction is ignored. (Default: NULL)
 #' @return A new mlresult where all results are present in the training
 #'  labelsets.
 #' @note The original paper describes a method to create only bipartitions
 #'  result, but we adapeted the method to change the scores. Based on the
 #'  base.threshold value the scores higher than the threshold value, but must be
-#'  lower are changed to respect this restriction.
+#'  lower are changed to respect this restriction. If \code{NULL} this
+#'  correction will be ignored.
 #' @references
 #'  Senge, R., Coz, J. J. del, & Hullermeier, E. (2013). Rectifying classifier
 #'    chains for multi-label classification. In Workshop of Lernen, Wissen &
@@ -346,13 +400,15 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = mse,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' prediction <- predict(br(toyml), toyml)
-#' subset_correction(prediction, toyml$dataset[toyml$labels$index])
-#' }
-subset_correction <- function(mlresult, train_y, base.threshold = 0.5) {
+#' prediction <- predict(br(toyml, "RANDOM"), toyml)
+#' subset_correction(prediction, toyml)
+subset_correction <- function(mlresult, train_y, base.threshold = NULL) {
   bipartition <- as.bipartition(mlresult)
   probability <- as.probability(mlresult)
+
+  if (class(train_y) == "mldr") {
+    train_y <- train_y$dataset[train_y$labels$index]
+  }
 
   if (ncol(mlresult) != ncol(train_y)) {
     stop("The number of columns in the predicted result are different from the
@@ -375,23 +431,27 @@ subset_correction <- function(mlresult, train_y, base.threshold = 0.5) {
 
   # Probabilities correction
   new.probability <- probability
-  for (r in seq(nrow(probability))) {
-    row <- probability[r, ]
+  if (!is.null(base.threshold)) {
+    for (r in seq(nrow(probability))) {
+      row <- probability[r, ]
 
-    max_index <- new.prediction[r, ] - row > base.threshold
-    min_index <- new.prediction[r, ] - row <= -base.threshold
+      max_index <- new.prediction[r, ] - row > base.threshold
+      min_index <- new.prediction[r, ] - row <= -base.threshold
 
-    indexes <- min_index | max_index
-    max_v <- min(c(row[row > base.threshold & !indexes], base.threshold + 0.1))
-    min_v <- max(c(row[row < base.threshold & !indexes], base.threshold - 0.1))
+      indexes <- min_index | max_index
+      max_v <- min(c(row[row > base.threshold & !indexes],
+                     base.threshold + 0.1))
+      min_v <- max(c(row[row < base.threshold & !indexes],
+                     base.threshold - 0.1))
 
-    # Normalize values
-    new.probability[r, max_index] = row[max_index] * (max_v - base.threshold) +
-      base.threshold
-    new.probability[r, min_index] = row[min_index] * (base.threshold - min_v) +
-      min_v
+      # Normalize values
+      new.probability[r, max_index] =
+        row[max_index] * (max_v - base.threshold) + base.threshold
+      new.probability[r, min_index] =
+        row[min_index] * (base.threshold - min_v) + min_v
+    }
   }
 
-  get_multilabel_prediction(new.prediction, new.probability,
-                            is.probability(mlresult))
+  multilabel_prediction(new.prediction, new.probability,
+                        is.probability(mlresult))
 }

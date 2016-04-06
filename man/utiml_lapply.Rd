@@ -4,15 +4,17 @@
 \alias{utiml_lapply}
 \title{Select the suitable method lapply or mclaplly}
 \usage{
-utiml_lapply(mylist, myfnc, cores, ...)
+utiml_lapply(mylist, myfnc, utiml.cores, utiml.seed = NA, ...)
 }
 \arguments{
 \item{mylist}{a list to iterate.}
 
 \item{myfnc}{The function to be applied to each element of the mylist.}
 
-\item{cores}{The number of cores to use. If 1 use lapply oterwise use
+\item{utiml.cores}{The number of cores to use. If 1 use lapply oterwise use
 mclapply.}
+
+\item{utiml.seed}{A numeric value to set a seed to execute in parallel mode.}
 
 \item{...}{Extra arguments to myfnc.}
 }
@@ -21,11 +23,5 @@ A list with the results of the specified method.
 }
 \description{
 Select the suitable method lapply or mclaplly
-}
-\examples{
-\dontrun{
-utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
-utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
-}
 }
 

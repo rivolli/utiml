@@ -15,9 +15,11 @@
 #'  use BR as estimators, however when other classifier is desirable then use
 #'  the value \code{FALSE} to skip this process. (Default: \code{TRUE}).
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of class \code{DBRmodel} containing the set of fitted
 #'  models, including:
 #'  \describe{
@@ -30,44 +32,50 @@
 #'  Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
 #'    J., & Hullermeier, E. (2014). Dependent binary relevance models for
 #'    multi-label classification. Pattern Recognition, 47(3), 1494-1508.
-#' @seealso \code{\link{rdbr}}
+#' @seealso \code{\link[=rdbr]{Recursive Dependent Binary Relevance}}
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Use SVM as base method
-#' model <- dbr(toyml)
+#' model <- dbr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Use Random Forest as base method and 4 cores
-#' model <- dbr(toyml, 'RF', CORES = 4)
+#' model <- dbr(toyml, 'RF', cores = 4)
 #' }
 dbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
                 estimate.models = TRUE, ...,
-                CORES = getOption("utiml.cores", 1)) {
+                cores = getOption("utiml.cores", 1),
+                seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
+
+  utiml_preserve_seed()
 
   # DBR Model class
   dbrmodel <- list(labels = rownames(mdata$labels), call = match.call())
   if (estimate.models) {
-    dbrmodel$estimation <- br(mdata, base.method, ..., CORES = CORES)
+    dbrmodel$estimation <- br(mdata, base.method, ..., cores=cores, seed=seed)
   }
 
   # Create models
   labeldata <- mdata$dataset[mdata$labels$index]
-  labels <- utiml_renames(seq(dbrmodel$labels), dbrmodel$labels)
+  labels <- utiml_rename(seq(dbrmodel$labels), dbrmodel$labels)
   dbrmodel$models <- utiml_lapply(labels, function(li) {
-    dbrdata  <- create_br_data(mdata, dbrmodel$labels[li], labeldata[-li])
-    dataset <- prepare_br_data(dbrdata, "mldDBR", base.method)
-    create_br_model(dataset, ...)
-  }, CORES)
+    dbrdata <- utiml_create_binary_data(mdata, dbrmodel$labels[li],
+                                        labeldata[-li])
+    dataset <- utiml_prepare_data(dbrdata, "mldDBR", mdata$name, "dbr",
+                                  base.method)
+    utiml_create_model(dataset, ...)
+  }, cores, seed)
+
+  utiml_restore_seed()
 
   class(dbrmodel) <- "DBRmodel"
   dbrmodel
@@ -93,9 +101,11 @@ dbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @references
 #'  Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
@@ -120,7 +130,8 @@ dbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' }
 predict.DBRmodel <- function(object, newdata, estimative = NULL,
                              probability = getOption("utiml.use.probs", TRUE),
-                             ..., CORES = getOption("utiml.cores", 1)) {
+                             ..., cores = getOption("utiml.cores", 1),
+                             seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "DBRmodel") {
     stop("First argument must be an DBRmodel object")
@@ -130,27 +141,31 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
     stop("The model requires an estimative matrix")
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
+
+  utiml_preserve_seed()
 
   newdata <- utiml_newdata(newdata)
   if (is.null(estimative)) {
     estimative <- predict(object$estimation, newdata, probability = FALSE, ...,
-                          CORES = CORES)
+                          cores = cores, seed = seed)
   }
   else if ('mlresult' %in% class(estimative)) {
     estimative <- as.bipartition(estimative)
   }
 
   estimative <- as.matrix(estimative)
-  labels <- utiml_renames(seq(object$labels), object$labels)
+  labels <- utiml_rename(seq(object$labels), object$labels)
   predictions <- utiml_lapply(labels, function(li) {
-    predict_br_model(object$models[[li]], cbind(newdata, estimative[, -li]),
-                     ...)
-  }, CORES)
+    utiml_predict_binary_model(object$models[[li]],
+                               cbind(newdata, estimative[, -li]),
+                               ...)
+  }, cores, seed)
 
-  as.multilabelPrediction(predictions, probability)
+  utiml_restore_seed()
+  utiml_predict(predictions, probability)
 }
 
 #' Print DBR model

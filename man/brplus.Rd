@@ -5,7 +5,7 @@
 \title{BR+ or BRplus for multi-label Classification}
 \usage{
 brplus(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
-  CORES = getOption("utiml.cores", 1))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -15,9 +15,12 @@ brplus(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{BRPmodel} containing the set of fitted
@@ -41,13 +44,13 @@ This implementation has different strategy to predict the final set of labels
 for unlabeled examples, as proposed in original paper.
 }
 \examples{
-\dontrun{
 # Use SVM as base method
-model <- brplus(toyml)
+model <- brplus(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Use Random Forest as base method and 4 cores
-model <- brplus(toyml, 'RF', CORES = 4)
+model <- brplus(toyml, 'RF', cores = 4, seed = 123)
 }
 }
 \references{

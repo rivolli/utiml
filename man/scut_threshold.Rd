@@ -6,14 +6,14 @@
 \alias{scut_threshold.mlresult}
 \title{SCut Score-based method}
 \usage{
-scut_threshold(prediction, expected, loss.function = mse,
-  CORES = getOption("utiml.cores", 1))
+scut_threshold(prediction, expected, loss.function = NA,
+  cores = getOption("utiml.cores", 1))
 
-\method{scut_threshold}{default}(prediction, expected, loss.function = mse,
-  CORES = getOption("utiml.cores", 1))
+\method{scut_threshold}{default}(prediction, expected, loss.function = NA,
+  cores = getOption("utiml.cores", 1))
 
-\method{scut_threshold}{mlresult}(prediction, expected, loss.function = mse,
-  CORES = getOption("utiml.cores", 1))
+\method{scut_threshold}{mlresult}(prediction, expected, loss.function = NA,
+  cores = getOption("utiml.cores", 1))
 }
 \arguments{
 \item{prediction}{A matrix or mlresult.}
@@ -22,9 +22,9 @@ scut_threshold(prediction, expected, loss.function = mse,
 the label values or a mldr object.}
 
 \item{loss.function}{A loss function to be optmized. If you want to use your
-own error function see the notes and example. (Default: mse)}
+own error function see the notes and example. (Default: Mean Squared Error)}
 
-\item{CORES}{The number of cores to parallelize the computation Values higher
+\item{cores}{The number of cores to parallelize the computation Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
 }
@@ -46,7 +46,7 @@ results it returs the threshold values for each label.
 \item \code{mlresult}: Mlresult scut_threshold
 }}
 \note{
-The loss function is a R method that receive two lists, the expected
+The loss function is a R method that receive two vectors, the expected
  values of the label and the predicted values, respectively. Positive values
  are represented by the 1 and the negative by the 0.
 }
@@ -55,15 +55,15 @@ names <- list(1:10, c("a", "b", "c"))
 prediction <- matrix(runif(30), ncol = 3, dimnames = names)
 classes <- matrix(sample(0:1, 30, rep = TRUE), ncol = 3, dimnames = names)
 thresholds <- scut_threshold(prediction, classes)
-bipartition <- fixed_threshold(prediction, thresholds)
+fixed_threshold(prediction, thresholds)
 
 \dontrun{
 # Penalizes only FP predictions
 mylossfunc <- function (real, predicted) {
    mean(predicted - real * predicted)
 }
-prediction <- predict(br(toyml), toyml)
-scut_threshold(prediction, toyml, loss.function = mylossfunc, CORES = 5)
+prediction <- predict(br(toyml, "RANDOM"), toyml)
+scut_threshold(prediction, toyml, loss.function = mylossfunc, cores = 5)
 }
 }
 \references{

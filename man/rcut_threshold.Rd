@@ -6,19 +6,23 @@
 \alias{rcut_threshold.mlresult}
 \title{Rank Cut (RCut) threshold method}
 \usage{
-rcut_threshold(prediction, k)
+rcut_threshold(prediction, k, probability = FALSE)
 
-\method{rcut_threshold}{default}(prediction, k)
+\method{rcut_threshold}{default}(prediction, k, probability = FALSE)
 
-\method{rcut_threshold}{mlresult}(prediction, k)
+\method{rcut_threshold}{mlresult}(prediction, k, probability = FALSE)
 }
 \arguments{
 \item{prediction}{A matrix or mlresult.}
 
 \item{k}{The number of elements that will be positive.}
+
+\item{probability}{A logical value. If \code{TRUE} the predicted values are
+the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+(Default: \code{FALSE})}
 }
 \value{
-A matrix or mlresult based as the type of prediction parameter.
+A mlresult object.
 }
 \description{
 The Rank Cut (RCut) method is an instance-wise strategy, which outputs the k

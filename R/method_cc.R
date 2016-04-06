@@ -14,11 +14,13 @@
 #'  \code{options("utiml.base.method", "SVM")})
 #' @param chain A vector with the label names to define the chain order. If
 #'   empty the chain is the default label sequence of the dataset. (Default:
-#'   \code{list()})
+#'   \code{NA})
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of class \code{CCmodel} containing the set of fitted
 #'   models, including: \describe{
 #'   \item{chain}{A vector with the chain order.}
@@ -35,30 +37,35 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Use SVM as base method
-#' model <- cc(toyml)
+#' model <- cc(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Use a specific chain with J48 classifier
 #' mychain <- sample(rownames(toyml$labels))
 #' model <- cc(toyml, 'J48', mychain)
 #'
 #' # Set a specific parameter
 #' model <- cc(toyml, 'KNN', k=5)
+#'
+#' #Run with multiple-cores
+#' model <- cc(toyml, 'RF', cores = 5, seed = 123)
 #' }
 cc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
-               chain = c(), ..., CORES = getOption("utiml.cores", 1)) {
+               chain = NA, ..., cores = getOption("utiml.cores", 1),
+               seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
   }
 
   labels <- rownames(mdata$labels)
-  chain <- utiml_ifelse(length(chain) == 0, labels, chain)
+  chain <- utiml_ifelse(anyNA(chain), labels, chain)
   if (!utiml_is_equal_sets(chain, labels)) {
     stop("Invalid chain (all labels must be on the chain)")
   }
+
+  utiml_preserve_seed()
 
   # CC Model class
   ccmodel <- list(labels = labels, chain = chain, call = match.call())
@@ -66,13 +73,15 @@ cc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   # Create models
   basedata <- mdata$dataset[mdata$attributesIndexes]
   labeldata <- mdata$dataset[mdata$labels$index][chain]
-  chain.order <- utiml_renames(seq(mdata$measures$num.labels), chain)
-  ccmodel$models <- utiml_lapply(chain.order, function(labelIndex) {
-    data <- cbind(basedata, labeldata[1:labelIndex])
-    dataset <- prepare_br_data(data, "mldCC", base.method,
-                               chain.order = labelIndex)
-    create_br_model(dataset, ...)
-  }, CORES)
+  chain.order <- utiml_rename(seq(mdata$measures$num.labels), chain)
+  ccmodel$models <- utiml_lapply(chain.order, function(lidx) {
+    data <- cbind(basedata, labeldata[seq(lidx)])
+    dataset <- utiml_prepare_data(data, "mldCC", mdata$name, "cc", base.method,
+                               chain.order = lidx)
+    utiml_create_model(dataset, ...)
+  }, cores, seed)
+
+  utiml_restore_seed()
 
   class(ccmodel) <- "CCmodel"
   ccmodel
@@ -89,17 +98,19 @@ cc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
+#' @param cores Ignored because this method does not support multi-core.
+#' @param seed An optional integer used to set the seed.
+#'  (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @seealso \code{\link[=cc]{Classifier Chains (CC)}}
 #' @note The Classifier Chains prediction can not be parellelized.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Predict SVM scores
-#' model <- cc(toyml)
+#' model <- cc(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Predict SVM bipartitions
 #' pred <- predict(model, toyml, prob = FALSE)
 #'
@@ -108,21 +119,29 @@ cc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' }
 predict.CCmodel <- function(object, newdata,
                             probability = getOption("utiml.use.probs", TRUE),
-                            ...) {
+                            ..., cores = NULL,
+                            seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "CCmodel") {
     stop("First argument must be an CCmodel object")
   }
 
+  utiml_preserve_seed()
+  if (!anyNA(seed)) {
+    set.seed(seed)
+  }
+
   newdata <- list(utiml_newdata(newdata))
   predictions <- list()
   for (label in object$chain) {
-    predictions[[label]] <- predict_br_model(object$models[[label]],
-                                             do.call(cbind, newdata), ...)
+    predictions[[label]] <- utiml_predict_binary_model(object$models[[label]],
+                                                       do.call(cbind, newdata),
+                                                       ...)
     newdata[[label]] <- predictions[[label]]$bipartition
   }
 
-  as.multilabelPrediction(predictions[object$labels], probability)
+  utiml_restore_seed()
+  utiml_predict(predictions[object$labels], probability)
 }
 
 #' Print CC model

@@ -225,7 +225,7 @@ create_subset <- function(mdata, rows, cols = NULL) {
 #' @param n The number of the fold to separated train and test subsets.
 #' @param has.validation Logical value that indicate if a validation
 #'  dataset will be used. (Defaul: \code{FALSE})
-#' @return A list contained train and test dataset:
+#' @return A list contained train and test mldr dataset:
 #'  \describe{
 #'    \code{train}{The mldr dataset with train examples, that inclue all
 #'      examples except those that are in test and validation samples}
@@ -293,7 +293,7 @@ partition_fold <- function(kfold, n, has.validation = FALSE) {
 utiml_validate_splitmethod <- function (method) {
   DEFAULT.METHODS <- c("random", "iterative", "stratified")
   method.name <- ifelse(method %in% DEFAULT.METHODS,
-                       paste(method, "split", sep = "_"),
+                       paste("utiml", method, "split", sep = "_"),
                        method)
 
   if (!exists(method.name, mode = "function")) {
@@ -319,12 +319,12 @@ utiml_validate_splitmethod <- function (method) {
 #' @examples
 #' \dontrun{
 #' # Create 3 partitions for train, validation and test
-#' indexes <- iterative_split(emotions, c(0.6,0.1,0.3))
+#' indexes <- utiml_iterative_split(emotions, c(0.6,0.1,0.3))
 #'
 #' # Create a stratified 10-fold
-#' indexes <- iterative_split(emotions, rep(0.1,10))
+#' indexes <- utiml_iterative_split(emotions, rep(0.1,10))
 #' }
-iterative_split <- function(mdata, r) {
+utiml_iterative_split <- function(mdata, r) {
   D <- rownames(mdata$dataset)
   S <- lapply(seq(length(r)), function(i) character())
 
@@ -400,9 +400,9 @@ iterative_split <- function(mdata, r) {
 #'
 #' @examples
 #' \dontrun{
-#' random_split(emotions, c(0.6, 0.2, 0.2))
+#' utiml_random_split(emotions, c(0.6, 0.2, 0.2))
 #' }
-random_split <- function(mdata, r) {
+utiml_random_split <- function(mdata, r) {
   index <- c()
   amount <- round(mdata$measures$num.instances * r)
 
@@ -437,12 +437,12 @@ random_split <- function(mdata, r) {
 #' @examples
 #' \dontrun{
 #' # Create 3 partitions for train, validation and test
-#' indexes <- stratified_split(emotions, c(0.6,0.1,0.3))
+#' indexes <- utiml_stratified_split(emotions, c(0.6,0.1,0.3))
 #'
 #' # Create a stratified 10-fold
-#' indexes <- stratified_split(emotions, rep(0.1,10))
+#' indexes <- utiml_stratified_split(emotions, rep(0.1,10))
 #' }
-stratified_split <- function(mdata, r) {
+utiml_stratified_split <- function(mdata, r) {
   D <- sample(mdata$measures$num.instances)
   S <- lapply(1:length(r), function(i) integer())
   labelsets <- apply(mdata$dataset[, mdata$labels$index], 1, paste, collapse="")

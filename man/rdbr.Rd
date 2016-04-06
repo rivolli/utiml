@@ -5,7 +5,8 @@
 \title{Recursive Dependent Binary Relevance (RDBR) for multi-label Classification}
 \usage{
 rdbr(mdata, base.method = getOption("utiml.base.method", "SVM"),
-  estimate.models = TRUE, ..., CORES = getOption("utiml.cores", 1))
+  estimate.models = TRUE, ..., cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -20,9 +21,12 @@ the value \code{FALSE} to skip this process. (Default: \code{TRUE}).}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{RDBRmodel} containing the set of fitted
@@ -45,13 +49,12 @@ The train method is exactly the same of DBR the recursivity is in the predict
 method.
 }
 \examples{
-\dontrun{
-# Use SVM as base method
-model <- rdbr(toyml)
+model <- rdbr(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Use Random Forest as base method and 4 cores
-model <- rdbr(toyml, 'RF', CORES = 4)
+model <- rdbr(toyml, 'RF', cores = 4, seed = 123)
 }
 }
 \references{

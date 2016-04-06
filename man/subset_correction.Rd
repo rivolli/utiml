@@ -4,18 +4,18 @@
 \alias{subset_correction}
 \title{Subset Correction of a predicted result}
 \usage{
-subset_correction(mlresult, train_y, base.threshold = 0.5)
+subset_correction(mlresult, train_y, base.threshold = NULL)
 }
 \arguments{
 \item{mlresult}{An object of mlresult that contain the scores and bipartition
 values.}
 
 \item{train_y}{A matrix/data.frame with all labels values of the training
-dataset.}
+dataset or a mldr train dataset.}
 
 \item{base.threshold}{A numeric value between 0 and 1 to use as base to
 determine which values needs be reescaled to preserve the corrected
-labelsets. (Default: 0.5)}
+labelsets. If \code{NULL} the score correction is ignored. (Default: NULL)}
 }
 \value{
 A new mlresult where all results are present in the training
@@ -36,13 +36,12 @@ used to determine the difference between the labelsets.
 The original paper describes a method to create only bipartitions
  result, but we adapeted the method to change the scores. Based on the
  base.threshold value the scores higher than the threshold value, but must be
- lower are changed to respect this restriction.
+ lower are changed to respect this restriction. If \code{NULL} this
+ correction will be ignored.
 }
 \examples{
-\dontrun{
-prediction <- predict(br(toyml), toyml)
-subset_correction(prediction, toyml$dataset[toyml$labels$index])
-}
+prediction <- predict(br(toyml, "RANDOM"), toyml)
+subset_correction(prediction, toyml)
 }
 \references{
 Senge, R., Coz, J. J. del, & Hullermeier, E. (2013). Rectifying classifier

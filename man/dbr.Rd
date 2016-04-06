@@ -5,7 +5,8 @@
 \title{Dependent Binary Relevance (DBR) for multi-label Classification}
 \usage{
 dbr(mdata, base.method = getOption("utiml.base.method", "SVM"),
-  estimate.models = TRUE, ..., CORES = getOption("utiml.cores", 1))
+  estimate.models = TRUE, ..., cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -20,9 +21,12 @@ the value \code{FALSE} to skip this process. (Default: \code{TRUE}).}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{DBRmodel} containing the set of fitted
@@ -42,13 +46,12 @@ method is the same, excepted by the argument \code{estimate.models} that
 indicate if the estimated models must be created).
 }
 \examples{
-\dontrun{
-# Use SVM as base method
-model <- dbr(toyml)
+model <- dbr(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Use Random Forest as base method and 4 cores
-model <- dbr(toyml, 'RF', CORES = 4)
+model <- dbr(toyml, 'RF', cores = 4)
 }
 }
 \references{
@@ -57,7 +60,7 @@ Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
    multi-label classification. Pattern Recognition, 47(3), 1494-1508.
 }
 \seealso{
-\code{\link{rdbr}}
+\code{\link[=rdbr]{Recursive Dependent Binary Relevance}}
 
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},

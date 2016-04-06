@@ -5,7 +5,7 @@
 \title{Binary Relevance for multi-label Classification}
 \usage{
 br(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
-  CORES = getOption("utiml.cores", 1))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -15,9 +15,12 @@ br(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
 
 \item{...}{Others arguments passed to the base method for all subproblems}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{BRmodel} containing the set of fitted
@@ -36,13 +39,16 @@ multi-label data. This is based on the one-versus-all approach to build a
 specific model for each label.
 }
 \examples{
-\dontrun{
-# Use SVM as base method
-model <- br(toyml)
+model <- br(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-# Change the default base method and use 4 CORES
-model <- br(toyml[1:50], 'RF', CORES = 4)
+\dontrun{
+# Use SVM as base method
+model <- br(toyml, "SVM")
+pred <- predict(model, toyml)
+
+# Change the base method and use 4 CORES
+model <- br(toyml[1:50], 'RF', cores = 4, seed = 123)
 
 # Set a parameters for all subproblems
 model <- br(toyml, 'KNN', k=5)

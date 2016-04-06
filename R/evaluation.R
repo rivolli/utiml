@@ -209,33 +209,33 @@ multilabel_evaluate.mlconfmat <- function (object, measures = c("all"), ...) {
   }
 
   default.methods <- list(
-    'accuracy' = "mlmeasure_accuracy",
-    'average-precision' = "mlmeasure_average_precision",
-    'coverage' = "mlmeasure_coverage",
-    'F1' = "mlmeasure_f1",
-    'hamming-loss' = "mlmeasure_hamming_loss",
-    'is-error' = "mlmeasure_is_error",
-    'macro-accuracy' = "mlmeasure_macro_accuracy",
-    'macro-AUC' = "mlmeasure_macro_AUC",
-    'macro-F1' = "mlmeasure_macro_f1",
-    'macro-precision' = "mlmeasure_macro_precision",
-    'macro-recall' = "mlmeasure_macro_recall",
-    'margin-loss' = "mlmeasure_margin_loss",
-    'micro-accuracy' = "mlmeasure_micro_accuracy",
-    'micro-AUC' = "mlmeasure_micro_AUC",
-    'micro-F1' = "mlmeasure_micro_f1",
-    'micro-precision' = "mlmeasure_micro_precision",
-    'micro-recall' = "mlmeasure_micro_recall",
-    'one-error' = "mlmeasure_one_error",
-    'precision' = "mlmeasure_precision",
-    'ranking-error' = "mlmeasure_ranking_error",
-    'ranking-loss' = "mlmeasure_ranking_loss",
-    'recall' = "mlmeasure_recall",
-    'subset-accuracy' = "mlmeasure_subset_accuracy"
+    'accuracy' = "utiml_measure_accuracy",
+    'average-precision' = "utiml_measure_average_precision",
+    'coverage' = "utiml_measure_coverage",
+    'F1' = "utiml_measure_f1",
+    'hamming-loss' = "utiml_measure_hamming_loss",
+    'is-error' = "utiml_measure_is_error",
+    'macro-accuracy' = "utiml_measure_macro_accuracy",
+    'macro-AUC' = "utiml_measure_macro_AUC",
+    'macro-F1' = "utiml_measure_macro_f1",
+    'macro-precision' = "utiml_measure_macro_precision",
+    'macro-recall' = "utiml_measure_macro_recall",
+    'margin-loss' = "utiml_measure_margin_loss",
+    'micro-accuracy' = "utiml_measure_micro_accuracy",
+    'micro-AUC' = "utiml_measure_micro_AUC",
+    'micro-F1' = "utiml_measure_micro_f1",
+    'micro-precision' = "utiml_measure_micro_precision",
+    'micro-recall' = "utiml_measure_micro_recall",
+    'one-error' = "utiml_measure_one_error",
+    'precision' = "utiml_measure_precision",
+    'ranking-error' = "utiml_measure_ranking_error",
+    'ranking-loss' = "utiml_measure_ranking_loss",
+    'recall' = "utiml_measure_recall",
+    'subset-accuracy' = "utiml_measure_subset_accuracy"
   )
 
   #Extra methods
-  measures <- multilabel_measure_names(measures)
+  measures <- utiml_measure_names(measures)
   midx <- measures %in% names(default.methods)
   extra.methods <- measures[!midx]
 
@@ -260,7 +260,7 @@ multilabel_evaluate.mlconfmat <- function (object, measures = c("all"), ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_accuracy <- function (mlconfmat, ...) {
+utiml_measure_accuracy <- function (mlconfmat, ...) {
   sum(mlconfmat$TPi / rowSums(mlconfmat$Z | mlconfmat$Y), na.rm = TRUE) /
     nrow(mlconfmat$Y)
 }
@@ -270,7 +270,7 @@ mlmeasure_accuracy <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
 #' based system for text categorization. Machine Learning, 39(2), 135-168.
-mlmeasure_average_precision <- function (mlconfmat, ...) {
+utiml_measure_average_precision <- function (mlconfmat, ...) {
   mean(sapply(seq(nrow(mlconfmat$Y)), function (i){
     rks <- mlconfmat$R[i, mlconfmat$Y[i,] == 1]
     sum(sapply(rks, function (r) sum(rks <= r) / r))
@@ -282,7 +282,7 @@ mlmeasure_average_precision <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
 #' based system for text categorization. Machine Learning, 39(2), 135-168.
-mlmeasure_coverage <- function (mlconfmat, ...) {
+utiml_measure_coverage <- function (mlconfmat, ...) {
   mean(sapply(seq(nrow(mlconfmat$Y)), function (i) {
     max(mlconfmat$R[i, mlconfmat$Y[i,] == 1]) - 1
   }))
@@ -293,7 +293,7 @@ mlmeasure_coverage <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_f1 <- function (mlconfmat, ...) {
+utiml_measure_f1 <- function (mlconfmat, ...) {
   sum((2 * mlconfmat$TPi) / (mlconfmat$Zi + mlconfmat$Yi), na.rm = TRUE) /
     nrow(mlconfmat$Y)
 }
@@ -303,7 +303,7 @@ mlmeasure_f1 <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Schapire, R. E., & Singer, Y. (1999). Improved boosting
 #'  algorithm using confidence-rated predictions. Machine Learning, 297-336.
-mlmeasure_hamming_loss <- function (mlconfmat, ...) {
+utiml_measure_hamming_loss <- function (mlconfmat, ...) {
   mean(apply(xor(mlconfmat$Z, mlconfmat$Y), 1, sum) / ncol(mlconfmat$Y))
 }
 
@@ -314,7 +314,7 @@ mlmeasure_hamming_loss <- function (mlconfmat, ...) {
 #' @references Crammer, K., & Singer, Y. (2003). A Family of Additive Online
 #'  Algorithms for Category Ranking. Journal of Machine Learning Research, 3(6),
 #'  1025-1058.
-mlmeasure_is_error <- function (mlconfmat, ranking, ...) {
+utiml_measure_is_error <- function (mlconfmat, ranking, ...) {
   if (missing(ranking)) {
     stop("Argument ranking not informed for measure 'is-error'")
   }
@@ -327,9 +327,9 @@ mlmeasure_is_error <- function (mlconfmat, ranking, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_macro_accuracy <- function (mlconfmat, ...) {
-  mean(mlmeasure_binary_accuracy(mlconfmat$TPl, mlconfmat$FPl, mlconfmat$TNl,
-                                  mlconfmat$FNl))
+utiml_measure_macro_accuracy <- function (mlconfmat, ...) {
+  mean(utiml_measure_binary_accuracy(mlconfmat$TPl, mlconfmat$FPl,
+                                     mlconfmat$TNl, mlconfmat$FNl))
 }
 
 #' Multi-label Macro-AUC Measure
@@ -338,9 +338,9 @@ mlmeasure_macro_accuracy <- function (mlconfmat, ...) {
 #' @references Zhang, M.-L., & Zhou, Z.-H. (2014). A Review on Multi-Label
 #'  Learning Algorithms. IEEE Transactions on Knowledge and Data Engineering,
 #'  26(8), 1819-1837.
-mlmeasure_macro_AUC <- function (mlconfmat, ...) {
+utiml_measure_macro_AUC <- function (mlconfmat, ...) {
   mean(sapply(seq(ncol(mlconfmat$Y)), function (col){
-    mlmeasure_binary_AUC(mlconfmat$Fx[, col], mlconfmat$Y[, col])
+    utiml_measure_binary_AUC(mlconfmat$Fx[, col], mlconfmat$Y[, col])
   }))
 }
 
@@ -349,9 +349,9 @@ mlmeasure_macro_AUC <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_macro_f1 <- function (mlconfmat, ...) {
-  mean(mlmeasure_binary_f1(mlconfmat$TPl, mlconfmat$FPl,
-                            mlconfmat$TNl, mlconfmat$FNl))
+utiml_measure_macro_f1 <- function (mlconfmat, ...) {
+  mean(utiml_measure_binary_f1(mlconfmat$TPl, mlconfmat$FPl,
+                               mlconfmat$TNl, mlconfmat$FNl))
 }
 
 #' Multi-label Macro-Precision Measure
@@ -359,9 +359,9 @@ mlmeasure_macro_f1 <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_macro_precision <- function (mlconfmat, ...) {
-  mean(mlmeasure_binary_precision(mlconfmat$TPl, mlconfmat$FPl,
-                                   mlconfmat$TNl, mlconfmat$FNl))
+utiml_measure_macro_precision <- function (mlconfmat, ...) {
+  mean(utiml_measure_binary_precision(mlconfmat$TPl, mlconfmat$FPl,
+                                      mlconfmat$TNl, mlconfmat$FNl))
 }
 
 #' Multi-label Macro-Recall Measure
@@ -369,9 +369,9 @@ mlmeasure_macro_precision <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_macro_recall <- function (mlconfmat, ...) {
-  mean(mlmeasure_binary_recall(mlconfmat$TPl, mlconfmat$FPl,
-                                mlconfmat$TNl, mlconfmat$FNl))
+utiml_measure_macro_recall <- function (mlconfmat, ...) {
+  mean(utiml_measure_binary_recall(mlconfmat$TPl, mlconfmat$FPl,
+                                   mlconfmat$TNl, mlconfmat$FNl))
 }
 
 #' Multi-label Margin Loss Measure
@@ -380,7 +380,7 @@ mlmeasure_macro_recall <- function (mlconfmat, ...) {
 #' @references Loza Mencia, E., & Furnkranz, J. (2010). Efficient Multilabel
 #' Classification Algorithms for Large-Scale Problems in the Legal Domain.
 #' In Semantic Processing of Legal Texts (pp. 192-215).
-mlmeasure_margin_loss <- function (mlconfmat, ...) {
+utiml_measure_margin_loss <- function (mlconfmat, ...) {
   mean(sapply(seq(nrow(mlconfmat$Y)), function (i){
     idxY <- mlconfmat$Y[i,] == 1
     max(0, max(mlconfmat$R[i, idxY], 0) -
@@ -393,9 +393,9 @@ mlmeasure_margin_loss <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_micro_accuracy <- function (mlconfmat, ...) {
-  mlmeasure_binary_accuracy(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
-                             sum(mlconfmat$TNl), sum(mlconfmat$FNl))
+utiml_measure_micro_accuracy <- function (mlconfmat, ...) {
+  utiml_measure_binary_accuracy(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
+                                sum(mlconfmat$TNl), sum(mlconfmat$FNl))
 }
 
 #' Multi-label Macro-AUC Measure
@@ -404,9 +404,9 @@ mlmeasure_micro_accuracy <- function (mlconfmat, ...) {
 #' @references Zhang, M.-L., & Zhou, Z.-H. (2014). A Review on Multi-Label
 #'  Learning Algorithms. IEEE Transactions on Knowledge and Data Engineering,
 #'  26(8), 1819-1837.
-mlmeasure_micro_AUC <- function (mlconfmat, ...) {
-  mlmeasure_binary_AUC(as.numeric(mlconfmat$Fx),
-                       as.numeric(as.matrix(mlconfmat$Y)))
+utiml_measure_micro_AUC <- function (mlconfmat, ...) {
+  utiml_measure_binary_AUC(as.numeric(mlconfmat$Fx),
+                           as.numeric(as.matrix(mlconfmat$Y)))
 }
 
 #' Multi-label Micro-F1 Measure
@@ -414,9 +414,9 @@ mlmeasure_micro_AUC <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_micro_f1 <- function (mlconfmat, ...) {
-  mlmeasure_binary_f1(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
-                       sum(mlconfmat$TNl), sum(mlconfmat$FNl))
+utiml_measure_micro_f1 <- function (mlconfmat, ...) {
+  utiml_measure_binary_f1(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
+                          sum(mlconfmat$TNl), sum(mlconfmat$FNl))
 }
 
 #' Multi-label Micro-Precision Measure
@@ -424,9 +424,9 @@ mlmeasure_micro_f1 <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_micro_precision <- function (mlconfmat, ...) {
-  mlmeasure_binary_precision(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
-                              sum(mlconfmat$TNl), sum(mlconfmat$FNl))
+utiml_measure_micro_precision <- function (mlconfmat, ...) {
+  utiml_measure_binary_precision(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
+                                 sum(mlconfmat$TNl), sum(mlconfmat$FNl))
 }
 
 #' Multi-label Micro-Recall Measure
@@ -434,9 +434,9 @@ mlmeasure_micro_precision <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
 #'  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
-mlmeasure_micro_recall <- function (mlconfmat, ...) {
-  mlmeasure_binary_recall(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
-                           sum(mlconfmat$TNl), sum(mlconfmat$FNl))
+utiml_measure_micro_recall <- function (mlconfmat, ...) {
+  utiml_measure_binary_recall(sum(mlconfmat$TPl), sum(mlconfmat$FPl),
+                              sum(mlconfmat$TNl), sum(mlconfmat$FNl))
 }
 
 #' Multi-label One Error Measure
@@ -444,7 +444,7 @@ mlmeasure_micro_recall <- function (mlconfmat, ...) {
 #' @param ... ignored
 #' @references Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
 #' based system for text categorization. Machine Learning, 39(2), 135-168.
-mlmeasure_one_error <- function (mlconfmat, ...) {
+utiml_measure_one_error <- function (mlconfmat, ...) {
   rowcol <- cbind(seq(nrow(mlconfmat$Y)), apply(mlconfmat$R, 1, which.min))
   mean(1 - mlconfmat$Y[rowcol])
 }
@@ -455,7 +455,7 @@ mlmeasure_one_error <- function (mlconfmat, ...) {
 #' @references Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for
 #' Multi-labeled Classification. In Proceedings of the 8th Pacific-Asia
 #' Conference on Knowledge Discovery and Data Mining (PAKDD 2004) (pp. 22-30).
-mlmeasure_precision <- function (mlconfmat, ...) {
+utiml_measure_precision <- function (mlconfmat, ...) {
   sum(mlconfmat$TPi / mlconfmat$Zi, na.rm = TRUE) / nrow(mlconfmat$Y)
 }
 
@@ -466,7 +466,7 @@ mlmeasure_precision <- function (mlconfmat, ...) {
 #' @references Park, S.-H., & Furnkranz, J. (2008). Multi-Label Classification
 #'  with Label Constraints. Proceedings of the ECML PKDD 2008 Workshop on
 #'  Preference Learning (PL-08, Antwerp, Belgium), 157-171.
-mlmeasure_ranking_error <- function (mlconfmat, ranking, ...) {
+utiml_measure_ranking_error <- function (mlconfmat, ranking, ...) {
   if (missing(ranking)) {
     stop("Argument ranking not informed for measure 'is-error'")
   }
@@ -478,7 +478,7 @@ mlmeasure_ranking_error <- function (mlconfmat, ranking, ...) {
 #' @param ... ignored
 #' @references Schapire, R. E., & Singer, Y. (1999). Improved boosting
 #'  algorithm using confidence-rated predictions. Machine Learning, 297-336.
-mlmeasure_ranking_loss <- function (mlconfmat, ...) {
+utiml_measure_ranking_loss <- function (mlconfmat, ...) {
   weight <- 1 / (mlconfmat$Yi * (length(mlconfmat$Yl) - mlconfmat$Yi))
   weight <- ifelse(weight == Inf, 0, weight)
   E <- sapply(seq(nrow(mlconfmat$Y)), function (i) {
@@ -495,7 +495,7 @@ mlmeasure_ranking_loss <- function (mlconfmat, ...) {
 #' @references Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for
 #' Multi-labeled Classification. In Proceedings of the 8th Pacific-Asia
 #' Conference on Knowledge Discovery and Data Mining (PAKDD 2004) (pp. 22-30).
-mlmeasure_recall <- function (mlconfmat, ...) {
+utiml_measure_recall <- function (mlconfmat, ...) {
   sum(mlconfmat$TPi / mlconfmat$Yi, na.rm = TRUE) / nrow(mlconfmat$Y)
 }
 
@@ -506,7 +506,7 @@ mlmeasure_recall <- function (mlconfmat, ...) {
 #'  Classification Using Maximum Entropy Method. In Proceedings of the 28th
 #'  Annual International ACM SIGIR Conference on Research and Development in
 #'  Information Retrieval (SIGIR'05) (pp. 274-281).
-mlmeasure_subset_accuracy <- function (mlconfmat, ...) {
+utiml_measure_subset_accuracy <- function (mlconfmat, ...) {
   mean(apply(mlconfmat$Z == mlconfmat$Y, 1, all))
 }
 
@@ -519,7 +519,7 @@ mlmeasure_subset_accuracy <- function (mlconfmat, ...) {
 #' @param FN The number of False Negative values
 #'
 #' @return Accuracy value between 0 and 1
-mlmeasure_binary_accuracy <- function (TP, FP, TN, FN) {
+utiml_measure_binary_accuracy <- function (TP, FP, TN, FN) {
   (TP + TN) / (TP + FP + TN + FN)
 }
 
@@ -528,7 +528,7 @@ mlmeasure_binary_accuracy <- function (TP, FP, TN, FN) {
 #' @param labels The expected label predictions
 #'
 #' @return AUC value between 0 and 1
-mlmeasure_binary_AUC <- function (scores, labels) {
+utiml_measure_binary_AUC <- function (scores, labels) {
   Zidx <- labels == 1
   Zj <- scores[Zidx]
   Znj <- scores[!Zidx]
@@ -547,7 +547,7 @@ mlmeasure_binary_AUC <- function (scores, labels) {
 #' @param FN The number of False Negative values
 #'
 #' @return Precision value between 0 and 1
-mlmeasure_binary_precision <- function (TP, FP, TN, FN) {
+utiml_measure_binary_precision <- function (TP, FP, TN, FN) {
   ifelse(TP + FP == 0, 0, TP / (TP + FP))
 }
 
@@ -558,7 +558,7 @@ mlmeasure_binary_precision <- function (TP, FP, TN, FN) {
 #' @param FN The number of False Negative values
 #'
 #' @return Recall value between 0 and 1
-mlmeasure_binary_recall <- function (TP, FP, TN, FN) {
+utiml_measure_binary_recall <- function (TP, FP, TN, FN) {
   ifelse(TP + FN == 0, 0, TP / (TP + FN))
 }
 
@@ -569,9 +569,9 @@ mlmeasure_binary_recall <- function (TP, FP, TN, FN) {
 #' @param FN The number of False Negative values
 #'
 #' @return F1 measure value between 0 and 1
-mlmeasure_binary_f1 <- function (TP, FP, TN, FN) {
-  prec <-  mlmeasure_binary_precision(TP, FP, TN, FN)
-  rec  <- mlmeasure_binary_recall(TP, FP, TN, FN)
+utiml_measure_binary_f1 <- function (TP, FP, TN, FN) {
+  prec <-  utiml_measure_binary_precision(TP, FP, TN, FN)
+  rec  <- utiml_measure_binary_recall(TP, FP, TN, FN)
   ifelse(prec + rec == 0, 0, 2 * prec * rec / (prec + rec))
 }
 
@@ -579,7 +579,7 @@ mlmeasure_binary_f1 <- function (TP, FP, TN, FN) {
 
 #' Return the tree with the measure names
 #' @return list
-multilabel_all_measures_names <- function (){
+utiml_all_measures_names <- function (){
   list(
     'all' = c(
       "bipartition",
@@ -631,18 +631,18 @@ multilabel_all_measures_names <- function (){
 #'
 #' @examples
 #' \dontrun{
-#' multilabel_measure_names()
-#' multilabel_measure_names("bipartition")
-#' multilabel_measure_names(c("micro-based", "macro-based"))
+#' utiml_measure_names()
+#' utiml_measure_names("bipartition")
+#' utiml_measure_names(c("micro-based", "macro-based"))
 #' }
-multilabel_measure_names <- function (measures =  c("all")) {
-  measures.names <- multilabel_all_measures_names()
+utiml_measure_names <- function (measures =  c("all")) {
+  measures.names <- utiml_all_measures_names()
 
   names <- unlist(lapply(measures, function (measure){
     if (is.null(measures.names[[measure]])) {
       measure
     } else {
-      multilabel_measure_names(measures.names[[measure]])
+      utiml_measure_names(measures.names[[measure]])
     }
   }))
   unique(sort(names))
@@ -656,7 +656,7 @@ multilabel_measure_names <- function (measures =  c("all")) {
 #' @examples
 #' multilabel_measures()
 multilabel_measures <- function () {
-  sort(c(multilabel_measure_names(), names(multilabel_all_measures_names())))
+  sort(c(utiml_measure_names(), names(utiml_all_measures_names())))
 }
 
 #' Print a Multi-label Confusion Matrix

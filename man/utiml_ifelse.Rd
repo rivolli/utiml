@@ -27,7 +27,4 @@ utiml_ifelse(TRUE, dataframe1, dataframe2) ## dataframe1
 utiml_ifelse(length(my.list) > 10, my.list[1:10], my.list)
 }
 }
-\seealso{
-\code{\link{ifelse}}
-}
 

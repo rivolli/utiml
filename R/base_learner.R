@@ -1,107 +1,126 @@
-#' Train function to extend base classifiers
+#' Build transformation models
 #'
-#' To extend a base classifier, two steps are necessary:
+#' Base classifiers are used to build models to solve the the transformation
+#' problems. To create a new base classifier, two steps are necessary:
 #' \enumerate{
 #'   \item Create a train method
 #'   \item Create a prediction method
 #' }
-#' This section is about how to create a train method. To create a new predict
-#' model see \code{\link{mlpredict}} documentation.
+#' This section is about how to create the first step: a train method.
+#' To create a new predict model see \code{\link{mlpredict}} documentation.
 #'
 #' @section How to create a new train base method:
-#' Fist is necessary to define a name of your classifier because this name
-#' determine the method name, that must start with mltrain.base followed by your
-#' name, e.g. a 'foo' classify must be \code{mltrain.basefoo}.
+#' First, is necessary to define a name of your classifier, because this name
+#' determines the method name. The base method name must start with
+#' \code{mltrain.base} followed by the designed name, e.g. a \code{'FOO'}
+#' classify must be defined as \code{mltrain.baseFOO} (we suggest always use
+#' upper case names).
 #'
-#' After defined the name, you need to implement your base method. The dataset
-#' is available on \code{dataset$base}. In the examples there are some ways to
-#' implement this method.
+#' Next, your method must receive at least two parameters (\code{object, ...}).
+#' Use \code{object$data[, object$labelindex]} or
+#' \code{object$data[, object$labelname]} to access the labels values and use
+#' \code{object$data[, -object$labelindex]} to access the predictive attributes.
+#' If you need to know which are the multi-label dataset and method, use
+#' \code{object$mldataset} and \code{object$mlmethod}, respectively.
 #'
-#' @param dataset An object of \code{mltransformation} class, that has at least
-#'  four attributes: \strong{data}, \strong{labelname}, \strong{labelindex} and
-#'  \strong{methodname}. The \code{data} is the dataframe with the predictive
-#'  attributes and the class column. The \code{labelname} is the name of the
-#'  class column. The \code{labelindex} is the column number of the class.
-#'   Finally, the \code{methodname} is the name of the implemented method.
+#' Finally, your method should return a model that will be used by the mlpredict
+#' method. Remember, that your method may be used to buid binary and multi-class
+#' models.
+#'
+#' @param object A \code{mltransformation} object. This is used as a list and
+#' contains at least five values:
+#'  \describe{
+#'    \item{object$data}{A data.frame with the train data, where the columns are
+#'    the attributes and the rows are the examples.}
+#'    \item{object$labelname}{The name of the class column.}
+#'    \item{object$labelindex}{The column index of the class.}
+#'    \item{object$mldataset}{The name of multi-label dataset.}
+#'    \item{object$mlmethod}{The name of the multi-label method.}
+#'  }
+#'  Others values may be specified by the multi-label method.
 #' @param ... Others arguments passed to the base method.
 #' @return A model object. The class of this model can be of any type, however,
 #'  this object will be passed to the respective mlpredict method.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Create a empty model of type foo
-#' mltrain.basefoo <- function (dataset, ...) {
-#'    mymodel <- list()
-#'    class(mymodel) <- 'foomodel'
+#' # Create a empty model of type FOO
+#' mltrain.baseFOO <- function (object, ...) {
+#'    mymodel <- list(
+#'      classes = as.character(unique(object$data[, object$labelindex]))
+#'    )
+#'    class(mymodel) <- 'fooModel'
 #'    mymodel
 #' }
 #'
-#' #Use this base method with Binary Relevance
-#' brmodel <- br(emotions, 'foo')
+#' # Using this base method with Binary Relevance
+#' brmodel <- br(toyml, 'FOO')
+#'
+#' \dontrun{
 #'
 #' # Create a SVM method using the e1071 package
 #' library(e1071)
-#' mltrain.baseSVM <- function (dataset, ...) {
-#'    traindata <- dataset$data[, -dataset$labelindex]
-#'    labeldata <- dataset$data[, dataset$labelindex]
+#' mltrain.baseSVM <- function (object, ...) {
+#'    traindata <- object$data[, -object$labelindex]
+#'    labeldata <- object$data[, object$labelindex]
 #'    model <- svm(traindata, labeldata, probability = TRUE, ...)
 #'    model
 #' }
 #' }
-mltrain <- function(dataset, ...) {
+mltrain <- function(object, ...) {
   UseMethod("mltrain")
 }
 
-#' Prediction function to extend base classifiers
+#' Prediction transformation problems
 #'
-#' To extend a base classifier, two steps are necessary:
+#' Base classifiers are used to build models to solve the the transformation
+#' problems. To create a new base classifier, two steps are necessary:
 #' \enumerate{
 #'   \item Create a train method
 #'   \item Create a prediction method
 #' }
-#' This section is about how to create a prediction method. To create a new
-#' train method see \code{\link{mltrain}} documentation.
+#' This section is about how to create the second step: a prediction method.
+#' To create a new train method see \code{\link{mltrain}} documentation.
 #'
 #' @section How to create a new prediction base method:
-#' Fist is necessary to know the class of model generate by respective train
-#' method because this name determine the method name, that must start with
-#' 'mlpredict.' followed by the model class name, e.g. a model with class
-#' 'foomodel' must be \code{mlpredict.foomodel}.
+#' Fist is necessary to know the class of model generate by the respective train
+#' method, because this name determines the method name. It must start with
+#' \code{'mlpredict.'}, followed by the model class name, e.g. a model with
+#' class 'fooModel' must be called as \code{mlpredict.fooModel}.
 #'
 #' After defined the name, you need to implement your prediction base method.
-#' The model is available on \code{model} parameter and the new data to predict
-#' \code{newdata}. In the examples there are some ways to implement this method.
+#' The model built on mltrain is available on \code{model} parameter and the
+#' \code{newdata} is the data to be predict.
 #'
-#' The return of this method must be a matrix with the probabilities of each
-#' class value for each examples. The rows represents the examples and the
-#' columns the class values.
-#'
-#' Remember that the prediction may be binary or multi-class, then the number
-#' and the column names may vary depending on the problem.
+#' The return of this method must be a data.frame with two columns called
+#' \code{"prediction"} and \code{"probability"}. The first column contains the
+#' predicted classe and the second the probability/score/confidence of this
+#' prediction. The rows represents the examples.
 #'
 #' @param model An object model returned by some mltrain method, its class
 #'  determine the name of this method.
-#' @param newdata A dataframe with the new data to be predicted
+#' @param newdata A data.frame with the new data to be predicted.
 #' @param ... Others arguments passed to the predict method.
-#' @return A matrix with the probabilities of each class value for each example,
+#' @return A matrix with the probabilities of each class value/example,
 #'  where the rows are the examples and the columns the class values.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Create a method that predict always the negative class
-#' # We consider a binary scenario (The model must be the class 'negativemodel')
-#' mlpredict.negativemodel <- function (model, newdata, ...) {
-#'    # Predict the class '0' with 100% and the class '1' with 0%
-#'    matrix(
-#'      c(rep(1, nrow(newdata)),
-#'      rep(0, nrow(newdata))),
-#'      ncol=2,
-#'      dimnames=list(rownames(newdata), c('0','1'))
+#'
+#' # Create a method that predict always the first class
+#' # The model must be of the class 'fooModel'
+#' mlpredict.fooModel <- function (model, newdata, ...) {
+#'    # Predict the first class with a random confidence
+#'    data.frame(
+#'      prediction = rep(model$classes[1], nrow(newdata)),
+#'      probability = sapply(runif(nrow(newdata)), function (score) {
+#'        max(score, 1 - score)
+#'      }),
+#'      row.names = rownames(newdata)
 #'    )
 #' }
 #'
+#' \dontrun{
 #' # Create a SVM predict method using the e1071 package (the class of SVM model
 #' # from e1071 package is 'svm')
 #' library(e1071)
@@ -117,9 +136,9 @@ mlpredict <- function(model, newdata, ...) {
 # DEFAULT METHOD -------------------------------------------------------------
 #' @describeIn mltrain Default S3 method
 #' @export
-mltrain.default <- function(dataset, ...) {
-  funcname <- paste("mltrain.base", dataset$methodname, sep = "")
-  stop(paste("The function '", funcname, "(dataset, ...)' is not implemented",
+mltrain.default <- function(object, ...) {
+  funcname <- paste("mltrain.base", object$methodname, sep = "")
+  stop(paste("The function '", funcname, "(object, ...)' is not implemented",
              sep = ""))
 }
 
@@ -134,10 +153,10 @@ mlpredict.default <- function(model, newdata, ...) {
 # SVM METHOD ------------------------------------------------------------------
 #' @describeIn mltrain SVM implementation (require \pkg{e1071} package to use)
 #' @export
-mltrain.baseSVM <- function(dataset, ...) {
+mltrain.baseSVM <- function(object, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
-    traindata <- dataset$data[, -dataset$labelindex]
-    labeldata <- dataset$data[, dataset$labelindex]
+    traindata <- object$data[, -object$labelindex]
+    labeldata <- object$data[, object$labelindex]
     model <- e1071::svm(traindata, labeldata, probability = TRUE, ...)
   }
   else {
@@ -150,31 +169,37 @@ mltrain.baseSVM <- function(dataset, ...) {
 #' @describeIn mlpredict SVM implementation (require \pkg{e1071} package to use)
 #' @export
 mlpredict.svm <- function(model, newdata, ...) {
-  if (requireNamespace("e1071", quietly = TRUE)) {
-    result <- predict(model, newdata, probability = TRUE, ...)
-  }
-  else {
+  if (!requireNamespace("e1071", quietly = TRUE)) {
     stop(paste("There are no installed package 'e1071' to use SVM classifier",
                "as base method"))
   }
-  attr(result, "probabilities")
+
+  result <- predict(model, newdata, probability = TRUE, ...)
+  prediction <- as.character(result)
+  all.prob <- attr(result, "probabilities")
+
+  data.frame(
+    prediction = prediction,
+    probability = all.prob[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
 }
 
 # J48 METHOD -------------------------------------------------------------
 #' @describeIn mltrain J48 implementation (require \pkg{RWeka} package to use)
 #' @export
-mltrain.baseJ48 <- function(dataset, ...) {
+mltrain.baseJ48 <- function(object, ...) {
   #http://r.789695.n4.nabble.com/How-to-save-load-RWeka-models-into-from-a-file-td870876.html
   #https://github.com/s-u/rJava/issues/25
   #inspect the JVM log error file in the second execution
   if (requireNamespace("RWeka", quietly = TRUE) &&
       requireNamespace("rJava", quietly = TRUE)) {
-    formula <- as.formula(paste("`", dataset$labelname, "` ~ .", sep = ""))
-    model <- RWeka::J48(formula, dataset$data, ...)
+    formula <- as.formula(paste("`", object$labelname, "` ~ .", sep = ""))
+    model <- RWeka::J48(formula, object$data, ...)
     rJava::.jcache(model$classifier)
   }
   else {
-    stop(paste("There are no installed package 'RWeka' to use J48",
+    stop(paste("There are no installed package 'RWeka' and 'rJava' to use J48",
                "classifier as base method"))
   }
   model
@@ -183,23 +208,27 @@ mltrain.baseJ48 <- function(dataset, ...) {
 #' @describeIn mlpredict J48 implementation (require \pkg{RWeka} package to use)
 #' @export
 mlpredict.J48 <- function(model, newdata, ...) {
-  if (requireNamespace("RWeka", quietly = TRUE)) {
-    result <- predict(model, newdata, "probability", ...)
-  }
-  else {
+  if (!requireNamespace("RWeka", quietly = TRUE)) {
     stop(paste("There are no installed package 'RWeka' to use J48 classifier",
                "as base method"))
   }
-  result
+
+  result <- predict(model, newdata, type = "probability", ...)
+  prediction <- colnames(result)[apply(result, 1, which.max)]
+  data.frame(
+    prediction = prediction,
+    probability = result[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
 }
 
 # C5.0 METHOD ------------------------------------------------------------------
 #' @describeIn mltrain C5.0 implementation (require \pkg{C50} package to use)
 #' @export
-mltrain.baseC5.0 <- function(dataset, ...) {
+mltrain.baseC5.0 <- function(object, ...) {
   if (requireNamespace("C50", quietly = TRUE)) {
-    traindata <- dataset$data[, -dataset$labelindex]
-    labeldata <- dataset$data[, dataset$labelindex]
+    traindata <- object$data[, -object$labelindex]
+    labeldata <- object$data[, object$labelindex]
     model <- C50::C5.0(traindata, labeldata, ...)
   }
   else {
@@ -216,16 +245,22 @@ mlpredict.C5.0 <- function(model, newdata, ...) {
     stop(paste("There are no installed package 'C50' to use C5.0 classifier",
                "as base method"))
   }
-  predict(model, newdata, type = "prob", ...)
+  result <- predict(model, newdata, type = "prob", ...)
+  prediction <- colnames(result)[apply(result, 1, which.max)]
+  data.frame(
+    prediction = prediction,
+    probability = result[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
 }
 
 # CART METHOD -----------------------------------------------------------------
 #' @describeIn mltrain CART implementation (require \pkg{rpart} package to use)
 #' @export
-mltrain.baseCART <- function(dataset, ...) {
+mltrain.baseCART <- function(object, ...) {
   if (requireNamespace("rpart", quietly = TRUE)) {
-    formula <- as.formula(paste("`", dataset$labelname, "` ~ .", sep = ""))
-    model <- rpart::rpart(formula, dataset$data, ...)
+    formula <- as.formula(paste("`", object$labelname, "` ~ .", sep = ""))
+    model <- rpart::rpart(formula, object$data, ...)
   }
   else {
     stop(paste("There are no installed package 'rpart' to use Cart classifier",
@@ -241,17 +276,23 @@ mlpredict.rpart <- function(model, newdata, ...) {
     stop(paste("There are no installed package 'rpart' to use Cart classifier",
                "as base method"))
   }
-  predict(model, newdata, type = "prob", ...)
+  result <- predict(model, newdata, type = "prob", ...)
+  prediction <- colnames(result)[apply(result, 1, which.max)]
+  data.frame(
+    prediction = prediction,
+    probability = result[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
 }
 
 # RANDOM FOREST METHOD --------------------------------------------------------
 #' @describeIn mltrain Random Forest (RF) implementation (require
 #'  \pkg{randomForest} package to use)
 #' @export
-mltrain.baseRF <- function(dataset, ...) {
+mltrain.baseRF <- function(object, ...) {
   if (requireNamespace("randomForest", quietly = TRUE)) {
-    traindata <- dataset$data[, -dataset$labelindex]
-    labeldata <- dataset$data[, dataset$labelindex]
+    traindata <- object$data[, -object$labelindex]
+    labeldata <- object$data[, object$labelindex]
     model <- randomForest::randomForest(traindata, labeldata, ...)
   }
   else {
@@ -269,17 +310,24 @@ mlpredict.randomForest <- function(model, newdata, ...) {
     stop(paste("There are no installed package 'randomForest' to use",
                "randomForest classifier as base method"))
   }
-  predict(model, newdata, type = "prob", ...)
+
+  result <- predict(model, newdata, type = "prob", ...)
+  prediction <- colnames(result)[apply(result, 1, which.max)]
+  data.frame(
+    prediction = prediction,
+    probability = result[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
 }
 
 # NAIVE BAYES METHOD ----------------------------------------------------------
 #' @describeIn mltrain Naive Bayes (NB) implementation (require
 #'  \pkg{e1071} package to use)
 #' @export
-mltrain.baseNB <- function(dataset, ...) {
+mltrain.baseNB <- function(object, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
-    traindata <- dataset$data[, -dataset$labelindex]
-    labeldata <- dataset$data[, dataset$labelindex]
+    traindata <- object$data[, -object$labelindex]
+    labeldata <- object$data[, object$labelindex]
     model <- e1071::naiveBayes(traindata, labeldata, type = "raw", ...)
   }
   else {
@@ -299,20 +347,25 @@ mlpredict.naiveBayes <- function(model, newdata, ...) {
   }
   result <- predict(model, newdata, type = "raw", ...)
   rownames(result) <- rownames(newdata)
-  result
+  prediction <- colnames(result)[apply(result, 1, which.max)]
+  data.frame(
+    prediction = prediction,
+    probability = result[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
 }
 
 # KNN METHOD ------------------------------------------------------------------
 #' @describeIn mltrain kNN implementation (require \pkg{kknn} package to use)
 #' @export
-mltrain.baseKNN <- function(dataset, ...) {
+mltrain.baseKNN <- function(object, ...) {
   if (!requireNamespace("kknn", quietly = TRUE)) {
     stop(paste("There are no installed package 'kknn' to use kNN classifier as",
                "base method"))
   }
 
-  dataset$extrakNN <- list(...)
-  dataset
+  object$extrakNN <- list(...)
+  object
 }
 
 #' @describeIn mlpredict kNN implementation (require \pkg{kknn} package to use)
@@ -333,15 +386,79 @@ mlpredict.baseKNN <- function(model, newdata, ...) {
                          k = model$extrakNN[["k"]], ...)
   }
 
-  result <- as.matrix(result$prob)
-  rownames(result) <- rownames(newdata)
-  result
+  prediction <- as.character(result$fitted.values)
+  all.prob <- as.matrix(result$prob)
+  rownames(all.prob) <- rownames(newdata)
+  data.frame(
+    prediction = prediction,
+    probability = all.prob[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
 }
 
-#' Summary method for mltransformation
-#' @param object A transformed dataset
-#' @param ... additional arguments affecting the summary produced.
+# Majority METHOD ------------------------------------------------------------
+#' @describeIn mltrain Majority model
 #' @export
-summary.mltransformation <- function(object, ...) {
-  summary(object$data, ...)
+mltrain.baseMAJORITY <- function(object, ...) {
+  values <- table(object$data[, object$labelindex])
+  model <- list(
+    classes = names(values),
+    predict = names(which.max(values))
+  )
+  class(model) <- 'majorityModel'
+  model
+}
+
+#' @describeIn mlpredict Majority prediction
+#' @export
+mlpredict.majorityModel <- function(model, newdata, ...) {
+  data.frame(
+    prediction = rep(model$predict, nrow(newdata)),
+    probability = rep(1, nrow(newdata)),
+    row.names = rownames(newdata)
+  )
+}
+
+# Random METHOD ------------------------------------------------------------
+#' @describeIn mltrain Random model
+#' @export
+mltrain.baseRANDOM <- function(object, ...) {
+  model <- list(
+    classes = as.character(unique(object$data[, object$labelindex]))
+  )
+  class(model) <- 'randomModel'
+  model
+}
+
+#' @describeIn mlpredict Majority prediction
+#' @export
+mlpredict.randomModel <- function(model, newdata, ...) {
+  data.frame(
+    prediction = sample(model$classes, nrow(newdata), replace = TRUE),
+    probability = sapply(runif(nrow(newdata)), function (score) {
+      max(score, 1 - score)
+    }),
+    row.names = rownames(newdata)
+  )
+}
+
+#' Print Majority model
+#' @param x The base model
+#' @param ... ignored
+#' @export
+print.majorityModel <- function (x, ...) {
+  cat("Majority Base Model\n\n")
+  cat("Label: ", attr(x, "label"), "\n")
+  cat("Classes: ", paste(x$classes, collapse = ' | '))
+  cat("Predict: ", x$predict)
+}
+
+#' Print Random model
+#' @param x The base model
+#' @param ... ignored
+#' @export
+print.randomModel <- function (x, ...) {
+  cat("Random Base Model\n\n")
+  cat("Label: ", attr(x, "label"), "\n")
+  cat("Classes: ", paste(x$classes, collapse = ' | '))
 }

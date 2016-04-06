@@ -6,7 +6,7 @@
 \usage{
 \method{predict}{BRmodel}(object, newdata,
   probability = getOption("utiml.use.probs", TRUE), ...,
-  CORES = getOption("utiml.cores", 1))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{object}{Object of class '\code{BRmodel}'.}
@@ -20,9 +20,12 @@ returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of type mlresult, based on the parameter probability.
@@ -31,6 +34,9 @@ An object of type mlresult, based on the parameter probability.
 This function predicts values based upon a model trained by \code{\link{br}}.
 }
 \examples{
+model <- br(toyml, "RANDOM")
+pred <- predict(model, toyml)
+
 \dontrun{
 # Predict SVM scores
 model <- br(toyml, "SVM")

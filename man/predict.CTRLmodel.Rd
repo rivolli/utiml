@@ -6,7 +6,7 @@
 \usage{
 \method{predict}{CTRLmodel}(object, newdata, vote.schema = "maj",
   probability = getOption("utiml.use.probs", TRUE), ...,
-  CORES = getOption("utiml.cores", 1))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{object}{Object of class '\code{CTRLmodel}'.}
@@ -14,19 +14,9 @@
 \item{newdata}{An object containing the new input data. This must be a
 matrix, data.frame or a mldr object.}
 
-\item{vote.schema}{Define the way that binary ensemble must compute the
-binary predictions. (Default: \code{'maj'})
-The default valid options are:
-\describe{
-  \code{'avg'}{Compute the proportion of votes, scale data between min and
-    max of votes}
-  \code{'maj'}{Compute the averages of probabilities},
-  \code{'max'}{Compute the votes scaled between 0 and \code{m}
-    (number of interations)},
-  \code{'min'}{Compute the proportion of votes, scale data between min and
-    max of votes}
-  \code{'prod'}{Compute the product of all votes for each instance}
-}}
+\item{vote.schema}{Define the way that ensemble must compute the predictions.
+The default valid options are: c("avg", "maj", "max", "min").
+(Default: \code{'maj'})}
 
 \item{probability}{Logical indicating whether class probabilities should be
 returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
@@ -34,9 +24,12 @@ returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of type mlresult, based on the parameter probability.
@@ -46,13 +39,12 @@ This function predicts values based upon a model trained by
 \code{\link{ctrl}}.
 }
 \examples{
-\dontrun{
-# Predict SVM scores
-model <- ctrl(toyml)
+model <- ctrl(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Predict SVM bipartitions running in 6 cores
-pred <- predict(model, toyml, probability = FALSE, CORES = 6)
+pred <- predict(model, toyml, probability = FALSE, cores = 6)
 
 # Using the Maximum vote schema
 pred <- predict(model, toyml, vote.schema = 'max')

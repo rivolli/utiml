@@ -5,7 +5,8 @@
 \title{PruDent classifier for multi-label Classification}
 \usage{
 prudent(mdata, base.method = getOption("utiml.base.method", "SVM"), phi = 0,
-  ..., CORES = getOption("utiml.cores", 1))
+  ..., cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -18,9 +19,12 @@ value 0 include all labels in the second phase and the 1 none.}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{PruDentmodel} containing the set of fitted
@@ -47,11 +51,10 @@ In the second phase only labels whose information gain is greater than a
 specific phi value is added.
 }
 \examples{
-\dontrun{
-# Use SVM as base method
-model <- prudent(toyml)
+model <- prudent(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Use different phi correlation with J48 classifier
 model <- prudent(toyml, 'J48', 0.3)
 
@@ -65,8 +68,6 @@ Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
    and Data Engineering, 27(9), 2480-2493.
 }
 \seealso{
-\code{\link{calculate_labels_information_gain}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
   \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},

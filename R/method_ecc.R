@@ -19,9 +19,11 @@
 #' @param attr.space A value between 0.1 and 1 to determine the percentage of
 #'    attributes that must be used for each classifier. (Default: 0.50)
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of class \code{ECCmodel} containing the set of fitted
 #'   CC models, including:
 #' \describe{
@@ -43,11 +45,11 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Use all default values
-#' model <- ecc(toyml)
+#' model <- ecc(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Use J48 with 100% of instances and only 5 rounds
 #' model <- ecc(toyml, 'J48', m = 5, subsample = 1)
 #'
@@ -55,16 +57,12 @@
 #' model <- ecc(toyml, attr.space = 0.75)
 #'
 #' # Running in 4 cores and define a specific seed
-#' options(utiml.mc.set.seed = FALSE)
-#' set.seed(91179631)
-#' model1 <- ecc(toyml, CORES=4)
-#'
-#' set.seed(91179631)
-#' model2 <- ecc(toyml, CORES=4)
+#' model1 <- ecc(toyml, cores=4, seed=123)
 #' }
 ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
                 m = 10, subsample = 0.75, attr.space = 0.5, ...,
-                CORES = getOption("utiml.cores", 1)) {
+                cores = getOption("utiml.cores", 1),
+                seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
@@ -82,7 +80,7 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     stop("The attribbute space of training instances must be between 0.1 and 1 inclusive")
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
 
@@ -91,6 +89,11 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   eccmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   eccmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
 
+
+  utiml_preserve_seed()
+  if (!anyNA(seed)) {
+    set.seed(seed)
+  }
   idx <- lapply(seq(m), function(iteration) {
     list(
       rows = sample(mdata$measures$num.instances, eccmodel$nrow),
@@ -103,11 +106,12 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     ndata <- create_subset(mdata, idx[[iteration]]$rows, idx[[iteration]]$cols)
     chain <- idx[[iteration]]$chain
 
-    ccmodel <- cc(ndata, base.method, chain, ..., CORES = CORES)
+    ccmodel <- cc(ndata, base.method, chain, ..., cores = cores, seed = seed)
     ccmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
     ccmodel
   })
 
+  utiml_restore_seed()
   class(eccmodel) <- "ECCmodel"
   eccmodel
 }
@@ -120,25 +124,17 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' @param newdata An object containing the new input data. This must be a
 #'  matrix, data.frame or a mldr object.
 #' @param vote.schema Define the way that ensemble must compute the predictions.
-#'  The default valid options are:
-#'  \describe{
-#'    \code{'avg'}{Compute the proportion of votes, scale data between min and
-#'      max of votes}
-#'    \code{'maj'}{Compute the averages of probabilities},
-#'    \code{'max'}{Compute the votes scaled between 0 and \code{m}
-#'      (number of interations)},
-#'    \code{'min'}{Compute the proportion of votes, scale data between min and
-#'      max of votes}
-#'    \code{'prod'}{Compute the product of all votes for each instance}
-#'  }
-#'  If \code{NULL} then all predictions are returned. (Default: \code{'maj'})
+#'  The default valid options are: c("avg", "maj", "max", "min"). If \code{NULL}
+#'  then all predictions are returned. (Default: \code{'maj'})
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @seealso \code{\link[=ecc]{Ensemble of Classifier Chains (ECC)}}
 #' @export
@@ -150,31 +146,34 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' pred <- predict(model, toyml)
 #'
 #' # Predict SVM bipartitions running in 6 cores
-#' pred <- predict(model, toyml, probability = FALSE, CORES = 6)
+#' pred <- predict(model, toyml, probability = FALSE, cores = 6)
 #'
 #' # Return the classes with the highest score
 #' pred <- predict(model, toyml, vote.schema = 'max')
 #' }
 predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
                              probability = getOption("utiml.use.probs", TRUE),
-                             ..., CORES = getOption("utiml.cores", 1)) {
+                             ..., cores = getOption("utiml.cores", 1),
+                             seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "ECCmodel") {
     stop("First argument must be an ECCmodel object")
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
 
-  check_ensemble_vote(vote.schema)
+  utiml_ensemble_check_voteschema(vote.schema)
+  utiml_preserve_seed()
 
   newdata <- utiml_newdata(newdata)
   allpreds <- utiml_lapply(object$models, function(ccmodel) {
     predict(ccmodel, newdata[, ccmodel$attrs], ...)
-  }, CORES)
+  }, cores, seed)
 
-  compute_multilabel_ensemble_votes(allpreds, vote.schema, probability)
+  utiml_restore_seed()
+  utiml_predict_ensemble(allpreds, vote.schema, probability)
 }
 
 #' Print ECC model

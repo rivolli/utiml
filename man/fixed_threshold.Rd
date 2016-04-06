@@ -2,9 +2,17 @@
 % Please edit documentation in R/threshold.R
 \name{fixed_threshold}
 \alias{fixed_threshold}
+\alias{fixed_threshold.default}
+\alias{fixed_threshold.mlresult}
 \title{Apply a fixed threshold in the results}
 \usage{
-fixed_threshold(prediction, threshold = 0.5)
+fixed_threshold(prediction, threshold = 0.5, probability = FALSE)
+
+\method{fixed_threshold}{default}(prediction, threshold = 0.5,
+  probability = FALSE)
+
+\method{fixed_threshold}{mlresult}(prediction, threshold = 0.5,
+  probability = FALSE)
 }
 \arguments{
 \item{prediction}{A matrix with scores/probabilities where the columns
@@ -12,15 +20,25 @@ are the labels and the rows are the instances.}
 
 \item{threshold}{A single value between 0 and 1 or a list with threshold
 values contained one value per label.}
+
+\item{probability}{A logical value. If \code{TRUE} the predicted values are
+the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+(Default: \code{FALSE})}
 }
 \value{
-A matrix with bipartition results
+A mlresult object.
 }
 \description{
-Transfom a prediction matrix with scores/probabilities in a bipartion
-prediction matrix. A global fixed threshold can be used of all labels or
+Transfom a prediction matrix with scores/probabilities in a mlresult applying
+a fixed threshold. A global fixed threshold can be used of all labels or
 different fixed thresholds, one for each label.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{default}: Fixed Threshold for matrix or data.frame
+
+\item \code{mlresult}: Fixed Threshold for mlresult
+}}
 \examples{
 # Create a prediction matrix with scores
 result <- matrix(

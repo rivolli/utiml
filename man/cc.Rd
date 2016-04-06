@@ -4,8 +4,9 @@
 \alias{cc}
 \title{Classifier Chains for multi-label Classification}
 \usage{
-cc(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = c(),
-  ..., CORES = getOption("utiml.cores", 1))
+cc(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = NA,
+  ..., cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -15,13 +16,16 @@ cc(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = c(),
 
 \item{chain}{A vector with the label names to define the chain order. If
 empty the chain is the default label sequence of the dataset. (Default:
-\code{list()})}
+\code{NA})}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{CCmodel} containing the set of fitted
@@ -42,17 +46,19 @@ strategy of extended the attribute space with the 0/1 label relevances of all
 previous classifiers, forming a classifier chain.
 }
 \examples{
-\dontrun{
-# Use SVM as base method
-model <- cc(toyml)
+model <- cc(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Use a specific chain with J48 classifier
 mychain <- sample(rownames(toyml$labels))
 model <- cc(toyml, 'J48', mychain)
 
 # Set a specific parameter
 model <- cc(toyml, 'KNN', k=5)
+
+#Run with multiple-cores
+model <- cc(toyml, 'RF', cores = 5, seed = 123)
 }
 }
 \references{

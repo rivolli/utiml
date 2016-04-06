@@ -6,37 +6,48 @@
 \alias{mltrain.baseCART}
 \alias{mltrain.baseJ48}
 \alias{mltrain.baseKNN}
+\alias{mltrain.baseMAJORITY}
 \alias{mltrain.baseNB}
+\alias{mltrain.baseRANDOM}
 \alias{mltrain.baseRF}
 \alias{mltrain.baseSVM}
 \alias{mltrain.default}
-\title{Train function to extend base classifiers}
+\title{Build transformation models}
 \usage{
-mltrain(dataset, ...)
+mltrain(object, ...)
 
-\method{mltrain}{default}(dataset, ...)
+\method{mltrain}{default}(object, ...)
 
-\method{mltrain}{baseSVM}(dataset, ...)
+\method{mltrain}{baseSVM}(object, ...)
 
-\method{mltrain}{baseJ48}(dataset, ...)
+\method{mltrain}{baseJ48}(object, ...)
 
-\method{mltrain}{baseC5.0}(dataset, ...)
+\method{mltrain}{baseC5.0}(object, ...)
 
-\method{mltrain}{baseCART}(dataset, ...)
+\method{mltrain}{baseCART}(object, ...)
 
-\method{mltrain}{baseRF}(dataset, ...)
+\method{mltrain}{baseRF}(object, ...)
 
-\method{mltrain}{baseNB}(dataset, ...)
+\method{mltrain}{baseNB}(object, ...)
 
-\method{mltrain}{baseKNN}(dataset, ...)
+\method{mltrain}{baseKNN}(object, ...)
+
+\method{mltrain}{baseMAJORITY}(object, ...)
+
+\method{mltrain}{baseRANDOM}(object, ...)
 }
 \arguments{
-\item{dataset}{An object of \code{mltransformation} class, that has at least
-four attributes: \strong{data}, \strong{labelname}, \strong{labelindex} and
-\strong{methodname}. The \code{data} is the dataframe with the predictive
-attributes and the class column. The \code{labelname} is the name of the
-class column. The \code{labelindex} is the column number of the class.
- Finally, the \code{methodname} is the name of the implemented method.}
+\item{object}{A \code{mltransformation} object. This is used as a list and
+contains at least five values:
+ \describe{
+   \item{object$data}{A data.frame with the train data, where the columns are
+   the attributes and the rows are the examples.}
+   \item{object$labelname}{The name of the class column.}
+   \item{object$labelindex}{The column index of the class.}
+   \item{object$mldataset}{The name of multi-label dataset.}
+   \item{object$mlmethod}{The name of the multi-label method.}
+ }
+ Others values may be specified by the multi-label method.}
 
 \item{...}{Others arguments passed to the base method.}
 }
@@ -45,13 +56,14 @@ A model object. The class of this model can be of any type, however,
  this object will be passed to the respective mlpredict method.
 }
 \description{
-To extend a base classifier, two steps are necessary:
+Base classifiers are used to build models to solve the the transformation
+problems. To create a new base classifier, two steps are necessary:
 \enumerate{
   \item Create a train method
   \item Create a prediction method
 }
-This section is about how to create a train method. To create a new predict
-model see \code{\link{mlpredict}} documentation.
+This section is about how to create the first step: a train method.
+To create a new predict model see \code{\link{mlpredict}} documentation.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -72,34 +84,50 @@ model see \code{\link{mlpredict}} documentation.
 \pkg{e1071} package to use)
 
 \item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
+
+\item \code{baseMAJORITY}: Majority model
+
+\item \code{baseRANDOM}: Random model
 }}
 \section{How to create a new train base method}{
 
-Fist is necessary to define a name of your classifier because this name
-determine the method name, that must start with mltrain.base followed by your
-name, e.g. a 'foo' classify must be \code{mltrain.basefoo}.
+First, is necessary to define a name of your classifier, because this name
+determines the method name. The base method name must start with
+\code{mltrain.base} followed by the designed name, e.g. a \code{'FOO'}
+classify must be defined as \code{mltrain.baseFOO} (we suggest always use
+upper case names).
 
-After defined the name, you need to implement your base method. The dataset
-is available on \code{dataset$base}. In the examples there are some ways to
-implement this method.
+Next, your method must receive at least two parameters (\code{object, ...}).
+Use \code{object$data[, object$labelindex]} or
+\code{object$data[, object$labelname]} to access the labels values and use
+\code{object$data[, -object$labelindex]} to access the predictive attributes.
+If you need to know which are the multi-label dataset and method, use
+\code{object$mldataset} and \code{object$mlmethod}, respectively.
+
+Finally, your method should return a model that will be used by the mlpredict
+method. Remember, that your method may be used to buid binary and multi-class
+models.
 }
 \examples{
-\dontrun{
-# Create a empty model of type foo
-mltrain.basefoo <- function (dataset, ...) {
-   mymodel <- list()
-   class(mymodel) <- 'foomodel'
+# Create a empty model of type FOO
+mltrain.baseFOO <- function (object, ...) {
+   mymodel <- list(
+     classes = as.character(unique(object$data[, object$labelindex]))
+   )
+   class(mymodel) <- 'fooModel'
    mymodel
 }
 
-#Use this base method with Binary Relevance
-brmodel <- br(emotions, 'foo')
+# Using this base method with Binary Relevance
+brmodel <- br(toyml, 'FOO')
+
+\dontrun{
 
 # Create a SVM method using the e1071 package
 library(e1071)
-mltrain.baseSVM <- function (dataset, ...) {
-   traindata <- dataset$data[, -dataset$labelindex]
-   labeldata <- dataset$data[, dataset$labelindex]
+mltrain.baseSVM <- function (object, ...) {
+   traindata <- object$data[, -object$labelindex]
+   labeldata <- object$data[, object$labelindex]
    model <- svm(traindata, labeldata, probability = TRUE, ...)
    model
 }

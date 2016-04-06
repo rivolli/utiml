@@ -6,7 +6,8 @@
 \usage{
 \method{predict}{BRPmodel}(object, newdata, strategy = c("Dyn", "Stat", "Ord",
   "NU"), order = list(), probability = getOption("utiml.use.probs", TRUE),
-  ..., CORES = getOption("utiml.cores", 1))
+  ..., cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{object}{Object of class '\code{BRPmodel}'.}
@@ -30,9 +31,12 @@ returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of type mlresult, based on the parameter probability.
@@ -65,11 +69,11 @@ two groups:
 }
 }
 \examples{
-\dontrun{
 # Predict SVM scores
-model <- brplus(toyml)
-pred <- predict(model, dataset$test)
+model <- brplus(toyml, "RANDOM")
+pred <- predict(model, toyml)
 
+\dontrun{
 # Predict SVM bipartitions and change the method to use No Update strategy
 pred <- predict(model, toyml, strategy = 'NU', probability = FALSE)
 

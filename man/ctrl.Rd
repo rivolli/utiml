@@ -6,7 +6,8 @@
 \usage{
 ctrl(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 5,
   validation.size = 0.3, validation.threshold = 0.3, ...,
-  predict.params = list(), CORES = getOption("utiml.cores", 1))
+  predict.params = list(), cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -29,9 +30,12 @@ class label in Y is regarded as error-prone or not. (Default: 0.3)}
 \item{predict.params}{A list of default arguments passed to the predictor
 method. (default: \code{list()})}
 
-\item{CORES}{The number of cores to parallelize the training. Values higher
+\item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
+
+\item{seed}{An optional integer used to set the seed. This is useful when
+the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{CTRLmodel} containing the set of fitted
@@ -66,14 +70,16 @@ Dependencies:
    \link[FSelector]{relief} method available in \pkg{FSelector} package.
 }
 \examples{
-\dontrun{
-# Use SVM as base method
-model <- ctrl(toyml)
+model <- ctrl(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Change default values and use 4 CORES
 model <- ctrl(toyml, 'C5.0', m = 10, validation.size = 0.4,
-              validation.threshold = 0.5, CORES = 4)
+              validation.threshold = 0.5, cores = 4)
+
+# Use seed
+model <- ctrl(toyml, 'RF', cores = 4, seed = 123)
 
 # Set a parameters for all subproblems
 model <- ctrl(dataset$train, 'KNN', k=5)

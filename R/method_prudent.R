@@ -14,9 +14,11 @@
 #' @param phi A value between 0 and 1 to determine the information gain. The
 #'  value 0 include all labels in the second phase and the 1 none.
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of class \code{PruDentmodel} containing the set of fitted
 #'   models, including:
 #'   \describe{
@@ -34,15 +36,13 @@
 #'  Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
 #'    Approach for Multi-Label Classification. IEEE Transactions on Knowledge
 #'    and Data Engineering, 27(9), 2480-2493.
-#' @seealso \code{\link{calculate_labels_information_gain}}
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Use SVM as base method
-#' model <- prudent(toyml)
+#' model <- prudent(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Use different phi correlation with J48 classifier
 #' model <- prudent(toyml, 'J48', 0.3)
 #'
@@ -50,7 +50,8 @@
 #' model <- prudent(toyml, 'KNN', k=5)
 #' }
 prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
-                    phi = 0, ..., CORES = getOption("utiml.cores", 1)) {
+                    phi = 0, ..., cores = getOption("utiml.cores", 1),
+                    seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
@@ -60,32 +61,40 @@ prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     stop("The phi threshold must be between 0 and 1, inclusive")
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
 
-  # PruDent Model class
-  pdmodel <- list(labels = rownames(mdata$labels), call = match.call(),
-                  IG = calculate_labels_information_gain(mdata), phi = phi)
+  utiml_preserve_seed()
 
-  # 1 Iteration - Base Level
-  pdmodel$basemodel <- br(mdata, base.method, ..., CORES = CORES)
+  # PruDent Model class
+  pdmodel <- list(
+    labels = rownames(mdata$labels),
+    call = match.call(),
+    IG = utiml_labels_IG(mdata),
+    phi = phi,
+
+    # 1 Iteration - Base Level
+    basemodel = br(mdata, base.method, ..., cores = cores, seed = seed)
+  )
   base.preds <- as.matrix(mdata$dataset[mdata$labels$index])
 
   # 2 Iteration - Meta level
   IG <- pdmodel$IG
-  labels <- utiml_renames(pdmodel$labels)
+  labels <- utiml_rename(pdmodel$labels)
   pdmodel$metamodels <- utiml_lapply(labels, function(label) {
-    extracols <- base.preds[, colnames(IG)[IG[label, ] > phi], drop = FALSE]
+    extracols <- base.preds[, colnames(IG)[IG[label, ] >= phi], drop = FALSE]
     if (ncol(extracols) > 0) {
-      colnames(extracols) <- paste("extra", colnames(extracols), sep = ".")
-      base <- create_br_data(mdata, label, extracols)
-      dataset <- prepare_br_data(base, "mldPruDent", base.method,
-                                 new.features = colnames(extracols))
-      create_br_model(dataset, ...)
+      nmcol <- paste("extra", colnames(extracols), sep = ".")
+      colnames(extracols) <- nmcol
+      base <- utiml_create_binary_data(mdata, label, extracols)
+      dataset <- utiml_prepare_data(base, "mldPruDent", mdata$name, "prudent",
+                                    base.method, new.features = nmcol)
+      utiml_create_model(dataset, ...)
     }
-  }, CORES)
+  }, cores, seed)
 
+  utiml_restore_seed()
   class(pdmodel) <- "PruDentmodel"
   pdmodel
 }
@@ -101,9 +110,11 @@ prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @seealso \code{\link[=prudent]{PruDent}}
 #' @export
@@ -123,37 +134,40 @@ prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 predict.PruDentmodel <- function(object, newdata,
                                  probability = getOption("utiml.use.probs",
                                                          TRUE),
-                                 ..., CORES = getOption("utiml.cores", 1)) {
+                                 ..., cores = getOption("utiml.cores", 1),
+                                 seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "PruDentmodel") {
     stop("First argument must be an PruDentmodel object")
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
 
+  utiml_preserve_seed()
   newdata <- utiml_newdata(newdata)
 
   # 1 Iteration - Base level
-  base.scores <- predict(object$basemodel, newdata, TRUE, ..., CORES = CORES)
+  base.scores <- predict(object$basemodel, newdata, TRUE, ...,
+                         cores=cores, seed=seed)
   base.preds <- as.bipartition(base.scores)
 
   # 2 Iteration - Meta level
   corr <- object$IG
-  labels <- utiml_renames(object$labels)
+  labels <- utiml_rename(object$labels)
   predictions <- utiml_lapply(labels, function(labelname) {
-    corr.lbs <- colnames(corr)[corr[labelname, ] > object$phi]
+    corr.lbs <- colnames(corr)[corr[labelname, ] >= object$phi]
     extracols <- base.preds[, corr.lbs, drop = FALSE]
     if (ncol(extracols) > 0) {
       colnames(extracols) <- paste("extra", colnames(extracols), sep = ".")
-      predict_br_model(object$metamodels[[labelname]],
-                       cbind(newdata, extracols), ...)
+      utiml_predict_binary_model(object$metamodels[[labelname]],
+                                 cbind(newdata, extracols), ...)
     }
     else {
-      as.binaryPrediction(base.scores[, labelname])
+      utiml_binary_prediction(base.preds[, labelname], base.scores[, labelname])
     }
-  }, CORES)
+  }, cores, seed)
 
   original <- predictions
   # Choosing the Final Classification
@@ -177,7 +191,44 @@ predict.PruDentmodel <- function(object, newdata,
     names(predictions[[i]]$bipartition) <- names(predictions[[i]]$probability)
   }
 
-  as.multilabelPrediction(predictions, probability)
+  utiml_restore_seed()
+  utiml_predict(predictions, probability)
+}
+
+#' Calculate the Information Gain for each pair of labels
+#'
+#' @param mdata A mldr dataset containing the label information.
+#' @return A matrix where the rows and columns represents the labels.
+#' @references
+#'  Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
+#'   Approach for Multi-Label Classification. IEEE Transactions on Knowledge
+#'   and Data Engineering, 27(9), 2480-2493.
+utiml_labels_IG <- function (mdata) {
+  entropy <- function (prob) {
+    res <- c(0, -prob * log2(prob) - (1 - prob) * log2(1 - prob))
+    zero <- prob == 0 || prob == 1
+    res[c(zero, !zero)]
+  }
+
+  labelnames <- rownames(mdata$labels)
+  classes <- mdata$dataset[,mdata$labels$index]
+  q <- length(labelnames)
+  ig <- matrix(nrow = q, ncol = q, dimnames = list(labelnames, labelnames))
+  for (i in 1:q) {
+    for (j in i:q) {
+      Hya <- entropy(mdata$labels$freq[i])
+      hasJ <- classes[j] == 1
+      Hyab <- mdata$labels$freq[j] *
+        entropy(sum(classes[hasJ, i] == 1) / sum(hasJ)) +
+        (1 - mdata$labels$freq[j]) *
+        entropy(sum(classes[classes[j] == 0, i] == 1) / sum(!hasJ))
+
+      ig[i,j] <- Hya  - Hyab
+      ig[j,i] <- ig[i,j]
+    }
+    ig[i,i] <- 0
+  }
+  ig
 }
 
 #' Print PruDent model

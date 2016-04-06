@@ -6,8 +6,7 @@ result <- matrix(
   ncol = 3,
   dimnames = list(11:15, c("lbl1",  "lbl2", "lbl3"))
 )
-predictions <- apply(result, 2, as.binaryPrediction)
-mlresult <- as.multilabelPrediction(predictions, F)
+mlresult <- as.mlresult(result, probability = FALSE)
 
 # result
 #    lbl1  lbl2  lbl3
@@ -18,29 +17,38 @@ mlresult <- as.multilabelPrediction(predictions, F)
 # 15 0.81  0.24  0.35
 
 test_that("Fixed threshold", {
-   expect_equal(fixed_threshold(result), as.bipartition(mlresult))
+  crisp <- fixed_threshold(result)
+  expect_is(crisp, "mlresult")
+  expect_true(is.bipartition(crisp))
+  expect_equal(crisp, mlresult)
 
-   new.data <- fixed_threshold(result, max(result))
-   expect_equal(apply(new.data, 1, sum),
-                c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
-   new.data <- fixed_threshold(result, min(result))
-   expect_equal(apply(new.data, 1, sum),
-                c('11'=3, '12'=3, '13'=3, '14'=3, '15'=3))
-   new.data <- fixed_threshold(result, c(0.8, 0.2, 0.5))
-   expect_equal(new.data[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
-   expect_equal(new.data[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=1))
-   expect_equal(new.data[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
+  newdata <- fixed_threshold(result, max(result))
+  expect_is(newdata, "mlresult")
+  expect_true(is.bipartition(newdata))
+  expect_equal(rowSums(newdata), c(1, 1, 1, 1, 1), check.names = FALSE)
+  newdata <- fixed_threshold(result, min(result))
+  expect_is(newdata, "mlresult")
+  expect_equal(rowSums(newdata), c(3, 3, 3, 3, 3), check.names = FALSE)
+
+  newdata <- fixed_threshold(result, c(0.8, 0.2, 0.5))
+  expect_is(newdata, "mlresult")
+  expect_equal(newdata[, "lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
+  expect_equal(newdata[, "lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=1))
+  expect_equal(newdata[, "lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
 })
 
 test_that("MCut threshold", {
   crisp <- mcut_threshold(result)
+  expect_is(crisp, "mlresult")
+  expect_true(is.bipartition(crisp))
   expect_equal(dimnames(crisp), dimnames(result))
-  expect_equal(crisp[,"lbl1"], c('11'=1, '12'=0, '13'=1, '14'=0, '15'=1))
-  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
-  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
+  expect_equal(crisp[, "lbl1"], c('11'=1, '12'=0, '13'=1, '14'=0, '15'=1))
+  expect_equal(crisp[, "lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[, "lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
 
   bipartition <- mcut_threshold(mlresult)
   expect_is(bipartition, "mlresult")
+  expect_true(is.bipartition(bipartition))
   expect_equal(as.probability(bipartition), as.probability(mlresult))
   expect_equal(as.bipartition(mcut_threshold(bipartition)),
                as.bipartition(bipartition))
@@ -48,19 +56,22 @@ test_that("MCut threshold", {
 
 test_that("PCut threshold", {
   crisp <- pcut_threshold(result, 0.20)
+  expect_is(crisp, "mlresult")
+  expect_true(is.bipartition(crisp))
   expect_equal(dimnames(crisp), dimnames(result))
-  expect_equal(crisp[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
-  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
-  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=0, '15'=0))
+  expect_equal(crisp[, "lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
+  expect_equal(crisp[, "lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[, "lbl3"], c('11'=1, '12'=1, '13'=0, '14'=0, '15'=0))
 
   crisp <- pcut_threshold(result, c(0.2, 0.3, 0.5))
   expect_equal(dimnames(crisp), dimnames(result))
-  expect_equal(crisp[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
-  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
-  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=1))
+  expect_equal(crisp[, "lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
+  expect_equal(crisp[, "lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[, "lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=1))
 
   bipartition <- pcut_threshold(mlresult, 0.3)
   expect_is(bipartition, "mlresult")
+  expect_true(is.bipartition(bipartition))
   expect_equal(as.probability(bipartition), as.probability(mlresult))
   expect_equal(as.bipartition(pcut_threshold(bipartition, 0.3)),
                as.bipartition(bipartition))
@@ -68,25 +79,28 @@ test_that("PCut threshold", {
 
 test_that("RCut threshold", {
   crisp <- rcut_threshold(result, 1)
+  expect_is(crisp, "mlresult")
+  expect_true(is.bipartition(crisp))
   expect_equal(dimnames(crisp), dimnames(result))
-  expect_equal(crisp[,"lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
-  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
-  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=0, '15'=0))
+  expect_equal(crisp[, "lbl1"], c('11'=0, '12'=0, '13'=0, '14'=0, '15'=1))
+  expect_equal(crisp[, "lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[, "lbl3"], c('11'=1, '12'=1, '13'=0, '14'=0, '15'=0))
 
   crisp <- rcut_threshold(result, 2)
   expect_equal(dimnames(crisp), dimnames(result))
-  expect_equal(crisp[,"lbl1"], c('11'=1, '12'=1, '13'=1, '14'=0, '15'=1))
-  expect_equal(crisp[,"lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
-  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=1))
+  expect_equal(crisp[, "lbl1"], c('11'=1, '12'=1, '13'=1, '14'=0, '15'=1))
+  expect_equal(crisp[, "lbl2"], c('11'=0, '12'=0, '13'=1, '14'=1, '15'=0))
+  expect_equal(crisp[, "lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=1))
 
   crisp <- rcut_threshold(result, 3)
   expect_equal(dimnames(crisp), dimnames(result))
-  expect_equal(crisp[,"lbl1"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
-  expect_equal(crisp[,"lbl2"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
-  expect_equal(crisp[,"lbl3"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
+  expect_equal(crisp[, "lbl1"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
+  expect_equal(crisp[, "lbl2"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
+  expect_equal(crisp[, "lbl3"], c('11'=1, '12'=1, '13'=1, '14'=1, '15'=1))
 
   bipartition <- rcut_threshold(mlresult, 2)
   expect_is(bipartition, "mlresult")
+  expect_true(is.bipartition(bipartition))
   expect_equal(as.probability(bipartition), as.probability(mlresult))
   expect_equal(as.bipartition(rcut_threshold(bipartition, 2)),
                as.bipartition(bipartition))
@@ -107,20 +121,21 @@ test_that("SCut threshold", {
   expect_equal(thresholds[2], thresholds2[2])
   expect_more_than(thresholds[3], max(result[, 3]))
 
-  expect_error(scut_threshold(result, mlresult, NULL))
+  expect_error(scut_threshold(result, mlresult, function (){}))
   expect_error(scut_threshold(result, mlresult, CORES = 0))
 })
 
 test_that("Subset correction", {
-  prediction <- subset_correction(mlresult, as.bipartition(mlresult))
+  prediction <- subset_correction(mlresult, as.bipartition(mlresult),
+                                  base.threshold = 0.5)
   expect_is(prediction, "mlresult")
-   scores <- as.probability(prediction)
-   expect_equal(scores[, 1], result[, 1])
-   expect_equal(scores[, 2], result[, 2])
-   expect_more_than(scores[2, 3], 0.5)
-   expect_more_than(scores[2, 3], result[2, 3])
-   expect_more_than(scores[2, 3], result[3, 3])
-   expect_more_than(scores[2, 3], result[5, 3])
-   expect_less_than(scores[2, 3], result[1, 3])
-   expect_less_than(scores[2, 3], result[4, 3])
+  scores <- as.probability(prediction)
+  expect_equal(scores[, 1], result[, 1])
+  expect_equal(scores[, 2], result[, 2])
+  expect_more_than(scores[2, 3], 0.5)
+  expect_more_than(scores[2, 3], result[2, 3])
+  expect_more_than(scores[2, 3], result[3, 3])
+  expect_more_than(scores[2, 3], result[5, 3])
+  expect_less_than(scores[2, 3], result[1, 3])
+  expect_less_than(scores[2, 3], result[4, 3])
 })

@@ -5,7 +5,8 @@
 \title{Predict Method for Nested Stacking}
 \usage{
 \method{predict}{NSmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...)
+  probability = getOption("utiml.use.probs", TRUE), ..., cores = NULL,
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{object}{Object of class '\code{NSmodel}'.}
@@ -18,6 +19,11 @@ returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
+
+\item{cores}{Ignored because this method does not support multi-core.}
+
+\item{seed}{An optional integer used to set the seed.
+(Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of type mlresult, based on the parameter probability.
@@ -29,11 +35,10 @@ of labelsets to predict only classes present on training data. To more
 information about this implementation see \code{\link{subset_correction}}.
 }
 \examples{
-\dontrun{
-# Predict SVM scores
-model <- ns(toyml)
+model <- ns(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Predict SVM bipartitions
 pred <- predict(model, toyml, probability = FALSE)
 

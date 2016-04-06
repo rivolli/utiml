@@ -13,10 +13,13 @@
 #'  \code{options("utiml.base.method", "SVM")})
 #' @param chain A vector with the label names to define the chain order. If
 #'   empty the chain is the default label sequence of the dataset. (Default:
-#'   \code{list()})
+#'   \code{NA})
 #' @param ... Others arguments passed to the base method for all subproblems.
 #' @param predict.params A list of default arguments passed to the predict
 #'  method. (default: \code{list()})
+#' @param cores Ignored because this method does not support multi-core.
+#' @param seed An optional integer used to set the seed.
+#'  (Default: \code{options("utiml.seed", NA)})
 #' @return An object of class \code{NSmodel} containing the set of fitted
 #'   models, including:
 #'   \describe{
@@ -32,11 +35,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Use SVM as base method
-#' model <- ns(toyml)
+#' model <- ns(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Use a specific chain with J48 classifier
 #' mychain <- sample(rownames(toyml$labels))
 #' model <- ns(toyml, 'J48', mychain)
@@ -45,22 +47,32 @@
 #' model <- ns(toyml, 'KNN', k=5)
 #' }
 ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
-               chain = c(), ..., predict.params = list()) {
+               chain = NA, ..., predict.params = list(), cores = NULL,
+               seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
   }
 
   labels <- rownames(mdata$labels)
-  chain <- utiml_ifelse(length(chain) == 0, labels, chain)
+  chain <- utiml_ifelse(anyNA(chain), labels, chain)
   if (!utiml_is_equal_sets(chain, labels)) {
     stop("Invalid chain (all labels must be on the chain)")
   }
 
+  utiml_preserve_seed()
+  if (!anyNA(seed)) {
+    set.seed(seed)
+  }
+
   # NS Model class
-  nsmodel <- list(labels = labels, chain = chain, call = match.call(),
-                  models = list(),
-                  labelsets = as.matrix(mdata$dataset[, mdata$labels$index]))
+  nsmodel <- list(
+    labels = labels,
+    chain = chain,
+    call = match.call(),
+    models = list(),
+    labelsets = as.matrix(mdata$dataset[, mdata$labels$index])
+  )
 
   basedata <- mdata$dataset[mdata$attributesIndexes]
   newattrs <- matrix(nrow = mdata$measures$num.instances, ncol = 0)
@@ -69,12 +81,12 @@ ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
     # Create data
     dataset <- cbind(basedata, mdata$dataset[label])
-    mldCC <- prepare_br_data(dataset, "mldCC", base.method,
-                             chain.order = labelIndex)
+    mldCC <- utiml_prepare_data(dataset, "mldCC", mdata$name, "ns", base.method,
+                                chain.order = labelIndex)
 
     # Call dynamic multilabel model with merged parameters
-    model <- create_br_model(mldCC, ...)
-    result <- do.call(predict_br_model,
+    model <- utiml_create_model(mldCC, ...)
+    result <- do.call(utiml_predict_binary_model,
                       c(list(model = model, newdata = basedata),
                         predict.params))
 
@@ -84,6 +96,7 @@ ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     nsmodel$models[[label]] <- model
   }
 
+  utiml_restore_seed()
   class(nsmodel) <- "NSmodel"
   nsmodel
 }
@@ -102,16 +115,18 @@ ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
+#' @param cores Ignored because this method does not support multi-core.
+#' @param seed An optional integer used to set the seed.
+#'   (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @seealso \code{\link[=ns]{Nested Stacking (NS)}}
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Predict SVM scores
-#' model <- ns(toyml)
+#' model <- ns(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Predict SVM bipartitions
 #' pred <- predict(model, toyml, probability = FALSE)
 #'
@@ -120,23 +135,31 @@ ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' }
 predict.NSmodel <- function(object, newdata,
                             probability = getOption("utiml.use.probs", TRUE),
-                            ...) {
+                            ..., cores = NULL,
+                            seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "NSmodel") {
     stop("First argument must be an NSmodel object")
   }
 
+  utiml_preserve_seed()
+  if (!anyNA(seed)) {
+    set.seed(seed)
+  }
+
   newdata <- utiml_newdata(newdata)
   predictions <- list()
   for (label in object$chain) {
-    predictions[[label]] <- predict_br_model(object$models[[label]], newdata,
-                                             ...)
+    predictions[[label]] <- utiml_predict_binary_model(object$models[[label]],
+                                                       newdata,
+                                                       ...)
     newdata <- cbind(newdata, predictions[[label]]$bipartition)
     names(newdata)[ncol(newdata)] <- label
   }
 
-  result <- as.multilabelPrediction(predictions[object$labels], probability)
-  subset_correction(result, object$labelsets)
+  utiml_restore_seed()
+  result <- utiml_predict(predictions[object$labels], probability)
+  subset_correction(result, object$labelsets, 0.5)
 }
 
 #' Print NS model

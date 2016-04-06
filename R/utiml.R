@@ -3,7 +3,6 @@
 #' The utiml package provides the follow categories of multi-label functions:
 #' \enumerate{
 #'  \item Classification methods
-#'  \item Ensemble utilities
 #'  \item Evaluation measures
 #'  \item Pre-process utilities
 #'  \item Sampling methods
@@ -11,19 +10,19 @@
 #' }
 #'
 #' @section Notes:
-#'  We use the good \code{\link{mldr}} package, to represent and support
-#'  multi-label data. See its documentation to more information about the
-#'  multi-label data.
+#'  We use the \code{\link{mldr}} package, to manipulate multi-label data.
+#'  See its documentation to more information about the multi-label data.
 #'
 #' @author
 #'  \itemize{
 #'    \item Adriano Rivolli <rivolli@@utfpr.edu.br>
 #'  }
 #'  This package is a result of my PhD at Institute of Mathematics and Computer
-#'  Sciences (ICMC) in the University of Sao Paulo.
+#'  Sciences (ICMC) at the University of Sao Paulo.
 #'
 #'  PhD advisor: Andre C. P. L. F. de Carvalho
 #'
+#' @import mldr
 #' @docType package
 #' @name utiml
 NULL

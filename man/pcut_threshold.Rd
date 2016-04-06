@@ -6,20 +6,24 @@
 \alias{pcut_threshold.mlresult}
 \title{Proportional Thresholding (PCut)}
 \usage{
-pcut_threshold(prediction, ratio)
+pcut_threshold(prediction, ratio, probability = FALSE)
 
-\method{pcut_threshold}{default}(prediction, ratio)
+\method{pcut_threshold}{default}(prediction, ratio, probability = FALSE)
 
-\method{pcut_threshold}{mlresult}(prediction, ratio)
+\method{pcut_threshold}{mlresult}(prediction, ratio, probability = FALSE)
 }
 \arguments{
 \item{prediction}{A matrix or mlresult.}
 
 \item{ratio}{A single value between 0 and 1 or a list with ratio values
 contained one value per label.}
+
+\item{probability}{A logical value. If \code{TRUE} the predicted values are
+the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+(Default: \code{FALSE})}
 }
 \value{
-A matrix or mlresult based as the type of prediction parameter.
+A mlresult object.
 }
 \description{
 Define the proportion of examples for each label will be positive.

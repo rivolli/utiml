@@ -5,7 +5,8 @@
 \title{Predict Method for Classifier Chains}
 \usage{
 \method{predict}{CCmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...)
+  probability = getOption("utiml.use.probs", TRUE), ..., cores = NULL,
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{object}{Object of class '\code{CCmodel}'.}
@@ -18,6 +19,11 @@ returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base method prediction for all
 subproblems.}
+
+\item{cores}{Ignored because this method does not support multi-core.}
+
+\item{seed}{An optional integer used to set the seed.
+(Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of type mlresult, based on the parameter probability.
@@ -29,11 +35,10 @@ This function predicts values based upon a model trained by \code{cc}.
 The Classifier Chains prediction can not be parellelized.
 }
 \examples{
-\dontrun{
-# Predict SVM scores
-model <- cc(toyml)
+model <- cc(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Predict SVM bipartitions
 pred <- predict(model, toyml, prob = FALSE)
 

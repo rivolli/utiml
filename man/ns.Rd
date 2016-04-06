@@ -4,8 +4,9 @@
 \alias{ns}
 \title{Nested Stacking for multi-label Classification}
 \usage{
-ns(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = c(),
-  ..., predict.params = list())
+ns(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = NA,
+  ..., predict.params = list(), cores = NULL,
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -15,12 +16,17 @@ ns(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = c(),
 
 \item{chain}{A vector with the label names to define the chain order. If
 empty the chain is the default label sequence of the dataset. (Default:
-\code{list()})}
+\code{NA})}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
 \item{predict.params}{A list of default arguments passed to the predict
 method. (default: \code{list()})}
+
+\item{cores}{Ignored because this method does not support multi-core.}
+
+\item{seed}{An optional integer used to set the seed.
+(Default: \code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{NSmodel} containing the set of fitted
@@ -42,11 +48,10 @@ the training step and to regularize the output based on the labelsets
 available on training data.
 }
 \examples{
-\dontrun{
-# Use SVM as base method
-model <- ns(toyml)
+model <- ns(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
+\dontrun{
 # Use a specific chain with J48 classifier
 mychain <- sample(rownames(toyml$labels))
 model <- ns(toyml, 'J48', mychain)

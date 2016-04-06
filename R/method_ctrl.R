@@ -24,9 +24,11 @@
 #' @param ... Others arguments passed to the base method for all subproblems
 #' @param predict.params A list of default arguments passed to the predictor
 #'  method. (default: \code{list()})
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of class \code{CTRLmodel} containing the set of fitted
 #'   models, including: \describe{
 #'   \item{rounds}{The value passed in the m parameter}
@@ -52,21 +54,24 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Use SVM as base method
-#' model <- ctrl(toyml)
+#' model <- ctrl(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Change default values and use 4 CORES
 #' model <- ctrl(toyml, 'C5.0', m = 10, validation.size = 0.4,
-#'               validation.threshold = 0.5, CORES = 4)
+#'               validation.threshold = 0.5, cores = 4)
+#'
+#' # Use seed
+#' model <- ctrl(toyml, 'RF', cores = 4, seed = 123)
 #'
 #' # Set a parameters for all subproblems
 #' model <- ctrl(dataset$train, 'KNN', k=5)
 #' }
 ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
                  m = 5, validation.size = 0.3, validation.threshold = 0.3, ...,
-                 predict.params = list(), CORES = getOption("utiml.cores", 1)) {
+                 predict.params = list(), cores = getOption("utiml.cores", 1),
+                 seed = getOption("utiml.seed", NA)) {
   # Validations
   if (!requireNamespace("FSelector", quietly = TRUE)) {
     stop(paste("There are no installed package 'FSelector' to use CTRL",
@@ -89,8 +94,13 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     stop("The validation size must be between 0 and 1")
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
+  }
+
+  utiml_preserve_seed()
+  if (!anyNA(seed)) {
+    set.seed(seed)
   }
 
   # CTRL Model class
@@ -102,26 +112,26 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   )
 
   # Step1 - Split validation data, train and evaluation using F1 measure (1-5)
-  partitions <- c(1 - validation.size, validation.size)
-  validation.set <- create_holdout_partition(mdata, partitions, "iterative")
-  validation.model <- br(validation.set[[1]], base.method, ..., CORES = CORES)
-  params <- list(
-    object      = validation.model,
-    newdata     = validation.set[[2]],
-    probability = FALSE,
-    CORES       = CORES
-  )
-  validation.prediction <- do.call('predict', c(params, predict.params))
-  validation.result <- utiml_measure_labels(validation.set[[2]],
-                                            validation.prediction,
-                                            utiml_measure_recall)
-  Yc <- names(which(validation.result >= validation.threshold))
+  partitions <- c(train = 1 - validation.size, test = validation.size)
+  val.set <- create_holdout_partition(mdata, partitions, "iterative")
+
+  val.model <- br(val.set$train, base.method, ..., cores=cores, seed=seed)
+  params <- list(object = val.model, newdata = val.set$test,
+                 probability = FALSE, cores = cores, seed = seed)
+  val.pred <- do.call(predict, c(params, predict.params))
+
+  val.confmat <- multilabel_confusion_matrix(val.set$test, val.pred)
+  val.result <- utiml_measure_binary_f1(val.confmat$TPl, val.confmat$FPl,
+                                        val.confmat$TNl, val.confmat$FNl)
+
+  Yc <- names(which(val.result >= validation.threshold))
   ctrlmodel$Y <- Yc
+  rm(val.set, val.model, val.pred, val.result)
 
   # Step2 - Identify close-related labels within Yc using feature selection
   #         technique (6-10)
   classes <- mdata$dataset[mdata$labels$index][, Yc]
-  labels <- utiml_renames(rownames(mdata$labels))
+  labels <- utiml_rename(rownames(mdata$labels))
   ctrlmodel$R <- Rj <- utiml_lapply(labels, function(labelname) {
     formula <- as.formula(paste("`", labelname, "` ~ .", sep = ""))
     cor.labels <- unique(c(Yc, labelname))
@@ -130,23 +140,24 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
       weights <- FSelector::relief(formula, Aj)
       FSelector::cutoff.k(weights, m)
     }
-  }, CORES)
+  }, cores, seed)
 
   # Build models (11-17)
   D <- mdata$dataset[mdata$attributesIndexes]
   ctrlmodel$models <- utiml_lapply(labels, function(labelname) {
-    data  <- create_br_data(mdata, labelname)
-    Di <- prepare_br_data(data, "mldBR", base.method)
-    fi <- list(create_br_model(Di, ...))
+    data  <- utiml_create_binary_data(mdata, labelname)
+    Di <- utiml_prepare_data(data, "mldBR", mdata$name, "ctrl", base.method)
+    fi <- list(utiml_create_model(Di, ...))
     for (k in Rj[[labelname]]) {
-      data <- create_br_data(mdata, labelname, mdata$dataset[k])
-      Di <- prepare_br_data(data, "mldBR", base.method)
-      fi <- c(fi, list(create_br_model(Di, ...)))
+      data <- utiml_create_binary_data(mdata, labelname, mdata$dataset[k])
+      Di <- utiml_prepare_data(data, "mldBR", mdata$name, "ctrl", base.method)
+      fi <- c(fi, list(utiml_create_model(Di, ...)))
     }
     names(fi) <- c(labelname, Rj[[labelname]])
     fi
-  }, CORES)
+  }, cores, seed)
 
+  utiml_restore_seed()
   class(ctrlmodel) <- "CTRLmodel"
   ctrlmodel
 }
@@ -159,83 +170,77 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' @param object Object of class '\code{CTRLmodel}'.
 #' @param newdata An object containing the new input data. This must be a
 #'  matrix, data.frame or a mldr object.
-#' @param vote.schema Define the way that binary ensemble must compute the
-#'  binary predictions. (Default: \code{'maj'})
-#'  The default valid options are:
-#'  \describe{
-#'    \code{'avg'}{Compute the proportion of votes, scale data between min and
-#'      max of votes}
-#'    \code{'maj'}{Compute the averages of probabilities},
-#'    \code{'max'}{Compute the votes scaled between 0 and \code{m}
-#'      (number of interations)},
-#'    \code{'min'}{Compute the proportion of votes, scale data between min and
-#'      max of votes}
-#'    \code{'prod'}{Compute the product of all votes for each instance}
-#'  }
+#' @param vote.schema Define the way that ensemble must compute the predictions.
+#'  The default valid options are: c("avg", "maj", "max", "min").
+#'  (Default: \code{'maj'})
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @seealso \code{\link[=ctrl]{CTRL}}
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Predict SVM scores
-#' model <- ctrl(toyml)
+#' model <- ctrl(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Predict SVM bipartitions running in 6 cores
-#' pred <- predict(model, toyml, probability = FALSE, CORES = 6)
+#' pred <- predict(model, toyml, probability = FALSE, cores = 6)
 #'
 #' # Using the Maximum vote schema
 #' pred <- predict(model, toyml, vote.schema = 'max')
 #' }
 predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
                               probability = getOption("utiml.use.probs", TRUE),
-                              ..., CORES = getOption("utiml.cores", 1)) {
+                              ..., cores = getOption("utiml.cores", 1),
+                              seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "CTRLmodel") {
     stop("First argument must be an CTRLmodel object")
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
 
-  check_ensemble_vote(vote.schema, accept.null = FALSE)
-
+  utiml_preserve_seed()
+  utiml_ensemble_check_voteschema(vote.schema, accept.null = FALSE)
   newdata <- utiml_newdata(newdata)
 
   # Predict initial values
   initial.prediction <- utiml_lapply(object$models, function(models) {
-    predict_br_model(models[[1]], newdata, ...)
-  }, CORES)
-  fjk <- as.matrix(as.multilabelPrediction(initial.prediction, FALSE))
+    utiml_predict_binary_model(models[[1]], newdata, ...)
+  }, cores, seed)
+  fjk <- as.bipartition(utiml_predict(initial.prediction, FALSE))
 
   # Predict binary ensemble values
-  labels <- utiml_renames(names(object$models))
+  labels <- utiml_rename(names(object$models))
   predictions <- utiml_lapply(labels, function(labelname) {
     models <- object$models[[labelname]]
     preds <- list()
     for (label in names(models)[-1]) {
-      preds[[label]] <- predict_br_model(models[[label]],
-                                          cbind(newdata, fjk[, label]), ...)
+      preds[[label]] <- utiml_predict_binary_model(models[[label]],
+                                                   cbind(newdata, fjk[, label]),
+                                                   ...)
     }
 
     if (length(preds) < 1) { #No models are found, only first prediction
       initial.prediction[[labelname]]
     }
     else {
-      compute_binary_ensemble_votes(preds, vote.schema)
+      utiml_predict_binary_ensemble(preds, vote.schema)
     }
-  }, CORES)
+  }, cores, seed)
 
-  as.multilabelPrediction(predictions, probability)
+  utiml_restore_seed()
+  utiml_predict(predictions, probability)
 }
 
 #' Print CTRL model

@@ -6,17 +6,21 @@
 \alias{mcut_threshold.mlresult}
 \title{Maximum Cut Thresholding (MCut)}
 \usage{
-mcut_threshold(prediction)
+mcut_threshold(prediction, probability = FALSE)
 
-\method{mcut_threshold}{default}(prediction)
+\method{mcut_threshold}{default}(prediction, probability = FALSE)
 
-\method{mcut_threshold}{mlresult}(prediction)
+\method{mcut_threshold}{mlresult}(prediction, probability = FALSE)
 }
 \arguments{
 \item{prediction}{A matrix or mlresult.}
+
+\item{probability}{A logical value. If \code{TRUE} the predicted values are
+the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+(Default: \code{FALSE})}
 }
 \value{
-A matrix or mlresult based as the type of prediction parameter.
+A mlresult object.
 }
 \description{
 The Maximum Cut (MCut) automatically determines a threshold for each instance

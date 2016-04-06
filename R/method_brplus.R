@@ -15,9 +15,11 @@
 #' @param base.method A string with the name of the base method. (Default:
 #'  \code{options("utiml.base.method", "SVM")})
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of class \code{BRPmodel} containing the set of fitted
 #'  models, including:
 #'  \describe{
@@ -33,23 +35,26 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Use SVM as base method
-#' model <- brplus(toyml)
+#' model <- brplus(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Use Random Forest as base method and 4 cores
-#' model <- brplus(toyml, 'RF', CORES = 4)
+#' model <- brplus(toyml, 'RF', cores = 4, seed = 123)
 #' }
 brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
-                   ..., CORES = getOption("utiml.cores", 1)) {
+                   ..., cores = getOption("utiml.cores", 1),
+                   seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
   }
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
+
+  utiml_preserve_seed()
 
   # BRplus Model class
   brpmodel <- list(labels = rownames(mdata$labels), call = match.call())
@@ -57,16 +62,19 @@ brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   names(freq) <- brpmodel$labels
   brpmodel$freq <- sort(freq)
 
-  brpmodel$initial <- br(mdata, base.method, ..., CORES = CORES)
+  brpmodel$initial <- br(mdata, base.method, ..., cores = cores, seed = seed)
 
   labeldata <- mdata$dataset[mdata$labels$index]
-  labels <- utiml_renames(seq(mdata$measures$num.labels), brpmodel$labels)
+  labels <- utiml_rename(seq(mdata$measures$num.labels), brpmodel$labels)
   brpmodel$models <- utiml_lapply(labels, function(li) {
-    basedata <- create_br_data(mdata, brpmodel$labels[li], labeldata[-li])
-    dataset <- prepare_br_data(basedata, "mldBRP", base.method)
-    create_br_model(dataset, ...)
-  }, CORES)
+    basedata <- utiml_create_binary_data(mdata, brpmodel$labels[li],
+                                         labeldata[-li])
+    dataset <- utiml_prepare_data(basedata, "mldBRP", mdata$name, "brplus",
+                                  base.method)
+    utiml_create_model(dataset, ...)
+  }, cores, seed)
 
+  utiml_restore_seed()
   class(brpmodel) <- "BRPmodel"
   brpmodel
 }
@@ -113,9 +121,11 @@ brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @references
 #'  Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
@@ -125,11 +135,11 @@ brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Predict SVM scores
-#' model <- brplus(toyml)
-#' pred <- predict(model, dataset$test)
+#' model <- brplus(toyml, "RANDOM")
+#' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Predict SVM bipartitions and change the method to use No Update strategy
 #' pred <- predict(model, toyml, strategy = 'NU', probability = FALSE)
 #'
@@ -144,59 +154,68 @@ predict.BRPmodel <- function(object, newdata,
                              strategy = c("Dyn", "Stat", "Ord", "NU"),
                              order = list(),
                              probability = getOption("utiml.use.probs", TRUE),
-                             ..., CORES = getOption("utiml.cores", 1)) {
+                             ..., cores = getOption("utiml.cores", 1),
+                             seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "BRPmodel") {
     stop("First argument must be an BRPmodel object")
   }
 
+  strategy <- strategy[1]
   strategies <- c("Dyn", "Stat", "Ord", "NU")
-  if (!strategy[1] %in% strategies) {
+  if (!strategy %in% strategies) {
     stop(paste("Strategy value must be '",
                paste(strategies, collapse = "' or '"), "'", sep = ""))
   }
 
   labels <- object$labels
-  if (strategy[1] == "Ord") {
+  if (strategy == "Ord") {
     if (!utiml_is_equal_sets(order, labels)) {
       stop("Invalid order (all labels must be on the chain)")
     }
   }
 
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
+  }
+
+  utiml_preserve_seed()
+  if (!anyNA(seed)) {
+    set.seed(seed)
   }
 
   newdata <- utiml_newdata(newdata)
 
-  if (strategy[1] == "NU") {
-    initial.preds <- as.matrix(predict(object$initial, newdata,
-                             probability = FALSE, ..., CORES = CORES))
-    indices <- utiml_renames(seq(length(labels)), labels)
+  if (strategy == "NU") {
+    initial.preds <- as.bipartition(predict(object$initial, newdata,
+                             probability=FALSE, ..., cores=cores, seed=seed))
+    indices <- utiml_rename(seq_along(labels), labels)
     predictions <- utiml_lapply(indices, function(li) {
-      predict_br_model(object$models[[li]], cbind(newdata,
-                                                  initial.preds[, -li]), ...)
-    }, CORES)
+      utiml_predict_binary_model(object$models[[li]],
+                                 cbind(newdata, initial.preds[, -li]),
+                                 ...)
+    }, cores, seed)
   }
   else {
-    initial.probs <- predict(object$initial, newdata,
-                             probability = TRUE, ..., CORES = CORES)
-    initial.preds <- as.matrix(as.bipartition(initial.probs))
+    initial.preds <- as.bipartition(predict(object$initial, newdata,
+                                probability=FALSE, ..., cores=cores, seed=seed))
     orders <- list(Dyn = names(sort(apply(initial.preds, 2, mean))),
                    Stat = names(object$freq),
                    Ord = order)
 
     predictions <- list()
-    for (labelname in orders[[strategy[1]]]) {
+    for (labelname in orders[[strategy]]) {
+      other.labels <- !labels %in% labelname
       model <- object$models[[labelname]]
-      new.columns <- initial.preds[, !labels %in% labelname, drop = FALSE]
-      data <- cbind(newdata, new.columns)
-      predictions[[labelname]] <- predict_br_model(model, data, ...)
+
+      data <- cbind(newdata, initial.preds[, other.labels, drop = FALSE])
+      predictions[[labelname]] <- utiml_predict_binary_model(model, data, ...)
       initial.preds[, labelname] <- predictions[[labelname]]$bipartition
     }
   }
 
-  as.multilabelPrediction(predictions[labels], probability)
+  utiml_restore_seed()
+  utiml_predict(predictions[labels], probability)
 }
 
 #' Print BRP model

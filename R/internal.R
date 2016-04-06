@@ -7,8 +7,6 @@
 #' alternative way to use a single logical value for avoid the real if/else for
 #' choice lists, matrices and other composed data.
 #'
-#' @seealso \code{\link{ifelse}}
-#'
 #' @examples
 #' \dontrun{
 #' utiml_ifelse(TRUE, dataframe1, dataframe2) ## dataframe1
@@ -22,28 +20,36 @@ utiml_ifelse <- function(test, yes, no) {
 #'
 #' @param mylist a list to iterate.
 #' @param myfnc The function to be applied to each element of the mylist.
-#' @param cores The number of cores to use. If 1 use lapply oterwise use
+#' @param utiml.cores The number of cores to use. If 1 use lapply oterwise use
 #'    mclapply.
+#' @param utiml.seed A numeric value to set a seed to execute in parallel mode.
 #' @param ... Extra arguments to myfnc.
 #' @return A list with the results of the specified method.
-#'
-#' @examples
-#' \dontrun{
-#' utiml_lapply(c(4,9,27), sqrt, 1) #use lapply
-#' utiml_lapply(c(4,9,27), sqrt, 3) #use mclapply
-#' }
-utiml_lapply <- function(mylist, myfnc, cores, ...) {
+utiml_lapply <- function(mylist, myfnc, utiml.cores, utiml.seed = NA, ...) {
+  mylist <- as.list(mylist)
+  indexes <- seq_along(mylist)
+  names(indexes) <- names(mylist)
+
+  if (anyNA(utiml.seed)) {
+    thefunc <- function (i, ...) {
+      myfnc(mylist[[i]], ...)
+    }
+  } else {
+    thefunc <- function (i, ...) {
+      set.seed(utiml_ifelse(is.null(utiml.seed),
+                            NULL, as.numeric(utiml.seed) + i))
+      myfnc(mylist[[i]], ...)
+    }
+  }
+
   if (requireNamespace("parallel", quietly = TRUE)) {
-    parallel::mclapply(mylist,
-                       myfnc,
-                       mc.cores = min(cores, length(mylist)),
-                       # When FALSE the allocation occurs on demand
-                       mc.preschedule = length(mylist) / cores > 2,
-                       mc.set.seed = getOption("utiml.mc.set.seed", TRUE),
+    parallel::mclapply(indexes,
+                       thefunc,
+                       mc.cores = min(utiml.cores, length(mylist)),
                        ...)
   }
   else {
-    lapply(mylist, myfnc, ...)
+    lapply(indexes, thefunc, ...)
   }
 }
 
@@ -95,6 +101,13 @@ utiml_newdata.mldr <- function(newdata) {
   newdata$dataset[, newdata$attributesIndexes]
 }
 
+#' Preserve current seed
+utiml_preserve_seed <- function () {
+  current.seed <- get('.Random.seed', envir = .GlobalEnv, inherits = FALSE)
+  scope <- parent.frame()
+  scope$utiml.current.seed <- current.seed
+}
+
 #' Rename the list using the names values or its own content
 #'
 #' @param X A list
@@ -103,14 +116,22 @@ utiml_newdata.mldr <- function(newdata) {
 #' @export
 #'
 #' @examples
-#' utiml_renames(c("a", "b", "c"))
+#' utiml_rename(c("a", "b", "c"))
 #' ## c(a="a", b="b", c="c")
 #'
-#' utiml_renames(c(1, 2, 3), c("a", "b", "c"))
+#' utiml_rename(c(1, 2, 3), c("a", "b", "c"))
 #' ## c(a=1, b=2, c=3)
-utiml_renames <- function (X, names = NULL) {
+utiml_rename <- function (X, names = NULL) {
   names(X) <- utiml_ifelse(is.null(names), X, names)
   X
+}
+
+#' Restore the current seed
+utiml_restore_seed <- function () {
+  scope <- parent.frame()
+  if (!is.null(scope$utiml.current.seed)) {
+    assign('.Random.seed', scope$utiml.current.seed, envir = .GlobalEnv)
+  }
 }
 
 #' Define if two sets are equals independently of the order of the elements

@@ -3,3 +3,4 @@
 .RData
 *.save
 packrat/lib*/
+inst/doc

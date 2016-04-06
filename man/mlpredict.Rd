@@ -6,11 +6,13 @@
 \alias{mlpredict.J48}
 \alias{mlpredict.baseKNN}
 \alias{mlpredict.default}
+\alias{mlpredict.majorityModel}
 \alias{mlpredict.naiveBayes}
 \alias{mlpredict.randomForest}
+\alias{mlpredict.randomModel}
 \alias{mlpredict.rpart}
 \alias{mlpredict.svm}
-\title{Prediction function to extend base classifiers}
+\title{Prediction transformation problems}
 \usage{
 mlpredict(model, newdata, ...)
 
@@ -29,27 +31,32 @@ mlpredict(model, newdata, ...)
 \method{mlpredict}{naiveBayes}(model, newdata, ...)
 
 \method{mlpredict}{baseKNN}(model, newdata, ...)
+
+\method{mlpredict}{majorityModel}(model, newdata, ...)
+
+\method{mlpredict}{randomModel}(model, newdata, ...)
 }
 \arguments{
 \item{model}{An object model returned by some mltrain method, its class
 determine the name of this method.}
 
-\item{newdata}{A dataframe with the new data to be predicted}
+\item{newdata}{A data.frame with the new data to be predicted.}
 
 \item{...}{Others arguments passed to the predict method.}
 }
 \value{
-A matrix with the probabilities of each class value for each example,
+A matrix with the probabilities of each class value/example,
  where the rows are the examples and the columns the class values.
 }
 \description{
-To extend a base classifier, two steps are necessary:
+Base classifiers are used to build models to solve the the transformation
+problems. To create a new base classifier, two steps are necessary:
 \enumerate{
   \item Create a train method
   \item Create a prediction method
 }
-This section is about how to create a prediction method. To create a new
-train method see \code{\link{mltrain}} documentation.
+This section is about how to create the second step: a prediction method.
+To create a new train method see \code{\link{mltrain}} documentation.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -70,39 +77,43 @@ train method see \code{\link{mltrain}} documentation.
 \pkg{e1071} package to use)
 
 \item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
+
+\item \code{majorityModel}: Majority prediction
+
+\item \code{randomModel}: Majority prediction
 }}
 \section{How to create a new prediction base method}{
 
-Fist is necessary to know the class of model generate by respective train
-method because this name determine the method name, that must start with
-'mlpredict.' followed by the model class name, e.g. a model with class
-'foomodel' must be \code{mlpredict.foomodel}.
+Fist is necessary to know the class of model generate by the respective train
+method, because this name determines the method name. It must start with
+\code{'mlpredict.'}, followed by the model class name, e.g. a model with
+class 'fooModel' must be called as \code{mlpredict.fooModel}.
 
 After defined the name, you need to implement your prediction base method.
-The model is available on \code{model} parameter and the new data to predict
-\code{newdata}. In the examples there are some ways to implement this method.
+The model built on mltrain is available on \code{model} parameter and the
+\code{newdata} is the data to be predict.
 
-The return of this method must be a matrix with the probabilities of each
-class value for each examples. The rows represents the examples and the
-columns the class values.
-
-Remember that the prediction may be binary or multi-class, then the number
-and the column names may vary depending on the problem.
+The return of this method must be a data.frame with two columns called
+\code{"prediction"} and \code{"probability"}. The first column contains the
+predicted classe and the second the probability/score/confidence of this
+prediction. The rows represents the examples.
 }
 \examples{
-\dontrun{
-# Create a method that predict always the negative class
-# We consider a binary scenario (The model must be the class 'negativemodel')
-mlpredict.negativemodel <- function (model, newdata, ...) {
-   # Predict the class '0' with 100\% and the class '1' with 0\%
-   matrix(
-     c(rep(1, nrow(newdata)),
-     rep(0, nrow(newdata))),
-     ncol=2,
-     dimnames=list(rownames(newdata), c('0','1'))
+
+# Create a method that predict always the first class
+# The model must be of the class 'fooModel'
+mlpredict.fooModel <- function (model, newdata, ...) {
+   # Predict the first class with a random confidence
+   data.frame(
+     prediction = rep(model$classes[1], nrow(newdata)),
+     probability = sapply(runif(nrow(newdata)), function (score) {
+       max(score, 1 - score)
+     }),
+     row.names = rownames(newdata)
    )
 }
 
+\dontrun{
 # Create a SVM predict method using the e1071 package (the class of SVM model
 # from e1071 package is 'svm')
 library(e1071)

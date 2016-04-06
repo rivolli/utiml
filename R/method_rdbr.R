@@ -17,9 +17,11 @@
 #'  use BR as estimators, however when other classifier is desirable then use
 #'  the value \code{FALSE} to skip this process. (Default: \code{TRUE}).
 #' @param ... Others arguments passed to the base method for all subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of class \code{RDBRmodel} containing the set of fitted
 #'  models, including:
 #'  \describe{
@@ -36,18 +38,19 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Use SVM as base method
-#' model <- rdbr(toyml)
+#' model <- rdbr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \dontrun{
 #' # Use Random Forest as base method and 4 cores
-#' model <- rdbr(toyml, 'RF', CORES = 4)
+#' model <- rdbr(toyml, 'RF', cores = 4, seed = 123)
 #' }
 rdbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
                  estimate.models = TRUE, ...,
-                 CORES = getOption("utiml.cores", 1)) {
-  rdbrmodel <- dbr(mdata, base.method, estimate.models, ..., CORES = CORES)
+                 cores = getOption("utiml.cores", 1),
+                 seed = getOption("utiml.seed", NA)) {
+  rdbrmodel <- dbr(mdata, base.method, estimate.models, ...,
+                   cores=cores, seed=seed)
   class(rdbrmodel) <- "RDBRmodel"
   rdbrmodel
 }
@@ -64,7 +67,7 @@ rdbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' available. This second does not support parallelize the prediction, however
 #' stabilizes earlier than batch mode.
 #'
-#' @param object Object of class '\code{DBRmodel}'.
+#' @param object Object of class '\code{RDBRmodel}'.
 #' @param newdata An object containing the new input data. This must be a
 #'  matrix, data.frame or a mldr object.
 #' @param estimative A matrix containing the bipartition result of other
@@ -79,9 +82,11 @@ rdbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
-#' @param CORES The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
+#' @param seed An optional integer used to set the seed. This is useful when
+#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @references
 #'  Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejao, F. M.
@@ -110,7 +115,8 @@ rdbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 predict.RDBRmodel <- function(object, newdata, estimative = NULL,
                               max.iterations = 5, batch.mode = FALSE,
                               probability = getOption("utiml.use.probs", TRUE),
-                              ..., CORES = getOption("utiml.cores", 1)) {
+                              ..., cores = getOption("utiml.cores", 1),
+                              seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "RDBRmodel") {
     stop("First argument must be an RDDBRmodel object")
@@ -121,23 +127,30 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
   if (max.iterations < 1) {
     stop("The number of iteractions must be positive")
   }
-  if (CORES < 1) {
+  if (cores < 1) {
     stop("Cores must be a positive value")
   }
 
+  utiml_preserve_seed()
+  if (!anyNA(seed)) {
+    set.seed(seed)
+  }
+
   newdata <- utiml_newdata(newdata)
+
   if (is.null(estimative)) {
-    estimative <- predict(object$estimation, newdata, FALSE, ..., CORES = CORES)
+    estimative <- predict(object$estimation, newdata, FALSE, ...,
+                          cores=cores, seed=seed)
   }
 
   labels <- names(object$models)
-  modelsindex <- utiml_renames(seq(labels), labels)
+  modelsindex <- utiml_rename(seq(labels), labels)
   if (batch.mode) {
     for (i in seq(max.iterations)) {
       predictions <- utiml_lapply(modelsindex, function(li) {
-        predict_br_model(object$models[[li]],
-                         cbind(newdata, estimative[, -li]), ...)
-      }, CORES)
+        utiml_predict_binary_model(object$models[[li]],
+                                   cbind(newdata, estimative[, -li]), ...)
+      }, cores, seed)
 
       new.estimative <- do.call(cbind, lapply(predictions,
                                               function(lbl) lbl$bipartition))
@@ -154,7 +167,7 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
 
       # the labels needs to be shuffled in each iteraction
       for (li in modelsindex) {
-        predictions[[li]] <- predict_br_model(object$models[[li]],
+        predictions[[li]] <- utiml_predict_binary_model(object$models[[li]],
                                               cbind(newdata, estimative[, -li]),
                                               ...)
         estimative[, li] <- predictions[[li]]$bipartition
@@ -166,7 +179,8 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
     }
   }
 
-  as.multilabelPrediction(predictions, probability)
+  utiml_restore_seed()
+  utiml_predict(predictions, probability)
 }
 
 #' Print RDBR model
