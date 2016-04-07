@@ -2,50 +2,90 @@
 [![Travis-CI Build Status](https://travis-ci.org/rivolli/utiml.svg?branch=master)](https://travis-ci.org/rivolli/utiml)
 
 The utiml package is a framework to support multi-label processing, like Mulan 
-on Weka. It is simple to use and extend, then this tutorial explain the main 
-topics related with the utiml package.
+on Weka. 
 
-# Geting started
+The main methods available on this package are organized in the groups:
+- Classification methods
+- Evaluation methods
+- Pre-process utilities
+- Sampling methods
+- Threshold methods
 
-Load the library:
+# Instalation
+The installation process is similar to other packages available on CRAN:
+```r
+install.packages("utiml")
+```
+
+This will also install [mldr](https://cran.r-project.org/web/packages/mldr/index.html).
+To run the examples in this document, you also need to install the packages:
+```r
+# Base classifiers (SVM and Random Forest)
+install.packages(c("e1071", "randomForest"))
+```
+
+# Multi-label Classification
+## Running Binary Relevance Method
 ```{r}
 library(utiml)
-```
 
-Next, we want to stratification the dataset in two partitions (train and test), 
-containing 65% and 35% of instances respectively, then we can do:
-```{r}
-ds <- create_holdout_partition(toyml, c(train=0.65, test=0.35), "iterative")
-```
+# Create two partitions (train and test) of toyml multi-label dataset
+ds <- create_holdout_partition(toyml, c(train=0.65, test=0.35))
 
-Now, the `ds` object has two elements `ds$train` and `ds$test`, where the first will
-be used to create a model and the second to test the model. For example, using the 
-*Binary Relevance* multi-label method with the base classifier *Random Forest*, 
-we can do:
-```{r}
-brmodel <- br(ds$train, "RF", seed=123)
+# Create a Binary Relevance Model using e1071::SVM method
+# (Require the manual installation of e1071 package)
+brmodel <- br(ds$train, "SVM", seed=123)
+
+# Predict
 prediction <- predict(brmodel, ds$test)
-```
 
-The `prediction` is an object of class `mlresult` that contains the probability (also called confidence or score)
-and the bipartitions values:
-```{r}
+# Show the predictions
 head(as.bipartition(prediction))
-head(as.probability(prediction))
 head(as.ranking(prediction))
-```
 
-A threshold strategy can be applied and generate a refined prediction:
-```{r}
+# Apply a threshold
 newpred <- rcut_threshold(prediction, 2)
-```
 
-Now we can evaluate the model and compare if the use of MCUT threshold improve the results:
-```{r}
+# Evaluate the models
 result <- multilabel_evaluate(ds$tes, prediction, "bipartition")
 thresres <- multilabel_evaluate(ds$tes, newpred, "bipartition")
 
-measures <- c("accuracy", "F1", "precision", "recall", "subset-accuracy")
-round(cbind(Default=result, RCUT=thresres), 3)
+# Print the result
+print(round(cbind(Default=result, RCUT=thresres), 3))
 ```
 
+## Running Ensemble of Classifier Chains
+```{r}
+library(utiml)
+
+# Create three partitions (train, val, test) of emotions dataset
+partitions <- c(train = 0.6, val = 0.2, test = 0.2)
+ds <- create_holdout_partition(emotions, partitions, method="iterative")
+
+# Create an Ensemble of Classifier Chains using Random Forest
+# (Require the manual installation of randomForest package)
+eccmodel <- ecc(ds$train, "RF", m=3, cores=parallel::detectCores(), seed=123)
+
+# Predict
+val <- predict(eccmodel, ds$val, cores=parallel::detectCores())
+test <- predict(eccmodel, ds$test, cores=parallel::detectCores())
+
+# Apply a threshold
+thresholds <- scut_threshold(val, ds$val, cores=parallel::detectCores())
+new.val <- fixed_threshold(val, thresholds)
+new.test <- fixed_threshold(test, thresholds)
+
+# Evaluate the models
+measures <- c("subset-accuracy", "F1", "hamming-loss", "macro-based") 
+
+result <- cbind(
+  Test = multilabel_evaluate(ds$tes, test, measures),
+  TestWithThreshold = multilabel_evaluate(ds$tes, new.test, measures),
+  Validation = multilabel_evaluate(ds$val, val, measures),
+  ValidationWithThreshold = multilabel_evaluate(ds$val, new.val, measures)
+)
+
+print(round(result, 3))
+```
+
+More examples and details are available on functions documentations and vignettes, please refer to the documentation.

@@ -194,7 +194,7 @@ mltrain.baseJ48 <- function(object, ...) {
   #inspect the JVM log error file in the second execution
   if (requireNamespace("RWeka", quietly = TRUE) &&
       requireNamespace("rJava", quietly = TRUE)) {
-    formula <- as.formula(paste("`", object$labelname, "` ~ .", sep = ""))
+    formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
     model <- RWeka::J48(formula, object$data, ...)
     rJava::.jcache(model$classifier)
   }
@@ -259,7 +259,7 @@ mlpredict.C5.0 <- function(model, newdata, ...) {
 #' @export
 mltrain.baseCART <- function(object, ...) {
   if (requireNamespace("rpart", quietly = TRUE)) {
-    formula <- as.formula(paste("`", object$labelname, "` ~ .", sep = ""))
+    formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
     model <- rpart::rpart(formula, object$data, ...)
   }
   else {
@@ -376,7 +376,7 @@ mlpredict.baseKNN <- function(model, newdata, ...) {
                "base method"))
   }
 
-  formula <- as.formula(paste("`", model$labelname, "` ~ .", sep = ""))
+  formula <- stats::as.formula(paste("`", model$labelname, "` ~ .", sep = ""))
   args <- list(...)
   if (is.null(model$extrakNN[["k"]]) || !is.null(args[["k"]])) {
     result <- kknn::kknn(formula, model$data, newdata, ...)
@@ -435,7 +435,7 @@ mltrain.baseRANDOM <- function(object, ...) {
 mlpredict.randomModel <- function(model, newdata, ...) {
   data.frame(
     prediction = sample(model$classes, nrow(newdata), replace = TRUE),
-    probability = sapply(runif(nrow(newdata)), function (score) {
+    probability = sapply(stats::runif(nrow(newdata)), function (score) {
       max(score, 1 - score)
     }),
     row.names = rownames(newdata)

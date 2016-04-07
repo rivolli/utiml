@@ -374,7 +374,7 @@ result <- multilabel_evaluate(confmat, "example-based")
 print(names(result))
 
 # Subset accuracy, F1 measure and hamming-loss
-result <- multilabel_evaluate(confmat, c("subset-accuracy", "F1", "ranking-loss"))
+result <- multilabel_evaluate(confmat, c("subset-accuracy", "F1", "hamming-loss"))
 print(names(result))
 
 # Ranking and label-basedd measures

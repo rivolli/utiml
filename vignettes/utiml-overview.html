@@ -462,15 +462,15 @@ prediction &lt;- predict(brmodel, toy$test)
 result &lt;- multilabel_evaluate(toy$test, prediction)
 print(round(result, 3))</code></pre>
 <pre><code>##          accuracy average-precision          coverage                F1 
-##             0.583             0.843             1.500             0.684 
+##             0.583             0.792             2.000             0.682 
 ##      hamming-loss         macro-AUC          macro-F1   macro-precision 
-##             0.213             0.580             0.317             0.281 
+##             0.220             0.464             0.324             0.278 
 ##      macro-recall       margin-loss         micro-AUC          micro-F1 
-##             0.362             0.767             0.803             0.704 
+##             0.390             1.200             0.764             0.713 
 ##   micro-precision      micro-recall         one-error         precision 
-##             0.704             0.704             0.233             0.717 
+##             0.695             0.732             0.267             0.683 
 ##      ranking-loss            recall   subset-accuracy 
-##             0.156             0.744             0.267</code></pre>
+##             0.228             0.733             0.267</code></pre>
 <pre class="r"><code># Build a confusion matrix
 confmat &lt;- multilabel_confusion_matrix(toy$test, prediction)
 result &lt;- multilabel_evaluate(confmat)
@@ -480,31 +480,31 @@ print(confmat)</code></pre>
 ## Absolute Matrix:
 ## -------------------------------------
 ##              Expected_1 Expected_0 TOTAL
-## Prediction_1         38         16    54
-## Predicion_0          16         80    96
-## TOTAL                54         96   150
+## Prediction_1         41         18    59
+## Predicion_0          15         76    91
+## TOTAL                56         94   150
 ## 
 ## Proportinal Matrix:
 ## -------------------------------------
 ##              Expected_1 Expected_0 TOTAL
-## Prediction_1      0.253      0.107  0.36
-## Predicion_0       0.107      0.533  0.64
-## TOTAL             0.360      0.640  1.00
+## Prediction_1      0.273      0.120 0.393
+## Predicion_0       0.100      0.507 0.607
+## TOTAL             0.373      0.627 1.000
 ## 
 ## Label Matrix
 ## -------------------------------------
 ##    TP FP FN TN Correct Wrong  %TP  %FP  %FN  %TN %Correct %Wrong
-## y1  0  0  2 28      28     2 0.00 0.00 0.07 0.93     0.93   0.07
-## y2 20  8  2  0      20    10 0.67 0.27 0.07 0.00     0.67   0.33
-## y3  0  0  7 23      23     7 0.00 0.00 0.23 0.77     0.77   0.23
-## y4 18  8  2  2      20    10 0.60 0.27 0.07 0.07     0.67   0.33
-## y5  0  0  3 27      27     3 0.00 0.00 0.10 0.90     0.90   0.10
+## y1  0  0  4 26      26     4 0.00 0.00 0.13 0.87     0.87   0.13
+## y2 22  8  0  0      22     8 0.73 0.27 0.00 0.00     0.73   0.27
+## y3  0  0  3 27      27     3 0.00 0.00 0.10 0.90     0.90   0.10
+## y4 19 10  1  0      19    11 0.63 0.33 0.03 0.00     0.63   0.37
+## y5  0  0  7 23      23     7 0.00 0.00 0.23 0.77     0.77   0.23
 ##    MeanRanking MeanScore
-## y1        3.70      0.22
-## y2        1.30      0.79
-## y3        4.57      0.18
-## y4        1.70      0.67
-## y5        3.73      0.20</code></pre>
+## y1        3.97      0.19
+## y2        1.17      0.81
+## y3        3.13      0.25
+## y4        1.83      0.70
+## y5        4.90      0.15</code></pre>
 <p>The confusion matrix summarizes a lot of data, and can be merged. For example, using a k-fold experiment:</p>
 <pre class="r"><code>kfcv &lt;- create_kfold_partition(toyml, k=3)
 confmats &lt;- lapply(1:3, function (k) {
@@ -520,9 +520,9 @@ print(names(result))</code></pre>
 <pre><code>## [1] &quot;accuracy&quot;        &quot;F1&quot;              &quot;hamming-loss&quot;    &quot;precision&quot;      
 ## [5] &quot;recall&quot;          &quot;subset-accuracy&quot;</code></pre>
 <pre class="r"><code># Subset accuracy, F1 measure and hamming-loss
-result &lt;- multilabel_evaluate(confmat, c(&quot;subset-accuracy&quot;, &quot;F1&quot;, &quot;ranking-loss&quot;))
+result &lt;- multilabel_evaluate(confmat, c(&quot;subset-accuracy&quot;, &quot;F1&quot;, &quot;hamming-loss&quot;))
 print(names(result))</code></pre>
-<pre><code>## [1] &quot;F1&quot;              &quot;ranking-loss&quot;    &quot;subset-accuracy&quot;</code></pre>
+<pre><code>## [1] &quot;F1&quot;              &quot;hamming-loss&quot;    &quot;subset-accuracy&quot;</code></pre>
 <pre class="r"><code># Ranking and label-basedd measures
 result &lt;- multilabel_evaluate(confmat, c(&quot;label-based&quot;, &quot;ranking&quot;))
 print(names(result))</code></pre>

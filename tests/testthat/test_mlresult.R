@@ -3,7 +3,7 @@ context("ML Result")
 test_that("multilabel_prediction", {
   set.seed(1)
   colrows <- list(as.character(11:20), paste("lbl", 1:10, sep=''))
-  probs <- matrix(runif(100), ncol = 10, dimnames = colrows)
+  probs <- matrix(stats::runif(100), ncol = 10, dimnames = colrows)
   classes <- ifelse(probs >= 0.5, 1, 0)
   mres1 = multilabel_prediction(classes, probs, TRUE)
   mres2 = multilabel_prediction(classes, probs, FALSE)
@@ -24,7 +24,8 @@ test_that("multilabel_prediction", {
 
   #TODO test prediction with all labels lower than 0.5
   colrows <- list(as.character(11:20), paste("lbl", 1:5, sep=''))
-  probs <- matrix(runif(50, min = 0, max = 0.4), ncol = 5, dimnames = colrows)
+  probs <- matrix(stats::runif(50, min = 0, max = 0.4), ncol = 5,
+                  dimnames = colrows)
   classes <- ifelse(probs >= 0.5, 1, 0)
   mres3 = multilabel_prediction(classes, probs, FALSE)
   expect_true(all(rowSums(mres3) == 1))
@@ -64,7 +65,7 @@ test_that("as.ranking", {
 
 test_that("as.mlresult", {
   set.seed(1234)
-  predictions <- matrix(runif(100), ncol = 10)
+  predictions <- matrix(stats::runif(100), ncol = 10)
   colnames(predictions) <- paste('label', 1:10, sep='')
 
   mlresult <- as.mlresult(predictions)
@@ -88,7 +89,7 @@ test_that("as.mlresult", {
 
 test_that("Filter ML Result", {
   set.seed(1234)
-  labels <- matrix(runif(150), ncol = 10)
+  labels <- matrix(stats::runif(150), ncol = 10)
   colnames(labels) <- paste("label", 1:10, sep='')
   mlres <- as.mlresult(labels)
   bipartition <- as.bipartition(mlres)

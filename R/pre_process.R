@@ -19,7 +19,7 @@ fill_sparce_mldata <- function(mdata) {
 
   attrs <- seq(mdata$measures$num.attributes)
   new.cols <- lapply(mdata$dataset[, attrs], function(col) {
-    if (sum(!complete.cases(col)) > 0) {
+    if (anyNA(col)) {
       # Has NA value
       if (is.numeric(col)) {
         # Numeric value - fill with 0

@@ -29,8 +29,8 @@ test_that("Normalize data", {
     X1 = seq(1, 100, by=2),
     X2 = rnorm(100),
     X3 = rnorm(100, 1000, 30),
-    X4 = sample(c(runif(90, 0, 1000), rep(NA, 10))),
-    X5 = runif(100, -50, 700),
+    X4 = sample(c(stats::runif(90, 0, 1000), rep(NA, 10))),
+    X5 = stats::runif(100, -50, 700),
     X6 = c("alfa", "beta", rep("gama", 98))
   )
   df$Label1 <- c(sample(c(0,1), 100, replace = TRUE))
@@ -53,7 +53,7 @@ test_that("Remove examples and attributes", {
   df <- data.frame(
     X1 = rep(1, 100),
     X2 = rep(c(1,2), 50),
-    X3 = runif(100, 1, 3),
+    X3 = stats::runif(100, 1, 3),
     X4 = rep("XYZ", 100),
     X5 = sample(c("abc", "bcd"), 100, replace = TRUE),
     X6 = c("alfa", "beta", rep("gama", 98)),

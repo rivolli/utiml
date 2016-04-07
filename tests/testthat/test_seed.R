@@ -37,14 +37,14 @@ testPredictMethod <- function (method, name, ...) {
   set.seed(321)
   r2 <- predict(model, smalltoyml, cores=1, seed=123)
   r3 <- predict(model, smalltoyml, cores=2, seed=123)
-  v1 <- runif(3)
+  v1 <- stats::runif(3)
 
   set.seed(345)
   r4 <- predict(model, smalltoyml, cores=2, seed=123)
   r5 <- predict(model, smalltoyml, cores=2, seed=NULL)
 
   set.seed(321)
-  v2 <- runif(3)
+  v2 <- stats::runif(3)
 
   expect_equal(r1, r2, label=name)
   expect_equal(r1, r3, label=name)
@@ -60,22 +60,22 @@ testSeedEffectMethod <- function (method, name, ...) {
   }
   set.seed(21)
   method(smalltoyml, "SVM", scale=FALSE, ...)
-  v1 <- runif(5)
+  v1 <- stats::runif(5)
 
   set.seed(21)
   method(smalltoyml, "SVM", scale=FALSE, ..., seed=123)
-  v2 <- runif(5)
+  v2 <- stats::runif(5)
 
   set.seed(21)
   method(smalltoyml, "SVM", scale=FALSE, ..., cores=2, seed=123)
-  v3 <- runif(5)
+  v3 <- stats::runif(5)
 
   set.seed(21)
   method(smalltoyml, "SVM", scale=FALSE, ..., cores=2, seed=321)
-  v4 <- runif(5)
+  v4 <- stats::runif(5)
   set.seed(22)
   method(smalltoyml, "SVM", scale=FALSE, ..., cores=2, seed=123)
-  v5 <- runif(5)
+  v5 <- stats::runif(5)
 
   expect_equal(v1, v2, label = name)
   expect_equal(v1, v3, label = name)

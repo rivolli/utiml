@@ -133,7 +133,7 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   classes <- mdata$dataset[mdata$labels$index][, Yc]
   labels <- utiml_rename(rownames(mdata$labels))
   ctrlmodel$R <- Rj <- utiml_lapply(labels, function(labelname) {
-    formula <- as.formula(paste("`", labelname, "` ~ .", sep = ""))
+    formula <- stats::as.formula(paste("`", labelname, "` ~ .", sep = ""))
     cor.labels <- unique(c(Yc, labelname))
     Aj <- mdata$dataset[, mdata$labels$index, drop = F][, cor.labels, drop = F]
     if (ncol(Aj) > 1) {

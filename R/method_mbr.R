@@ -262,7 +262,7 @@ print.MBRmodel <- function(x, ...) {
   tbl <- data.frame(
     min = apply(corr, 1, min, na.rm = TRUE),
     mean = apply(corr, 1, mean, na.rm = TRUE),
-    median = apply(corr, 1, median, na.rm = TRUE),
+    `median` = apply(corr, 1, median, na.rm = TRUE),
     max = apply(corr, 1, max, na.rm = TRUE),
     extra = apply(x$correlation, 1, function(row) sum(row > x$phi))
   )

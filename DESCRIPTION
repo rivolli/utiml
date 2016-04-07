@@ -1,16 +1,18 @@
 Package: utiml
 Type: Package
-Title: Utilities for Multi-Label Learning
+Title: Utilities for Multi-label Learning
 Version: 0.1.0.9000
 Date: 2015-11-25
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
-Description: Multi-label learning methods and others utilities to support
-    multi-label classification in R.
+Description: Multilabel learning methods and others utilities to support
+    multilabel classification in R.
 URL: https://github.com/rivolli/utiml
 Depends:
     R (>= 3.0.0),
     mldr(>= 0.3.22)
+Imports:
+    stats
 Suggests:
     C50,
     e1071,
