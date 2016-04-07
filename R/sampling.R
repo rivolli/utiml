@@ -162,14 +162,24 @@ create_kfold_partition <- function (mdata,
 #' @family sampling
 #' @param mdata A mldr dataset
 #' @param instances The number of expected instances
-#' @param attributes The number of expected attributes
+#' @param attributes The number of expected attributes.
+#'  (Default: all attributes)
 #' @return A new mldr subset
 #' @export
 #'
 #' @examples
 #' small.toy <- create_random_subset(toyml, 10, 3)
 #' medium.toy <- create_random_subset(toyml, 50, 5)
-create_random_subset <- function(mdata, instances, attributes) {
+create_random_subset <- function(mdata, instances,
+                                 attributes = mdata$measures$num.inputs) {
+  if (instances > mdata$measures$num.instances) {
+    stop(paste("The expected number of instances is greater than ",
+               mdata$measures$num.instances))
+  }
+  if (attributes > mdata$measures$num.inputs) {
+    stop(paste("The expected number of attributes is greater than ",
+               mdata$measures$num.inputs))
+  }
   rows <- sample(mdata$measures$num.instances, instances)
   cols <- sample(mdata$attributesIndexes, attributes)
   create_subset(mdata, rows, cols)

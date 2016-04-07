@@ -4,7 +4,8 @@
 \alias{subset_correction}
 \title{Subset Correction of a predicted result}
 \usage{
-subset_correction(mlresult, train_y, base.threshold = NULL)
+subset_correction(mlresult, train_y, base.threshold = NULL,
+  probability = FALSE)
 }
 \arguments{
 \item{mlresult}{An object of mlresult that contain the scores and bipartition
@@ -16,6 +17,10 @@ dataset or a mldr train dataset.}
 \item{base.threshold}{A numeric value between 0 and 1 to use as base to
 determine which values needs be reescaled to preserve the corrected
 labelsets. If \code{NULL} the score correction is ignored. (Default: NULL)}
+
+\item{probability}{A logical value. If \code{TRUE} the predicted values are
+the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+(Default: \code{FALSE})}
 }
 \value{
 A new mlresult where all results are present in the training

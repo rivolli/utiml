@@ -386,6 +386,9 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = NA,
 #' @param base.threshold A numeric value between 0 and 1 to use as base to
 #'  determine which values needs be reescaled to preserve the corrected
 #'  labelsets. If \code{NULL} the score correction is ignored. (Default: NULL)
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#'  (Default: \code{FALSE})
 #' @return A new mlresult where all results are present in the training
 #'  labelsets.
 #' @note The original paper describes a method to create only bipartitions
@@ -402,9 +405,10 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = NA,
 #' @examples
 #' prediction <- predict(br(toyml, "RANDOM"), toyml)
 #' subset_correction(prediction, toyml)
-subset_correction <- function(mlresult, train_y, base.threshold = NULL) {
-  bipartition <- as.bipartition(mlresult)
-  probability <- as.probability(mlresult)
+subset_correction <- function(mlresult, train_y, base.threshold = NULL,
+                              probability = FALSE) {
+  bip <- as.bipartition(mlresult)
+  prob <- as.probability(mlresult)
 
   if (class(train_y) == "mldr") {
     train_y <- train_y$dataset[train_y$labels$index]
@@ -423,20 +427,20 @@ subset_correction <- function(mlresult, train_y, base.threshold = NULL) {
                       decreasing = TRUE))
   labelsets <- labelsets[order, ]
 
-  new.prediction <- t(apply(bipartition, 1, function(y) {
+  new.pred <- t(apply(bip, 1, function(y) {
     labelsets[names(which.min(apply(labelsets, 1, function(row) {
       sum(row != y)
     }))), ]
   }))
 
   # Probabilities correction
-  new.probability <- probability
+  new.prob <- prob
   if (!is.null(base.threshold)) {
-    for (r in seq(nrow(probability))) {
-      row <- probability[r, ]
+    for (r in seq(nrow(prob))) {
+      row <- prob[r, ]
 
-      max_index <- new.prediction[r, ] - row > base.threshold
-      min_index <- new.prediction[r, ] - row <= -base.threshold
+      max_index <- new.pred[r, ] - row > base.threshold
+      min_index <- new.pred[r, ] - row <= -base.threshold
 
       indexes <- min_index | max_index
       max_v <- min(c(row[row > base.threshold & !indexes],
@@ -445,13 +449,12 @@ subset_correction <- function(mlresult, train_y, base.threshold = NULL) {
                      base.threshold - 0.1))
 
       # Normalize values
-      new.probability[r, max_index] =
+      new.prob[r, max_index] =
         row[max_index] * (max_v - base.threshold) + base.threshold
-      new.probability[r, min_index] =
+      new.prob[r, min_index] =
         row[min_index] * (base.threshold - min_v) + min_v
     }
   }
 
-  multilabel_prediction(new.prediction, new.probability,
-                        is.probability(mlresult))
+  multilabel_prediction(new.pred, new.prob, probability)
 }

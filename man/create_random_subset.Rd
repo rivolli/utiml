@@ -4,14 +4,15 @@
 \alias{create_random_subset}
 \title{Create a random subset of a dataset}
 \usage{
-create_random_subset(mdata, instances, attributes)
+create_random_subset(mdata, instances, attributes = mdata$measures$num.inputs)
 }
 \arguments{
 \item{mdata}{A mldr dataset}
 
 \item{instances}{The number of expected instances}
 
-\item{attributes}{The number of expected attributes}
+\item{attributes}{The number of expected attributes.
+(Default: all attributes)}
 }
 \value{
 A new mldr subset

@@ -158,8 +158,8 @@ predict.NSmodel <- function(object, newdata,
   }
 
   utiml_restore_seed()
-  result <- utiml_predict(predictions[object$labels], probability)
-  subset_correction(result, object$labelsets, 0.5)
+  subset_correction(utiml_predict(predictions[object$labels], probability),
+                    object$labelsets, 0.5, probability)
 }
 
 #' Print NS model

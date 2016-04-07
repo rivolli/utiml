@@ -103,9 +103,11 @@ utiml_newdata.mldr <- function(newdata) {
 
 #' Preserve current seed
 utiml_preserve_seed <- function () {
-  current.seed <- get('.Random.seed', envir = .GlobalEnv, inherits = FALSE)
-  scope <- parent.frame()
-  scope$utiml.current.seed <- current.seed
+  if (exists('.Random.seed', envir = .GlobalEnv, inherits = FALSE)) {
+    current.seed <- get('.Random.seed', envir = .GlobalEnv, inherits = FALSE)
+    scope <- parent.frame()
+    scope$utiml.current.seed <- current.seed
+  }
 }
 
 #' Rename the list using the names values or its own content

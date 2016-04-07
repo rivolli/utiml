@@ -42,7 +42,7 @@ An object of class \code{PruDentmodel} containing the set of fitted
 }
 }
 \description{
-Create a PruDent (MBR) classifier to predic multi-label data. To this, two
+Create a PruDent classifier to predic multi-label data. To this, two
 round of Binary Relevance is executed, such that, the first iteraction
 generates new attributes to enrich the second prediction.
 }

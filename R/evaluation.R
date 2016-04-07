@@ -131,6 +131,23 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
   mlcm1
 }
 
+#' Join a list of multi-label confusion matrix
+#'
+#' @param object A mlconfmat object or a list of mlconfmat objects
+#' @param ... mlconfmat objects
+#'
+#' @return mlconfmat
+#' @export
+merge_mlconfmat <- function (object, ...) {
+  objects <- c(object, list(...))
+  if (length(objects) > 1) {
+    for (i in seq(2, length(objects))) {
+      objects[[1]] <- objects[[1]] + objects[[i]]
+    }
+  }
+  objects[[1]]
+}
+
 #' Evaluate multi-label predictions
 #'
 #' This method is used to evaluate multi-label predictions. You can create a
