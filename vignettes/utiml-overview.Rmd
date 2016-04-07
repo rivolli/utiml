@@ -60,13 +60,13 @@ aborded and illustrated, then the final considerations are made.
 After load the multi-label dataset some data processing may be necessary. The pre-processing
 methods are utilities that manipulate the `mldr` datasets. Suppose that we want to normalize
 the attributes values (between 0 and 1), we can do:
-```{r}
+```r
 mytoy <- normalize_mldata(toyml)
 ```
 
 Next, we want to stratification the dataset in two partitions (train and test), 
 containing 65% and 35% of instances respectively, then we can do:
-```{r}
+```r
 ds <- create_holdout_partition(mytoy, c(train=0.65, test=0.35), "iterative")
 ```
 
@@ -74,26 +74,26 @@ Now, the `ds` object has two elements `ds$train` and `ds$test`, where the first 
 be used to create a model and the second to test the model. For example, using the 
 *Binary Relevance* multi-label method with the base classifier *Random Forest*^[Requires the 
 [randomForest](https://cran.r-project.org/web/packages/randomForest/) package.], we can do:
-```{r}
+```r
 brmodel <- br(ds$train, "RF", seed=123)
 prediction <- predict(brmodel, ds$test)
 ```
 
 The `prediction` is an object of class `mlresult` that contains the probability (also called confidence or score)
 and the bipartitions values:
-```{r}
+```r
 head(as.bipartition(prediction))
 head(as.probability(prediction))
 head(as.ranking(prediction))
 ```
 
 A threshold strategy can be applied and generate a refined prediction:
-```{r}
+```r
 newpred <- rcut_threshold(prediction, 2)
 ```
 
 Now we can evaluate the model and compare if the use of MCUT threshold improve the results:
-```{r}
+```r
 result <- multilabel_evaluate(ds$tes, prediction, "bipartition")
 thresres <- multilabel_evaluate(ds$tes, newpred, "bipartition")
 
@@ -107,7 +107,7 @@ All pre-processing methods receive a mldr dataset and return other mldr dataset.
 as needed.
 
 Here, a overview of the pre-processing methods:
-```{r}
+```r
 # Fill sparce data
 mdata <- fill_sparce_mldata(toyml)
 
@@ -140,7 +140,7 @@ If you want to create a specific or a random subset of a dataset, you can use th
 `create_random_subset`, respectively. In the first case, you should specify which rows and
 optionally attributes, do you want. In the second case, you just define the number of instances 
 and optionally the number of attributes. 
-```{r}
+```r
 # Create a subset of toyml dataset with the even instances and the first five attributes
 mdata <- create_subset(toyml, seq(1, 100, 2), 1:5)
 
@@ -161,7 +161,7 @@ partition method. The options are: `random`, `iterative` and `stratified`. The `
 a stratification by label and the `stratified` is a stratification by labelset. The return of the
 method is a list with the names defined by the second parameter.
 See some examples:
-```{r}
+```r
 # Create two equal partitions using the 'iterative' method
 toy <- create_holdout_partition(toyml, c(train=0.5, test=0.5), "iterative")
 ## toy$train and toy$test is a mldr object
@@ -181,7 +181,7 @@ Finally, to run a k-fold cross validation we can use the `create_kfold_partition
 method is an object of type `kFoldPartition` that will be used with the method `partition_fold` to
 create the datasets:
 
-```{r}
+```r
 # Create 3-fold object
 kfcv <- create_kfold_partition(toyml, k=3, "iterative")
 result <- lapply(1:3, function (k) {
@@ -242,7 +242,7 @@ knitr::kable(mts)
 The first and second parameters of each multi-label method is always the same: 
 The multi-label dataset and the base classifier, respectively. However, they may have specific 
 parameters, examples:
-```{r}
+```r
 #Classifier chain with a specific chain
 ccmodel <- cc(toyml, "J48", chain = c("y5", "y4", "y3", "y2", "y1"))
 
@@ -253,7 +253,7 @@ ebrmodel <- ebr(toyml, "C5.0", m = 5, subsample=0.6, attr = 0.75)
 Beyond the parameters of each multi-label methods, you can define the parameters for the 
 base method, like this:
 
-```{r}
+```r
 # Specific parameters for SVM
 brmodel <- br(toyml, "SVM", gamma = 0.1, scale=FALSE)
 
@@ -269,7 +269,7 @@ require specific arguments and you can assign arguments for the base method too.
 all base learner will predict the probability of prediciton, then do not use these parameters.
 Instead of, use the `probability` parameter defined by the multi-label prediction method. 
 
-```{r}
+```r
 # Predict the BR model
 result <- predict(brmodel, toyml)
 
@@ -294,7 +294,7 @@ called `cores` that specify the number of cores used to run the method. For some
 methods are not possible running in multi-core, then read the documentation of each method, 
 for more details^[Base learner `J48` do not work very well with multicore].
 
-```{r}
+```r
 # Running Binary Relevance method using 4 cores
 brmodel <- br(toyml, "SVM", cores=4)
 prediction <- predict(brmodel, toyml, cores=4)
@@ -302,7 +302,7 @@ prediction <- predict(brmodel, toyml, cores=4)
 
 If you need of reproducibility, you can set a specific seed:
 
-```{r}
+```r
 # Running Binary Relevance method using 4 cores
 brmodel <- br(toyml, "SVM", cores=4, seed=1984)
 prediction <- predict(brmodel, toyml, seed=1984, cores=4)
@@ -313,7 +313,7 @@ The threshold methods receive a `mlresult` object and return a new `mlresult`, e
 that returns the threshold values. These methods, change mainly the bipartitions values using
 the probabilities values.
 
-```{r}
+```r
 # Use a fixed threshold for all labels 
 newpred <- fixed_threshold(prediction, 0.4)
 
@@ -357,7 +357,7 @@ print(confmat)
 
 The confusion matrix summarizes a lot of data, and can be merged. For example, 
 using a k-fold experiment:
-```{r}
+```r
 kfcv <- create_kfold_partition(toyml, k=3)
 confmats <- lapply(1:3, function (k) {
   toy <- partition_fold(kfcv, k)
@@ -399,3 +399,10 @@ If you want to contribute with the development of this package, contact us
 and you  will be very welcome.
 
 Please, report any bugs or suggestions on CRAN mail or git hub page.
+
+
+```{r, echo=FALSE, results='asis'}
+# Build pdf
+# rmarkdown::render("vignettes/utiml-overview.Rmd", "pdf_document")
+# tools::compactPDF("vignettes/utiml-overview.pdf", gs_quality = "ebook")
+```

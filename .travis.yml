@@ -1,0 +1,10 @@
+# Sample .travis.yml for R projects
+
+language: r
+sudo: required
+
+# R dependencies
+r_packages:
+ - mldr
+
+warnings_are_errors: true

@@ -16,10 +16,10 @@ utiml_predict_ensemble(predictions, vote.schema, probability)
 \item{vote.schema}{Define the way that ensemble must compute the predictions.
 The default valid options are:
 \describe{
-  \code{'avg'}{Compute the mean of probabilities and the bipartitions}
-  \code{'maj'}{Compute the majority of votes}
-  \code{'max'}{Compute the higher probability for each instance/label}
-  \code{'min'}{Compute the lower probability for each instance/label}
+  \item{'avg'}{Compute the mean of probabilities and the bipartitions}
+  \item{'maj'}{Compute the majority of votes}
+  \item{'max'}{Compute the higher probability for each instance/label}
+  \item{'min'}{Compute the lower probability for each instance/label}
 }. (Default: 'maj')}
 
 \item{probability}{A logical value. If \code{TRUE} the predicted values are

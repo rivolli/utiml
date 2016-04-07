@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Adriano Rivolli" />
+
+<meta name="date" content="2016-04-07" />
+
+<title>utiml: Utilities for multi-label learning</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="fluid-row" id="header">
+
+
+<h1 class="title">utiml: Utilities for multi-label learning</h1>
+<h4 class="author"><em>Adriano Rivolli</em></h4>
+<h4 class="date"><em>2016-04-07</em></h4>
+
+</div>
+
+
+<p><strong>Version:</strong> 0.0.1</p>
+<p>The utiml package is a framework to support multi-label processing, like Mulan on Weka. It is simple to use and extend. This tutorial explain the main topics related with the utiml package. More details and examples are available on <a href="https://github.com/rivolli/utiml">utiml repository</a>.</p>
+<p><em><strong>Note:</strong> Currently, just few one-agains-all transformation methods are available, but in the future we intend remove this note and have a full range of multi-label classification methods. If you want to contribute with your code or your tallent, read the last section about how to contribute.</em></p>
+<div id="introduction" class="section level2">
+<h2>1. Introduction</h2>
+<p>The general prupose of <strong>utiml</strong> is be an alternative to processing multi-label in R. The main methods available on this package are organized in the groups:</p>
+<ul>
+<li>Classification methods</li>
+<li>Evaluation methods</li>
+<li>Pre-process utilities</li>
+<li>Sampling methods</li>
+<li>Threshold methods</li>
+</ul>
+<p>The <strong>utiml</strong> package needs of the <a href="https://cran.r-project.org/web/packages/mldr/index.html">mldr</a> package to handle multi-label datasets. It will be installed together with the <strong>utiml</strong><a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
+<p>The installation process is similar to other packages available on CRAN:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;utiml&quot;</span>)</code></pre></div>
+<p>After installed, you can now load the <strong>utiml</strong> package (The mldr package will be also loaded):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;utiml&quot;</span>)</code></pre></div>
+<p>The <strong>utiml</strong> brings a synthetic multi-label dataset called <code>toyml</code>, all examples illustrated in this tutorial use it. To understand how to load your own dataset, we suggest the read of <a href="https://cran.r-project.org/web/packages/mldr/index.html">mldr</a> documentation. The <code>toyml</code> contains 100 instances, 10 features and 5 labels, its prupose is to be used for small tests and examples.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(toyml)</code></pre></div>
+<p>In the following section, an overview of how to conduct a multi-label experiment are explained. Next, we explores each group of methods and its particularity. Finally, how to extend the <strong>utiml</strong> is aborded and illustrated, then the final considerations are made.</p>
+</div>
+<div id="overview" class="section level2">
+<h2>2. Overview</h2>
+<p>After load the multi-label dataset some data processing may be necessary. The pre-processing methods are utilities that manipulate the <code>mldr</code> datasets. Suppose that we want to normalize the attributes values (between 0 and 1), we can do:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mytoy &lt;-<span class="st"> </span><span class="kw">normalize_mldata</span>(toyml)</code></pre></div>
+<p>Next, we want to stratification the dataset in two partitions (train and test), containing 65% and 35% of instances respectively, then we can do:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ds &lt;-<span class="st"> </span><span class="kw">create_holdout_partition</span>(mytoy, <span class="kw">c</span>(<span class="dt">train=</span><span class="fl">0.65</span>, <span class="dt">test=</span><span class="fl">0.35</span>), <span class="st">&quot;iterative&quot;</span>)</code></pre></div>
+<p>Now, the <code>ds</code> object has two elements <code>ds$train</code> and <code>ds$test</code>, where the first will be used to create a model and the second to test the model. For example, using the <em>Binary Relevance</em> multi-label method with the base classifier <em>Random Forest</em><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>, we can do:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">brmodel &lt;-<span class="st"> </span><span class="kw">br</span>(ds$train, <span class="st">&quot;RF&quot;</span>, <span class="dt">seed=</span><span class="dv">123</span>)
+prediction &lt;-<span class="st"> </span><span class="kw">predict</span>(brmodel, ds$test)</code></pre></div>
+<p>The <code>prediction</code> is an object of class <code>mlresult</code> that contains the probability (also called confidence or score) and the bipartitions values:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">as.bipartition</span>(prediction))</code></pre></div>
+<pre><code>##    y1 y2 y3 y4 y5
+## 8   0  1  0  1  0
+## 10  1  1  0  1  0
+## 12  0  1  0  1  0
+## 14  0  1  0  1  0
+## 18  0  1  0  1  0
+## 19  0  1  0  0  0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">as.probability</span>(prediction))</code></pre></div>
+<pre><code>##       y1    y2    y3    y4    y5
+## 8  0.240 0.956 0.046 0.874 0.226
+## 10 0.552 0.970 0.008 0.612 0.088
+## 12 0.170 0.942 0.062 0.726 0.268
+## 14 0.402 0.872 0.034 0.776 0.268
+## 18 0.266 0.850 0.452 0.622 0.302
+## 19 0.094 0.844 0.278 0.492 0.112</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">as.ranking</span>(prediction))</code></pre></div>
+<pre><code>##    y1 y2 y3 y4 y5
+## 8   3  1  5  2  4
+## 10  3  1  5  2  4
+## 12  4  1  5  2  3
+## 14  3  1  5  2  4
+## 18  5  1  3  2  4
+## 19  5  1  3  2  4</code></pre>
+<p>A threshold strategy can be applied and generate a refined prediction:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">newpred &lt;-<span class="st"> </span><span class="kw">rcut_threshold</span>(prediction, <span class="dv">2</span>)</code></pre></div>
+<p>Now we can evaluate the model and compare if the use of MCUT threshold improve the results:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">result &lt;-<span class="st"> </span><span class="kw">multilabel_evaluate</span>(ds$tes, prediction, <span class="st">&quot;bipartition&quot;</span>)
+thresres &lt;-<span class="st"> </span><span class="kw">multilabel_evaluate</span>(ds$tes, newpred, <span class="st">&quot;bipartition&quot;</span>)
+
+measures &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;accuracy&quot;</span>, <span class="st">&quot;F1&quot;</span>, <span class="st">&quot;precision&quot;</span>, <span class="st">&quot;recall&quot;</span>, <span class="st">&quot;subset-accuracy&quot;</span>)
+<span class="kw">round</span>(<span class="kw">cbind</span>(<span class="dt">Default=</span>result, <span class="dt">RCUT=</span>thresres), <span class="dv">3</span>)</code></pre></div>
+<pre><code>##                 Default  RCUT
+## accuracy          0.574 0.607
+## F1                0.709 0.735
+## hamming-loss      0.217 0.200
+## macro-AUC         0.590 0.590
+## macro-F1          0.432 0.390
+## macro-precision   0.585 0.490
+## macro-recall      0.432 0.425
+## micro-AUC         0.824 0.824
+## micro-F1          0.716 0.745
+## micro-precision   0.716 0.729
+## micro-recall      0.716 0.761
+## precision         0.738 0.729
+## recall            0.786 0.829
+## subset-accuracy   0.143 0.171</code></pre>
+</div>
+<div id="pre-processing" class="section level2">
+<h2>3. Pre-processing</h2>
+<p>The pre processing methods were developed to facilitate some operation with the multi-label data. All pre-processing methods receive a mldr dataset and return other mldr dataset. You can use them as needed.</p>
+<p>Here, a overview of the pre-processing methods:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Fill sparce data</span>
+mdata &lt;-<span class="st"> </span><span class="kw">fill_sparce_mldata</span>(toyml)
+
+<span class="co"># Remove unique attributes</span>
+mdata &lt;-<span class="st"> </span><span class="kw">remove_unique_attributes</span>(toyml)
+
+<span class="co"># Remove the attributes &quot;iatt8&quot;, &quot;iatt9&quot; and &quot;ratt10&quot;</span>
+mdata &lt;-<span class="st"> </span><span class="kw">remove_attributes</span>(toyml, <span class="kw">c</span>(<span class="st">&quot;iatt8&quot;</span>, <span class="st">&quot;iatt9&quot;</span>, <span class="st">&quot;ratt10&quot;</span>))
+
+<span class="co"># Remove labels with less than 10 positive or negative examples</span>
+mdata &lt;-<span class="st"> </span><span class="kw">remove_skewness_labels</span>(toyml, <span class="dv">10</span>)
+
+<span class="co"># Remove the labels &quot;y2&quot; and &quot;y3&quot;</span>
+mdata &lt;-<span class="st"> </span><span class="kw">remove_labels</span>(toyml, <span class="kw">c</span>(<span class="st">&quot;y2&quot;</span>, <span class="st">&quot;y3&quot;</span>))
+
+<span class="co"># Remove the examples without any labels</span>
+mdata &lt;-<span class="st"> </span><span class="kw">remove_unlabeled_instances</span>(toyml)
+
+<span class="co"># Replace nominal attributes</span>
+mdata &lt;-<span class="st"> </span><span class="kw">replace_nominal_attributes</span>(toyml)
+
+<span class="co"># Normalize the predictive attributes between 0 and 1</span>
+mdata &lt;-<span class="st"> </span><span class="kw">normalize_mldata</span>(mdata)</code></pre></div>
+</div>
+<div id="sampling" class="section level2">
+<h2>4. Sampling</h2>
+<div id="subsets" class="section level3">
+<h3>4.1 Subsets</h3>
+<p>If you want to create a specific or a random subset of a dataset, you can use the methods <code>create_subset</code> and <code>create_random_subset</code>, respectively. In the first case, you should specify which rows and optionally attributes, do you want. In the second case, you just define the number of instances and optionally the number of attributes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create a subset of toyml dataset with the even instances and the first five attributes</span>
+mdata &lt;-<span class="st"> </span><span class="kw">create_subset</span>(toyml, <span class="kw">seq</span>(<span class="dv">1</span>, <span class="dv">100</span>, <span class="dv">2</span>), <span class="dv">1</span>:<span class="dv">5</span>)
+
+<span class="co"># Create a subset of toyml dataset with the ten first instances and all attributes</span>
+mdata &lt;-<span class="st"> </span><span class="kw">create_subset</span>(toyml, <span class="dv">1</span>:<span class="dv">10</span>)
+
+<span class="co"># Create a random subset of toyml dataset with 30 instances and 6 attributes</span>
+mdata &lt;-<span class="st"> </span><span class="kw">create_random_subset</span>(toyml, <span class="dv">30</span>, <span class="dv">6</span>)
+
+<span class="co"># Create a random subset of toyml dataset with 7 instances and all attributes</span>
+mdata &lt;-<span class="st"> </span><span class="kw">create_random_subset</span>(toyml, <span class="dv">7</span>)</code></pre></div>
+</div>
+<div id="holdout" class="section level3">
+<h3>4.2 Holdout</h3>
+<p>To create two or more partitions of the dataset, we use the method <code>create_holdout_partition</code>. The first argument is a mldr dataset, the second is the size of partitions and the third is the partition method. The options are: <code>random</code>, <code>iterative</code> and <code>stratified</code>. The <code>iterative</code> is a stratification by label and the <code>stratified</code> is a stratification by labelset. The return of the method is a list with the names defined by the second parameter. See some examples:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create two equal partitions using the 'iterative' method</span>
+toy &lt;-<span class="st"> </span><span class="kw">create_holdout_partition</span>(toyml, <span class="kw">c</span>(<span class="dt">train=</span><span class="fl">0.5</span>, <span class="dt">test=</span><span class="fl">0.5</span>), <span class="st">&quot;iterative&quot;</span>)
+## toy$train and toy$test is a mldr object
+
+<span class="co"># Create three partitions using the 'random' method</span>
+toy &lt;-<span class="st"> </span><span class="kw">create_holdout_partition</span>(toyml, <span class="kw">c</span>(<span class="dt">a=</span><span class="fl">0.4</span>, <span class="dt">b=</span><span class="fl">0.3</span>, <span class="dt">c=</span><span class="fl">0.3</span>))
+## Use toy$a, toy$b and toy$c
+
+<span class="co"># Create two partitions using the 'stratified' method</span>
+toy &lt;-<span class="st"> </span><span class="kw">create_holdout_partition</span>(toyml, <span class="kw">c</span>(<span class="fl">0.6</span>, <span class="fl">0.4</span>), <span class="st">&quot;stratified&quot;</span>)
+## Use toy[[1]] and toy[[2]] </code></pre></div>
+</div>
+<div id="k-folds" class="section level3">
+<h3>4.3 k-Folds</h3>
+<p>Finally, to run a k-fold cross validation we can use the <code>create_kfold_partition</code>. The return of this method is an object of type <code>kFoldPartition</code> that will be used with the method <code>partition_fold</code> to create the datasets:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create 3-fold object</span>
+kfcv &lt;-<span class="st"> </span><span class="kw">create_kfold_partition</span>(toyml, <span class="dt">k=</span><span class="dv">3</span>, <span class="st">&quot;iterative&quot;</span>)
+result &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span>:<span class="dv">3</span>, function (k) {
+  toy &lt;-<span class="st"> </span><span class="kw">partition_fold</span>(kfcv, k)
+  model &lt;-<span class="st"> </span><span class="kw">br</span>(toy$train, <span class="st">&quot;RF&quot;</span>)
+  <span class="kw">predict</span>(model, toy$test)
+})
+
+<span class="co"># Create 5-fold object and use a validation set</span>
+kfcv &lt;-<span class="st"> </span><span class="kw">create_kfold_partition</span>(toyml, <span class="dv">5</span>, <span class="st">&quot;stratified&quot;</span>)
+result &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span>:<span class="dv">5</span>, function (k) {
+  toy &lt;-<span class="st"> </span><span class="kw">partition_fold</span>(kfcv, k, <span class="dt">has.validation=</span><span class="ot">TRUE</span>)
+  model &lt;-<span class="st"> </span><span class="kw">br</span>(toy$train, <span class="st">&quot;RF&quot;</span>)
+  
+  <span class="kw">list</span>(
+    <span class="dt">validation =</span> <span class="kw">predict</span>(model, toy$validation),
+    <span class="dt">test =</span> <span class="kw">predict</span>(model, toy$test)
+  )
+})</code></pre></div>
+</div>
+</div>
+<div id="classification-methods" class="section level2">
+<h2>5. Classification Methods</h2>
+<p>The multi-label classification is a supervised learning task that seeks to learn and predict one or more labels together. This task can be grouped in: problem transformation and algorithm adaptation. Next, we provide more details about the methods and their specifities.</p>
+<div id="transformation-methods-and-base-learners" class="section level3">
+<h3>5.1 Transformation methods and Base Learners</h3>
+<p>The transformation methods require a base learner (binary or multi-class) and use their predictions to compose the multi-label result. In the <strong>utiml</strong> package there are some default base learners that are accepted, but if you need another you can easily developement your own<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>.</p>
+<p>Each base learner requires a specific package, you need to install manually this packages, because they are not installed together with <strong>utiml</strong>. The follow base learners are supported:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Use</th>
+<th align="left">Name</th>
+<th align="left">Package</th>
+<th align="left">Call</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">CART</td>
+<td align="left">Classification and regression trees</td>
+<td align="left">rpart</td>
+<td align="left">rpart::rpart(…)</td>
+</tr>
+<tr class="even">
+<td align="left">C5.0</td>
+<td align="left">C5.0 Decision Trees and Rule-Based Models</td>
+<td align="left">C50</td>
+<td align="left">C50::C5.0(…)</td>
+</tr>
+<tr class="odd">
+<td align="left">J48</td>
+<td align="left">Java implementation of the C4.5</td>
+<td align="left">RWeka and rJava</td>
+<td align="left">RWeka::J48(…)</td>
+</tr>
+<tr class="even">
+<td align="left">KNN</td>
+<td align="left">K Nearest Neighbor</td>
+<td align="left">kknn</td>
+<td align="left">kknn::kknn(…)</td>
+</tr>
+<tr class="odd">
+<td align="left">MAJORITY</td>
+<td align="left">Majority class prediction</td>
+<td align="left">-</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="left">NB</td>
+<td align="left">Naive Bayes</td>
+<td align="left">e1071</td>
+<td align="left">e1071::naiveBayes(…)</td>
+</tr>
+<tr class="odd">
+<td align="left">RANDOM</td>
+<td align="left">Random prediction</td>
+<td align="left">-</td>
+<td align="left">-</td>
+</tr>
+<tr class="even">
+<td align="left">RF</td>
+<td align="left">Random Forest</td>
+<td align="left">randomForest</td>
+<td align="left">randomForest::randomForest(…)</td>
+</tr>
+<tr class="odd">
+<td align="left">SVM</td>
+<td align="left">Support Vector Machine</td>
+<td align="left">e1071</td>
+<td align="left">e1071::svm(…)</td>
+</tr>
+</tbody>
+</table>
+<p>To realize a classification first is necessary create a multi-label model, the available methods are:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Method</th>
+<th align="left">Name</th>
+<th align="left">Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">br</td>
+<td align="left">Binary Relevance (BR)</td>
+<td align="left">one-agains-all</td>
+</tr>
+<tr class="even">
+<td align="left">brplus</td>
+<td align="left">BR+</td>
+<td align="left">one-agains-all; stacking</td>
+</tr>
+<tr class="odd">
+<td align="left">cc</td>
+<td align="left">Classifier Chains</td>
+<td align="left">one-agains-all; stacking</td>
+</tr>
+<tr class="even">
+<td align="left">ctrl</td>
+<td align="left">ConTRolled Label correlation exploitation (CTRL)</td>
+<td align="left">one-agains-all; binary-ensemble</td>
+</tr>
+<tr class="odd">
+<td align="left">dbr</td>
+<td align="left">Dependent Binary Relevance (DBR)</td>
+<td align="left">one-agains-all; stacking</td>
+</tr>
+<tr class="even">
+<td align="left">ebr</td>
+<td align="left">Ensemble of Binary Relevance (EBR)</td>
+<td align="left">one-agains-all; ensemble</td>
+</tr>
+<tr class="odd">
+<td align="left">ecc</td>
+<td align="left">Ensemble of Classifier Chains (ECC)</td>
+<td align="left">one-agains-all; ensemble; stacking</td>
+</tr>
+<tr class="even">
+<td align="left">mbr</td>
+<td align="left">Meta-Binary Relevance (MBR or 2BR)</td>
+<td align="left">one-agains-all; stacking</td>
+</tr>
+<tr class="odd">
+<td align="left">ns</td>
+<td align="left">Nested Stacking (NS)</td>
+<td align="left">one-agains-all; stacking</td>
+</tr>
+<tr class="even">
+<td align="left">prudent</td>
+<td align="left">Pruned and Confident Stacking Approach (Prudent)</td>
+<td align="left">one-agains-all; binary-ensemble; stacking</td>
+</tr>
+<tr class="odd">
+<td align="left">rdbr</td>
+<td align="left">Recursive Dependent Binary Relevance (RDBR)</td>
+<td align="left">one-agains-all; stacking</td>
+</tr>
+</tbody>
+</table>
+<p>The first and second parameters of each multi-label method is always the same: The multi-label dataset and the base classifier, respectively. However, they may have specific parameters, examples:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Classifier chain with a specific chain</span>
+ccmodel &lt;-<span class="st"> </span><span class="kw">cc</span>(toyml, <span class="st">&quot;J48&quot;</span>, <span class="dt">chain =</span> <span class="kw">c</span>(<span class="st">&quot;y5&quot;</span>, <span class="st">&quot;y4&quot;</span>, <span class="st">&quot;y3&quot;</span>, <span class="st">&quot;y2&quot;</span>, <span class="st">&quot;y1&quot;</span>))
+
+<span class="co"># Ensemble with 5 models using 60% of sampling and 75% of attributes</span>
+ebrmodel &lt;-<span class="st"> </span><span class="kw">ebr</span>(toyml, <span class="st">&quot;C5.0&quot;</span>, <span class="dt">m =</span> <span class="dv">5</span>, <span class="dt">subsample=</span><span class="fl">0.6</span>, <span class="dt">attr =</span> <span class="fl">0.75</span>)</code></pre></div>
+<p>Beyond the parameters of each multi-label methods, you can define the parameters for the base method, like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Specific parameters for SVM</span>
+brmodel &lt;-<span class="st"> </span><span class="kw">br</span>(toyml, <span class="st">&quot;SVM&quot;</span>, <span class="dt">gamma =</span> <span class="fl">0.1</span>, <span class="dt">scale=</span><span class="ot">FALSE</span>)
+
+<span class="co"># Specific parameters for KNN</span>
+ccmodel &lt;-<span class="st"> </span><span class="kw">cc</span>(toyml, <span class="st">&quot;KNN&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;y5&quot;</span>, <span class="st">&quot;y4&quot;</span>, <span class="st">&quot;y3&quot;</span>, <span class="st">&quot;y2&quot;</span>, <span class="st">&quot;y1&quot;</span>), <span class="dt">k=</span><span class="dv">5</span>)
+
+<span class="co"># Specific parameters for Random Forest</span>
+ebrmodel &lt;-<span class="st"> </span><span class="kw">ebr</span>(toyml, <span class="st">&quot;RF&quot;</span>, <span class="dv">5</span>, <span class="fl">0.6</span>, <span class="fl">0.75</span>, <span class="dt">proximity=</span><span class="ot">TRUE</span>, <span class="dt">ntree=</span><span class="dv">100</span>)</code></pre></div>
+<p>After build the model, To predict new data use the <code>predict</code> method. Here, some predict methods require specific arguments and you can assign arguments for the base method too. For default, all base learner will predict the probability of prediciton, then do not use these parameters. Instead of, use the <code>probability</code> parameter defined by the multi-label prediction method.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Predict the BR model</span>
+result &lt;-<span class="st"> </span><span class="kw">predict</span>(brmodel, toyml)
+
+<span class="co"># Specific parameters for KNN</span>
+result &lt;-<span class="st"> </span><span class="kw">predict</span>(ccmodel, toyml, <span class="dt">kernel=</span><span class="st">&quot;triangular&quot;</span>, <span class="dt">probability =</span> <span class="ot">FALSE</span>)
+
+<span class="co"># Specific parameters for ebr predict method</span>
+result &lt;-<span class="st"> </span><span class="kw">predict</span>(ebrmodel, toyml, <span class="dt">vote.schema =</span> <span class="st">&quot;avg&quot;</span>, <span class="dt">probability =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p>An object of type <code>mlresult</code> is the return of predict method. It always contains the bipartitions and the probabilities values. So you can use: <code>as.bipartition</code>, <code>as.probability</code> and <code>as.ranking</code> for specific values.</p>
+</div>
+<div id="algorithm-adapatation" class="section level3">
+<h3>5.2 Algorithm adapatation</h3>
+<p>Any method available yet!</p>
+</div>
+<div id="seed-and-multicores" class="section level3">
+<h3>5.3 Seed and Multicores</h3>
+<p>Almost all multi-label methods can run in parallel, but it requires the installation of <em>parallel</em> package. The train and prediction methods receive a parameter called <code>cores</code> that specify the number of cores used to run the method. For some multi-label methods are not possible running in multi-core, then read the documentation of each method, for more details<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Running Binary Relevance method using 4 cores</span>
+brmodel &lt;-<span class="st"> </span><span class="kw">br</span>(toyml, <span class="st">&quot;SVM&quot;</span>, <span class="dt">cores=</span><span class="dv">4</span>)
+prediction &lt;-<span class="st"> </span><span class="kw">predict</span>(brmodel, toyml, <span class="dt">cores=</span><span class="dv">4</span>)</code></pre></div>
+<p>If you need of reproducibility, you can set a specific seed:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Running Binary Relevance method using 4 cores</span>
+brmodel &lt;-<span class="st"> </span><span class="kw">br</span>(toyml, <span class="st">&quot;SVM&quot;</span>, <span class="dt">cores=</span><span class="dv">4</span>, <span class="dt">seed=</span><span class="dv">1984</span>)
+prediction &lt;-<span class="st"> </span><span class="kw">predict</span>(brmodel, toyml, <span class="dt">seed=</span><span class="dv">1984</span>, <span class="dt">cores=</span><span class="dv">4</span>)</code></pre></div>
+</div>
+</div>
+<div id="thresholds" class="section level2">
+<h2>6. Thresholds</h2>
+<p>The threshold methods receive a <code>mlresult</code> object and return a new <code>mlresult</code>, except for <code>scut</code> that returns the threshold values. These methods, change mainly the bipartitions values using the probabilities values.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Use a fixed threshold for all labels </span>
+newpred &lt;-<span class="st"> </span><span class="kw">fixed_threshold</span>(prediction, <span class="fl">0.4</span>)
+
+<span class="co"># Use a specific threshold for each label </span>
+newpred &lt;-<span class="st"> </span><span class="kw">fixed_threshold</span>(prediction, <span class="kw">c</span>(<span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.8</span>))
+
+<span class="co"># Use the MCut approch to define the threshold</span>
+newpred &lt;-<span class="st"> </span><span class="kw">mcut_threshold</span>(prediction)
+
+<span class="co"># Use the PCut threshold</span>
+newpred &lt;-<span class="st"> </span><span class="kw">pcut_threshold</span>(prediction, <span class="dt">ratio=</span><span class="fl">0.65</span>)
+
+<span class="co"># Use the RCut threshold</span>
+newpred &lt;-<span class="st"> </span><span class="kw">rcut_threshold</span>(prediction, <span class="dt">k=</span><span class="dv">3</span>)
+
+<span class="co"># Choose the best threshold values based on a Mean Squared Error </span>
+thresholds &lt;-<span class="st"> </span><span class="kw">scut_threshold</span>(prediction, toyml, <span class="dt">cores =</span> <span class="dv">5</span>)
+newpred &lt;-<span class="st"> </span><span class="kw">fixed_threshold</span>(prediction, thresholds)
+
+<span class="co">#Predict only the labelsets present in the train data</span>
+newpred &lt;-<span class="st"> </span><span class="kw">subset_correction</span>(prediction, toyml)</code></pre></div>
+</div>
+<div id="evaluation" class="section level2">
+<h2>7. Evaluation</h2>
+<p>To evaluate multi-label models you can use the method <code>multilabel_evaluate</code>. There are two ways of call this method:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">toy &lt;-<span class="st"> </span><span class="kw">create_holdout_partition</span>(toyml)
+brmodel &lt;-<span class="st"> </span><span class="kw">br</span>(toy$train, <span class="st">&quot;SVM&quot;</span>)
+prediction &lt;-<span class="st"> </span><span class="kw">predict</span>(brmodel, toy$test)
+
+<span class="co"># Using the test dataset and the prediction</span>
+result &lt;-<span class="st"> </span><span class="kw">multilabel_evaluate</span>(toy$test, prediction)
+<span class="kw">print</span>(<span class="kw">round</span>(result, <span class="dv">3</span>))</code></pre></div>
+<pre><code>##          accuracy average-precision          coverage                F1 
+##             0.628             0.846             1.833             0.737 
+##      hamming-loss         macro-AUC          macro-F1   macro-precision 
+##             0.200             0.485             0.342             0.300 
+##      macro-recall       margin-loss         micro-AUC          micro-F1 
+##             0.400             0.900             0.793             0.750 
+##   micro-precision      micro-recall         one-error         precision 
+##             0.750             0.750             0.200             0.750 
+##      ranking-loss            recall   subset-accuracy 
+##             0.164             0.789             0.267</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Build a confusion matrix</span>
+confmat &lt;-<span class="st"> </span><span class="kw">multilabel_confusion_matrix</span>(toy$test, prediction)
+result &lt;-<span class="st"> </span><span class="kw">multilabel_evaluate</span>(confmat)
+<span class="kw">print</span>(confmat)</code></pre></div>
+<pre><code>## Multi-label Confusion Matrix
+## 
+## Absolute Matrix:
+## -------------------------------------
+##              Expected_1 Expected_0 TOTAL
+## Prediction_1         45         15    60
+## Predicion_0          15         75    90
+## TOTAL                60         90   150
+## 
+## Proportinal Matrix:
+## -------------------------------------
+##              Expected_1 Expected_0 TOTAL
+## Prediction_1        0.3        0.1   0.4
+## Predicion_0         0.1        0.5   0.6
+## TOTAL               0.4        0.6   1.0
+## 
+## Label Matrix
+## -------------------------------------
+##    TP FP FN TN Correct Wrong %TP %FP  %FN  %TN %Correct %Wrong MeanRanking
+## y1  0  0  4 26      26     4 0.0 0.0 0.13 0.87     0.87   0.13         4.4
+## y2 24  6  0  0      24     6 0.8 0.2 0.00 0.00     0.80   0.20         1.0
+## y3  0  0  5 25      25     5 0.0 0.0 0.17 0.83     0.83   0.17         3.4
+## y4 21  9  0  0      21     9 0.7 0.3 0.00 0.00     0.70   0.30         2.0
+## y5  0  0  6 24      24     6 0.0 0.0 0.20 0.80     0.80   0.20         4.2
+##    MeanScore
+## y1      0.16
+## y2      0.77
+## y3      0.20
+## y4      0.69
+## y5      0.16</code></pre>
+<p>The confusion matrix summarizes a lot of data, and can be merged. For example, using a k-fold experiment:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">kfcv &lt;-<span class="st"> </span><span class="kw">create_kfold_partition</span>(toyml, <span class="dt">k=</span><span class="dv">3</span>)
+confmats &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span>:<span class="dv">3</span>, function (k) {
+  toy &lt;-<span class="st"> </span><span class="kw">partition_fold</span>(kfcv, k)
+  model &lt;-<span class="st"> </span><span class="kw">br</span>(toy$train, <span class="st">&quot;RF&quot;</span>)
+  <span class="kw">multilabel_confusion_matrix</span>(toy$test, <span class="kw">predict</span>(model, toy$test))
+})
+result &lt;-<span class="st"> </span><span class="kw">multilabel_evaluate</span>(<span class="kw">merge_mlconfmat</span>(confmats))</code></pre></div>
+<p>Its possible choose which measures will be computed:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Example-based measures</span>
+result &lt;-<span class="st"> </span><span class="kw">multilabel_evaluate</span>(confmat, <span class="st">&quot;example-based&quot;</span>)
+<span class="kw">print</span>(<span class="kw">names</span>(result))</code></pre></div>
+<pre><code>## [1] &quot;accuracy&quot;        &quot;F1&quot;              &quot;hamming-loss&quot;    &quot;precision&quot;      
+## [5] &quot;recall&quot;          &quot;subset-accuracy&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subset accuracy, F1 measure and hamming-loss</span>
+result &lt;-<span class="st"> </span><span class="kw">multilabel_evaluate</span>(confmat, <span class="kw">c</span>(<span class="st">&quot;subset-accuracy&quot;</span>, <span class="st">&quot;F1&quot;</span>, <span class="st">&quot;ranking-loss&quot;</span>))
+<span class="kw">print</span>(<span class="kw">names</span>(result))</code></pre></div>
+<pre><code>## [1] &quot;F1&quot;              &quot;ranking-loss&quot;    &quot;subset-accuracy&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Ranking and label-basedd measures</span>
+result &lt;-<span class="st"> </span><span class="kw">multilabel_evaluate</span>(confmat, <span class="kw">c</span>(<span class="st">&quot;label-based&quot;</span>, <span class="st">&quot;ranking&quot;</span>))
+<span class="kw">print</span>(<span class="kw">names</span>(result))</code></pre></div>
+<pre><code>##  [1] &quot;average-precision&quot; &quot;coverage&quot;          &quot;macro-AUC&quot;        
+##  [4] &quot;macro-F1&quot;          &quot;macro-precision&quot;   &quot;macro-recall&quot;     
+##  [7] &quot;margin-loss&quot;       &quot;micro-AUC&quot;         &quot;micro-F1&quot;         
+## [10] &quot;micro-precision&quot;   &quot;micro-recall&quot;      &quot;one-error&quot;        
+## [13] &quot;ranking-loss&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># To see all the supported measures you can try</span>
+<span class="kw">multilabel_measures</span>()</code></pre></div>
+<pre><code>##  [1] &quot;accuracy&quot;          &quot;all&quot;               &quot;average-precision&quot;
+##  [4] &quot;bipartition&quot;       &quot;coverage&quot;          &quot;example-based&quot;    
+##  [7] &quot;F1&quot;                &quot;hamming-loss&quot;      &quot;label-based&quot;      
+## [10] &quot;macro-AUC&quot;         &quot;macro-based&quot;       &quot;macro-F1&quot;         
+## [13] &quot;macro-precision&quot;   &quot;macro-recall&quot;      &quot;margin-loss&quot;      
+## [16] &quot;micro-AUC&quot;         &quot;micro-based&quot;       &quot;micro-F1&quot;         
+## [19] &quot;micro-precision&quot;   &quot;micro-recall&quot;      &quot;one-error&quot;        
+## [22] &quot;precision&quot;         &quot;ranking&quot;           &quot;ranking-loss&quot;     
+## [25] &quot;recall&quot;            &quot;subset-accuracy&quot;</code></pre>
+</div>
+<div id="how-to-contribute" class="section level2">
+<h2>8. How to Contribute</h2>
+<p>The <strong>utiml</strong> repository is available on (<a href="https://github.com/rivolli/utiml" class="uri">https://github.com/rivolli/utiml</a>). If you want to contribute with the development of this package, contact us and you will be very welcome.</p>
+<p>Please, report any bugs or suggestions on CRAN mail or git hub page.</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>You may also be interested in <a href="https://cran.r-project.org/web/packages/mldr.datasets/index.html">mldr.datasets</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>Requires the <a href="https://cran.r-project.org/web/packages/randomForest/">randomForest</a> package.<a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p>see the section <em>Create a new base Learner</em><a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p>Base learner <code>J48</code> do not work very well with multicore<a href="#fnref4">↩</a></p></li>
+</ol>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
