@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-**Version:** 0.0.1
+**Version:** 0.1.0.9000
 
 The utiml package is a framework to support multi-label processing, like Mulan on Weka. 
 It is simple to use and extend. This tutorial explain the main topics related with the utiml package. 
@@ -399,10 +399,3 @@ If you want to contribute with the development of this package, contact us
 and you  will be very welcome.
 
 Please, report any bugs or suggestions on CRAN mail or git hub page.
-
-
-```{r, echo=FALSE, results='asis'}
-# Build pdf
-# rmarkdown::render("vignettes/utiml-overview.Rmd", "pdf_document")
-# tools::compactPDF("vignettes/utiml-overview.pdf", gs_quality = "ebook")
-```
