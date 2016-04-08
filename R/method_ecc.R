@@ -169,7 +169,7 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
 
   newdata <- utiml_newdata(newdata)
   allpreds <- utiml_lapply(object$models, function(ccmodel) {
-    predict(ccmodel, newdata[, ccmodel$attrs], ...)
+    predict.CCmodel(ccmodel, newdata[, ccmodel$attrs], ...)
   }, cores, seed)
 
   utiml_restore_seed()

@@ -166,7 +166,8 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "maj",
   newdata <- utiml_newdata(newdata)
   allpreds <- lapply(seq(object$models), function(imodel) {
     brmodel <- object$models[[imodel]]
-    predict(brmodel, newdata[, brmodel$attrs], ..., cores = cores, seed = seed)
+    predict.BRmodel(brmodel, newdata[, brmodel$attrs], ...,
+                    cores = cores, seed = seed)
   })
 
   utiml_restore_seed()

@@ -17,7 +17,7 @@ The installation process is similar to other packages available on CRAN:
 install.packages("utiml")
 ```
 
-This will also install [mldr](https://cran.r-project.org/web/packages/mldr/index.html).
+This will also install [mldr](https://cran.r-project.org/package=mldr).
 To run the examples in this document, you also need to install the packages:
 ```r
 # Base classifiers (SVM and Random Forest)
@@ -32,8 +32,7 @@ library(utiml)
 # Create two partitions (train and test) of toyml multi-label dataset
 ds <- create_holdout_partition(toyml, c(train=0.65, test=0.35))
 
-# Create a Binary Relevance Model using e1071::SVM method
-# (Require the manual installation of e1071 package)
+# Create a Binary Relevance Model using e1071::svm method
 brmodel <- br(ds$train, "SVM", seed=123)
 
 # Predict
@@ -62,8 +61,7 @@ library(utiml)
 partitions <- c(train = 0.6, val = 0.2, test = 0.2)
 ds <- create_holdout_partition(emotions, partitions, method="iterative")
 
-# Create an Ensemble of Classifier Chains using Random Forest
-# (Require the manual installation of randomForest package)
+# Create an Ensemble of Classifier Chains using Random Forest (randomForest package)
 eccmodel <- ecc(ds$train, "RF", m=3, cores=parallel::detectCores(), seed=123)
 
 # Predict

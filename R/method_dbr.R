@@ -149,8 +149,9 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
 
   newdata <- utiml_newdata(newdata)
   if (is.null(estimative)) {
-    estimative <- predict(object$estimation, newdata, probability = FALSE, ...,
-                          cores = cores, seed = seed)
+    estimative <- predict.BRmodel(object$estimation, newdata,
+                                  probability = FALSE, ...,
+                                  cores = cores, seed = seed)
   }
   else if ('mlresult' %in% class(estimative)) {
     estimative <- as.bipartition(estimative)

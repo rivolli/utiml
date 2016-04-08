@@ -149,8 +149,8 @@ predict.PruDentmodel <- function(object, newdata,
   newdata <- utiml_newdata(newdata)
 
   # 1 Iteration - Base level
-  base.scores <- predict(object$basemodel, newdata, TRUE, ...,
-                         cores=cores, seed=seed)
+  base.scores <- predict.BRmodel(object$basemodel, newdata, TRUE, ...,
+                                 cores=cores, seed=seed)
   base.preds <- as.bipartition(base.scores)
 
   # 2 Iteration - Meta level
@@ -246,7 +246,7 @@ print.PruDentmodel <- function(x, ...) {
   tbl <- data.frame(
     min = apply(corr, 1, min, na.rm = TRUE),
     mean = apply(corr, 1, mean, na.rm = TRUE),
-    `median` = apply(corr, 1, median, na.rm = TRUE),
+    median = apply(corr, 1, stats::median, na.rm = TRUE),
     max = apply(corr, 1, max, na.rm = TRUE),
     extra = apply(x$IG, 1, function(row) sum(row > x$phi))
   )

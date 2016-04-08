@@ -139,8 +139,8 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
   newdata <- utiml_newdata(newdata)
 
   if (is.null(estimative)) {
-    estimative <- predict(object$estimation, newdata, FALSE, ...,
-                          cores=cores, seed=seed)
+    estimative <- predict.BRmodel(object$estimation, newdata, FALSE, ...,
+                                  cores=cores, seed=seed)
   }
 
   labels <- names(object$models)

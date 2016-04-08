@@ -98,7 +98,8 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     params <- list(object = mbrmodel$basemodel,
                    newdata = mdata$dataset[mdata$attributesIndexes],
                    probability = FALSE, cores = cores, seed = seed)
-    base.preds <- as.bipartition(do.call(predict, c(params, predict.params)))
+    base.preds <- as.bipartition(do.call(predict.BRmodel,
+                                         c(params, predict.params)))
   }
   else {
     kf <- create_kfold_partition(mdata, folds, "iterative")
@@ -108,7 +109,7 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
       classifier <- br(dataset$train, base.method, ..., cores=cores, seed=seed)
       params <- list(object = classifier, newdata = dataset$test,
                      probability = FALSE, cores = cores, seed = seed)
-      as.bipartition(do.call(predict, c(params, predict.params)))
+      as.bipartition(do.call(predict.BRmodel, c(params, predict.params)))
     }))
     base.preds <- base.preds[rownames(mdata$dataset), ]
   }
@@ -182,9 +183,9 @@ predict.MBRmodel <- function(object, newdata,
   newdata <- utiml_newdata(newdata)
 
   # 1 Iteration - Base level -------------------------------------------------
-  base.preds <- as.bipartition(predict(object$basemodel, newdata,
-                                       probability=FALSE, ...,
-                                       cores=cores, seed=seed))
+  base.preds <- as.bipartition(predict.BRmodel(object$basemodel, newdata,
+                                               probability=FALSE, ...,
+                                               cores=cores, seed=seed))
 
   # 2 Iteration - Meta level -------------------------------------------------
   corr <- object$correlation
@@ -262,7 +263,7 @@ print.MBRmodel <- function(x, ...) {
   tbl <- data.frame(
     min = apply(corr, 1, min, na.rm = TRUE),
     mean = apply(corr, 1, mean, na.rm = TRUE),
-    `median` = apply(corr, 1, median, na.rm = TRUE),
+    median = apply(corr, 1, stats::median, na.rm = TRUE),
     max = apply(corr, 1, max, na.rm = TRUE),
     extra = apply(x$correlation, 1, function(row) sum(row > x$phi))
   )

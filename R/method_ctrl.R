@@ -118,7 +118,7 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   val.model <- br(val.set$train, base.method, ..., cores=cores, seed=seed)
   params <- list(object = val.model, newdata = val.set$test,
                  probability = FALSE, cores = cores, seed = seed)
-  val.pred <- do.call(predict, c(params, predict.params))
+  val.pred <- do.call(predict.BRmodel, c(params, predict.params))
 
   val.confmat <- multilabel_confusion_matrix(val.set$test, val.pred)
   val.result <- utiml_measure_binary_f1(val.confmat$TPl, val.confmat$FPl,

@@ -174,7 +174,7 @@ mlpredict.svm <- function(model, newdata, ...) {
                "as base method"))
   }
 
-  result <- predict(model, newdata, probability = TRUE, ...)
+  result <- stats::predict(model, newdata, probability = TRUE, ...)
   prediction <- as.character(result)
   all.prob <- attr(result, "probabilities")
 
@@ -213,7 +213,7 @@ mlpredict.J48 <- function(model, newdata, ...) {
                "as base method"))
   }
 
-  result <- predict(model, newdata, type = "probability", ...)
+  result <- stats::predict(model, newdata, type = "probability", ...)
   prediction <- colnames(result)[apply(result, 1, which.max)]
   data.frame(
     prediction = prediction,
@@ -245,7 +245,7 @@ mlpredict.C5.0 <- function(model, newdata, ...) {
     stop(paste("There are no installed package 'C50' to use C5.0 classifier",
                "as base method"))
   }
-  result <- predict(model, newdata, type = "prob", ...)
+  result <- C50::predict.C5.0(model, newdata, type = "prob", ...)
   prediction <- colnames(result)[apply(result, 1, which.max)]
   data.frame(
     prediction = prediction,
@@ -276,7 +276,7 @@ mlpredict.rpart <- function(model, newdata, ...) {
     stop(paste("There are no installed package 'rpart' to use Cart classifier",
                "as base method"))
   }
-  result <- predict(model, newdata, type = "prob", ...)
+  result <- stats::predict(model, newdata, type = "prob", ...)
   prediction <- colnames(result)[apply(result, 1, which.max)]
   data.frame(
     prediction = prediction,
@@ -311,7 +311,8 @@ mlpredict.randomForest <- function(model, newdata, ...) {
                "randomForest classifier as base method"))
   }
 
-  result <- predict(model, newdata, type = "prob", ...)
+  result <- stats::predict(model, newdata,
+                                                type = "prob", ...)
   prediction <- colnames(result)[apply(result, 1, which.max)]
   data.frame(
     prediction = prediction,
@@ -345,7 +346,7 @@ mlpredict.naiveBayes <- function(model, newdata, ...) {
     stop(paste("There are no installed package 'e1071' to use naiveBayes",
                "classifier as base method"))
   }
-  result <- predict(model, newdata, type = "raw", ...)
+  result <- stats::predict(model, newdata, type = "raw", ...)
   rownames(result) <- rownames(newdata)
   prediction <- colnames(result)[apply(result, 1, which.max)]
   data.frame(
