@@ -1,6 +1,13 @@
 # Changelog
 
-## utiml 0.1.0.91 (Ankle)
+## utiml 0.1.1.9000 (Chair)
+### Major changes
+* Nothing yet
+
+### Bug fixes
+* Majority Ensemble Predictions Votes
+
+## utiml 0.1.0 (Ankle)
 
 First release of **utiml**:
 

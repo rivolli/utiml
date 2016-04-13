@@ -24,6 +24,11 @@ To run the examples in this document, you also need to install the packages:
 install.packages(c("e1071", "randomForest"))
 ```
 
+## Install via github (development version)
+```r
+devtools::install_github("rivolli/utiml")
+```
+
 # Multi-label Classification
 ## Running Binary Relevance Method
 ```{r}

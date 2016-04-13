@@ -127,7 +127,7 @@ utiml_ensemble_majority <- function (bipartition, probability) {
   # Compute the votes
   votes <- rowMeans(bipartition)
   ties <- votes == 0.5
-  votes[ties] <- rowMeans(as.matrix(probability[ties,]))
+  votes[ties] <- rowMeans(probability[ties, T, drop=FALSE])
   votes <- as.numeric(votes >= 0.5)
 
   probs <- votes

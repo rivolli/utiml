@@ -16,6 +16,18 @@ test_that("Majority votes", {
 
   result2 <- utiml_ensemble_majority(preds, probs)
   expect_equal(result, result2)
+
+  probs <- matrix(
+    c(0.5, 0.1, 1, 0.5, 0.6, 1),
+    ncol = 2
+  )
+  preds <- matrix(
+    unlist(as.numeric(probs >= 0.5)),
+    ncol = 2
+  )
+  result <- utiml_ensemble_majority(preds, probs)
+  expect_equal(result$bipartition, c(1,0,1))
+  expect_equal(result$probability, c(0.5,0.1,1))
 })
 
 test_that("Other votes", {
