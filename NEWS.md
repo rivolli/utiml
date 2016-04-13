@@ -1,11 +1,15 @@
 # Changelog
 
 ## utiml 0.1.1.9000 (Chair)
+
+Development version (only available via github install)
+
 ### Major changes
 * Nothing yet
 
 ### Bug fixes
 * Majority Ensemble Predictions Votes
+
 
 ## utiml 0.1.0 (Ankle)
 
