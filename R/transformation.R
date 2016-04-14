@@ -131,7 +131,8 @@ utiml_prepare_data <- function(dataset, classname, mldataset, mlmethod,
     labelname = label,
     labelindex = ncol(dataset),
     mldataset = mldataset,
-    mlmethod = mlmethod
+    mlmethod = mlmethod,
+    base.method = base.method
   )
 
   extra <- list(...)

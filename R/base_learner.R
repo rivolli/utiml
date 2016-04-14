@@ -137,7 +137,7 @@ mlpredict <- function(model, newdata, ...) {
 #' @describeIn mltrain Default S3 method
 #' @export
 mltrain.default <- function(object, ...) {
-  funcname <- paste("mltrain.base", object$methodname, sep = "")
+  funcname <- paste("mltrain.base", object$base.method, sep = "")
   stop(paste("The function '", funcname, "(object, ...)' is not implemented",
              sep = ""))
 }

@@ -1,4 +1,4 @@
-# utiml: UTIlities for Multi-label Learning
+# utiml: Utilities for Multi-label Learning
 [![Travis-CI Build Status](https://travis-ci.org/rivolli/utiml.svg?branch=master)](https://travis-ci.org/rivolli/utiml)
 
 The utiml package is a framework to support multi-label processing, like Mulan 
