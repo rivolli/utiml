@@ -37,4 +37,31 @@ test_that("Summary", {
   expect_equal(summary(testdataset), summary(testdataset$data))
 })
 
+test_that("Many Arguments", {
+  utiml <- baseenv()
+  utiml$mltrain.baseXYZ <- function (object, dataset, partition, extra, ...) {
+    list(labelname = object$labelname,
+      labelindex = object$labelindex,
+      mldataset = object$mldataset,
+      mlmethod = object$mlmethod,
+      base.method = object$base.method,
+      dataset=dataset,
+      partition=partition,
+      extra=extra,
+      ...)
+  }
+
+  model <- br(toyml, "XYZ", dataset="toyml", partition="all", extra=123)
+  y1 <- model$models[["y1"]]
+  expect_equal(y1$labelname, "y1")
+  expect_equal(y1$labelindex, 11)
+  expect_equal(y1$mldataset, "toyml")
+  expect_equal(y1$mlmethod, "br")
+  expect_equal(y1$base.method, "XYZ")
+  expect_equal(y1$dataset, "toyml")
+  expect_equal(y1$partition, "all")
+
+  same <- c("mldataset", "mlmethod", "base.method", "dataset", "partition", "extra")
+  expect_equal(model$models[["y1"]][same], model$models[["y2"]][same])
+})
 

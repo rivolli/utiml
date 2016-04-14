@@ -1,15 +1,16 @@
 # Changelog
 
-## utiml 0.1.1.9001 (Chair)
+## utiml 0.1.1.9002 (Chair)
 
 Development version (only available via github install)
 
 ### Major changes
-* Nothing yet
+* None yet
 
 ### Bug fixes
 * Majority Ensemble Predictions Votes
 * Base method not found message error
+* base method support any attribute names
 
 ## utiml 0.1.0 (Ankle)
 
