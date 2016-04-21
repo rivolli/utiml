@@ -6,6 +6,7 @@
 \alias{mlpredict.J48}
 \alias{mlpredict.baseKNN}
 \alias{mlpredict.default}
+\alias{mlpredict.emptyModel}
 \alias{mlpredict.majorityModel}
 \alias{mlpredict.naiveBayes}
 \alias{mlpredict.randomForest}
@@ -35,6 +36,8 @@ mlpredict(model, newdata, ...)
 \method{mlpredict}{majorityModel}(model, newdata, ...)
 
 \method{mlpredict}{randomModel}(model, newdata, ...)
+
+\method{mlpredict}{emptyModel}(model, newdata, ...)
 }
 \arguments{
 \item{model}{An object model returned by some mltrain method, its class
@@ -81,6 +84,8 @@ To create a new train method see \code{\link{mltrain}} documentation.
 \item \code{majorityModel}: Majority prediction
 
 \item \code{randomModel}: Majority prediction
+
+\item \code{emptyModel}: Empty model to fix the cases with few train examples
 }}
 \section{How to create a new prediction base method}{
 

@@ -16,8 +16,14 @@ utiml_create_binary_data <- function (mdata, label.name, extra.columns = NULL) {
 }
 
 utiml_create_model <- function(utiml.object, ...) {
-  # Call dynamic multilabel model with merged parameters
-  model <- do.call(mltrain, c(list(object = utiml.object), ...))
+  if (any(table(utiml.object$data[utiml.object$labelname]) < 2)) {
+    #There are no sufficient examples to train (create a empty model)
+    model <- list()
+    class(model) <- "emptyModel"
+  } else {
+    # Call dynamic multilabel model with merged parameters
+    model <- do.call(mltrain, c(list(object = utiml.object), ...))
+  }
   attr(model, "dataset") <- utiml.object$mldataset
   attr(model, "label") <- utiml.object$labelname
 

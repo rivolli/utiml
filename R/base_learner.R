@@ -443,6 +443,16 @@ mlpredict.randomModel <- function(model, newdata, ...) {
   )
 }
 
+#' @describeIn mlpredict Empty model to fix the cases with few train examples
+#' @export
+mlpredict.emptyModel <- function (model, newdata, ...) {
+  data.frame(
+    prediction = rep(0, nrow(newdata)),
+    probability = rep(1, nrow(newdata)),
+    row.names = rownames(newdata)
+  )
+}
+
 #' Print Majority model
 #' @param x The base model
 #' @param ... ignored

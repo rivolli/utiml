@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9002 (Chair)
+## utiml 0.1.1.9003 (Chair)
 
 Development version (only available via github install)
 
@@ -11,6 +11,7 @@ Development version (only available via github install)
 * Majority Ensemble Predictions Votes
 * Base method not found message error
 * base method support any attribute names
+* Empty Model to avoid errors when the training step there are few examples
 
 ## utiml 0.1.0 (Ankle)
 
