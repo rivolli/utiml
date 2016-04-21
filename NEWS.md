@@ -1,17 +1,19 @@
 # Changelog
 
-## utiml 0.1.1.9003 (Chair)
+## utiml 0.1.1.9004 (Chair)
 
 Development version (only available via github install)
 
 ### Major changes
 * None yet
 
+### Minor changes
+* Add Empty Model as base method to fix training labels with few examples
+
 ### Bug fixes
 * Majority Ensemble Predictions Votes
 * Base method not found message error
 * base method support any attribute names
-* Empty Model to avoid errors when the training step there are few examples
 
 ## utiml 0.1.0 (Ankle)
 
