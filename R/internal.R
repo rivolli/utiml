@@ -73,7 +73,7 @@ utiml_lapply <- function(mylist, myfnc, utiml.cores, utiml.seed = NA, ...) {
 utiml_normalize <- function(data, max.val = NULL, min.val = NULL) {
   max.val <- ifelse(is.null(max.val), max(data, na.rm = TRUE), max.val)
   min.val <- ifelse(is.null(min.val), min(data, na.rm = TRUE), min.val)
-  (data - min.val)/(max.val - min.val)
+  utiml_ifelse(max.val == min.val, data, (data - min.val)/(max.val - min.val))
 }
 
 #' Return the newdata to a data.frame or matrix

@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9004 (Chair)
+## utiml 0.1.1.9005 (Chair)
 
 Development version (only available via github install)
 
@@ -13,7 +13,8 @@ Development version (only available via github install)
 ### Bug fixes
 * Majority Ensemble Predictions Votes
 * Base method not found message error
-* base method support any attribute names
+* Base method support any attribute names
+* Normalize data ignore attributes with a single value
 
 ## utiml 0.1.0 (Ankle)
 

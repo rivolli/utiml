@@ -47,6 +47,11 @@ test_that("Normalize data", {
   }
   expect_equal(new.data$dataset[, 6], mdata$dataset[, 6])
   expect_equal(new.data$name, mdata$name)
+
+  #Test Scale with a single value
+  mdata$dataset$X1 <- rep(1,100)
+  new.data <- normalize_mldata(mdata)
+  expect_equal(new.data$dataset$X1, mdata$dataset$X1)
 })
 
 test_that("Remove examples and attributes", {
