@@ -119,7 +119,7 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   mbrmodel$models <- utiml_lapply(labels, function (label) {
     nmcol <- colnames(corr)[corr[label, ] >= phi]
     new.data <- base.preds[, nmcol, drop = FALSE]
-    if (ncol(new.data) > 1) {
+    if (ncol(new.data) > 0) {
       colnames(new.data) <- paste("extra", nmcol, sep = ".")
     }
     brdata  <- utiml_create_binary_data(mdata, label, new.data)
@@ -193,7 +193,7 @@ predict.MBRmodel <- function(object, newdata,
   predictions <- utiml_lapply(labels, function(labelname) {
     nmcol <- colnames(corr)[corr[labelname, ] >= object$phi]
     extra.col <- base.preds[, nmcol, drop = FALSE]
-    if (ncol(extra.col) > 1) {
+    if (ncol(extra.col) > 0) {
       colnames(extra.col) <- paste("extra", nmcol, sep = ".")
     }
 

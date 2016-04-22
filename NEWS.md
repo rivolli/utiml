@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9006 (Chair)
+## utiml 0.1.1.9007 (Chair)
 
 Development version (only available via github install)
 
