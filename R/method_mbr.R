@@ -104,7 +104,6 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   else {
     kf <- create_kfold_partition(mdata, folds, "iterative")
     base.preds <- do.call(rbind, lapply(seq(folds), function(f) {
-      #TODO label with few positive examples
       dataset <- partition_fold(kf, f)
       classifier <- br(dataset$train, base.method, ..., cores=cores, seed=seed)
       params <- list(object = classifier, newdata = dataset$test,
@@ -120,8 +119,9 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   mbrmodel$models <- utiml_lapply(labels, function (label) {
     nmcol <- colnames(corr)[corr[label, ] >= phi]
     new.data <- base.preds[, nmcol, drop = FALSE]
-    colnames(new.data) <- paste("extra", nmcol, sep = ".")
-
+    if (ncol(new.data) > 1) {
+      colnames(new.data) <- paste("extra", nmcol, sep = ".")
+    }
     brdata  <- utiml_create_binary_data(mdata, label, new.data)
     dataset <- utiml_prepare_data(brdata, "mldMBR", mdata$name, "mbr",
                                   base.method, new.features = nmcol)
@@ -193,7 +193,10 @@ predict.MBRmodel <- function(object, newdata,
   predictions <- utiml_lapply(labels, function(labelname) {
     nmcol <- colnames(corr)[corr[labelname, ] >= object$phi]
     extra.col <- base.preds[, nmcol, drop = FALSE]
-    colnames(extra.col) <- paste("extra", nmcol, sep = ".")
+    if (ncol(extra.col) > 1) {
+      colnames(extra.col) <- paste("extra", nmcol, sep = ".")
+    }
+
     utiml_predict_binary_model(object$models[[labelname]],
                                cbind(newdata, extra.col), ...)
   }, cores, seed)
@@ -231,18 +234,23 @@ predict.MBRmodel <- function(object, newdata,
 #' ## result[4, -4]
 utiml_labels_correlation <- function(mdata) {
   label.names <- rownames(mdata$labels)
-  classes <- mdata$dataset[, mdata$labels$index]
+  classes <- lapply(mdata$labels$index, function (col) {
+    factor(mdata$dataset[, col], levels=c("0", "1"))
+  })
+
   q <- length(label.names)
   cor <- matrix(nrow = q, ncol = q, dimnames = list(label.names, label.names))
-  for (i in 1:q) {
-    for (j in i:q) {
-      confmat <- table(classes[, c(i, j)])
+
+  for (i in seq(1, q)) {
+    for (j in seq(i, q)) {
+      confmat <- table(classes[c(i, j)])
       A <- as.numeric(confmat["1", "1"])
       B <- as.numeric(confmat["1", "0"])
       C <- as.numeric(confmat["0", "1"])
       D <- as.numeric(confmat["0", "0"])
-      cor[i, j] <- abs((A * D - B * C) / sqrt(as.numeric(A + B) * (C + D) *
-                                                (A + C) * (B + D)))
+      value1 <- A * D - B * C
+      value2 <- sqrt(as.numeric(A + B) * (C + D) * (A + C) * (B + D))
+      cor[i, j] <- ifelse(value1 == 0 & value2 == 0, -Inf, abs(value1 / value2))
       cor[j, i] <- cor[i, j]
     }
   }

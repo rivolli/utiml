@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9005 (Chair)
+## utiml 0.1.1.9006 (Chair)
 
 Development version (only available via github install)
 
@@ -15,6 +15,7 @@ Development version (only available via github install)
 * Base method not found message error
 * Base method support any attribute names
 * Normalize data ignore attributes with a single value
+* MBR support labels without positive examples
 
 ## utiml 0.1.0 (Ankle)
 
