@@ -288,8 +288,10 @@ test_that("Evaluate", {
   expect_true(measures["macro-accuracy"] == measures["micro-accuracy"])
   expect_true(measures["macro-accuracy"] + measures["hamming-loss"] == 1)
 
+  expect_equal(multilabel_evaluate(parts$test, as.matrix(result)),
+               multilabel_evaluate(parts$test, as.matrix(result)))
+
   expect_error(multilabel_evaluate(parts$test))
-  expect_error(multilabel_evaluate(parts$test, as.matrix(result)))
   expect_error(multilabel_evaluate(parts$test, result, "mymeasure"))
 })
 

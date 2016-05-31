@@ -59,9 +59,21 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
   if (any(mdim != dim(mlresult))) {
     stop("Wrong dimension between the real and expected data")
   }
+
+  if (class(mlresult) != "mlresult") {
+    mlresult <- as.mlresult(mlresult)
+  }
+
   expected <- mdata$dataset[, mdata$labels$index]
   bipartition <- as.bipartition(mlresult)
   scores <- as.probability(mlresult)
+
+  #Remove instances without labels
+#   empty_instances <- -which(rowSums(expected) == 0)
+#   expected <- expected[empty_instances, ]
+#   bipartition <- bipartition[empty_instances, ]
+#   scores <- scores[empty_instances, ]
+
   ranking <- t(apply(1 - scores, 1, rank, ties.method = "first"))
 
   predict_and_expected <- expected & bipartition
@@ -209,10 +221,6 @@ multilabel_evaluate.mldr <- function (object, mlresult, measures = c("all"),
     stop("First argument must be an mldr object")
   }
 
-  if (class(mlresult) != "mlresult") {
-    stop("Second argument must be an mlresult object")
-  }
-
   mlconfmat <- multilabel_confusion_matrix(mdata, mlresult)
   multilabel_evaluate.mlconfmat(mlconfmat, measures, ...)
 }
@@ -288,10 +296,16 @@ utiml_measure_accuracy <- function (mlconfmat, ...) {
 #' @references Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
 #' based system for text categorization. Machine Learning, 39(2), 135-168.
 utiml_measure_average_precision <- function (mlconfmat, ...) {
-  mean(sapply(seq(nrow(mlconfmat$Y)), function (i){
-    rks <- mlconfmat$R[i, mlconfmat$Y[i,] == 1]
-    sum(sapply(rks, function (r) sum(rks <= r) / r))
-  }) / mlconfmat$Yi)
+  #Remove instance without labels
+  non.empty <- which(mlconfmat$Yi > 0)
+  Y <- mlconfmat$Y[non.empty, ]
+  Yi <- mlconfmat$Yi[non.empty]
+  Rank <- mlconfmat$R[non.empty, ]
+
+  mean(sapply(seq(nrow(Y)), function (i){
+    rks <- Rank[i, Y[i,] == 1]
+    sum(unlist(lapply(rks, function (r) sum(rks <= r) / r)))
+  }) / Yi)
 }
 
 #' Multi-label Coverage Measure
@@ -300,8 +314,13 @@ utiml_measure_average_precision <- function (mlconfmat, ...) {
 #' @references Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
 #' based system for text categorization. Machine Learning, 39(2), 135-168.
 utiml_measure_coverage <- function (mlconfmat, ...) {
-  mean(sapply(seq(nrow(mlconfmat$Y)), function (i) {
-    max(mlconfmat$R[i, mlconfmat$Y[i,] == 1]) - 1
+  #Remove instance without labels
+  non.empty <- which(mlconfmat$Yi > 0)
+  Y <- mlconfmat$Y[non.empty, ]
+  Rank <- mlconfmat$R[non.empty, ]
+
+  mean(sapply(seq(nrow(Y)), function (i) {
+    max(Rank[i, Y[i,] == 1]) - 1
   }))
 }
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9007 (Chair)
+## utiml 0.1.1.9008
 
 Development version (only available via github install)
 
@@ -9,6 +9,7 @@ Development version (only available via github install)
 
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples
+* `multilabel_confusion_matrix` accepts a data.frame or matrix with the predicitons
 
 ### Bug fixes
 * Majority Ensemble Predictions Votes
@@ -16,8 +17,9 @@ Development version (only available via github install)
 * Base method support any attribute names
 * Normalize data ignore attributes with a single value
 * MBR support labels without positive examples
+* Fix average precision and coverage measures to support instances without labels
 
-## utiml 0.1.0 (Ankle)
+## utiml 0.1.0
 
 First release of **utiml**:
 
