@@ -124,26 +124,11 @@ utiml_ensemble_check_voteschema <- function (vote.schema, accept.null = TRUE) {
 #'  label The column are the predictions and the rows the examples.
 #' @return A list with two values "bipartition" and "probability".
 utiml_ensemble_majority <- function (bipartition, probability) {
-  # Compute the votes
-  votes <- rowMeans(bipartition)
-  ties <- votes == 0.5
-  votes[ties] <- rowMeans(probability[ties, T, drop=FALSE])
-  votes <- as.numeric(votes >= 0.5)
-
-  probs <- votes
-  positive <- votes == 1
-
-  # Compute the positive probabilities
-  probs[positive] <- unlist(lapply(which(positive), function(row) {
-    mean(probability[row, bipartition[row, ] == 1])
-  }))
-
-  # Compute the negative p
-  probs[!positive] <- unlist(lapply(which(!positive), function(row) {
-    mean(probability[row, bipartition[row, ] == 0])
-  }))
-
-  list(bipartition = votes, probability = probs)
+  probs <- rowMeans(bipartition)
+  list(
+    bipartition = as.numeric(probs >= 0.5),
+    probability = probs
+  )
 }
 
 #' Maximum vote combination for single-label prediction

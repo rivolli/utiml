@@ -2,7 +2,7 @@ context("Ensemble tests")
 
 test_that("Majority votes", {
   probs <- matrix(
-    c(1, 1, 1, 1, 0.6, 0.1, 0.8, 0.2, 0.8, 0.3, 0.4, 0.1),
+    c(1, 1, 1, 1,   0.6, 0.1, 0.8, 0.2, 0.8, 0.3, 0.4, 0.1),
     ncol = 3
   )
   preds <- matrix(
@@ -10,24 +10,38 @@ test_that("Majority votes", {
     ncol = 3
   )
 
+#  probs                  preds
+#         [,1] [,2] [,3]         [,1] [,2] [,3]
+#  [1,]    1  0.6  0.8    [1,]    1    1    1
+#  [2,]    1  0.1  0.3    [2,]    1    0    0
+#  [3,]    1  0.8  0.4    [3,]    1    1    0
+#  [4,]    1  0.2  0.1    [4,]    1    0    0
+
   result <- utiml_ensemble_majority(preds, probs)
   expect_equal(result$bipartition, c(1,0,1,0))
-  expect_equal(result$probability, c(0.8,0.2,0.9,0.15))
+  expect_equal(result$probability, c(1,1/3,2/3,1/3))
 
   result2 <- utiml_ensemble_majority(preds, probs)
   expect_equal(result, result2)
 
   probs <- matrix(
-    c(0.5, 0.1, 1, 0.5, 0.6, 1),
+    c(0.5, 0.1,
+      1, 0.5,
+      0.6, 1),
     ncol = 2
   )
   preds <- matrix(
     unlist(as.numeric(probs >= 0.5)),
     ncol = 2
   )
+  # probs             preds
+  #       [,1] [,2]         [,1] [,2]
+  # [1,]  0.5  0.5    [1,]    1    1
+  # [2,]  0.1  0.6    [2,]    0    1
+  # [3,]  1.0  1.0    [3,]    1    1
   result <- utiml_ensemble_majority(preds, probs)
-  expect_equal(result$bipartition, c(1,0,1))
-  expect_equal(result$probability, c(0.5,0.1,1))
+  expect_equal(result$bipartition, c(1,1,1))
+  expect_equal(result$probability, c(1,0.5,1))
 })
 
 test_that("Other votes", {
@@ -80,6 +94,12 @@ test_that("Compute ensemble votes", {
     unlist(as.numeric(probs > 0.5)),
     ncol = 3
   )
+  # probs                 preds
+  #      [,1] [,2] [,3]        [,1] [,2] [,3]
+  # [1,]    1  0.6  0.8   [1,]    1    1    1
+  # [2,]    1  0.1  0.3   [2,]    1    0    0
+  # [3,]    1  0.8  0.4   [3,]    1    1    0
+  # [4,]    1  0.2  0.1   [4,]    1    0    0
 
   vmethod <- utiml_ensemble_method("maj")
   result <- utiml_compute_ensemble(preds, probs, vmethod, c(1,2,3,4))
@@ -87,7 +107,7 @@ test_that("Compute ensemble votes", {
   expect_named(result$bipartition, as.character(c(1,2,3,4)))
   expect_named(result$probability, as.character(c(1,2,3,4)))
   expect_equal(result$bipartition, c(1,0,1,0), check.names = FALSE)
-  expect_equal(result$probability, c(0.8,0.2,0.9,0.15), check.names = FALSE)
+  expect_equal(result$probability, c(1,1/3,2/3,1/3), check.names = FALSE)
 
   result <- utiml_compute_ensemble(preds, probs, vmethod, c(4,3,2,1))
   expect_named(result$bipartition, as.character(c(4,3,2,1)))
@@ -103,6 +123,12 @@ test_that("Binary ensemble predictions", {
     unlist(as.numeric(probs > 0.5)),
     ncol = 3
   )
+  # probs                 preds
+  #      [,1] [,2] [,3]        [,1] [,2] [,3]
+  # [1,]    1  0.6  0.8   [1,]    1    1    1
+  # [2,]    1  0.1  0.3   [2,]    1    0    0
+  # [3,]    1  0.8  0.4   [3,]    1    1    0
+  # [4,]    1  0.2  0.1   [4,]    1    0    0
 
   bpreds <- lapply(seq(ncol(preds)), function (i){
     bipartition <- preds[, i]
@@ -115,7 +141,7 @@ test_that("Binary ensemble predictions", {
   expect_named(result$bipartition, as.character(c(1,2,3,4)))
   expect_named(result$probability, as.character(c(1,2,3,4)))
   expect_equal(result$bipartition, c(1,0,1,0), check.names = FALSE)
-  expect_equal(result$probability, c(0.8,0.2,0.9,0.15), check.names = FALSE)
+  expect_equal(result$probability, c(1,1/3,2/3,1/3), check.names = FALSE)
 
   bpreds <- lapply(3, function (i){
     bipartition <- preds[, i]
