@@ -64,6 +64,50 @@ fixed_threshold.mlresult <- function (prediction, threshold = 0.5,
   fixed_threshold.default(as.probability(prediction), threshold, probability)
 }
 
+# CARDINALITY -----------------------------------------------------------------
+#' Threshold based on cardinality
+#'
+#' Find and apply the best threshold based on cardinality of training set.
+#' The threshold is choice based on how much the average observed label
+#' cardinality is close to the average predicted label cardinality.
+#'
+#' @family threshold
+#' @param prediction A matrix or mlresult.
+#' @param cardinality
+#' @param probability A logical value. If \code{TRUE} the predicted values are
+#'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
+#'  (Default: \code{FALSE})
+#' @return A mlresult object.
+#' @references
+#'  Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
+#'  for multi-label classification. Machine Learning, 85(3), 333–359.
+#'
+#' @examples
+#' prediction <- matrix(runif(16), ncol = 4)
+#' lcard_threshold(prediction, 2.1)
+lcard_threshold <- function (prediction, cardinality, probability = FALSE) {
+  UseMethod("lcard_threshold")
+}
+
+#' @describeIn lcard_threshold Cardinality Threshold for matrix or data.frame
+#' @export
+lcard_threshold.default <- function (prediction, cardinality,
+                                     probability = FALSE) {
+  thresholds <- sort(unique(c(prediction)))
+  best <- which.min(abs(cardinality - sapply(thresholds, function (ts) {
+    mean(rowSums(prediction >= ts))
+  })))
+
+  fixed_threshold.default(prediction, thresholds[best], probability)
+}
+
+#' @describeIn lcard_threshold Cardinality Threshold for mlresult
+#' @export
+lcard_threshold.mlresult <- function (prediction, cardinality,
+                                      probability = FALSE) {
+  lcard_threshold.default(as.probability(prediction), cardinality, probability)
+}
+
 # MCUT -------------------------------------------------------------------------
 #' Maximum Cut Thresholding (MCut)
 #'
