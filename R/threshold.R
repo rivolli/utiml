@@ -82,6 +82,7 @@ fixed_threshold.mlresult <- function (prediction, threshold = 0.5,
 #' @references
 #'  Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
 #'  for multi-label classification. Machine Learning, 85(3), 333–359.
+#' @export
 #'
 #' @examples
 #' prediction <- matrix(runif(16), ncol = 4)

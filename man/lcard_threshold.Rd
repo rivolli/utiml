@@ -17,6 +17,9 @@ lcard_threshold(prediction, cardinality, probability = FALSE)
 \arguments{
 \item{prediction}{A matrix or mlresult.}
 
+\item{cardinality}{A real value of training dataset label cardinality, used
+to define the threshold value.}
+
 \item{probability}{A logical value. If \code{TRUE} the predicted values are
 the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 (Default: \code{FALSE})}

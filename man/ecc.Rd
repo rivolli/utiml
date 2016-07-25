@@ -5,7 +5,7 @@
 \title{Ensemble of Classifier Chains for multi-label Classification}
 \usage{
 ecc(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 10,
-  subsample = 0.75, attr.space = 0.5, ...,
+  subsample = 0.75, attr.space = 0.5, replacement = TRUE, ...,
   cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
@@ -21,6 +21,9 @@ training instances that must be used for each classifier. (Default: 0.75)}
 
 \item{attr.space}{A value between 0.1 and 1 to determine the percentage of
 attributes that must be used for each classifier. (Default: 0.50)}
+
+\item{replacement}{Bollean value to define if use sampling with replacement
+to create the data of the models of the ensemble. (Default: TRUE)}
 
 \item{...}{Others arguments passed to the base method for all subproblems.}
 
