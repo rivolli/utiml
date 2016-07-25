@@ -59,7 +59,8 @@ Al-Otaibi, R., Flach, P., & Kull, M. (2014). Multi-label Classification: A
  Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
 }
 \seealso{
-Other threshold: \code{\link{mcut_threshold}},
+Other threshold: \code{\link{lcard_threshold}},
+  \code{\link{mcut_threshold}},
   \code{\link{pcut_threshold}},
   \code{\link{rcut_threshold}},
   \code{\link{scut_threshold}},

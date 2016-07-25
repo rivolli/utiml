@@ -51,6 +51,7 @@ Largeron, C., Moulin, C., & Gery, M. (2012). MCut: A Thresholding Strategy
 }
 \seealso{
 Other threshold: \code{\link{fixed_threshold}},
+  \code{\link{lcard_threshold}},
   \code{\link{mcut_threshold}},
   \code{\link{rcut_threshold}},
   \code{\link{scut_threshold}},

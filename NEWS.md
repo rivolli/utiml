@@ -1,18 +1,20 @@
 # Changelog
 
-## utiml 0.1.1.9008
+## utiml 0.1.1.9009
 
 Development version (only available via github install)
 
 ### Major changes
-* None yet
+* lcard threshold calibration
 
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples
 * `multilabel_confusion_matrix` accepts a data.frame or matrix with the predicitons
+* Including EBR and ECC threshold calibration
 
 ### Bug fixes
 * Majority Ensemble Predictions Votes
+* Majority Ensemble Predictions Probability
 * Base method not found message error
 * Base method support any attribute names
 * Normalize data ignore attributes with a single value

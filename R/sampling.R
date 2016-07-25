@@ -213,13 +213,6 @@ create_subset <- function(mdata, rows, cols = NULL) {
     cols <- intersect(cols, seq(mdata$measures$num.attributes))
   }
 
-  if (mode(rows) == "character") {
-    rows <- intersect(rows, rownames(mdata$dataset))
-  }
-  else {
-    rows <- intersect(rows, seq(mdata$measures$num.instances))
-  }
-
   dataset <- mdata$dataset[rows, sort(unique(c(cols, mdata$labels$index)))]
   labelIndexes <- which(colnames(dataset) %in% rownames(mdata$labels))
 

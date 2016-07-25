@@ -18,6 +18,8 @@
 #'    training instances that must be used for each classifier. (Default: 0.75)
 #' @param attr.space A value between 0.1 and 1 to determine the percentage of
 #'    attributes that must be used for each classifier. (Default: 0.50)
+#' @param replacement Bollean value to define if use sampling with replacement
+#'    to create the data of the models of the ensemble. (Default: TRUE)
 #' @param ... Others arguments passed to the base method for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
@@ -60,8 +62,8 @@
 #' model1 <- ecc(toyml, cores=4, seed=123)
 #' }
 ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
-                m = 10, subsample = 0.75, attr.space = 0.5, ...,
-                cores = getOption("utiml.cores", 1),
+                m = 10, subsample = 0.75, attr.space = 0.5, replacement = TRUE,
+                ..., cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
@@ -88,7 +90,7 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   eccmodel <- list(rounds = m, call = match.call())
   eccmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   eccmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
-
+  eccmodel$cardinality <- mdata$measures$cardinality
 
   utiml_preserve_seed()
   if (!anyNA(seed)) {
@@ -96,7 +98,7 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   }
   idx <- lapply(seq(m), function(iteration) {
     list(
-      rows = sample(mdata$measures$num.instances, eccmodel$nrow),
+      rows = sample(mdata$measures$num.instances, eccmodel$nrow, replacement),
       cols = sample(mdata$attributesIndexes, eccmodel$ncol),
       chain = sample(rownames(mdata$labels))
     )
@@ -173,7 +175,11 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
   }, cores, seed)
 
   utiml_restore_seed()
-  utiml_predict_ensemble(allpreds, vote.schema, probability)
+  prediction <- utiml_predict_ensemble(allpreds, vote.schema, probability)
+  if (!is.null(vote.schema)) {
+    prediction <- lcard_threshold(prediction, object$cardinality, probability)
+  }
+  prediction
 }
 
 #' Print ECC model

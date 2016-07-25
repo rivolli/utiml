@@ -274,11 +274,10 @@ test_that("subset and random subset", {
   data2 <- create_subset(mdata, rows, cols)
   expect_equal(data1, data2)
 
-  data <- create_subset(mdata, seq(200), seq(30))
-  expect_equal(data, mdata)
-
-  data <- create_subset(mdata, c(1,2,3,-5,-4,-10), c(1,2,3,-5,-4,-10))
+  expect_error(create_subset(mdata, c(1,2,3,-5,-4,-10), c(1,2,3,-5,-4,-10)))
   #TODO test values
+
+
 
   data <- create_random_subset(mdata, 20, 5)
   expect_equal(data$measures$num.instances, 20)

@@ -15,6 +15,8 @@
 #'    training instances that must be used for each classifier. (Default: 0.75)
 #' @param attr.space A value between 0.1 and 1 to determine the percentage of
 #'    attributes that must be used for each classifier. (Default: 0.50)
+#' @param replacement Bollean value to define if use sampling with replacement
+#'    to create the data of the models of the ensemble. (Default: TRUE)
 #' @param ... Others arguments passed to the base method for all subproblems
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
@@ -56,8 +58,8 @@
 #' model1 <- ebr(toyml, cores=4, seed = 312)
 #' }
 ebr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
-                m = 10, subsample = 0.75, attr.space = 0.5, ...,
-                cores = getOption("utiml.cores", 1),
+                m = 10, subsample = 0.75, attr.space = 0.5, replacement = TRUE,
+                ..., cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
@@ -85,6 +87,7 @@ ebr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   ebrmodel <- list(rounds = m, call = match.call())
   ebrmodel$nrow <- ceiling(mdata$measures$num.instances * subsample)
   ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
+  ebrmodel$cardinality <- mdata$measures$cardinality
 
   utiml_preserve_seed()
   if (!anyNA(seed)) {
@@ -92,7 +95,7 @@ ebr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   }
   idx <- lapply(seq(m), function(iteration) {
     list(
-      rows = sample(mdata$measures$num.instances, ebrmodel$nrow),
+      rows = sample(mdata$measures$num.instances, ebrmodel$nrow, replacement),
       cols = sample(mdata$attributesIndexes, ebrmodel$ncol)
     )
   })
@@ -171,7 +174,12 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "maj",
   })
 
   utiml_restore_seed()
-  utiml_predict_ensemble(allpreds, vote.schema, probability)
+
+  prediction <- utiml_predict_ensemble(allpreds, vote.schema, probability)
+  if (!is.null(vote.schema)) {
+    prediction <- lcard_threshold(prediction, object$cardinality, probability)
+  }
+  prediction
 }
 
 #' Print EBR model
