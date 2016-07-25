@@ -44,7 +44,7 @@ lcard_threshold(prediction, 2.1)
 }
 \references{
 Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
- for multi-label classification. Machine Learning, 85(3), 333–359.
+ for multi-label classification. Machine Learning, 85(3), 333-359.
 }
 \seealso{
 Other threshold: \code{\link{fixed_threshold}},
