@@ -73,7 +73,8 @@ fixed_threshold.mlresult <- function (prediction, threshold = 0.5,
 #'
 #' @family threshold
 #' @param prediction A matrix or mlresult.
-#' @param cardinality
+#' @param cardinality A real value of training dataset label cardinality, used
+#'  to define the threshold value.
 #' @param probability A logical value. If \code{TRUE} the predicted values are
 #'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 #'  (Default: \code{FALSE})
