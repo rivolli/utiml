@@ -68,12 +68,8 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
   bipartition <- as.bipartition(mlresult)
   scores <- as.probability(mlresult)
 
-  #Remove instances without labels
-#   empty_instances <- -which(rowSums(expected) == 0)
-#   expected <- expected[empty_instances, ]
-#   bipartition <- bipartition[empty_instances, ]
-#   scores <- scores[empty_instances, ]
-
+  #TODO see if apply is correcty
+  #TODO review ties.method to use the default
   ranking <- t(apply(1 - scores, 1, rank, ties.method = "first"))
 
   predict_and_expected <- expected & bipartition

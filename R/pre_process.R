@@ -175,11 +175,7 @@ remove_unique_attributes <- function(mdata) {
 remove_unlabeled_instances <- function(mdata) {
   labelset <- rep(0, mdata$measures$num.labels)
   rows <- !apply(mdata$dataset[mdata$labels$index] == labelset, 1, all)
-  cols <- seq(mdata$measures$num.attributes)
-
-  mldr::mldr_from_dataframe(mdata$dataset[rows, cols],
-                            mdata$labels$index,
-                            name = mdata$name)
+  create_subset(mdata, rows)
 }
 
 #' Remove unusual or very common labels

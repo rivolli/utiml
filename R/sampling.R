@@ -79,7 +79,7 @@ create_holdout_partition <- function (mdata,
                              partitions)
 
   # Split data
-  folds <- do.call(holdout.method, list(mdata = mdata, r = partitions))
+  folds <- do.call(holdout.method, list(mdata = mldata(mdata), r = partitions))
   names(folds) <- names(partitions)
   ldata <- lapply(folds, function (fold) {
     create_subset(mdata, fold, mdata$attributesIndexes)
@@ -151,7 +151,7 @@ create_kfold_partition <- function (mdata,
   kfold.method <- utiml_validate_splitmethod(method[1])
 
   kf <- list(dataset = mdata, k = k)
-  kf$fold <- do.call(kfold.method, list(mdata = mdata, r = rep(1/k, k)))
+  kf$fold <- do.call(kfold.method, list(mdata = mldata(mdata), r = rep(1/k, k)))
   class(kf) <- "kFoldPartition"
 
   kf
@@ -164,6 +164,8 @@ create_kfold_partition <- function (mdata,
 #' @param instances The number of expected instances
 #' @param attributes The number of expected attributes.
 #'  (Default: all attributes)
+#' @param replacement A boolean value to define sample with replacement or not.
+#'  (Default: FALSE)
 #' @return A new mldr subset
 #' @export
 #'
@@ -171,7 +173,8 @@ create_kfold_partition <- function (mdata,
 #' small.toy <- create_random_subset(toyml, 10, 3)
 #' medium.toy <- create_random_subset(toyml, 50, 5)
 create_random_subset <- function(mdata, instances,
-                                 attributes = mdata$measures$num.inputs) {
+                                 attributes = mdata$measures$num.inputs,
+                                 replacement = FALSE) {
   if (instances > mdata$measures$num.instances) {
     stop(paste("The expected number of instances is greater than ",
                mdata$measures$num.instances))
@@ -180,9 +183,9 @@ create_random_subset <- function(mdata, instances,
     stop(paste("The expected number of attributes is greater than ",
                mdata$measures$num.inputs))
   }
-  rows <- sample(mdata$measures$num.instances, instances)
+  rows <- sample(mdata$measures$num.instances, instances, replacement)
   cols <- sample(mdata$attributesIndexes, attributes)
-  create_subset(mdata, rows, cols)
+  create_subset(mldata(mdata), rows, cols)
 }
 
 #' Create a subset of a dataset
@@ -343,7 +346,7 @@ utiml_iterative_split <- function(mdata, r) {
   colnames(cji) <- rownames(mdata$labels)
 
   # Empty examples (without any labels)
-  empty.inst <- apply(mdata$dataset[, mdata$labels$index], 1, sum)
+  empty.inst <- rowSums(mdata$dataset[, mdata$labels$index])
   empty.inst <- as.character(which(empty.inst == 0))
   if (length(empty.inst) > 0) {
     D <- setdiff(D, empty.inst)

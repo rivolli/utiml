@@ -88,6 +88,7 @@ as.probability <- function(mlresult) {
 #' @return matrix with ranking values
 #' @export
 as.ranking <- function (mlresult, ties.method = "min", ...) {
+  #TODO see if apply is correctly
   t(apply(1 - as.probability(mlresult), 1, rank, ties = ties.method, ...))
 }
 
@@ -118,6 +119,9 @@ is.probability <- function(mlresult) {
 #' @param probability A logical value. If \code{TRUE} the predicted values are
 #'  the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 #'  (Default: \code{getOption("utiml.use.probs", TRUE)})
+#' @param empty.prediction A logical value. If \code{TRUE} the predicted values
+#'  may contains empty values, otherwise at least one label will be positive for
+#'  each instance.
 #' @return An object of type mlresult
 #' @export
 #' @examples
@@ -129,10 +133,14 @@ is.probability <- function(mlresult) {
 #' )
 #' multilabel_prediction(probs, preds)
 multilabel_prediction <- function(bipartitions, probabilities,
-                            probability = getOption("utiml.use.probs", TRUE)) {
-  # At least one label is predict
-  for (row in seq(nrow(bipartitions))) {
-    bipartitions[row, probabilities[row, ] == max(probabilities[row, ])] <- 1
+                            probability = getOption("utiml.use.probs", TRUE),
+                            empty.prediction =
+                              getOption("utiml.empty.prediction", FALSE)) {
+  if (!empty.prediction) {
+    # At least one label is predict
+    for (row in seq(nrow(bipartitions))) {
+      bipartitions[row, probabilities[row, ] == max(probabilities[row, ])] <- 1
+    }
   }
 
   bipartitions <- as.matrix(bipartitions)

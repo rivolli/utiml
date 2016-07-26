@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9009
+## utiml 0.1.1.9010
 
 Development version (only available via github install)
 
@@ -10,7 +10,8 @@ Development version (only available via github install)
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples
 * `multilabel_confusion_matrix` accepts a data.frame or matrix with the predicitons
-* Including EBR and ECC threshold calibration
+* Change EBR and ECC to use threshold calibration
+* Include parameter empty.prediction to enable/disable empty predictions
 
 ### Bug fixes
 * Majority Ensemble Predictions Votes

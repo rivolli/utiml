@@ -473,6 +473,7 @@ subset_correction <- function(mlresult, train_y, base.threshold = NULL,
                       decreasing = TRUE))
   labelsets <- labelsets[order, ]
 
+  #TODO confirm the use of apply
   new.pred <- t(apply(bip, 1, function(y) {
     labelsets[names(which.min(apply(labelsets, 1, function(row) {
       sum(row != y)

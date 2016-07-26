@@ -155,9 +155,8 @@ mlpredict.default <- function(model, newdata, ...) {
 #' @export
 mltrain.baseSVM <- function(object, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
-    traindata <- object$data[, -object$labelindex]
-    labeldata <- object$data[, object$labelindex]
-    model <- e1071::svm(traindata, labeldata, probability = TRUE, ...)
+    formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
+    model <- e1071::svm(formula, object$data, probability = TRUE, ...)
   }
   else {
     stop(paste("There are no installed package 'e1071' to use SVM classifier",
@@ -327,9 +326,8 @@ mlpredict.randomForest <- function(model, newdata, ...) {
 #' @export
 mltrain.baseNB <- function(object, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
-    traindata <- object$data[, -object$labelindex]
-    labeldata <- object$data[, object$labelindex]
-    model <- e1071::naiveBayes(traindata, labeldata, type = "raw", ...)
+    formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
+    model <- e1071::naiveBayes(formula, object$data, type = "raw", ...)
   }
   else {
     stop(paste("There are no installed package 'e1071' to use naiveBayes",

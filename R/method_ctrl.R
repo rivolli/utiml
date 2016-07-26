@@ -143,13 +143,15 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   }, cores, seed)
 
   # Build models (11-17)
+  labeldata <- as.data.frame(apply(mdata$dataset[,mdata$labels$index], 2,
+                                   factor, levels=c(0,1)))
   D <- mdata$dataset[mdata$attributesIndexes]
   ctrlmodel$models <- utiml_lapply(labels, function(labelname) {
     data  <- utiml_create_binary_data(mdata, labelname)
     Di <- utiml_prepare_data(data, "mldBR", mdata$name, "ctrl", base.method)
     fi <- list(utiml_create_model(Di, ...))
     for (k in Rj[[labelname]]) {
-      data <- utiml_create_binary_data(mdata, labelname, mdata$dataset[k])
+      data <- utiml_create_binary_data(mdata, labelname, labeldata[k])
       Di <- utiml_prepare_data(data, "mldBR", mdata$name, "ctrl", base.method)
       fi <- c(fi, list(utiml_create_model(Di, ...)))
     }
@@ -219,6 +221,10 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
     utiml_predict_binary_model(models[[1]], newdata, ...)
   }, cores, seed)
   fjk <- as.bipartition(utiml_predict(initial.prediction, FALSE))
+  labeldata <- as.data.frame(fjk)
+  for (i in seq(ncol(labeldata))) {
+    labeldata[,i] <- factor(labeldata[,i], levels=c(0,1))
+  }
 
   # Predict binary ensemble values
   labels <- utiml_rename(names(object$models))
@@ -226,9 +232,9 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
     models <- object$models[[labelname]]
     preds <- list()
     for (label in names(models)[-1]) {
-      preds[[label]] <- utiml_predict_binary_model(models[[label]],
-                                                   cbind(newdata, fjk[, label]),
-                                                   ...)
+      preds[[label]] <- utiml_predict_binary_model(
+        models[[label]], cbind(newdata, labeldata[, label, drop=FALSE]), ...
+      )
     }
 
     if (length(preds) < 1) { #No models are found, only first prediction

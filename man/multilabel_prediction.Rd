@@ -5,7 +5,8 @@
 \title{Create a mlresult object}
 \usage{
 multilabel_prediction(bipartitions, probabilities,
-  probability = getOption("utiml.use.probs", TRUE))
+  probability = getOption("utiml.use.probs", TRUE),
+  empty.prediction = getOption("utiml.empty.prediction", FALSE))
 }
 \arguments{
 \item{bipartitions}{The matrix of predictions (bipartition values),
@@ -17,6 +18,10 @@ between 0..1}
 \item{probability}{A logical value. If \code{TRUE} the predicted values are
 the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 (Default: \code{getOption("utiml.use.probs", TRUE)})}
+
+\item{empty.prediction}{A logical value. If \code{TRUE} the predicted values
+may contains empty values, otherwise at least one label will be positive for
+each instance.}
 }
 \value{
 An object of type mlresult
