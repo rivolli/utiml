@@ -1,9 +1,3 @@
-utiml_from_dataframe <- function(...) {
-  default_mldr_from_dataframe <- getOption("utiml.mldr_from_dataframe")
-  mdata <- default_mldr_from_dataframe(...)
-  mldata(mdata)
-}
-
 #' Fix the mldr dataset to use factors
 #'
 #' @param mdata A mldr dataset.

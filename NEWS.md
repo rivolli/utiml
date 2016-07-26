@@ -1,17 +1,18 @@
 # Changelog
 
-## utiml 0.1.1.9010
+## utiml 0.1.1.9011
 
 Development version (only available via github install)
 
 ### Major changes
 * lcard threshold calibration
+* Use categorical attributes in multilabel datasets
 
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples
 * `multilabel_confusion_matrix` accepts a data.frame or matrix with the predicitons
 * Change EBR and ECC to use threshold calibration
-* Include parameter empty.prediction to enable/disable empty predictions
+* Include empty.prediction configuration to enable/disable empty predictions
 
 ### Bug fixes
 * Majority Ensemble Predictions Votes
