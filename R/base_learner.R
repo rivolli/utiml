@@ -226,9 +226,8 @@ mlpredict.J48 <- function(model, newdata, ...) {
 #' @export
 mltrain.baseC5.0 <- function(object, ...) {
   if (requireNamespace("C50", quietly = TRUE)) {
-    traindata <- object$data[, -object$labelindex]
-    labeldata <- object$data[, object$labelindex]
-    model <- C50::C5.0(traindata, labeldata, ...)
+    formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
+    model <- C50::C5.0(formula, object$data, ...)
   }
   else {
     stop(paste("There are no installed package 'C50' to use C5.0 classifier",
@@ -290,9 +289,8 @@ mlpredict.rpart <- function(model, newdata, ...) {
 #' @export
 mltrain.baseRF <- function(object, ...) {
   if (requireNamespace("randomForest", quietly = TRUE)) {
-    traindata <- object$data[, -object$labelindex]
-    labeldata <- object$data[, object$labelindex]
-    model <- randomForest::randomForest(traindata, labeldata, ...)
+    formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
+    model <- randomForest::randomForest(formula, object$data, ...)
   }
   else {
     stop(paste("There are no installed package 'randomForest' to use",
@@ -310,8 +308,7 @@ mlpredict.randomForest <- function(model, newdata, ...) {
                "randomForest classifier as base method"))
   }
 
-  result <- stats::predict(model, newdata,
-                                                type = "prob", ...)
+  result <- stats::predict(model, newdata, type = "prob", ...)
   prediction <- colnames(result)[apply(result, 1, which.max)]
   data.frame(
     prediction = prediction,
@@ -378,11 +375,12 @@ mlpredict.baseKNN <- function(model, newdata, ...) {
   formula <- stats::as.formula(paste("`", model$labelname, "` ~ .", sep = ""))
   args <- list(...)
   if (is.null(model$extrakNN[["k"]]) || !is.null(args[["k"]])) {
-    result <- kknn::kknn(formula, model$data, newdata, ...)
+    result <- kknn::kknn(formula, rep_nom_attr(model$data, FALSE),
+                         rep_nom_attr(newdata), ...)
   }
   else {
-    result <- kknn::kknn(formula, model$data, newdata,
-                         k = model$extrakNN[["k"]], ...)
+    result <- kknn::kknn(formula, rep_nom_attr(model$data, FALSE),
+                         rep_nom_attr(newdata), k = model$extrakNN[["k"]], ...)
   }
 
   prediction <- as.character(result$fitted.values)
