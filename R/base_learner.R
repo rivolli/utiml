@@ -184,6 +184,40 @@ mlpredict.svm <- function(model, newdata, ...) {
   )
 }
 
+# SMO METHOD -------------------------------------------------------------
+#' @describeIn mltrain SMO implementation (require \pkg{RWeka} package to use)
+#' @export
+mltrain.baseSMO <- function(object, ...) {
+  if (requireNamespace("RWeka", quietly = TRUE) &&
+      requireNamespace("rJava", quietly = TRUE)) {
+    formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
+    model <- RWeka::SMO(formula, object$data, ...)
+    rJava::.jcache(model$classifier)
+  }
+  else {
+    stop(paste("There are no installed package 'RWeka' and 'rJava' to use SMO",
+               "classifier as base method"))
+  }
+  model
+}
+
+#' @describeIn mlpredict SMO implementation (require \pkg{RWeka} package to use)
+#' @export
+mlpredict.SMO <- function(model, newdata, ...) {
+  if (!requireNamespace("RWeka", quietly = TRUE)) {
+    stop(paste("There are no installed package 'RWeka' to use SMO classifier",
+               "as base method"))
+  }
+
+  result <- stats::predict(model, newdata, type = "probability", ...)
+  prediction <- colnames(result)[apply(result, 1, which.max)]
+  data.frame(
+    prediction = prediction,
+    probability = result[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
+}
+
 # J48 METHOD -------------------------------------------------------------
 #' @describeIn mltrain J48 implementation (require \pkg{RWeka} package to use)
 #' @export
@@ -389,6 +423,46 @@ mlpredict.baseKNN <- function(model, newdata, ...) {
   data.frame(
     prediction = prediction,
     probability = all.prob[cbind(rownames(newdata), prediction)],
+    row.names = rownames(newdata)
+  )
+}
+
+# XGBoost METHOD ------------------------------------------------------------------
+#' @describeIn mltrain XGBoost implementation (require \pkg{xgboost} package)
+#' @export
+mltrain.baseXGB <- function(object, ...) {
+  if (!requireNamespace("xgboost", quietly = TRUE)) {
+    stop(paste("There are no installed package 'xgboost' to use xgboost",
+               "classifier as base method"))
+  }
+
+  def.args <- list(
+    data = as.matrix(rep_nom_attr(object$data[, -object$labelindex])),
+    label = as.numeric(as.character(object$data[, object$labelindex])),
+    nthread = 1,
+    verbose = F,
+    objective = "binary:logistic"
+  )
+  args <- list(...)
+  for (narg in names(args)) {
+    def.args[[narg]] <- args[[narg]]
+  }
+
+  do.call(xgboost::xgboost, def.args)
+}
+
+#' @describeIn mlpredict XGBoost implementation (require \pkg{xgboost} package)
+#' @export
+mlpredict.xgb.Booster <- function(model, newdata, ...) {
+  if (!requireNamespace("xgboost", quietly = TRUE)) {
+    stop(paste("There are no installed package 'xgboost' to use xgboost",
+               "classifier as base method"))
+  }
+
+  pred <- xgboost::predict(model, as.matrix(rep_nom_attr(newdata)), ...)
+  data.frame(
+    prediction = as.numeric(pred >= 0.5),
+    probability = pred,
     row.names = rownames(newdata)
   )
 }

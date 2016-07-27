@@ -10,7 +10,9 @@
 \alias{mltrain.baseNB}
 \alias{mltrain.baseRANDOM}
 \alias{mltrain.baseRF}
+\alias{mltrain.baseSMO}
 \alias{mltrain.baseSVM}
+\alias{mltrain.baseXGB}
 \alias{mltrain.default}
 \title{Build transformation models}
 \usage{
@@ -19,6 +21,8 @@ mltrain(object, ...)
 \method{mltrain}{default}(object, ...)
 
 \method{mltrain}{baseSVM}(object, ...)
+
+\method{mltrain}{baseSMO}(object, ...)
 
 \method{mltrain}{baseJ48}(object, ...)
 
@@ -31,6 +35,8 @@ mltrain(object, ...)
 \method{mltrain}{baseNB}(object, ...)
 
 \method{mltrain}{baseKNN}(object, ...)
+
+\method{mltrain}{baseXGB}(object, ...)
 
 \method{mltrain}{baseMAJORITY}(object, ...)
 
@@ -71,6 +77,8 @@ To create a new predict model see \code{\link{mlpredict}} documentation.
 
 \item \code{baseSVM}: SVM implementation (require \pkg{e1071} package to use)
 
+\item \code{baseSMO}: SMO implementation (require \pkg{RWeka} package to use)
+
 \item \code{baseJ48}: J48 implementation (require \pkg{RWeka} package to use)
 
 \item \code{baseC5.0}: C5.0 implementation (require \pkg{C50} package to use)
@@ -84,6 +92,8 @@ To create a new predict model see \code{\link{mlpredict}} documentation.
 \pkg{e1071} package to use)
 
 \item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
+
+\item \code{baseXGB}: XGBoost implementation (require \pkg{xgboost} package)
 
 \item \code{baseMAJORITY}: Majority model
 

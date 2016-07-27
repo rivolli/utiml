@@ -4,6 +4,7 @@
 \alias{mlpredict}
 \alias{mlpredict.C5.0}
 \alias{mlpredict.J48}
+\alias{mlpredict.SMO}
 \alias{mlpredict.baseKNN}
 \alias{mlpredict.default}
 \alias{mlpredict.emptyModel}
@@ -13,6 +14,7 @@
 \alias{mlpredict.randomModel}
 \alias{mlpredict.rpart}
 \alias{mlpredict.svm}
+\alias{mlpredict.xgb.Booster}
 \title{Prediction transformation problems}
 \usage{
 mlpredict(model, newdata, ...)
@@ -20,6 +22,8 @@ mlpredict(model, newdata, ...)
 \method{mlpredict}{default}(model, newdata, ...)
 
 \method{mlpredict}{svm}(model, newdata, ...)
+
+\method{mlpredict}{SMO}(model, newdata, ...)
 
 \method{mlpredict}{J48}(model, newdata, ...)
 
@@ -32,6 +36,8 @@ mlpredict(model, newdata, ...)
 \method{mlpredict}{naiveBayes}(model, newdata, ...)
 
 \method{mlpredict}{baseKNN}(model, newdata, ...)
+
+\method{mlpredict}{xgb.Booster}(model, newdata, ...)
 
 \method{mlpredict}{majorityModel}(model, newdata, ...)
 
@@ -67,6 +73,8 @@ To create a new train method see \code{\link{mltrain}} documentation.
 
 \item \code{svm}: SVM implementation (require \pkg{e1071} package to use)
 
+\item \code{SMO}: SMO implementation (require \pkg{RWeka} package to use)
+
 \item \code{J48}: J48 implementation (require \pkg{RWeka} package to use)
 
 \item \code{C5.0}: C5.0 implementation (require \pkg{C50} package to use)
@@ -80,6 +88,8 @@ To create a new train method see \code{\link{mltrain}} documentation.
 \pkg{e1071} package to use)
 
 \item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
+
+\item \code{xgb.Booster}: XGBoost implementation (require \pkg{xgboost} package)
 
 \item \code{majorityModel}: Majority prediction
 
