@@ -72,7 +72,9 @@ cc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
   # Create models
   basedata <- mdata$dataset[mdata$attributesIndexes]
-  labeldata <- mdata$dataset[mdata$labels$index][chain]
+  labeldata <-as.data.frame(
+    apply(mdata$dataset[mdata$labels$index][chain], 2, factor, levels=c(0, 1))
+  )
   chain.order <- utiml_rename(seq(mdata$measures$num.labels), chain)
   ccmodel$models <- utiml_lapply(chain.order, function(lidx) {
     data <- cbind(basedata, labeldata[seq(lidx)])
@@ -134,10 +136,9 @@ predict.CCmodel <- function(object, newdata,
   newdata <- list(utiml_newdata(newdata))
   predictions <- list()
   for (label in object$chain) {
-    predictions[[label]] <- utiml_predict_binary_model(object$models[[label]],
-                                                       do.call(cbind, newdata),
-                                                       ...)
-    newdata[[label]] <- predictions[[label]]$bipartition
+    predictions[[label]] <- utiml_predict_binary_model(
+      object$models[[label]], do.call(cbind, newdata), ...)
+    newdata[[label]] <- factor(predictions[[label]]$bipartition, levels=c(0, 1))
   }
 
   utiml_restore_seed()
