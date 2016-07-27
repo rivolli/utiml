@@ -26,7 +26,8 @@ Suggests:
     rmarkdown,
     rpart,
     RWeka(>= 0.4),
-    testthat
+    testthat,
+    xgboost
 License: GPL | file LICENSE
 LazyData: true
 BugReports: https://github.com/rivolli/utiml
