@@ -72,7 +72,7 @@ cc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
   # Create models
   basedata <- mdata$dataset[mdata$attributesIndexes]
-  labeldata <-as.data.frame(
+  labeldata <- as.data.frame(
     apply(mdata$dataset[mdata$labels$index][chain], 2, factor, levels=c(0, 1))
   )
   chain.order <- utiml_rename(seq(mdata$measures$num.labels), chain)

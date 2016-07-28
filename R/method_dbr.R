@@ -65,7 +65,10 @@ dbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   }
 
   # Create models
-  labeldata <- mdata$dataset[mdata$labels$index]
+  labeldata <- as.data.frame(
+    apply(mdata$dataset[mdata$labels$index], 2, factor, levels=c(0, 1))
+  )
+
   labels <- utiml_rename(seq(dbrmodel$labels), dbrmodel$labels)
   dbrmodel$models <- utiml_lapply(labels, function(li) {
     dbrdata <- utiml_create_binary_data(mdata, dbrmodel$labels[li],
@@ -153,11 +156,17 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
                                   probability = FALSE, ...,
                                   cores = cores, seed = seed)
   }
-  else if ('mlresult' %in% class(estimative)) {
+
+
+  if ('mlresult' %in% class(estimative)) {
     estimative <- as.bipartition(estimative)
   }
 
-  estimative <- as.matrix(estimative)
+  estimative <- as.data.frame(estimative)
+  for (i in seq(ncol(estimative))) {
+    estimative[,i] <- factor(estimative[,i], levels=c(0, 1))
+  }
+
   labels <- utiml_rename(seq(object$labels), object$labels)
   predictions <- utiml_lapply(labels, function(li) {
     utiml_predict_binary_model(object$models[[li]],

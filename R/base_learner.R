@@ -441,7 +441,7 @@ mltrain.baseXGB <- function(object, ...) {
     data = as.matrix(rep_nom_attr(object$data[, -object$labelindex])),
     label = as.numeric(as.character(object$data[, object$labelindex])),
     nthread = 1,
-    verbose = F,
+    verbose = FALSE,
     objective = "binary:logistic"
   )
   args <- list(...)
