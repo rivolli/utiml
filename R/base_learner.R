@@ -323,8 +323,9 @@ mlpredict.rpart <- function(model, newdata, ...) {
 #' @export
 mltrain.baseRF <- function(object, ...) {
   if (requireNamespace("randomForest", quietly = TRUE)) {
-    formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
-    model <- randomForest::randomForest(formula, object$data, ...)
+    traindata <- object$data[, -object$labelindex]
+    labeldata <- object$data[, object$labelindex]
+    model <- randomForest::randomForest(traindata, labeldata, ...)
   }
   else {
     stop(paste("There are no installed package 'randomForest' to use",
