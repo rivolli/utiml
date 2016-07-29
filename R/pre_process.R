@@ -251,16 +251,10 @@ rep_nom_col <- function (column, column.name = "", type = 1) {
   symbols <- levels(column)
   result <- {}
 
-  if (length(symbols) == 2 && type == 1 && 0 %in% symbols && 1 %in% symbols) {
-    result <- cbind(result, as.double(column == 1))
-    names <- column.name
+  for (i in seq(length(symbols) - type)) {
+    result <- cbind(result, as.double(column == symbols[i]))
   }
-  else {
-    for (i in seq(length(symbols) - type)) {
-      result <- cbind(result, as.double(column == symbols[i]))
-    }
-    names <- paste(column.name, symbols[seq(length(symbols) - type)], sep="_")
-  }
+  names <- paste(column.name, symbols[seq(length(symbols) - type)], sep="_")
 
   if (column.name != "") {
     colnames(result) <- names

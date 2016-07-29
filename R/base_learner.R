@@ -407,15 +407,11 @@ mlpredict.baseKNN <- function(model, newdata, ...) {
                "base method"))
   }
 
-  #TODO Review it
-  train <- rep_nom_attr(model$data, FALSE)
-  test <- rep_nom_attr(newdata)
-  colnames(test) <- colnames(train)[-ncol(train)]
-
   formula <- stats::as.formula(paste("`", model$labelname, "` ~ .", sep = ""))
   args <- list(...)
   if (is.null(model$extrakNN[["k"]]) || !is.null(args[["k"]])) {
-    result <- kknn::kknn(formula, train, test, ...)
+    result <- kknn::kknn(formula, rep_nom_attr(model$data, FALSE),
+                         rep_nom_attr(newdata), ...)
   }
   else {
     result <- kknn::kknn(formula, rep_nom_attr(model$data, FALSE),
@@ -453,12 +449,7 @@ mltrain.baseXGB <- function(object, ...) {
     def.args[[narg]] <- args[[narg]]
   }
 
-  model <- do.call(xgboost::xgboost, def.args)
-
-  #TODO Review it
-  attr(model, "utiml.colnames") <- colnames(def.args$data)[-ncol(def.args$data)]
-
-  model
+  do.call(xgboost::xgboost, def.args)
 }
 
 #' @describeIn mlpredict XGBoost implementation (require \pkg{xgboost} package)
@@ -469,9 +460,8 @@ mlpredict.xgb.Booster <- function(model, newdata, ...) {
                "classifier as base method"))
   }
 
-  test <- as.matrix(rep_nom_attr(newdata))
   colnames(test) <- attr(model, "utiml.colnames")
-  pred <- xgboost::predict(model, test, ...)
+  pred <- xgboost::predict(model, as.matrix(rep_nom_attr(newdata)), ...)
   data.frame(
     prediction = as.numeric(pred >= 0.5),
     probability = pred,
