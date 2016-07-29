@@ -143,6 +143,15 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
                                   cores=cores, seed=seed)
   }
 
+  if ('mlresult' %in% class(estimative)) {
+    estimative <- as.bipartition(estimative)
+  }
+
+  estimative <- as.data.frame(estimative)
+  for (i in seq(ncol(estimative))) {
+    estimative[,i] <- factor(estimative[,i], levels=c(0, 1))
+  }
+
   labels <- names(object$models)
   modelsindex <- utiml_rename(seq(labels), labels)
   if (batch.mode) {
@@ -152,8 +161,9 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
                                    cbind(newdata, estimative[, -li]), ...)
       }, cores, seed)
 
-      new.estimative <- do.call(cbind, lapply(predictions,
-                                              function(lbl) lbl$bipartition))
+      new.estimative <- do.call(cbind, lapply(predictions, function(lbl) {
+        factor(lbl$bipartition, levels=c(0,1))
+      }))
       if (all(new.estimative == estimative)) {
         break
       }
@@ -170,7 +180,7 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
         predictions[[li]] <- utiml_predict_binary_model(object$models[[li]],
                                               cbind(newdata, estimative[, -li]),
                                               ...)
-        estimative[, li] <- predictions[[li]]$bipartition
+        estimative[, li] <- factor(predictions[[li]]$bipartition, levels=c(0,1))
       }
       names(predictions) <- labels
       if (all(old.estimative == estimative)) {

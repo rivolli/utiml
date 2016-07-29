@@ -157,7 +157,6 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
                                   cores = cores, seed = seed)
   }
 
-
   if ('mlresult' %in% class(estimative)) {
     estimative <- as.bipartition(estimative)
   }

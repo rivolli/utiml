@@ -113,6 +113,11 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     base.preds <- base.preds[rownames(mdata$dataset), ]
   }
 
+  base.preds <- as.data.frame(base.preds)
+  for (i in seq(ncol(base.preds))) {
+    base.preds[, i] <- factor(base.preds[, i], levels=c(0, 1))
+  }
+
   # 2 Iteration - Meta level -------------------------------------------------
   corr <- mbrmodel$correlation <- utiml_labels_correlation(mdata)
   labels <- utiml_rename(mbrmodel$labels)
@@ -186,6 +191,10 @@ predict.MBRmodel <- function(object, newdata,
   base.preds <- as.bipartition(predict.BRmodel(object$basemodel, newdata,
                                                probability=FALSE, ...,
                                                cores=cores, seed=seed))
+  base.preds <- as.data.frame(base.preds)
+  for (i in seq(ncol(base.preds))) {
+    base.preds[,i] <- factor(base.preds[,i], levels=c(0, 1))
+  }
 
   # 2 Iteration - Meta level -------------------------------------------------
   corr <- object$correlation
