@@ -65,9 +65,10 @@ dbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   }
 
   # Create models
-  labeldata <- as.data.frame(
-    apply(mdata$dataset[mdata$labels$index], 2, factor, levels=c(0, 1))
-  )
+  labeldata <- as.data.frame(mdata$dataset[mdata$labels$index])
+  for (i in seq(ncol(labeldata))) {
+    labeldata[, i] <- factor(labeldata[, i], levels=c(0, 1))
+  }
 
   labels <- utiml_rename(seq(dbrmodel$labels), dbrmodel$labels)
   dbrmodel$models <- utiml_lapply(labels, function(li) {
