@@ -460,7 +460,6 @@ mlpredict.xgb.Booster <- function(model, newdata, ...) {
                "classifier as base method"))
   }
 
-  colnames(test) <- attr(model, "utiml.colnames")
   pred <- xgboost::predict(model, as.matrix(rep_nom_attr(newdata)), ...)
   data.frame(
     prediction = as.numeric(pred >= 0.5),
