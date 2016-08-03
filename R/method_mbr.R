@@ -127,11 +127,13 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     if (ncol(new.data) > 0) {
       colnames(new.data) <- paste("extra", nmcol, sep = ".")
     }
-    brdata  <- utiml_create_binary_data(mdata, label, new.data)
-    dataset <- utiml_prepare_data(brdata, "mldMBR", mdata$name, "mbr",
-                                  base.method, new.features = nmcol)
 
-    utiml_create_model(dataset, ...)
+    utiml_create_model(
+      utiml_prepare_data(
+        utiml_create_binary_data(mdata, label, new.data),
+        "mldMBR", mdata$name, "mbr", base.method, new.features = nmcol
+      ), ...
+    )
   }, cores, seed)
 
   utiml_restore_seed()

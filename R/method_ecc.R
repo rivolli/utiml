@@ -110,6 +110,8 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
     ccmodel <- cc(ndata, base.method, chain, ..., cores = cores, seed = seed)
     ccmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
+    rm(ndata)
+
     ccmodel
   })
 

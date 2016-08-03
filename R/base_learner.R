@@ -376,12 +376,13 @@ mlpredict.naiveBayes <- function(model, newdata, ...) {
     stop(paste("There are no installed package 'e1071' to use naiveBayes",
                "classifier as base method"))
   }
+
   result <- stats::predict(model, newdata, type = "raw", ...)
   rownames(result) <- rownames(newdata)
-  prediction <- colnames(result)[apply(result, 1, which.max)]
+  classes <- colnames(result)[apply(result, 1, which.max)]
   data.frame(
-    prediction = prediction,
-    probability = result[cbind(rownames(newdata), prediction)],
+    prediction = classes,
+    probability = result[cbind(rownames(newdata), classes)],
     row.names = rownames(newdata)
   )
 }
@@ -441,7 +442,9 @@ mltrain.baseXGB <- function(object, ...) {
     data = as.matrix(rep_nom_attr(object$data[, -object$labelindex])),
     label = as.numeric(as.character(object$data[, object$labelindex])),
     nthread = 1,
+    nrounds = 3,
     verbose = FALSE,
+    silent = 1,
     objective = "binary:logistic"
   )
   args <- list(...)
@@ -461,9 +464,10 @@ mlpredict.xgb.Booster <- function(model, newdata, ...) {
   }
 
   pred <- xgboost::predict(model, as.matrix(rep_nom_attr(newdata)), ...)
+  classes <- as.numeric(pred >= 0.5)
   data.frame(
-    prediction = as.numeric(pred >= 0.5),
-    probability = pred,
+    prediction = classes,
+    probability = ifelse(classes == 1, pred, 1 - pred),
     row.names = rownames(newdata)
   )
 }

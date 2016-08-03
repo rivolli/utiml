@@ -62,9 +62,12 @@ br <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
   # Create models
   labels <- utiml_rename(brmodel$labels)
   brmodel$models <- utiml_lapply(labels, function (label) {
-    brdata <- utiml_create_binary_data(mdata, label)
-    object <- utiml_prepare_data(brdata, "mldBR", mdata$name, "br", base.method)
-    utiml_create_model(object, ...)
+    utiml_create_model(
+      utiml_prepare_data(
+        utiml_create_binary_data(mdata, label),
+        "mldBR", mdata$name, "br", base.method
+      ), ...
+    )
   }, cores, seed)
 
   utiml_restore_seed()

@@ -76,12 +76,14 @@ cc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   for (i in seq(ncol(labeldata))) {
     labeldata[, i] <- factor(labeldata[, i], levels=c(0, 1))
   }
+
   chain.order <- utiml_rename(seq(mdata$measures$num.labels), chain)
   ccmodel$models <- utiml_lapply(chain.order, function(lidx) {
-    data <- cbind(basedata, labeldata[seq(lidx)])
-    dataset <- utiml_prepare_data(data, "mldCC", mdata$name, "cc", base.method,
-                               chain.order = lidx)
-    utiml_create_model(dataset, ...)
+    utiml_create_model(
+      utiml_prepare_data(
+        cbind(basedata, labeldata[seq(lidx)]),
+        "mldCC", mdata$name, "cc", base.method, chain.order = lidx
+      ), ...)
   }, cores, seed)
 
   utiml_restore_seed()

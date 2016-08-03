@@ -105,6 +105,8 @@ ebr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
     brmodel <- br(ndata, base.method, ..., cores = cores, seed = seed)
     brmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
+    rm(ndata)
+
     brmodel
   })
 

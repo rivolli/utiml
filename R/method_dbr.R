@@ -72,11 +72,12 @@ dbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
   labels <- utiml_rename(seq(dbrmodel$labels), dbrmodel$labels)
   dbrmodel$models <- utiml_lapply(labels, function(li) {
-    dbrdata <- utiml_create_binary_data(mdata, dbrmodel$labels[li],
-                                        labeldata[-li])
-    dataset <- utiml_prepare_data(dbrdata, "mldDBR", mdata$name, "dbr",
-                                  base.method)
-    utiml_create_model(dataset, ...)
+    utiml_create_model(
+      utiml_prepare_data(
+        utiml_create_binary_data(mdata, dbrmodel$labels[li], labeldata[-li]),
+        "mldDBR", mdata$name, "dbr", base.method
+      ), ...
+    )
   }, cores, seed)
 
   utiml_restore_seed()
