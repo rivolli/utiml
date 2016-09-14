@@ -90,7 +90,7 @@ ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
                       c(list(model = model, newdata = basedata),
                         predict.params))
 
-    basedata <- cbind(basedata, result$bipartition)
+    basedata <- cbind(basedata, factor(result$bipartition, levels=c(0, 1)))
     names(basedata)[ncol(basedata)] <- label
 
     nsmodel$models[[label]] <- model
@@ -153,13 +153,14 @@ predict.NSmodel <- function(object, newdata,
     predictions[[label]] <- utiml_predict_binary_model(object$models[[label]],
                                                        newdata,
                                                        ...)
-    newdata <- cbind(newdata, predictions[[label]]$bipartition)
+
+    newdata <- cbind(newdata, factor(predictions[[label]]$bipartition, levels=c(0, 1)))
     names(newdata)[ncol(newdata)] <- label
   }
 
   utiml_restore_seed()
   subset_correction(utiml_predict(predictions[object$labels], probability),
-                    object$labelsets, 0.5, probability)
+                    object$labelsets, probability)
 }
 
 #' Print NS model

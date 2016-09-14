@@ -156,16 +156,7 @@ test_that("SCut threshold", {
 })
 
 test_that("Subset correction", {
-  prediction <- subset_correction(mlresult, as.bipartition(mlresult),
-                                  base.threshold = 0.5)
+  prediction <- subset_correction(mlresult, as.bipartition(mlresult))
   expect_is(prediction, "mlresult")
-  scores <- as.probability(prediction)
-  expect_equal(scores[, 1], result[, 1])
-  expect_equal(scores[, 2], result[, 2])
-  expect_gt(scores[2, 3], 0.5)
-  expect_gt(scores[2, 3], result[2, 3])
-  expect_gt(scores[2, 3], result[3, 3])
-  expect_gt(scores[2, 3], result[5, 3])
-  expect_lt(scores[2, 3], result[1, 3])
-  expect_lt(scores[2, 3], result[4, 3])
+  expect_equal(as.probability(prediction), as.probability(mlresult))
 })
