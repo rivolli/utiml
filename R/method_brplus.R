@@ -64,7 +64,7 @@ brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
   brpmodel$initial <- br(mdata, base.method, ..., cores = cores, seed = seed)
 
-  labeldata <- mdata$dataset[mdata$labels$index]
+  labeldata <- as.data.frame(mdata$dataset[mdata$labels$index])
   labels <- utiml_rename(seq(mdata$measures$num.labels), brpmodel$labels)
   brpmodel$models <- utiml_lapply(labels, function(li) {
     basedata <- utiml_create_binary_data(mdata, brpmodel$labels[li],
@@ -161,12 +161,7 @@ predict.BRPmodel <- function(object, newdata,
     stop("First argument must be an BRPmodel object")
   }
 
-  strategy <- strategy[1]
-  strategies <- c("Dyn", "Stat", "Ord", "NU")
-  if (!strategy %in% strategies) {
-    stop(paste("Strategy value must be '",
-               paste(strategies, collapse = "' or '"), "'", sep = ""))
-  }
+  strategy <- match.arg(strategy)
 
   labels <- object$labels
   if (strategy == "Ord") {
@@ -185,32 +180,35 @@ predict.BRPmodel <- function(object, newdata,
   }
 
   newdata <- utiml_newdata(newdata)
-
+  initial.preds <- predict.BRmodel(object$initial, newdata, probability=FALSE,
+                                   ..., cores=cores, seed=seed)
+  labeldata <- as.bipartition(initial.preds)
+  for (i in seq(ncol(labeldata))) {
+    labeldata[, i] <- factor(labeldata[, i], levels=c(0, 1))
+  }
   if (strategy == "NU") {
-    initial.preds <- as.bipartition(predict.BRmodel(object$initial, newdata,
-                             probability=FALSE, ..., cores=cores, seed=seed))
     indices <- utiml_rename(seq_along(labels), labels)
     predictions <- utiml_lapply(indices, function(li) {
       utiml_predict_binary_model(object$models[[li]],
-                                 cbind(newdata, initial.preds[, -li]),
-                                 ...)
+                                 cbind(newdata, labeldata[, -li]), ...)
     }, cores, seed)
   }
   else {
-    initial.preds <- as.bipartition(predict.BRmodel(object$initial, newdata,
-                                probability=FALSE, ..., cores=cores, seed=seed))
-    orders <- list(Dyn = names(sort(apply(initial.preds, 2, mean))),
-                   Stat = names(object$freq),
-                   Ord = order)
+    order <- switch (strategy,
+      Dyn = names(sort(apply(as.probability(initial.preds), 2, mean))),
+      Stat = names(object$freq),
+      Ord = order
+    )
 
     predictions <- list()
-    for (labelname in orders[[strategy]]) {
+    for (labelname in order) {
       other.labels <- !labels %in% labelname
       model <- object$models[[labelname]]
 
-      data <- cbind(newdata, initial.preds[, other.labels, drop = FALSE])
+      data <- cbind(newdata, labeldata[, other.labels, drop = FALSE])
       predictions[[labelname]] <- utiml_predict_binary_model(model, data, ...)
-      initial.preds[, labelname] <- predictions[[labelname]]$bipartition
+      labeldata[, labelname] <- factor(predictions[[labelname]]$bipartition,
+                                       levels=c(0, 1))
     }
   }
 

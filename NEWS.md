@@ -1,12 +1,11 @@
 # Changelog
 
-## utiml 0.1.1.9015
-
+## utiml 0.1.1.9016
 Development version (only available via github install)
 
 ### Major changes
 * lcard threshold calibration
-* Use categorical attributes in multilabel datasets
+* Use categorical attributes in multilabel datasets and methods
 
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples
