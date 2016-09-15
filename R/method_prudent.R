@@ -77,21 +77,30 @@ prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     # 1 Iteration - Base Level
     basemodel = br(mdata, base.method, ..., cores = cores, seed = seed)
   )
-  base.preds <- as.matrix(mdata$dataset[mdata$labels$index])
+
+  labeldata <- as.data.frame(mdata$dataset[mdata$labels$index])
+  for (i in seq(ncol(labeldata))) {
+    labeldata[, i] <- factor(labeldata[, i], levels=c(0, 1))
+  }
+  #base.preds <- as.matrix(mdata$dataset[mdata$labels$index])
 
   # 2 Iteration - Meta level
-  IG <- pdmodel$IG
+  IG <- matrix(pdmodel$IG >= phi,
+               ncol = ncol(pdmodel$IG), dimnames = dimnames(pdmodel$IG))
+
   labels <- utiml_rename(pdmodel$labels)
   pdmodel$metamodels <- utiml_lapply(labels, function(label) {
-    extracols <- base.preds[, colnames(IG)[IG[label, ] >= phi], drop = FALSE]
+    mmodel <- NULL
+    extracols <- labeldata[, which(IG[label,]), drop = FALSE]
     if (ncol(extracols) > 0) {
       nmcol <- paste("extra", colnames(extracols), sep = ".")
       colnames(extracols) <- nmcol
       base <- utiml_create_binary_data(mdata, label, extracols)
       dataset <- utiml_prepare_data(base, "mldPruDent", mdata$name, "prudent",
                                     base.method, new.features = nmcol)
-      utiml_create_model(dataset, ...)
+      mmodel <- utiml_create_model(dataset, ...)
     }
+    mmodel
   }, cores, seed)
 
   utiml_restore_seed()
@@ -152,13 +161,18 @@ predict.PruDentmodel <- function(object, newdata,
   base.scores <- predict.BRmodel(object$basemodel, newdata, TRUE, ...,
                                  cores=cores, seed=seed)
   base.preds <- as.bipartition(base.scores)
+  labeldata <- as.data.frame(base.preds)
+  for (i in seq(ncol(labeldata))) {
+    labeldata[,i] <- factor(labeldata[,i], levels=c(0, 1))
+  }
 
   # 2 Iteration - Meta level
-  corr <- object$IG
+  IG <- matrix(object$IG >= object$phi,
+               ncol = ncol(object$IG), dimnames = dimnames(object$IG))
+
   labels <- utiml_rename(object$labels)
   predictions <- utiml_lapply(labels, function(labelname) {
-    corr.lbs <- colnames(corr)[corr[labelname, ] >= object$phi]
-    extracols <- base.preds[, corr.lbs, drop = FALSE]
+    extracols <- labeldata[, which(IG[labelname,]), drop = FALSE]
     if (ncol(extracols) > 0) {
       colnames(extracols) <- paste("extra", colnames(extracols), sep = ".")
       utiml_predict_binary_model(object$metamodels[[labelname]],
@@ -169,26 +183,14 @@ predict.PruDentmodel <- function(object, newdata,
     }
   }, cores, seed)
 
-  original <- predictions
   # Choosing the Final Classification
   for (i in seq(predictions)) {
-    indexes <- predictions[[i]]$bipartition == 1 | base.preds[, i] == 1
+    scores <- cbind(base = base.scores[,i],
+                    meta = predictions[[i]]$probability)
+    baseinst <- apply(abs(0.5 - scores), 1, which.max) == 1
 
-    # Positive scores
-    predictions[[i]]$probability[indexes] <- unlist(lapply(which(indexes),
-                                                           function(j) {
-      max(predictions[[i]]$probability[j], base.scores[j, i])
-    }))
-
-    # Negative scores
-    predictions[[i]]$probability[!indexes] <- unlist(lapply(which(!indexes),
-                                                            function(j) {
-      min(predictions[[i]]$probability[j], base.scores[j, i])
-    }))
-
-    predictions[[i]]$bipartition <- as.numeric(predictions[[i]]$probability >=
-                                                 0.5)
-    names(predictions[[i]]$bipartition) <- names(predictions[[i]]$probability)
+    predictions[[i]]$probability[baseinst] <- base.scores[baseinst, i]
+    predictions[[i]]$bipartition[baseinst] <- base.preds[baseinst, i]
   }
 
   utiml_restore_seed()
@@ -205,17 +207,17 @@ predict.PruDentmodel <- function(object, newdata,
 #'   and Data Engineering, 27(9), 2480-2493.
 utiml_labels_IG <- function (mdata) {
   entropy <- function (prob) {
-    res <- c(0, -prob * log2(prob) - (1 - prob) * log2(1 - prob))
-    zero <- prob == 0 || prob == 1
-    res[c(zero, !zero)]
+    prob0 <- 1 - prob
+    ifelse(prob == 0 || prob == 1,
+           0, -prob * log2(prob) - prob0 * log2(prob0))
   }
 
   labelnames <- rownames(mdata$labels)
   classes <- mdata$dataset[,mdata$labels$index]
   q <- length(labelnames)
   ig <- matrix(nrow = q, ncol = q, dimnames = list(labelnames, labelnames))
-  for (i in 1:q) {
-    for (j in i:q) {
+  for (i in seq(q)) {
+    for (j in seq(q)) {
       Hya <- entropy(mdata$labels$freq[i])
       hasJ <- classes[j] == 1
       Hyab <- mdata$labels$freq[j] *

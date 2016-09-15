@@ -210,6 +210,9 @@ test_that("Prudent", {
   #TODO pred <- baseTest(model, "PruDentmodel")
 
   expect_error(prudent(train, "RANDOM", phi=1.1))
+
+  #utiml_labels_IG
+
 })
 
 test_that("RDBR", {
