@@ -87,7 +87,7 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   }
 
   if (validation.size < 0.1 || validation.size > 0.5) {
-    stop("The validation size must be between 0.1 and 0.6")
+    stop("The validation size must be between 0.1 and 0.5")
   }
 
   if (validation.threshold < 0 || validation.threshold > 1) {
@@ -130,21 +130,23 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
   # Step2 - Identify close-related labels within Yc using feature selection
   #         technique (6-10)
-  classes <- mdata$dataset[mdata$labels$index][, Yc]
+  classes <- mdata$dataset[Yc]
   labels <- utiml_rename(rownames(mdata$labels))
   ctrlmodel$R <- Rj <- utiml_lapply(labels, function(labelname) {
-    formula <- stats::as.formula(paste("`", labelname, "` ~ .", sep = ""))
-    cor.labels <- unique(c(Yc, labelname))
-    Aj <- mdata$dataset[, mdata$labels$index, drop = F][, cor.labels, drop = F]
+    Aj <- mdata$dataset[, unique(c(Yc, labelname)), drop = F]
     if (ncol(Aj) > 1) {
+      formula <- stats::as.formula(paste("`", labelname, "` ~ .", sep = ""))
       weights <- FSelector::relief(formula, Aj)
       FSelector::cutoff.k(weights, m)
     }
   }, cores, seed)
 
   # Build models (11-17)
-  labeldata <- as.data.frame(apply(mdata$dataset[,mdata$labels$index], 2,
-                                   factor, levels=c(0,1)))
+  labeldata <- as.data.frame(mdata$dataset[mdata$labels$index])
+  for (i in seq(ncol(labeldata))) {
+    labeldata[, i] <- factor(labeldata[, i], levels=c(0, 1))
+  }
+
   D <- mdata$dataset[mdata$attributesIndexes]
   ctrlmodel$models <- utiml_lapply(labels, function(labelname) {
     data  <- utiml_create_binary_data(mdata, labelname)
