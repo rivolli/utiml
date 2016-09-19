@@ -156,18 +156,20 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
   modelsindex <- utiml_rename(seq(labels), labels)
   if (batch.mode) {
     for (i in seq(max.iterations)) {
+      old.estimative <- estimative
       predictions <- utiml_lapply(modelsindex, function(li) {
         utiml_predict_binary_model(object$models[[li]],
                                    cbind(newdata, estimative[, -li]), ...)
       }, cores, seed)
 
-      new.estimative <- do.call(cbind, lapply(predictions, function(lbl) {
-        factor(lbl$bipartition, levels=c(0,1))
-      }))
-      if (all(new.estimative == estimative)) {
+      for (j in seq(predictions)) {
+        classes <- predictions[[j]]$bipartition
+        estimative[, j] <- factor(classes, levels=c(0, 1))
+      }
+
+      if (all(old.estimative == estimative)) {
         break
       }
-      estimative <- new.estimative
     }
   }
   else {
@@ -176,12 +178,13 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
       predictions <- list()
 
       # the labels needs to be shuffled in each iteraction
-      for (li in modelsindex) {
+      for (li in sample(modelsindex)) {
         predictions[[li]] <- utiml_predict_binary_model(object$models[[li]],
                                               cbind(newdata, estimative[, -li]),
                                               ...)
         estimative[, li] <- factor(predictions[[li]]$bipartition, levels=c(0,1))
       }
+
       names(predictions) <- labels
       if (all(old.estimative == estimative)) {
         break
