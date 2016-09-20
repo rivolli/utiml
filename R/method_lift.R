@@ -27,7 +27,7 @@
 #' @references
 #'  Zhang, M.-L., & Wu, L. (2015). Lift: Multi-Label Learning with
 #'  Label-Specific Features. IEEE Transactions on Pattern Analysis and Machine
-#'  Intelligence, 37(1), 107–120.
+#'  Intelligence, 37(1), 107-120.
 #' @export
 #'
 #' @examples
@@ -83,7 +83,7 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
       instance <- mdata$dataset[inst, ]
       instancedata <- instance[mdata$attributesIndexes]
       ninst <- apply(centroids, 1, function (group) {
-        dist(rbind(group, instancedata))
+        stats::dist(rbind(group, instancedata))
       })
       data.frame(c(ninst, instance[label]))
     }))
@@ -158,7 +158,7 @@ predict.LIFTmodel <- function(object, newdata,
     dataset <- do.call(rbind, lapply(rows, function (inst){
       instancedata <- newdata[inst, ]
       apply(centroids, 1, function (group) {
-        dist(rbind(group, instancedata))
+        stats::dist(rbind(group, instancedata))
       })
     }))
     rownames(dataset) <- rownames(newdata)

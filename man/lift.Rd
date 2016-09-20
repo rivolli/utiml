@@ -54,7 +54,7 @@ model <- lift(toyml, "RF", 0.15)
 \references{
 Zhang, M.-L., & Wu, L. (2015). Lift: Multi-Label Learning with
  Label-Specific Features. IEEE Transactions on Pattern Analysis and Machine
- Intelligence, 37(1), 107–120.
+ Intelligence, 37(1), 107-120.
 }
 \seealso{
 Other Transformation methods: \code{\link{brplus}},
