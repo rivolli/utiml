@@ -174,3 +174,11 @@ test_that("RDBR Test", {
   testPredictMethod(method=rdbr, name=name)
   testSeedEffectMethod(method=rdbr, name=name)
 })
+
+test_that("LIFT", {
+  skip_on_cran()
+  name <- "LIFT"
+  testTrainMethod(method=lift, name=name)
+  testPredictMethod(method=lift, name=name)
+  testSeedEffectMethod(method=lift, name=name)
+})

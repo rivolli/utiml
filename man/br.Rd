@@ -61,8 +61,8 @@ Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
 \seealso{
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{cc}}, \code{\link{ctrl}}, \code{\link{dbr}},
-  \code{\link{ebr}}, \code{\link{ecc}}, \code{\link{mbr}},
-  \code{\link{ns}}, \code{\link{prudent}},
-  \code{\link{rdbr}}
+  \code{\link{ebr}}, \code{\link{ecc}}, \code{\link{lift}},
+  \code{\link{mbr}}, \code{\link{ns}},
+  \code{\link{prudent}}, \code{\link{rdbr}}
 }
 

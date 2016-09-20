@@ -86,7 +86,7 @@ Other Stacking methods: \code{\link{brplus}}
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
   \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{ns}}, \code{\link{prudent}},
-  \code{\link{rdbr}}
+  \code{\link{lift}}, \code{\link{ns}},
+  \code{\link{prudent}}, \code{\link{rdbr}}
 }
 

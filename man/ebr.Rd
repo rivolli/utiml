@@ -84,8 +84,8 @@ Other Ensemble methods: \code{\link{ecc}}
 
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
-  \code{\link{dbr}}, \code{\link{ecc}}, \code{\link{mbr}},
-  \code{\link{ns}}, \code{\link{prudent}},
-  \code{\link{rdbr}}
+  \code{\link{dbr}}, \code{\link{ecc}}, \code{\link{lift}},
+  \code{\link{mbr}}, \code{\link{ns}},
+  \code{\link{prudent}}, \code{\link{rdbr}}
 }
 

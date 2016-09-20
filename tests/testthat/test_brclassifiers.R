@@ -227,3 +227,10 @@ test_that("RDBR", {
   model <- dbr(train, "RANDOM", estimate = FALSE)
   expect_error(predict(model, test))
 })
+
+
+test_that("LIFT", {
+  model <- lift(train, "RANDOM")
+  baseTest(model, "LIFTmodel")
+})
+
