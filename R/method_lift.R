@@ -54,6 +54,7 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     stop("The attribbute ratio must be between 0 and 1")
   }
 
+  #TODO parametrize clustering and distance method
   utiml_preserve_seed()
 
   # LIFT Model class
@@ -61,6 +62,7 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
                     ratio = ratio, call = match.call())
 
   # Create models
+  mldataset <- rep_nom_attr(mdata$dataset[mdata$attributesIndexes], TRUE)
   labels <- utiml_rename(liftmodel$labels)
   liftdata <- utiml_lapply(labels, function (label) {
     #Form Pk and Nk based on D according to Eq.(1)
@@ -70,8 +72,8 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     #Perform k-means on Pk and Nk, each with mk clusters as defined in Eq.(2)
     mk <- ceiling(ratio * min(sum(Pk), sum(Nk)))
 
-    gpk <- stats::kmeans(mdata$dataset[Pk, mdata$attributesIndexes], mk)
-    gnk <- stats::kmeans(mdata$dataset[Nk, mdata$attributesIndexes], mk)
+    gpk <- stats::kmeans(mldataset[Pk, ], mk)
+    gnk <- stats::kmeans(mldataset[Nk, ], mk)
 
     centroids <- rbind(gpk$centers, gnk$centers)
     rownames(centroids) <- c(paste("p", rownames(gpk$centers), sep=''),
@@ -80,12 +82,11 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     #Create the mapping φk for lk according to Eq.(3);
     rows <- seq(mdata$measures$num.instances)
     dataset <- do.call(rbind, lapply(rows, function (inst){
-      instance <- mdata$dataset[inst, ]
-      instancedata <- instance[mdata$attributesIndexes]
+      instancedata <- mldataset[inst, ]
       ninst <- apply(centroids, 1, function (group) {
         stats::dist(rbind(group, instancedata))
       })
-      data.frame(c(ninst, instance[label]))
+      cbind.data.frame(t(ninst), mdata$dataset[inst, label, drop=FALSE])
     }))
 
     #Induce the model using the base algorithm
@@ -139,8 +140,8 @@ predict.LIFTmodel <- function(object, newdata,
                             ..., cores = getOption("utiml.cores", 1),
                             seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "LIFTmodel") {
-    stop("First argument must be an BRmodel object")
+  if (class(object) != "LIFTmodel" && class(object) != "MLDFLmodel") {
+    stop("First argument must be an LIFTmodel/MLDFLmodel object")
   }
 
   if (cores < 1) {
@@ -150,7 +151,7 @@ predict.LIFTmodel <- function(object, newdata,
   utiml_preserve_seed()
 
   # Predict models
-  newdata <- utiml_newdata(newdata)
+  newdata <- rep_nom_attr(utiml_newdata(newdata), TRUE)
   labels <- utiml_rename(object$labels)
   predictions <- utiml_lapply(labels, function (label) {
     centroids <- object$centroids[[label]]
@@ -170,8 +171,8 @@ predict.LIFTmodel <- function(object, newdata,
   utiml_predict(predictions, probability)
 }
 
-#' Print BR model
-#' @param x The br model
+#' Print LIFT model
+#' @param x The lift model
 #' @param ... ignored
 #' @export
 print.LIFTmodel <- function(x, ...) {

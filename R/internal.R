@@ -98,7 +98,7 @@ utiml_newdata.default <- function(newdata) {
 
 #' @describeIn utiml_newdata Return the dataset from the mldr dataset
 utiml_newdata.mldr <- function(newdata) {
-  newdata$dataset[, newdata$attributesIndexes]
+  newdata$dataset[newdata$attributesIndexes]
 }
 
 #' Preserve current seed
