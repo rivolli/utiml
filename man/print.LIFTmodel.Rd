@@ -2,16 +2,16 @@
 % Please edit documentation in R/method_lift.R
 \name{print.LIFTmodel}
 \alias{print.LIFTmodel}
-\title{Print BR model}
+\title{Print LIFT model}
 \usage{
 \method{print}{LIFTmodel}(x, ...)
 }
 \arguments{
-\item{x}{The br model}
+\item{x}{The lift model}
 
 \item{...}{ignored}
 }
 \description{
-Print BR model
+Print LIFT model
 }
 

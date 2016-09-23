@@ -74,20 +74,14 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
     gpk <- stats::kmeans(mldataset[Pk, ], mk)
     gnk <- stats::kmeans(mldataset[Nk, ], mk)
-
     centroids <- rbind(gpk$centers, gnk$centers)
     rownames(centroids) <- c(paste("p", rownames(gpk$centers), sep=''),
                              paste("n", rownames(gnk$centers), sep=''))
 
     #Create the mapping φk for lk according to Eq.(3);
-    rows <- seq(mdata$measures$num.instances)
-    dataset <- do.call(rbind, lapply(rows, function (inst){
-      instancedata <- mldataset[inst, ]
-      ninst <- apply(centroids, 1, function (group) {
-        stats::dist(rbind(group, instancedata))
-      })
-      cbind.data.frame(t(ninst), mdata$dataset[inst, label, drop=FALSE])
-    }))
+    dataset <- cbind(utiml_euclidean_distance(mldataset, centroids),
+                     mdata$dataset[label])
+    colnames(dataset) <-  c(rownames(centroids), label)
 
     #Induce the model using the base algorithm
     model <- utiml_create_model(
@@ -155,13 +149,8 @@ predict.LIFTmodel <- function(object, newdata,
   labels <- utiml_rename(object$labels)
   predictions <- utiml_lapply(labels, function (label) {
     centroids <- object$centroids[[label]]
-    rows <- seq(nrow(newdata))
-    dataset <- do.call(rbind, lapply(rows, function (inst){
-      instancedata <- newdata[inst, ]
-      apply(centroids, 1, function (group) {
-        stats::dist(rbind(group, instancedata))
-      })
-    }))
+    dataset <- utiml_euclidean_distance(newdata, centroids)
+    colnames(dataset) <- rownames(centroids)
     rownames(dataset) <- rownames(newdata)
     utiml_predict_binary_model(object$models[[label]], dataset, ...)
   }, cores, seed)
@@ -184,4 +173,10 @@ print.LIFTmodel <- function(x, ...) {
                                   attrs=unlist(lapply(x$centroids, nrow))))
   rownames(overview) <- NULL
   print(overview)
+}
+
+# Calculate the euclidian distance for two sets of data
+utiml_euclidean_distance <- function(x, y) {
+  x <- t(x)
+  apply(y, 1, function (row) sqrt(colSums((x - row) ^ 2)))
 }
