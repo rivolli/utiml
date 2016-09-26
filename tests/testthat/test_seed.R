@@ -182,3 +182,11 @@ test_that("LIFT", {
   testPredictMethod(method=lift, name=name)
   testSeedEffectMethod(method=lift, name=name)
 })
+
+test_that("RPC", {
+  skip_on_cran()
+  name <- "RPC"
+  testTrainMethod(method=rpc, name=name)
+  testPredictMethod(method=rpc, name=name)
+  testSeedEffectMethod(method=rpc, name=name)
+})

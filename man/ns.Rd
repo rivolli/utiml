@@ -70,6 +70,7 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
   \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
   \code{\link{lift}}, \code{\link{mbr}},
-  \code{\link{prudent}}, \code{\link{rdbr}}
+  \code{\link{prudent}}, \code{\link{rdbr}},
+  \code{\link{rpc}}
 }
 

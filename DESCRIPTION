@@ -1,8 +1,8 @@
 Package: utiml
 Type: Package
 Title: Utilities for Multi-Label Learning
-Version: 0.1.1.9021
-Date: 2016-04-07
+Version: 0.1.1.9022
+Date: 2016-09-26
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
 Description: Multi-label learning methods and others utilities to support multi-
@@ -12,7 +12,8 @@ Depends:
     R (>= 3.0.0),
     mldr(>= 0.3.22)
 Imports:
-    stats
+    stats,
+    utils
 Suggests:
     C50,
     e1071,

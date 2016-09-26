@@ -148,3 +148,18 @@ test_that("create binary data", {
   expect_equal(dataset[c("a", "b")], as.data.frame(extra.columns))
   expect_equal(dataset["y4"], toyml$dataset["y4"])
 })
+
+test_that("create pairwise data", {
+  dataset <- utiml_create_pairwise_data(toyml, "y1", "y2")
+  expect_equal(ncol(dataset), toyml$measures$num.inputs + 1)
+  filter <- (toyml$dataset$y1 == 1 & toyml$dataset$y2 == 0) |
+    (toyml$dataset$y1 == 0 & toyml$dataset$y2 == 1)
+  expect_equal(dataset[seq(toyml$measures$num.inputs)],
+               toyml$dataset[filter, toyml$attributesIndexes])
+  expect_equal(dataset["y1"], toyml$dataset[filter, "y1", drop=FALSE])
+
+  dataset2 <- utiml_create_pairwise_data(toyml, "y2", "y1")
+  expect_equal(dataset[seq(toyml$measures$num.inputs)],
+               dataset2[seq(toyml$measures$num.inputs)])
+  expect_false(any(dataset["y1"] == dataset2["y2"]))
+})

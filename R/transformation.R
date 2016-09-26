@@ -15,6 +15,11 @@ utiml_create_binary_data <- function (mdata, label.name, extra.columns = NULL) {
   }
 }
 
+utiml_create_pairwise_data <- function (mdata, label1, label2) {
+  mdata$dataset[xor(mdata$dataset[label1], mdata$dataset[label2]),
+                c(mdata$attributesIndexes,mdata$labels[label1, "index"])]
+}
+
 utiml_create_model <- function(utiml.object, ...) {
   labelinfo <- table(utiml.object$data[utiml.object$labelname])
   if (any(labelinfo < 2) | length(labelinfo) < 2) {
