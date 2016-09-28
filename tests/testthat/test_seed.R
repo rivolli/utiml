@@ -198,3 +198,11 @@ test_that("CLR", {
   testPredictMethod(method=clr, name=name)
   testSeedEffectMethod(method=clr, name=name)
 })
+
+test_that("LP", {
+  skip_on_cran()
+  name <- "LP"
+  testTrainMethod(method=lp, name=name)
+  testPredictMethod(method=lp, name=name)
+  testSeedEffectMethod(method=lp, name=name)
+})

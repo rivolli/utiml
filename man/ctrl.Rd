@@ -95,8 +95,8 @@ Li, Y., & Zhang, M. (2014). Enhancing Binary Relevance for Multi-label
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{lift}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{prudent}}, \code{\link{rdbr}},
-  \code{\link{rpc}}
+  \code{\link{lift}}, \code{\link{lp}}, \code{\link{mbr}},
+  \code{\link{ns}}, \code{\link{prudent}},
+  \code{\link{rdbr}}, \code{\link{rpc}}
 }
 

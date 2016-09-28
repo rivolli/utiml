@@ -359,7 +359,14 @@ mlpredict.randomForest <- function(model, newdata, ...) {
 mltrain.baseNB <- function(object, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
     formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
-    model <- e1071::naiveBayes(formula, object$data, type = "raw", ...)
+
+    #Avoid error because there are only one positive instance
+    duplicate <- any(table(object$data[,object$labelname]) == 1)
+    model <- e1071::naiveBayes(formula, rbind(object$data,
+                                              utiml_ifelse(duplicate,
+                                                           object$data,
+                                                           NULL)),
+                               type = "raw", ...)
   }
   else {
     stop(paste("There are no installed package 'e1071' to use naiveBayes",

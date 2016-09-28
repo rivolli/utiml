@@ -20,9 +20,17 @@ utiml_create_pairwise_data <- function (mdata, label1, label2) {
                 c(mdata$attributesIndexes,mdata$labels[label1, "index"])]
 }
 
+utiml_create_lp_data <- function (mdata) {
+  cbind(mdata$dataset[mdata$attributesIndexes],
+        classlp=factor(apply(mdata$dataset[mdata$labels$index], 1, paste,
+                             collapse="")))
+}
+
 utiml_create_model <- function(utiml.object, ...) {
   labelinfo <- table(utiml.object$data[utiml.object$labelname])
-  if (any(labelinfo < 2) | length(labelinfo) < 2) {
+
+  #if ((any(labelinfo < 2) & length(labelinfo) == 2) | length(labelinfo) < 2) {
+  if (any(labelinfo < 1) | length(labelinfo) < 2) {
     #There are no sufficient examples to train (create a empty model)
     model <- list()
     class(model) <- "emptyModel"
@@ -66,6 +74,21 @@ utiml_predict_binary_model <- function(model, newdata, ...) {
 
   names(bipartition) <- names(probability) <- rownames(result)
   utiml_binary_prediction(bipartition, probability)
+}
+
+utiml_predict_multiclass_model <- function (model, newdata, labels, probability,
+                                            ...) {
+  result <- do.call(mlpredict, c(list(model = model, newdata = newdata), ...))
+  classes <- do.call(rbind, lapply(
+    strsplit(as.character(result$prediction),""), as.numeric)
+  )
+  dimnames(classes) <- list(rownames(newdata), labels)
+
+  probs <- apply(classes, 2, function (col) {
+    ifelse(col == 1, result$probability, 0)
+  })
+
+  multilabel_prediction(classes, probs, probability)
 }
 
 utiml_prepare_data <- function(dataset, classname, mldataset, mlmethod,

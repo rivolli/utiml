@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9023
+## utiml 0.1.1.9024
 Development version (only available via github install)
 
 ### Major changes
@@ -9,6 +9,7 @@ Development version (only available via github install)
 * LIFT multi-label classification method
 * RPC multi-label classification method
 * CRL multi-label classification method
+* LP multi-label classification method
 
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples

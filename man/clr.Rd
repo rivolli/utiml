@@ -27,7 +27,8 @@ An object of class \code{RPCmodel} containing the set of fitted
   models, including:
   \describe{
    \item{labels}{A vector with the label names.}
-   \item{models}{A list of the generated models, named by the label names.}
+   \item{rpcmodel}{A RPC model.}
+   \item{brmodel}{A BR model used to calibrated the labels.}
   }
 }
 \description{
@@ -59,8 +60,8 @@ Other Pairwise methods: \code{\link{rpc}}
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
   \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{lift}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{prudent}}, \code{\link{rdbr}},
-  \code{\link{rpc}}
+  \code{\link{lift}}, \code{\link{lp}}, \code{\link{mbr}},
+  \code{\link{ns}}, \code{\link{prudent}},
+  \code{\link{rdbr}}, \code{\link{rpc}}
 }
 

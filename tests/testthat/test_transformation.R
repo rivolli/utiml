@@ -123,6 +123,27 @@ test_that("create model and predict binary model", {
   expect_false(all(predict2$probability == predict3$probability))
 })
 
+test_that("create model and predict multi-class model", {
+  set.seed(123)
+  mydata <- data.frame(
+    attr = runif(10, min = 0, max = 1),
+    classlp = factor(sample(c("10", "01", "11"), 10, TRUE),
+                    levels = c("10", "01", "11")),
+    row.names = seq(1, to = 20, by = 2)
+  )
+  dataset <- utiml_prepare_data(mydata, "testdata", "mlds", "lp", "RANDOM")
+  model <- utiml_create_model(dataset)
+  expect_equal(attr(model, "label"), "classlp")
+  expect_equal(attr(model, "dataset"), "mlds")
+
+  set.seed(123)
+  predict1 <- utiml_predict_multiclass_model(model, mydata[, 1, drop = FALSE],
+                                             c("zero", "um"), TRUE)
+  expect_is(predict1, "mlresult")
+  rows <- apply(predict1>0, 1, all)
+  expect_equal(predict1[rows, 1], predict1[rows, 2])
+})
+
 test_that("create binary data", {
   dataset <- utiml_create_binary_data(toyml, "y1")
   expect_equal(ncol(dataset), toyml$measures$num.inputs + 1)
@@ -162,4 +183,20 @@ test_that("create pairwise data", {
   expect_equal(dataset[seq(toyml$measures$num.inputs)],
                dataset2[seq(toyml$measures$num.inputs)])
   expect_false(any(dataset["y1"] == dataset2["y2"]))
+})
+
+
+test_that("create lp data", {
+  dataset <- utiml_create_lp_data(toyml)
+  expect_equal(ncol(dataset), toyml$measures$num.inputs + 1)
+  expect_true(is.factor(dataset$classlp))
+
+  label.vals <- do.call(rbind, lapply(lapply(as.character(dataset$classlp),
+                                        strsplit, split=''),
+                                 function(x) as.numeric(unlist(x))))
+  expect_equal(toyml$dataset$y1, label.vals[,1])
+  expect_equal(toyml$dataset$y2, label.vals[,2])
+  expect_equal(toyml$dataset$y3, label.vals[,3])
+  expect_equal(toyml$dataset$y4, label.vals[,4])
+  expect_equal(toyml$dataset$y5, label.vals[,5])
 })

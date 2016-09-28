@@ -21,7 +21,8 @@
 #'   models, including:
 #'   \describe{
 #'    \item{labels}{A vector with the label names.}
-#'    \item{models}{A list of the generated models, named by the label names.}
+#'    \item{rpcmodel}{A RPC model.}
+#'    \item{brmodel}{A BR model used to calibrated the labels.}
 #'   }
 #' @references
 #'  Brinker, K., Furnkranz, J., & Hullermeier, E. (2006). A unified model for
