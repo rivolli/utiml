@@ -63,9 +63,9 @@ Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
 \code{\link[=rdbr]{Recursive Dependent Binary Relevance}}
 
 Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
-  \code{\link{ebr}}, \code{\link{ecc}}, \code{\link{lift}},
-  \code{\link{mbr}}, \code{\link{ns}},
+  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
+  \code{\link{ctrl}}, \code{\link{ebr}}, \code{\link{ecc}},
+  \code{\link{lift}}, \code{\link{mbr}}, \code{\link{ns}},
   \code{\link{prudent}}, \code{\link{rdbr}},
   \code{\link{rpc}}
 }

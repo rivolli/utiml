@@ -58,9 +58,9 @@ Zhang, M.-L., & Wu, L. (2015). Lift: Multi-Label Learning with
 }
 \seealso{
 Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
-  \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{mbr}}, \code{\link{ns}},
+  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
+  \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
+  \code{\link{ecc}}, \code{\link{mbr}}, \code{\link{ns}},
   \code{\link{prudent}}, \code{\link{rdbr}},
   \code{\link{rpc}}
 }

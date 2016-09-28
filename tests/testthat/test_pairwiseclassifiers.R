@@ -31,3 +31,9 @@ test_that("RPC", {
   model <- rpc(train, "RANDOM")
   baseTest(model, "RPCmodel")
 })
+
+test_that("CLR", {
+  model <- clr(train, "RANDOM")
+  model$models <- c(model$rpcmodel$models, model$brmodel$models)
+  baseTest(model, "CLRmodel")
+})

@@ -2,7 +2,7 @@
 % Please edit documentation in R/method_rpc.R
 \name{rpc}
 \alias{rpc}
-\title{Ranking by pairwise comparison (RPC) for multi-label Classification}
+\title{Ranking by Pairwise Comparison (RPC) for multi-label Classification}
 \usage{
 rpc(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
   cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
@@ -51,10 +51,13 @@ Hullermeier, E., Furnkranz, J., Cheng, W., & Brinker, K. (2008).
  172(16-17), 1897-1916.
 }
 \seealso{
+Other Pairwise methods: \code{\link{clr}}
+
 Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
-  \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{lift}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{prudent}}, \code{\link{rdbr}}
+  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
+  \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
+  \code{\link{ecc}}, \code{\link{lift}}, \code{\link{mbr}},
+  \code{\link{ns}}, \code{\link{prudent}},
+  \code{\link{rdbr}}
 }
 

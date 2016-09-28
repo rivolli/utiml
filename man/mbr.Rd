@@ -84,9 +84,9 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
 Other Stacking methods: \code{\link{brplus}}
 
 Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
-  \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{lift}}, \code{\link{ns}},
+  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
+  \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
+  \code{\link{ecc}}, \code{\link{lift}}, \code{\link{ns}},
   \code{\link{prudent}}, \code{\link{rdbr}},
   \code{\link{rpc}}
 }

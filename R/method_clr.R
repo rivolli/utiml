@@ -1,10 +1,10 @@
-#' Ranking by Pairwise Comparison (RPC) for multi-label Classification
+#' Calibrated Label Ranking (CLR) for multi-label Classification
 #'
-#' Create a RPC model for multilabel classification.
+#' Create a CLR model for multilabel classification.
 #'
-#' RPC is a simple transformation method that uses pairwise classification to
-#' predict multi-label data. This is based on the one-versus-one approach to
-#' build a specific model for each label combination.
+#' CLR is an extension of label ranking that incorporates the calibrated
+#' scenario. The introduction of an artificial calibration label,
+#' separates the relevant from the irrelevant labels.
 #'
 #' @family Transformation methods
 #' @family Pairwise methods
@@ -24,18 +24,21 @@
 #'    \item{models}{A list of the generated models, named by the label names.}
 #'   }
 #' @references
-#'  Hullermeier, E., Furnkranz, J., Cheng, W., & Brinker, K. (2008).
-#'  Label ranking by learning pairwise preferences. Artificial Intelligence,
-#'  172(16-17), 1897-1916.
+#'  Brinker, K., Furnkranz, J., & Hullermeier, E. (2006). A unified model for
+#'    multilabel classification and ranking. In Proceeding of the ECAI 2006:
+#'    17th European Conference on Artificial Intelligence. p. 489-493.
+#'  Furnkranz, J., Hullermeier, E., Loza Mencia, E., & Brinker, K. (2008).
+#'    Multilabel classification via calibrated label ranking.
+#'    Machine Learning, 73(2), 133-153.
 #' @export
 #'
 #' @examples
-#' model <- rpc(toyml, "RANDOM")
+#' model <- clr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
 #' \dontrun{
 #' }
-rpc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
+clr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
                cores = getOption("utiml.cores", 1),
                seed = getOption("utiml.seed", NA)) {
   # Validations
@@ -47,36 +50,25 @@ rpc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
+  # CLR Model class
+  clrmodel <- list(labels = rownames(mdata$labels), call = match.call())
 
-  # RPC Model class
-  rpcmodel <- list(labels = rownames(mdata$labels), call = match.call())
+  # Create pairwise models
+  clrmodel$rpcmodel <- rpc(mdata, base.method, ..., cores=cores, seed=seed)
 
-  # Create models
-  labels <- utils::combn(rpcmodel$labels, 2, simplify=FALSE)
-  names(labels) <- unlist(lapply(labels, paste, collapse=','))
-  rpcmodel$models <- utiml_lapply(labels, function (pairwise) {
-    utiml_create_model(
-      utiml_prepare_data(
-        utiml_create_pairwise_data(mdata, pairwise[1], pairwise[2]),
-        "mldRPC", mdata$name, "rpc", base.method,
-        label1=pairwise[1], label2=pairwise[2]
-      ), ...
-    )
-  }, cores, seed)
+  # Create calibrated models
+  clrmodel$brmodel <- br(mdata, base.method, ..., cores=cores, seed=seed)
 
-  utiml_restore_seed()
-
-  class(rpcmodel) <- "RPCmodel"
-  rpcmodel
+  class(clrmodel) <- "CLRmodel"
+  clrmodel
 }
 
-#' Predict Method for RPC
+#' Predict Method for CLR
 #'
 #' This function predicts values based upon a model trained by
-#' \code{\link{rpc}}.
+#' \code{\link{clr}}.
 #'
-#' @param object Object of class '\code{RPCmodel}'.
+#' @param object Object of class '\code{CLRmodel}'.
 #' @param newdata An object containing the new input data. This must be a
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
@@ -93,18 +85,18 @@ rpc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
 #' @export
 #'
 #' @examples
-#' model <- rpc(toyml, "RANDOM")
+#' model <- clr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
 #' \dontrun{
 #' }
-predict.RPCmodel <- function(object, newdata,
+predict.CLRmodel <- function(object, newdata,
                             probability = getOption("utiml.use.probs", TRUE),
                             ..., cores = getOption("utiml.cores", 1),
                             seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "RPCmodel") {
-    stop("First argument must be an RPCmodel object")
+  if (class(object) != "CLRmodel") {
+    stop("First argument must be an CLRmodel object")
   }
 
   if (cores < 1) {
@@ -114,30 +106,29 @@ predict.RPCmodel <- function(object, newdata,
   utiml_preserve_seed()
 
   # Create models
-  newdata <- utiml_newdata(newdata)
-  labels <- utiml_rename(object$labels)
-  predictions <- utiml_lapply(object$models, utiml_predict_binary_model,
-                              newdata = newdata, ..., cores, seed)
+  predictions <- as.matrix(predict.RPCmodel(object$rpcmodel, newdata, TRUE,
+                                            ..., cores=cores, seed=seed))
+
+  previous.value <- getOption("utiml.empty.prediction")
+  options(utiml.empty.prediction = TRUE)
+  calibrated <- as.matrix(predict.BRmodel(object$brmodel, newdata, FALSE, ...,
+                                          cores=cores, seed=seed))
+  options(utiml.empty.prediction = previous.value)
 
   utiml_restore_seed()
 
   # Compute votes
-  labels <- utils::combn(object$labels, 2, simplify=FALSE)
-  votes <- matrix(0, ncol=length(object$labels), nrow=nrow(newdata),
-                  dimnames = list(rownames(newdata), object$labels))
-  for (i in seq(labels)) {
-    votes[,labels[[i]]] <- votes[,labels[[i]]] +
-      cbind(predictions[[i]]$bipartition, 1 - predictions[[i]]$bipartition)
-  }
+  l0 <- (length(object$labels) - rowSums(calibrated)) / length(object$labels)
+  bipartitions <- apply(predictions >= l0, 2, as.numeric)
 
-  as.mlresult(votes / length(object$labels), probability)
+  multilabel_prediction(bipartitions, predictions, probability)
 }
 
-#' Print RPC model
+#' Print CLR model
 #' @param x The br model
 #' @param ... ignored
 #' @export
-print.RPCmodel <- function(x, ...) {
-  cat("RPC Model\n\nCall:\n")
+print.CLRmodel <- function(x, ...) {
+  cat("CLR Model\n\nCall:\n")
   print(x$call)
-  cat("\n", length(x$models), " pairwise models\n", sep='')}
+  cat("\n", length(x$rpcmodel$models) + length(x$labels), " pairwise models\n", sep='')}
