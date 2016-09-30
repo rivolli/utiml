@@ -264,6 +264,7 @@ rep_nom_col <- function (column, column.name = "", type = 1) {
 }
 
 rep_nom_attr <- function(sdata, include.last = TRUE) {
+  sdata <- as.data.frame(sdata)
   dataset <- data.frame(row.names = rownames(sdata))
   labelIndexes <- c()
   cols <- seq(ifelse(include.last, ncol(sdata), ncol(sdata)-1))

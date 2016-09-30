@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9024
+## utiml 0.1.1.9025
 Development version (only available via github install)
 
 ### Major changes

@@ -149,9 +149,8 @@ predict.LIFTmodel <- function(object, newdata,
   labels <- utiml_rename(object$labels)
   predictions <- utiml_lapply(labels, function (label) {
     centroids <- object$centroids[[label]]
-    dataset <- utiml_euclidean_distance(newdata, centroids)
-    colnames(dataset) <- rownames(centroids)
-    rownames(dataset) <- rownames(newdata)
+    dataset <- as.data.frame(utiml_euclidean_distance(newdata, centroids))
+    dimnames(dataset) <- list(rownames(newdata), rownames(centroids))
     utiml_predict_binary_model(object$models[[label]], dataset, ...)
   }, cores, seed)
 
