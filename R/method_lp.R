@@ -38,7 +38,9 @@ lp <- function (mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
   }
 
   # LP Model class
-  lpmodel <- list(labels = rownames(mdata$labels), call = match.call())
+  lpmodel <- list(labels = rownames(mdata$labels),
+                  call = match.call(),
+                  classes = mdata$labelsets)
   utiml_preserve_seed()
 
   lpmodel$model <- utiml_lapply(1, function (x){
@@ -82,7 +84,7 @@ predict.LPmodel <- function(object, newdata,
                             seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(object) != "LPmodel") {
-    stop("First argument must be an LPmodel object")
+    stop("First argument must be a LPmodel object")
   }
 
   newdata <- utiml_newdata(newdata)
@@ -95,4 +97,15 @@ predict.LPmodel <- function(object, newdata,
   utiml_restore_seed()
 
   result
+}
+
+#' Print LP model
+#' @param x The lp model
+#' @param ... ignored
+#' @export
+print.LPmodel <- function(x, ...) {
+  cat("Label Powerset Model\n\nCall:\n")
+  print(x$call)
+  cat("\n1 Model: ",length(x$classes),"classes\n")
+  print(cbind.data.frame(classe=names(x$classes), instances=as.numeric(x$classes)))
 }

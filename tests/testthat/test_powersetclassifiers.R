@@ -29,3 +29,8 @@ test_that("LP", {
   model <- lp(train, "RANDOM")
   baseTest(model, "LPmodel")
 })
+
+test_that("RAkEL", {
+  model <- rakel(train, "RANDOM")
+  baseTest(model, "RAkELmodel")
+})

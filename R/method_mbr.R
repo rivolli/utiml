@@ -119,7 +119,8 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   }
 
   # 2 Iteration - Meta level -------------------------------------------------
-  corr <- mbrmodel$correlation <- utiml_labels_correlation(mdata)
+  corr <- abs(stats::cor(mdata$dataset[mdata$labels$index]))
+  mbrmodel$correlation <- corr
   labels <- utiml_rename(mbrmodel$labels)
   mbrmodel$models <- utiml_lapply(labels, function (label) {
     nmcol <- colnames(corr)[corr[label, ] >= phi]

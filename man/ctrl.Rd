@@ -97,6 +97,7 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
   \code{\link{lift}}, \code{\link{lp}}, \code{\link{mbr}},
   \code{\link{ns}}, \code{\link{prudent}},
-  \code{\link{rdbr}}, \code{\link{rpc}}
+  \code{\link{rakel}}, \code{\link{rdbr}},
+  \code{\link{rpc}}
 }
 

@@ -106,7 +106,7 @@ predict.CLRmodel <- function(object, newdata,
 
   utiml_preserve_seed()
 
-  # Create models
+  # Predict RPC models
   predictions <- as.matrix(predict.RPCmodel(object$rpcmodel, newdata, TRUE,
                                             ..., cores=cores, seed=seed))
 
