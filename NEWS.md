@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9025
+## utiml 0.1.1.9026
 Development version (only available via github install)
 
 ### Major changes
@@ -10,6 +10,8 @@ Development version (only available via github install)
 * RPC multi-label classification method
 * CRL multi-label classification method
 * LP multi-label classification method
+* RAkEL multi-label classification method
+* BASELINE multi-label classification method
 
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples
