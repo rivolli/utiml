@@ -34,3 +34,10 @@ test_that("RAkEL", {
   model <- rakel(train, "RANDOM")
   baseTest(model, "RAkELmodel")
 })
+
+test_that("PPT", {
+  model <- ppt(train, "RANDOM")
+  baseTest(model, "PPTmodel")
+
+  expect_error(ppt(train, "RANDOM", p=0))
+})

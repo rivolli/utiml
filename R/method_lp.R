@@ -19,7 +19,7 @@
 #'   models, including:
 #'   \describe{
 #'    \item{labels}{A vector with the label names.}
-#'    \item{model}{A list of the generated models, named by the label names.}
+#'    \item{model}{A multi-class model.}
 #'   }
 #' @references
 #'  Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning

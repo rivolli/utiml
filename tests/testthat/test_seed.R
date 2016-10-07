@@ -214,3 +214,11 @@ test_that("RAkEL", {
   testPredictMethod(method=rakel, name=name)
   testSeedEffectMethod(method=rakel, name=name)
 })
+
+test_that("PPT", {
+  skip_on_cran()
+  name <- "PPT"
+  testTrainMethod(method=ppt, name=name)
+  testPredictMethod(method=ppt, name=name)
+  testSeedEffectMethod(method=ppt, name=name)
+})

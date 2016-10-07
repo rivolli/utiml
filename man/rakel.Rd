@@ -66,13 +66,13 @@ Tsoumakas, G., Katakis, I., & Vlahavas, I. (2011). Random k-labelsets for
  Engineering, 23(7), 1079-1089.
 }
 \seealso{
-Other Powerset: \code{\link{lp}}
+Other Powerset: \code{\link{lp}}, \code{\link{ppt}}
 
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
   \code{\link{ecc}}, \code{\link{lift}}, \code{\link{lp}},
-  \code{\link{mbr}}, \code{\link{ns}},
+  \code{\link{mbr}}, \code{\link{ns}}, \code{\link{ppt}},
   \code{\link{prudent}}, \code{\link{rdbr}},
   \code{\link{rpc}}
 }

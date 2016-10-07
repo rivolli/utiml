@@ -124,8 +124,7 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   val.result <- utiml_measure_binary_f1(val.confmat$TPl, val.confmat$FPl,
                                         val.confmat$TNl, val.confmat$FNl)
 
-  Yc <- names(which(val.result >= validation.threshold))
-  ctrlmodel$Y <- Yc
+  ctrlmodel$Y <- Yc <- names(which(val.result >= validation.threshold))
   rm(val.set, val.model, val.pred, val.result)
 
   # Step2 - Identify close-related labels within Yc using feature selection
@@ -133,10 +132,11 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   classes <- mdata$dataset[Yc]
   labels <- utiml_rename(rownames(mdata$labels))
   ctrlmodel$R <- Rj <- utiml_lapply(labels, function(labelname) {
-    Aj <- mdata$dataset[, unique(c(Yc, labelname)), drop = F]
-    if (ncol(Aj) > 1) {
+    Aj <- unique(c(Yc, labelname))
+
+    if (length(Aj) > 1) {
       formula <- stats::as.formula(paste("`", labelname, "` ~ .", sep = ""))
-      weights <- FSelector::relief(formula, Aj)
+      weights <- FSelector::relief(formula, mdata$dataset[Aj])
       FSelector::cutoff.k(weights, m)
     }
   }, cores, seed)
@@ -149,14 +149,22 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
   D <- mdata$dataset[mdata$attributesIndexes]
   ctrlmodel$models <- utiml_lapply(labels, function(labelname) {
-    data  <- utiml_create_binary_data(mdata, labelname)
-    Di <- utiml_prepare_data(data, "mldBR", mdata$name, "ctrl", base.method)
-    fi <- list(utiml_create_model(Di, ...))
-    for (k in Rj[[labelname]]) {
-      data <- utiml_create_binary_data(mdata, labelname, labeldata[k])
-      Di <- utiml_prepare_data(data, "mldBR", mdata$name, "ctrl", base.method)
-      fi <- c(fi, list(utiml_create_model(Di, ...)))
-    }
+    fi <- list(
+      utiml_create_model(
+        utiml_prepare_data(
+          utiml_create_binary_data(mdata, labelname),
+          "mldBR", mdata$name, "ctrl", base.method
+        ), ...)
+    )
+
+    fi <- c(fi, lapply(Rj[[labelname]], function (k){
+      utiml_create_model(
+        utiml_prepare_data(
+          utiml_create_binary_data(mdata, labelname, labeldata[k]),
+          "mldBR", mdata$name, "ctrl", base.method
+        ), ...)
+    }))
+
     names(fi) <- c(labelname, Rj[[labelname]])
     fi
   }, cores, seed)
@@ -225,7 +233,7 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
   fjk <- as.bipartition(utiml_predict(initial.prediction, FALSE))
   labeldata <- as.data.frame(fjk)
   for (i in seq(ncol(labeldata))) {
-    labeldata[,i] <- factor(labeldata[,i], levels=c(0,1))
+    labeldata[,i] <- factor(labeldata[, i], levels=c(0,1))
   }
 
   # Predict binary ensemble values
