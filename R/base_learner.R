@@ -309,6 +309,7 @@ mlpredict.rpart <- function(model, newdata, ...) {
                "as base method"))
   }
   result <- stats::predict(model, newdata, type = "prob", ...)
+  rownames(result) <- rownames(newdata)
   prediction <- colnames(result)[apply(result, 1, which.max)]
   data.frame(
     prediction = prediction,
@@ -447,19 +448,25 @@ mltrain.baseXGB <- function(object, ...) {
 
   def.args <- list(
     data = as.matrix(rep_nom_attr(object$data[, -object$labelindex])),
-    label = as.numeric(as.character(object$data[, object$labelindex])),
+    label = as.numeric(object$data[, object$labelindex]) - 1,
     nthread = 1,
     nrounds = 3,
     verbose = FALSE,
     silent = 1,
-    objective = "binary:logistic"
+    objective = ifelse(nlevels(object$data[, object$labelindex]) == 2,
+                       "binary:logistic", "multi:softprob")
   )
+  if (nlevels(object$data[, object$labelindex]) > 2) {
+    def.args$num_class <- nlevels(object$data[, object$labelindex])
+  }
   args <- list(...)
   for (narg in names(args)) {
     def.args[[narg]] <- args[[narg]]
   }
 
-  do.call(xgboost::xgboost, def.args)
+  model <- do.call(xgboost::xgboost, def.args)
+  attr(model, "classes") <- levels(object$data[, object$labelindex])
+  model
 }
 
 #' @describeIn mlpredict XGBoost implementation (require \pkg{xgboost} package)
@@ -470,11 +477,21 @@ mlpredict.xgb.Booster <- function(model, newdata, ...) {
                "classifier as base method"))
   }
 
+  classes <- attr(model, "classes")
   pred <- xgboost::predict(model, as.matrix(rep_nom_attr(newdata)), ...)
-  classes <- as.numeric(pred >= 0.5)
+  if (length(classes) == 2) {
+    bipartitions <- as.numeric(pred >= 0.5)
+    probabilities <- ifelse(bipartitions == 1, pred, 1 - pred)
+  } else {
+    pred <- matrix(pred, nrow=nrow(newdata), byrow = TRUE)
+    which.pred <- apply(pred, 1, which.max)
+    bipartitions <- classes[which.pred]
+    probabilities <- pred[cbind(seq(nrow(newdata)), which.pred)]
+  }
+
   data.frame(
-    prediction = classes,
-    probability = ifelse(classes == 1, pred, 1 - pred),
+    prediction = bipartitions,
+    probability = probabilities,
     row.names = rownames(newdata)
   )
 }

@@ -74,7 +74,8 @@ ppt <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
     #Sort by the number of labels and then for frequency
     labelsets <- labelsets[rev(order(unlist(lapply(labelsets, sum))))]
 
-    Si <- mdata$dataset[!original.instances, mdata$labels$index]
+    removed.instances <- which(!original.instances)
+    Si <- mdata$dataset[removed.instances, mdata$labels$index]
     has.match <- do.call(cbind, lapply(labelsets, function (ls) {
       colSums(ls == 1 & ls == t(Si)) == sum(ls)
     }))
@@ -99,7 +100,8 @@ ppt <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
     inst.idx <- which(unlist(lapply(inst.lab, length)) > 0)
     new.labelsets <- do.call(rbind, labelsets[unlist(inst.lab[inst.idx])])
     colnames(new.labelsets) <- rownames(mdata$labels)
-    rows <- rep(names(inst.idx), unlist(lapply(inst.lab[inst.idx], length)))
+    rows <- rep(removed.instances[inst.idx],
+                unlist(lapply(inst.lab[inst.idx], length)))
 
     ndata <- mldr::mldr_from_dataframe(
       rbind(
