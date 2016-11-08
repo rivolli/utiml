@@ -97,23 +97,10 @@ ppt <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
     })
     rm(has.match)
 
-    inst.idx <- which(unlist(lapply(inst.lab, length)) > 0)
-    new.labelsets <- do.call(rbind, labelsets[unlist(inst.lab[inst.idx])])
-    colnames(new.labelsets) <- rownames(mdata$labels)
-    rows <- rep(removed.instances[inst.idx],
-                unlist(lapply(inst.lab[inst.idx], length)))
-
-    ndata <- mldr::mldr_from_dataframe(
-      rbind(
-        mdata$dataset[original.instances,
-                      c(mdata$attributesIndexes, mdata$labels$index)],
-        cbind.data.frame(
-          mdata$dataset[rows, mdata$attributesIndexes], new.labelsets
-        )
-      ), seq(mdata$measures$num.inputs + 1, mdata$measures$num.attributes),
-      name = mdata$name
-    )
+    ndata <- merge_pruned_instances(mdata, removed.instances, inst.lab,
+                                    labelsets)
   }
+
   pptmodel$model <- lp(ndata, base.method=base.method, seed=seed)
   class(pptmodel) <- "PPTmodel"
   pptmodel

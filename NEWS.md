@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.1.9027
+## utiml 0.1.1.9028
 Development version (only available via github install)
 
 ### Major changes
@@ -13,6 +13,7 @@ Development version (only available via github install)
 * RAkEL multi-label classification method
 * BASELINE multi-label classification method
 * PPT multi-label classification method
+* PS multi-label classification method
 
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples

@@ -62,7 +62,8 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
   \code{\link{ecc}}, \code{\link{lp}}, \code{\link{mbr}},
   \code{\link{ns}}, \code{\link{ppt}},
-  \code{\link{prudent}}, \code{\link{rakel}},
-  \code{\link{rdbr}}, \code{\link{rpc}}
+  \code{\link{prudent}}, \code{\link{ps}},
+  \code{\link{rakel}}, \code{\link{rdbr}},
+  \code{\link{rpc}}
 }
 

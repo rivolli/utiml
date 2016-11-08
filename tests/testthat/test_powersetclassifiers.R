@@ -39,5 +39,18 @@ test_that("PPT", {
   model <- ppt(train, "RANDOM")
   baseTest(model, "PPTmodel")
 
+  model <- ppt(train, "RANDOM", info.loss=TRUE)
+  baseTest(model, "PPTmodel")
+
   expect_error(ppt(train, "RANDOM", p=0))
+})
+
+test_that("PS", {
+  model <- ps(train, "RANDOM")
+  baseTest(model, "PSmodel")
+
+  model <- ps(train, "RANDOM", strategy="B")
+  baseTest(model, "PSmodel")
+
+  expect_error(ps(train, "RANDOM", p=0))
 })

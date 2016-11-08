@@ -222,3 +222,11 @@ test_that("PPT", {
   testPredictMethod(method=ppt, name=name)
   testSeedEffectMethod(method=ppt, name=name)
 })
+
+test_that("PS", {
+  skip_on_cran()
+  name <- "PS"
+  testTrainMethod(method=ps, name=name)
+  testPredictMethod(method=ps, name=name)
+  testSeedEffectMethod(method=ps, name=name)
+})
