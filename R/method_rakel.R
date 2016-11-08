@@ -116,7 +116,7 @@ rakel <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base method prediction for all
 #'   subproblems.
-#' @param cores The number of cores to parallelize the training. Values higher
+#' @param cores The number of cores to parallelize the prediction. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
 #' @param seed An optional integer used to set the seed. This is useful when

@@ -58,6 +58,8 @@ ps <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
     stop("The parameter b must be greater or equal than 0")
   }
 
+  utiml_preserve_seed()
+
   # PS Model class
   psmodel <- list(labels = rownames(mdata$labels),
                   p = p,
@@ -97,9 +99,10 @@ ps <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
   )
   rm(has.match)
 
-
   ndata <- merge_pruned_instances(mdata, removed.instances, inst.lab, labelsets)
   psmodel$model <- lp(ndata, base.method=base.method, seed=seed)
+
+  utiml_restore_seed()
   class(psmodel) <- "PSmodel"
 
   psmodel

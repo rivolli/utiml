@@ -14,7 +14,8 @@ ebr(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 10,
 \item{base.method}{A string with the name of the base method. (Default:
 \code{options("utiml.base.method", "SVM")})}
 
-\item{m}{The number of Binary Relevance models used in the ensemble.}
+\item{m}{The number of Binary Relevance models used in the ensemble.
+(Default: 10)}
 
 \item{subsample}{A value between 0.1 and 1 to determine the percentage of
 training instances that must be used for each classifier. (Default: 0.75)}
@@ -80,13 +81,14 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
    5782, 254-269.
 }
 \seealso{
-Other Ensemble methods: \code{\link{ecc}}
+Other Ensemble methods: \code{\link{ecc}},
+  \code{\link{eps}}
 
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ecc}},
-  \code{\link{lift}}, \code{\link{lp}}, \code{\link{mbr}},
-  \code{\link{ns}}, \code{\link{ppt}},
+  \code{\link{eps}}, \code{\link{lift}}, \code{\link{lp}},
+  \code{\link{mbr}}, \code{\link{ns}}, \code{\link{ppt}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}

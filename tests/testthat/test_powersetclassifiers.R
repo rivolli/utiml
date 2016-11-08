@@ -54,3 +54,10 @@ test_that("PS", {
 
   expect_error(ps(train, "RANDOM", p=0))
 })
+
+test_that("EPS", {
+  model <- eps(train, "RANDOM")
+  baseTest(model, "EPSmodel")
+
+  expect_error(eps(train, "RANDOM", m=0))
+})

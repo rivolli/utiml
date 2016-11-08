@@ -14,6 +14,7 @@
 #' @param base.method A string with the name of the base method. (Default:
 #'  \code{options("utiml.base.method", "SVM")})
 #' @param m The number of Classifier Chains models used in the ensemble.
+#'    (Default: 10)
 #' @param subsample A value between 0.1 and 1 to determine the percentage of
 #'    training instances that must be used for each classifier. (Default: 0.75)
 #' @param attr.space A value between 0.1 and 1 to determine the percentage of

@@ -230,3 +230,11 @@ test_that("PS", {
   testPredictMethod(method=ps, name=name)
   testSeedEffectMethod(method=ps, name=name)
 })
+
+test_that("EPS", {
+  skip_on_cran()
+  name <- "EPS"
+  testTrainMethod(method=eps, name=name)
+  testPredictMethod(method=eps, name=name)
+  testSeedEffectMethod(method=eps, name=name)
+})

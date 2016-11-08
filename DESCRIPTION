@@ -1,8 +1,8 @@
 Package: utiml
 Type: Package
 Title: Utilities for Multi-Label Learning
-Version: 0.1.1.9028
-Date: 2016-09-26
+Version: 0.1.1.9029
+Date: 2016-11-08
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
 Description: Multi-label learning methods and others utilities to support multi-

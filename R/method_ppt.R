@@ -52,6 +52,8 @@ ppt <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
     stop("The prunning value must be greater than 0")
   }
 
+  utiml_preserve_seed()
+
   # PPT Model class
   pptmodel <- list(labels = rownames(mdata$labels),
                    p = p,
@@ -102,6 +104,8 @@ ppt <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
   }
 
   pptmodel$model <- lp(ndata, base.method=base.method, seed=seed)
+
+  utiml_restore_seed()
   class(pptmodel) <- "PPTmodel"
   pptmodel
 }
