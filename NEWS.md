@@ -1,7 +1,8 @@
 # Changelog
 
-## utiml 0.1.1.9029
-Development version (only available via github install)
+## utiml 0.1.1
+New multi-label transformation methods including pairwise and multiclass 
+approaches. Some fixes from previous version.
 
 ### Major changes
 * lcard threshold calibration
@@ -15,6 +16,7 @@ Development version (only available via github install)
 * PPT multi-label classification method
 * PS multi-label classification method
 * EPS multi-label classification method
+* HOMER multi-label classification method
 
 ### Minor changes
 * Add Empty Model as base method to fix training labels with few examples

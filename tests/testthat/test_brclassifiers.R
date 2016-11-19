@@ -234,3 +234,9 @@ test_that("LIFT", {
   baseTest(model, "LIFTmodel")
 })
 
+test_that("HOMER", {
+  model <- homer(train, "RANDOM")
+  expect_is(model, "HOMERmodel")
+  model <- homer(train, "RANDOM", clusters=2, method="random")
+  expect_error(homer(train, "RANDOM", clusters=0))
+})

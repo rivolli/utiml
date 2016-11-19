@@ -238,3 +238,11 @@ test_that("EPS", {
   testPredictMethod(method=eps, name=name)
   testSeedEffectMethod(method=eps, name=name)
 })
+
+test_that("HOMER", {
+  skip_on_cran()
+  name <- "HOMER"
+  testTrainMethod(method=homer, name=name)
+  testPredictMethod(method=homer, name=name)
+  testSeedEffectMethod(method=homer, name=name)
+})
