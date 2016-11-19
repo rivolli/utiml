@@ -78,7 +78,7 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     rownames(centroids) <- c(paste("p", rownames(gpk$centers), sep=''),
                              paste("n", rownames(gnk$centers), sep=''))
 
-    #Create the mapping φk for lk according to Eq.(3);
+    #Create the mapping k for lk according to Eq.(3);
     dataset <- cbind(utiml_euclidean_distance(mldataset, centroids),
                      mdata$dataset[label])
     colnames(dataset) <-  c(rownames(centroids), label)
