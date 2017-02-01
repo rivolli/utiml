@@ -136,12 +136,15 @@ predictLabelHierarchy <- function(node, newdata, ..., cores, seed) {
   bipartition <- as.bipartition(prediction)
   probability <- as.probability(prediction)
 
+  metalabel <- paste(unlist(lapply(node$metalabels, paste, collapse="*")),
+                     collapse="|")
+
   for(i in seq(node$metalabels)) {
     labels <- node$metalabels[[i]]
     if (length(labels) > 1) {
       child <- node$children[[i]]
 
-      indexes <- bipartition[, i] == 1
+      indexes <- bipartition[, i, drop=FALSE] == 1
       if (any(indexes)) {
         prediction <- predictLabelHierarchy(child, newdata[indexes, ], ...,
                                             cores=cores, seed=seed)
@@ -151,7 +154,6 @@ predictLabelHierarchy <- function(node, newdata, ..., cores, seed) {
           dimnames = list(rownames(bipartition), colnames(prediction)))
         )
 
-        new.bip[!indexes, ] <- 0
         new.bip[indexes, colnames(prediction)] <- as.bipartition(prediction)
         bipartition <- cbind(bipartition, new.bip)
 
@@ -165,10 +167,25 @@ predictLabelHierarchy <- function(node, newdata, ..., cores, seed) {
         }
         new.prob[indexes, colnames(prediction)] <- as.probability(prediction)
         probability <- cbind(probability, new.prob)
+      } else {
+        #Predict all instances of the meta-label as negative
+        aux <- do.call(cbind, lapply(labels, function(lbl)
+          bipartition[, i, drop=FALSE]))
+        colnames(aux) <- labels
+        bipartition <- cbind(bipartition, aux)
+
+        aux <- do.call(cbind, lapply(labels, function(lbl)
+          probability[, i, drop=FALSE]))
+        colnames(aux) <- labels
+        probability <- cbind(probability, aux)
       }
+    } else {
+      #Rename the meta-label because it is the label
+      colnames(bipartition)[i] <- colnames(probability)[i] <- labels
     }
   }
 
+ #cat(metalabel, "\n")
   multilabel_prediction(
     bipartition[, node$labels, drop=F], probability[, node$labels, drop=F]
   )
@@ -183,14 +200,28 @@ buildLabelHierarchy <- function (mdata, base.method, method, k, it,
   newls <- do.call(cbind, lapply(node$metalabels, function (u){
     as.numeric(rowSums(mdata$dataset[, u, drop=FALSE]) > 0)
   }))
-  colnames(newls) <- unlist(lapply(node$metalabels, paste, collapse='@'))
+  colnames(newls) <- paste('meta-lbl-', seq(node$metalabels), sep='')
   rows <- which(rowSums(newls) > 0)
+
+  #Fix meta-label without positive instances
+  if (any(colSums(newls) == 0)) {
+    empty.labels <- colSums(newls) == 0
+    node$metalabels <- c(node$metalabels[!empty.labels],
+                         unlist(node$metalabels[empty.labels]))
+    newls <- do.call(cbind, lapply(node$metalabels, function (u){
+      as.numeric(rowSums(mdata$dataset[, u, drop=FALSE]) > 0)
+    }))
+    colnames(newls) <- paste('meta-lbl-', seq(node$metalabels), sep='')
+    rows <- which(rowSums(newls) > 0)
+  }
 
   ndata <- remove_unique_attributes(mldr_from_dataframe(
     cbind(mdata$dataset[rows, mdata$attributesIndexes], newls[rows,, drop=F]),
     mdata$measures$num.inputs + seq(length(node$metalabels)),
     name = mdata$name
   ))
+
+  mtlbl <- paste(sapply(node$metalabels, paste, collapse='*'), collapse="|")
 
   node$attributes <- colnames(ndata$dataset[, ndata$attributesIndexes])
   node$model <- br(ndata, base.method, ..., cores=cores, seed=seed)

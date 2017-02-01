@@ -1,5 +1,11 @@
 # Changelog
 
+## utiml 0.1.2.9001
+
+### Minor changes
+* Bugfix in `homer` to deal with labels without intances and to predict instances 
+   based on the meta-label scores
+
 ## utiml 0.1.1
 New multi-label transformation methods including pairwise and multiclass 
 approaches. Some fixes from previous version.

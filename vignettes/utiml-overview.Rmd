@@ -233,8 +233,8 @@ mts <- data.frame(
   Method = c("br", "brplus", "cc", "ctrl", "dbr", "ebr", "ecc", "mbr", "ns", "prudent", "rdbr"),
   Name = c("Binary Relevance (BR)", "BR+", "Classifier Chains", "ConTRolled Label correlation exploitation (CTRL)",
            "Dependent Binary Relevance (DBR)", "Ensemble of Binary Relevance (EBR)", "Ensemble of Classifier Chains (ECC)", "Meta-Binary Relevance (MBR or 2BR)", "Nested Stacking (NS)", "Pruned and Confident Stacking Approach (Prudent)", "Recursive Dependent Binary Relevance (RDBR)"),
-  Approach = c("one-agains-all", "one-agains-all; stacking", "one-agains-all; stacking", "one-agains-all; binary-ensemble", "one-agains-all; stacking", "one-agains-all; ensemble", "one-agains-all; ensemble; stacking",
-"one-agains-all; stacking", "one-agains-all; stacking", "one-agains-all; binary-ensemble; stacking", "one-agains-all; stacking")
+  Approach = c("one-against-all", "one-against-all; stacking", "one-against-all; stacking", "one-against-all; binary-ensemble", "one-against-all; stacking", "one-against-all; ensemble", "one-against-all; ensemble; stacking",
+"one-against-all; stacking", "one-against-all; stacking", "one-against-all; binary-ensemble; stacking", "one-against-all; stacking")
 )
 knitr::kable(mts)
 ```
