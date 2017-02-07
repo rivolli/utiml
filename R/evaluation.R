@@ -147,13 +147,7 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
 #' @return mlconfmat
 #' @export
 merge_mlconfmat <- function (object, ...) {
-  objects <- c(object, list(...))
-  if (length(objects) > 1) {
-    for (i in seq(2, length(objects))) {
-      objects[[1]] <- objects[[1]] + objects[[i]]
-    }
-  }
-  objects[[1]]
+  Reduce('+', c(object, list(...)))
 }
 
 #' Evaluate multi-label predictions

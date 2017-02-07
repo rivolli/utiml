@@ -42,7 +42,7 @@ utiml_lapply <- function(mylist, myfnc, utiml.cores, utiml.seed = NA, ...) {
     }
   }
 
-  if (requireNamespace("parallel", quietly = TRUE)) {
+  if (utiml.cores > 1 && requireNamespace("parallel", quietly = TRUE)) {
     parallel::mclapply(indexes,
                        thefunc,
                        mc.cores = min(utiml.cores, length(mylist)),
