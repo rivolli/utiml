@@ -2,7 +2,7 @@
 
 ## utiml 0.1.2.9001
 
-### Minor changes
+### Bug fixes
 * Bugfix in `homer` to deal with labels without intances and to predict instances 
    based on the meta-label scores
 
