@@ -9,9 +9,9 @@
 #' @family Transformation methods
 #' @family Pairwise methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
+#' @param ... Others arguments passed to the base algorithm for all subproblems
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -39,9 +39,10 @@
 #'
 #' \dontrun{
 #' }
-clr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
-               cores = getOption("utiml.cores", 1),
-               seed = getOption("utiml.seed", NA)) {
+clr <- function(mdata,
+                base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
+                cores = getOption("utiml.cores", 1),
+                seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
@@ -55,10 +56,10 @@ clr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
   clrmodel <- list(labels = rownames(mdata$labels), call = match.call())
 
   # Create pairwise models
-  clrmodel$rpcmodel <- rpc(mdata, base.method, ..., cores=cores, seed=seed)
+  clrmodel$rpcmodel <- rpc(mdata, base.algorithm, ..., cores=cores, seed=seed)
 
   # Create calibrated models
-  clrmodel$brmodel <- br(mdata, base.method, ..., cores=cores, seed=seed)
+  clrmodel$brmodel <- br(mdata, base.algorithm, ..., cores=cores, seed=seed)
 
   class(clrmodel) <- "CLRmodel"
   clrmodel
@@ -74,7 +75,7 @@ clr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:

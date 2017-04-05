@@ -9,14 +9,14 @@
 #'
 #' @family Transformation methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param chain A vector with the label names to define the chain order. If
 #'   empty the chain is the default label sequence of the dataset. (Default:
 #'   \code{NA})
-#' @param ... Others arguments passed to the base method for all subproblems.
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param predict.params A list of default arguments passed to the predict
-#'  method. (default: \code{list()})
+#'  algorithm. (default: \code{list()})
 #' @param cores Ignored because this method does not support multi-core.
 #' @param seed An optional integer used to set the seed.
 #'  (Default: \code{options("utiml.seed", NA)})
@@ -46,7 +46,7 @@
 #' # Set a specific parameter
 #' model <- ns(toyml, 'KNN', k=5)
 #' }
-ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
+ns <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                chain = NA, ..., predict.params = list(), cores = NULL,
                seed = getOption("utiml.seed", NA)) {
   # Validations
@@ -81,8 +81,8 @@ ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
     # Create data
     dataset <- cbind(basedata, mdata$dataset[label])
-    mldCC <- utiml_prepare_data(dataset, "mldCC", mdata$name, "ns", base.method,
-                                chain.order = labelIndex)
+    mldCC <- utiml_prepare_data(dataset, "mldCC", mdata$name, "ns",
+                                base.algorithm, chain.order = labelIndex)
 
     # Call dynamic multilabel model with merged parameters
     model <- utiml_create_model(mldCC, ...)
@@ -113,7 +113,7 @@ ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores Ignored because this method does not support multi-core.
 #' @param seed An optional integer used to set the seed.
@@ -130,7 +130,7 @@ ns <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' # Predict SVM bipartitions
 #' pred <- predict(model, toyml, probability = FALSE)
 #'
-#' # Passing a specif parameter for SVM predict method
+#' # Passing a specif parameter for SVM predict algorithm
 #' pred <- predict(model, toyml, na.action = na.fail)
 #' }
 predict.NSmodel <- function(object, newdata,

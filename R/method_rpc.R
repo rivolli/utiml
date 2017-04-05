@@ -9,9 +9,9 @@
 #' @family Transformation methods
 #' @family Pairwise methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
+#' @param ... Others arguments passed to the base algorithm for all subproblems
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -35,9 +35,10 @@
 #'
 #' \dontrun{
 #' }
-rpc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
-               cores = getOption("utiml.cores", 1),
-               seed = getOption("utiml.seed", NA)) {
+rpc <- function(mdata,
+                base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
+                cores = getOption("utiml.cores", 1),
+                seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
@@ -59,7 +60,7 @@ rpc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
     utiml_create_model(
       utiml_prepare_data(
         utiml_create_pairwise_data(mdata, pairwise[1], pairwise[2]),
-        "mldRPC", mdata$name, "rpc", base.method,
+        "mldRPC", mdata$name, "rpc", base.algorithm,
         label1=pairwise[1], label2=pairwise[2]
       ), ...
     )
@@ -81,7 +82,7 @@ rpc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:

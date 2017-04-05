@@ -4,15 +4,15 @@
 \alias{eps}
 \title{Ensemble of Pruned Set for multi-label Classification}
 \usage{
-eps(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 10,
-  subsample = 0.75, p = 3, strategy = c("A", "B"), b = 2, ...,
+eps(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  m = 10, subsample = 0.75, p = 3, strategy = c("A", "B"), b = 2, ...,
   cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{m}{The number of Pruned Set models used in the ensemble.}
 
@@ -27,7 +27,7 @@ less in the training data is removed. (Default: 3)}
 
 \item{b}{The number used by the strategy for processing infrequent labelsets.}
 
-\item{...}{Others arguments passed to the base method for all subproblems}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:

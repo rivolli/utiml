@@ -29,7 +29,7 @@ If \code{FALSE} then use the stochastic re-estimation strategy.
 \item{probability}{Logical indicating whether class probabilities should be
 returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
-\item{...}{Others arguments passed to the base method prediction for all
+\item{...}{Others arguments passed to the base algorithm prediction for all
 subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
@@ -60,7 +60,7 @@ stabilizes earlier than batch mode.
 model <- rdbr(toyml)
 pred <- predict(model, toyml)
 
-# Passing a specif parameter for SVM predict method
+# Passing a specif parameter for SVM predict algorithm
 pred <- predict(model, toyml, na.action = na.fail)
 
 # Use the batch mode and increase the max number of iteration to 10

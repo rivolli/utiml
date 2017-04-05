@@ -1,7 +1,7 @@
 .onLoad <- function(libname, pkgname) {
   op <- options()
   op.utiml <- list(
-    utiml.base.method = "SVM",
+    utiml.base.algorithm = "SVM",
     utiml.cores = 1,
     utiml.seed = NA,
     utiml.use.probs = TRUE,

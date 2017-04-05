@@ -9,15 +9,15 @@
 #' @family Transformation methods
 #' @family Powerset
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param k The number of labels used in each labelset. (Default: \code{3})
 #' @param m The number of LP models. Used when overlapping is TRUE, otherwise it
 #'  is ignored. (Default: \code{2 * length(labels)})
-#' @param overlapping Logical value define if the method must overlapping the
-#'  labelsets. If FALSE the method uses disjoint labelsets.
+#' @param overlapping Logical value, that defines if the method must overlapping
+#'  the labelsets. If FALSE the method uses disjoint labelsets.
 #'  (Default: \code{TRUE})
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -46,7 +46,8 @@
 #' ## Random Forest using disjoint labelsets
 #' model <- rakel(toyml, "RF", overlapping=FALSE)
 #' }
-rakel <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
+rakel <- function (mdata,
+                   base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                    k = 3, m = 2 * mdata$measures$num.labels, overlapping = TRUE,
                    ..., cores = getOption("utiml.cores", 1),
                    seed = getOption("utiml.seed", NA)) {
@@ -96,7 +97,7 @@ rakel <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
       seq(lbl.index + 1, lbl.index + length(labels)),
       name = mdata$name
     )
-    lp(data, base.method = base.method, ...)
+    lp(data, base.algorithm = base.algorithm, ...)
   }, cores, seed)
 
   utiml_restore_seed()
@@ -114,7 +115,7 @@ rakel <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the prediction. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:

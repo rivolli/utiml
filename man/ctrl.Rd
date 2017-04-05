@@ -4,16 +4,16 @@
 \alias{ctrl}
 \title{CTRL model for multi-label Classification}
 \usage{
-ctrl(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 5,
-  validation.size = 0.3, validation.threshold = 0.3, ...,
+ctrl(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  m = 5, validation.size = 0.3, validation.threshold = 0.3, ...,
   predict.params = list(), cores = getOption("utiml.cores", 1),
   seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{m}{The max number of Binary Relevance models used in the binary
 ensemble. (Default: 5)}
@@ -25,10 +25,10 @@ error-prone class labels. The value must be between 0.1 and 0.5.
 \item{validation.threshold}{Thresholding parameter determining whether any
 class label in Y is regarded as error-prone or not. (Default: 0.3)}
 
-\item{...}{Others arguments passed to the base method for all subproblems}
+\item{...}{Others arguments passed to the base algorithm for all subproblems}
 
 \item{predict.params}{A list of default arguments passed to the predictor
-method. (default: \code{list()})}
+algorithm. (default: \code{list()})}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:

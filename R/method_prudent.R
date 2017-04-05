@@ -9,11 +9,11 @@
 #'
 #' @family Transformation methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param phi A value between 0 and 1 to determine the information gain. The
 #'  value 0 include all labels in the second phase and the 1 none.
-#' @param ... Others arguments passed to the base method for all subproblems.
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -49,7 +49,7 @@
 #' # Set a specific parameter
 #' model <- prudent(toyml, 'KNN', k=5)
 #' }
-prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
+prudent <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                     phi = 0, ..., cores = getOption("utiml.cores", 1),
                     seed = getOption("utiml.seed", NA)) {
   # Validations
@@ -75,7 +75,7 @@ prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     phi = phi,
 
     # 1 Iteration - Base Level
-    basemodel = br(mdata, base.method, ..., cores = cores, seed = seed)
+    basemodel = br(mdata, base.algorithm, ..., cores = cores, seed = seed)
   )
 
   labeldata <- as.data.frame(mdata$dataset[mdata$labels$index])
@@ -97,7 +97,7 @@ prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
       colnames(extracols) <- nmcol
       base <- utiml_create_binary_data(mdata, label, extracols)
       dataset <- utiml_prepare_data(base, "mldPruDent", mdata$name, "prudent",
-                                    base.method, new.features = nmcol)
+                                    base.algorithm, new.features = nmcol)
       mmodel <- utiml_create_model(dataset, ...)
     }
     mmodel
@@ -117,7 +117,7 @@ prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
@@ -137,7 +137,7 @@ prudent <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' # Predict SVM bipartitions
 #' pred <- predict(model, toyml, probability = FALSE)
 #'
-#' # Passing a specif parameter for SVM predict method
+#' # Passing a specif parameter for SVM predict algorithm
 #' pred <- predict(model, toyml, na.action = na.fail)
 #' }
 predict.PruDentmodel <- function(object, newdata,

@@ -8,14 +8,14 @@
 #' @family Transformation methods
 #' @family Powerset
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param p Number of instances to prune. All labelsets that occurs p times or
 #'  less in the training data is removed. (Default: 3)
 #' @param strategy The strategy  (A or B) for processing infrequent labelsets.
 #'    (Default: A).
 #' @param b The number used by the strategy for processing infrequent labelsets.
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores Not used
 #' @param seed An optional integer used to set the seed. (Default:
 #' \code{options("utiml.seed", NA)})
@@ -39,10 +39,11 @@
 #' ##Change default configurations
 #' model <- ps(toyml, "RF", p=4, strategy="B", b=4)
 #' }
-ps <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
-                 p = 3, strategy = c("A", "B"), b = 2, ...,
-                 cores = getOption("utiml.cores", 1),
-                 seed = getOption("utiml.seed", NA)) {
+ps <- function (mdata,
+                base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+                p = 3, strategy = c("A", "B"), b = 2, ...,
+                cores = getOption("utiml.cores", 1),
+                seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
@@ -100,7 +101,7 @@ ps <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
   rm(has.match)
 
   ndata <- merge_pruned_instances(mdata, removed.instances, inst.lab, labelsets)
-  psmodel$model <- lp(ndata, base.method=base.method, seed=seed)
+  psmodel$model <- lp(ndata, base.algorithm=base.algorithm, seed=seed)
 
   utiml_restore_seed()
   class(psmodel) <- "PSmodel"
@@ -146,7 +147,7 @@ merge_pruned_instances <- function (mdata, removed.instances,
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores Not used
 #' @param seed An optional integer used to set the seed. (Default:

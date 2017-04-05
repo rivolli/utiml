@@ -72,7 +72,7 @@ ds <- create_holdout_partition(mytoy, c(train=0.65, test=0.35), "iterative")
 
 Now, the `ds` object has two elements `ds$train` and `ds$test`, where the first will
 be used to create a model and the second to test the model. For example, using the 
-*Binary Relevance* multi-label method with the base classifier *Random Forest*^[Requires the 
+*Binary Relevance* multi-label method with the base algorithm *Random Forest*^[Requires the 
 [randomForest](https://cran.r-project.org/web/packages/randomForest/) package.], we can do:
 ```r
 brmodel <- br(ds$train, "RF", seed=123)
@@ -208,14 +208,14 @@ The multi-label classification is a supervised learning task that seeks to learn
 one or more labels together. This task can be grouped in: problem transformation and
 algorithm adaptation. Next, we provide more details about the methods and their specifities. 
 
-### 5.1 Transformation methods and Base Learners
-The transformation methods require a base learner (binary or multi-class) and use their
+### 5.1 Transformation methods and Base Algorihtms
+The transformation methods require a base algorithm (binary or multi-class) and use their
 predictions to compose the multi-label result. In the **utiml** package there are some
-default base learners that are accepted, but if you need another you can easily 
+default base algorithms that are accepted, but if you need another you can easily 
 developement your own^[see the section *Create a new base Learner*].
 
-Each base learner requires a specific package, you need to install manually this packages,
-because they are not installed together with **utiml**. The follow base learners are supported:
+Each base algorithm requires a specific package, you need to install manually this packages,
+because they are not installed together with **utiml**. The follow algorithm learners are supported:
 
 ```{r, echo=FALSE, results='asis'}
 bl <- data.frame(
@@ -240,7 +240,7 @@ knitr::kable(mts)
 ```
 
 The first and second parameters of each multi-label method is always the same: 
-The multi-label dataset and the base classifier, respectively. However, they may have specific 
+The multi-label dataset and the base algorithm, respectively. However, they may have specific 
 parameters, examples:
 ```r
 #Classifier chain with a specific chain
@@ -251,7 +251,7 @@ ebrmodel <- ebr(toyml, "C5.0", m = 5, subsample=0.6, attr = 0.75)
 ```
 
 Beyond the parameters of each multi-label methods, you can define the parameters for the 
-base method, like this:
+base algorithm, like this:
 
 ```r
 # Specific parameters for SVM
@@ -292,7 +292,7 @@ Almost all multi-label methods can run in parallel, but it requires the installa
 of *parallel* package. The train and prediction methods receive a parameter
 called `cores` that specify the number of cores used to run the method. For some multi-label
 methods are not possible running in multi-core, then read the documentation of each method, 
-for more details^[Base learner `J48` do not work very well with multicore].
+for more details^[Base algorithm `J48` do not work very well with multicore].
 
 ```r
 # Running Binary Relevance method using 4 cores

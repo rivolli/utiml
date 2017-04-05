@@ -11,16 +11,16 @@
 #' @family Transformation methods
 #' @family Stacking methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param folds The number of folds used in internal prediction. If this value
 #'  is 1 all dataset will be used in the first prediction. (Default: 1)
 #' @param phi A value between 0 and 1 to determine the correlation coefficient,
 #'  The value 0 include all labels in the second phase and the 1 only the
 #'  predicted label. (Default: 0)
-#' @param ... Others arguments passed to the base method for all subproblems.
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param predict.params A list of default arguments passed to the predictor
-#'  method. (Default: \code{list()})
+#'  algorithm. (Default: \code{list()})
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -61,7 +61,8 @@
 #' # Set a specific parameter
 #' model <- mbr(toyml, 'KNN', k=5)
 #' }
-mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
+mbr <- function(mdata,
+                base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                 folds = 1, phi = 0, ..., predict.params = list(),
                 cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
@@ -93,7 +94,7 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
                    call = match.call())
 
   # 1 Iteration - Base Level -------------------------------------------------
-  mbrmodel$basemodel <- br(mdata, base.method, ..., cores=cores, seed=seed)
+  mbrmodel$basemodel <- br(mdata, base.algorithm, ..., cores=cores, seed=seed)
   if (folds == 1) {
     params <- list(object = mbrmodel$basemodel,
                    newdata = mdata$dataset[mdata$attributesIndexes],
@@ -105,7 +106,8 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     kf <- create_kfold_partition(mdata, folds, "iterative")
     base.preds <- do.call(rbind, lapply(seq(folds), function(f) {
       dataset <- partition_fold(kf, f)
-      classifier <- br(dataset$train, base.method, ..., cores=cores, seed=seed)
+      classifier <- br(dataset$train, base.algorithm, ...,
+                       cores=cores, seed=seed)
       params <- list(object = classifier, newdata = dataset$test,
                      probability = FALSE, cores = cores, seed = seed)
       as.bipartition(do.call(predict.BRmodel, c(params, predict.params)))
@@ -132,7 +134,7 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     utiml_create_model(
       utiml_prepare_data(
         utiml_create_binary_data(mdata, label, new.data),
-        "mldMBR", mdata$name, "mbr", base.method, new.features = nmcol
+        "mldMBR", mdata$name, "mbr", base.algorithm, new.features = nmcol
       ), ...
     )
   }, cores, seed)
@@ -151,7 +153,7 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
@@ -171,7 +173,7 @@ mbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' # Predict SVM bipartitions
 #' pred <- predict(model, toyml, probability = FALSE)
 #'
-#' # Passing a specif parameter for SVM predict method
+#' # Passing a specif parameter for SVM predict algorithm
 #' pred <- predict(model, toyml, na.action = na.fail)
 #' }
 predict.MBRmodel <- function(object, newdata,

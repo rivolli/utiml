@@ -10,8 +10,8 @@
 #' @family Powerset
 #' @family Ensemble methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param m The number of Pruned Set models used in the ensemble.
 #' @param subsample A value between 0.1 and 1 to determine the percentage of
 #'    training instances that must be used for each classifier. (Default: 0.63)
@@ -20,7 +20,7 @@
 #' @param strategy The strategy  (A or B) for processing infrequent labelsets.
 #'    (Default: A).
 #' @param b The number used by the strategy for processing infrequent labelsets.
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -46,7 +46,8 @@
 #' ##Change default configurations
 #' model <- eps(toyml, "RF", m=15, subsample=0.4, p=4, strategy="B", b=4)
 #' }
-eps <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
+eps <- function (mdata,
+                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                 m = 10, subsample = 0.75, p = 3, strategy = c("A", "B"), b = 2,
                 ..., cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
@@ -87,7 +88,7 @@ eps <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
   })
 
   epsmodel$models <- utiml_lapply(idxs, function(idx) {
-    ps(create_subset(mdata, idx), base.method = base.method, p = p,
+    ps(create_subset(mdata, idx), base.algorithm = base.algorithm, p = p,
        strategy = strategy, b = b, ..., seed = seed)
   }, cores, seed)
 
@@ -109,7 +110,7 @@ eps <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' @param threshold A threshold value for producing bipartitions. (Default: 0.5)
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the prediction. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:

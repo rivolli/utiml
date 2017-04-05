@@ -4,20 +4,20 @@
 \alias{prudent}
 \title{PruDent classifier for multi-label Classification}
 \usage{
-prudent(mdata, base.method = getOption("utiml.base.method", "SVM"), phi = 0,
-  ..., cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+prudent(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  phi = 0, ..., cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{phi}{A value between 0 and 1 to determine the information gain. The
 value 0 include all labels in the second phase and the 1 none.}
 
-\item{...}{Others arguments passed to the base method for all subproblems.}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:

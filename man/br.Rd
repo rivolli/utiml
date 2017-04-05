@@ -4,16 +4,16 @@
 \alias{br}
 \title{Binary Relevance for multi-label Classification}
 \usage{
-br(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
+br(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
   cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
-\item{...}{Others arguments passed to the base method for all subproblems}
+\item{...}{Others arguments passed to the base algorithm for all subproblems}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -43,11 +43,11 @@ model <- br(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
 \dontrun{
-# Use SVM as base method
+# Use SVM as base algorithm
 model <- br(toyml, "SVM")
 pred <- predict(model, toyml)
 
-# Change the base method and use 4 CORES
+# Change the base algorithm and use 4 CORES
 model <- br(toyml[1:50], 'RF', cores = 4, seed = 123)
 
 # Set a parameters for all subproblems

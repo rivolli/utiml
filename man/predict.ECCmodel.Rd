@@ -21,7 +21,7 @@ then all predictions are returned. (Default: \code{'maj'})}
 \item{probability}{Logical indicating whether class probabilities should be
 returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
-\item{...}{Others arguments passed to the base method prediction for all
+\item{...}{Others arguments passed to the base algorithm prediction for all
 subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher

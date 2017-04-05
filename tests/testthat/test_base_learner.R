@@ -8,7 +8,7 @@ testdataset <- list(
 )
 testdataset$data$y3 <- as.factor(testdataset$data$y3)
 
-test_that("test train/prediction base learner methods", {
+test_that("test train/prediction base learner algorithms", {
   methods <- c("baseSVM", "baseJ48", "baseC5.0", "baseCART", "baseRF",
                "baseNB", "baseKNN", "baseMAJORITY", "baseRANDOM")
   names(methods) <- c("svm", "J48", "C5.0", "rpart", "randomForest",
@@ -44,7 +44,7 @@ test_that("Many Arguments", {
       labelindex = object$labelindex,
       mldataset = object$mldataset,
       mlmethod = object$mlmethod,
-      base.method = object$base.method,
+      base.algorithm = object$base.algorithm,
       dataset=dataset,
       partition=partition,
       extra=extra,
@@ -57,11 +57,11 @@ test_that("Many Arguments", {
   expect_equal(y1$labelindex, 11)
   expect_equal(y1$mldataset, "toyml")
   expect_equal(y1$mlmethod, "br")
-  expect_equal(y1$base.method, "XYZ")
+  expect_equal(y1$base.algorithm, "XYZ")
   expect_equal(y1$dataset, "toyml")
   expect_equal(y1$partition, "all")
 
-  same <- c("mldataset", "mlmethod", "base.method", "dataset", "partition", "extra")
+  same <- c("mldataset", "mlmethod", "base.algorithm", "dataset", "partition", "extra")
   expect_equal(model$models[["y1"]][same], model$models[["y2"]][same])
 })
 
