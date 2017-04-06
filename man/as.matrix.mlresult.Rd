@@ -17,4 +17,3 @@ matrix
 \description{
 Convert a mlresult to matrix
 }
-

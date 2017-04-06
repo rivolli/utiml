@@ -45,4 +45,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=eps]{Ensemble of Pruned Set (EPS)}}
 }
-

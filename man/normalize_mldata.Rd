@@ -28,4 +28,3 @@ Other pre process: \code{\link{fill_sparce_mldata}},
   \code{\link{remove_unlabeled_instances}},
   \code{\link{replace_nominal_attributes}}
 }
-

@@ -41,4 +41,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=homer]{Hierarchy Of Multilabel classifiER (HOMER)}}
 }
-

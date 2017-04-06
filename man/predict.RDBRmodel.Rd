@@ -80,4 +80,3 @@ Rauber, T. W., Mello, L. H., Rocha, V. F., Luchi, D., & Varejao, F. M.
 \seealso{
 \code{\link[=rdbr]{Recursive Dependent Binary Relevance (RDBR)}}
 }
-

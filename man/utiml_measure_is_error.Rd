@@ -21,4 +21,3 @@ Crammer, K., & Singer, Y. (2003). A Family of Additive Online
  Algorithms for Category Ranking. Journal of Machine Learning Research, 3(6),
  1025-1058.
 }
-

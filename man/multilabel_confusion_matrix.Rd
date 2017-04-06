@@ -64,4 +64,3 @@ confmatp2 <- multilabel_confusion_matrix(part2, prediction[51:100, ])
 mlconfmat <- confmatp1 + confmatp2
 }
 }
-

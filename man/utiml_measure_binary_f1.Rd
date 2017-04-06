@@ -21,4 +21,3 @@ F1 measure value between 0 and 1
 \description{
 Compute the binary F1 measure
 }
-

@@ -26,4 +26,3 @@ utiml_is_equal_sets(c(1, 2, 3), c(1, 2, 3, 4))
 ## FALSE
 }
 }
-

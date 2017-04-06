@@ -15,4 +15,3 @@ matrix with probabilities values
 \description{
 Convert a mlresult to a probability matrix
 }
-

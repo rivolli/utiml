@@ -41,4 +41,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=lift]{LIFT}}
 }
-

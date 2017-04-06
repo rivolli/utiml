@@ -44,4 +44,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=br]{Binary Relevance (BR)}}
 }
-

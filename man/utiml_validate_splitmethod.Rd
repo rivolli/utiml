@@ -15,4 +15,3 @@ The correct name of split method
 \description{
 Return the name of split method and validate if it is valid
 }
-

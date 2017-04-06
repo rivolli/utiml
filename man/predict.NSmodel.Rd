@@ -49,4 +49,3 @@ pred <- predict(model, toyml, na.action = na.fail)
 \seealso{
 \code{\link[=ns]{Nested Stacking (NS)}}
 }
-

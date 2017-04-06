@@ -39,6 +39,7 @@ Convert a matrix prediction in a multi label prediction
 
 \item \code{mlresult}: change the mlresult type
 }}
+
 \examples{
 predictions <- matrix(runif(100), ncol = 10)
 colnames(predictions) <- paste('label', 1:10, sep='')
@@ -51,4 +52,3 @@ mlresult <- as.mlresult(predictions, probability = FALSE, threshold = 0.6)
 # Change the current type of a mlresult
 mlresult <- as.mlresult(mlresult, probability = TRUE)
 }
-

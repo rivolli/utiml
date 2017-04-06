@@ -14,4 +14,3 @@
 \description{
 Print ECC model
 }
-

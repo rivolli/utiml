@@ -34,6 +34,7 @@ the threshold.
 
 \item \code{mlresult}: Maximum Cut Thresholding (MCut) for mlresult
 }}
+
 \examples{
 prediction <- matrix(runif(16), ncol = 4)
 mcut_threshold(prediction)
@@ -51,4 +52,3 @@ Other threshold: \code{\link{fixed_threshold}},
   \code{\link{scut_threshold}},
   \code{\link{subset_correction}}
 }
-

@@ -2,11 +2,16 @@ Package: utiml
 Type: Package
 Title: Utilities for Multi-Label Learning
 Version: 0.1.2
-Date: 2016-11-19
+Date: 2017-04-05
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
-Description: Multi-label learning methods and others utilities to support multi-
-  label classification in R.
+Description: Multi-label learning strategies and others procedures to support multi-
+  label classification in R. The package provides a set of multi-label procedures such as
+  sampling methods, transformation strategies, threshold functions, pre-processing 
+  techniques and evaluation metrics. A complete overview of the matter can be seen in
+  Zhang, M. and Zhou, Z. (2014) <doi:10.1109/TKDE.2013.39> and Gibaja, E. and 
+  Ventura, S. (2015) <doi:10.1145/2716262>.
+  \citet{}.
 URL: https://github.com/rivolli/utiml
 Depends:
     R (>= 3.0.0),
@@ -32,5 +37,5 @@ Suggests:
 License: GPL | file LICENSE
 LazyData: true
 BugReports: https://github.com/rivolli/utiml
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 VignetteBuilder: knitr

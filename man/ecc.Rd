@@ -85,9 +85,6 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
    5782, 254-269.
 }
 \seealso{
-Other Ensemble methods: \code{\link{ebr}},
-  \code{\link{eps}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -97,5 +94,7 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Ensemble methods: \code{\link{ebr}},
+  \code{\link{eps}}
+}

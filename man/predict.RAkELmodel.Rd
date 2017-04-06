@@ -41,4 +41,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=rakel]{Random k Labelsets (RAkEL)}}
 }
-

@@ -32,4 +32,3 @@ Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
  Learningand Knowledge Discovery in Databases - European Conference,
  ECML PKDD (pp. 145-158).
 }
-

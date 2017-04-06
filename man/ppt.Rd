@@ -58,9 +58,6 @@ Read, J. (2008). A pruned problem transformation method for multi-label
   Research Student Conference (pp. 143-150).
 }
 \seealso{
-Other Powerset: \code{\link{eps}}, \code{\link{lp}},
-  \code{\link{ps}}, \code{\link{rakel}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -70,5 +67,7 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Powerset: \code{\link{eps}}, \code{\link{lp}},
+  \code{\link{ps}}, \code{\link{rakel}}
+}

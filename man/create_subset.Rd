@@ -35,4 +35,3 @@ Other sampling: \code{\link{create_holdout_partition}},
   \code{\link{create_kfold_partition}},
   \code{\link{create_random_subset}}
 }
-

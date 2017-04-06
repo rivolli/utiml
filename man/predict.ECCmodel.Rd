@@ -53,4 +53,3 @@ pred <- predict(model, toyml, vote.schema = 'max')
 \seealso{
 \code{\link[=ecc]{Ensemble of Classifier Chains (ECC)}}
 }
-

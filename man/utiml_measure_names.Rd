@@ -22,4 +22,3 @@ utiml_measure_names("bipartition")
 utiml_measure_names(c("micro-based", "macro-based"))
 }
 }
-

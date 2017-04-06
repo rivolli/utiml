@@ -24,4 +24,3 @@ A list with the results of the specified method.
 \description{
 Select the suitable method lapply or mclaplly
 }
-

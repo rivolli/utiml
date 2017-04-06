@@ -19,4 +19,3 @@ Zhang, M.-L., & Zhou, Z.-H. (2014). A Review on Multi-Label
  Learning Algorithms. IEEE Transactions on Knowledge and Data Engineering,
  26(8), 1819-1837.
 }
-

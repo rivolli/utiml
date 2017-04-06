@@ -93,4 +93,3 @@ Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
 \seealso{
 \code{\link[=brplus]{BR+}}
 }
-

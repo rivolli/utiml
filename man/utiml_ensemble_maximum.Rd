@@ -20,4 +20,3 @@ A list with two values "bipartition" and "probability".
 Compute the single-label prediction using the maximum votes schema. The
 probabilities result is computed using the maximum value.
 }
-

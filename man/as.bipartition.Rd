@@ -15,4 +15,3 @@ matrix with bipartition values
 \description{
 Convert a mlresult to a bipartition matrix
 }
-

@@ -81,8 +81,6 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
    Classification. In Data Mining and Knowledge Discovery (pp. 1-26).
 }
 \seealso{
-Other Stacking methods: \code{\link{brplus}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -92,5 +90,6 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Stacking methods: \code{\link{brplus}}
+}

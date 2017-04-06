@@ -39,4 +39,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=ps]{Pruned Set (PS)}}
 }
-

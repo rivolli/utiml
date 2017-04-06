@@ -18,4 +18,3 @@ TRUE or throw an error message otherwise
 \description{
 Verify if a schema vote name is valid
 }
-

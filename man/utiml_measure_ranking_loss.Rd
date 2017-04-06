@@ -18,4 +18,3 @@ Multi-label Hamming Loss Measure
 Schapire, R. E., & Singer, Y. (1999). Improved boosting
  algorithm using confidence-rated predictions. Machine Learning, 297-336.
 }
-

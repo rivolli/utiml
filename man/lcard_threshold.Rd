@@ -38,6 +38,7 @@ cardinality is close to the average predicted label cardinality.
 
 \item \code{mlresult}: Cardinality Threshold for mlresult
 }}
+
 \examples{
 prediction <- matrix(runif(16), ncol = 4)
 lcard_threshold(prediction, 2.1)
@@ -54,4 +55,3 @@ Other threshold: \code{\link{fixed_threshold}},
   \code{\link{scut_threshold}},
   \code{\link{subset_correction}}
 }
-

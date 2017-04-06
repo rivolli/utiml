@@ -51,8 +51,6 @@ Hullermeier, E., Furnkranz, J., Cheng, W., & Brinker, K. (2008).
  172(16-17), 1897-1916.
 }
 \seealso{
-Other Pairwise methods: \code{\link{clr}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -61,5 +59,6 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
   \code{\link{ppt}}, \code{\link{prudent}},
   \code{\link{ps}}, \code{\link{rakel}}, \code{\link{rdbr}}
-}
 
+Other Pairwise methods: \code{\link{clr}}
+}

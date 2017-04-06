@@ -38,4 +38,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=lp]{Label Powerset (LP)}}
 }
-

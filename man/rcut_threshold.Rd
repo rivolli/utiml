@@ -34,6 +34,7 @@ labels with the highest scores for each instance at the deployment.
 
 \item \code{mlresult}: Rank Cut (RCut) threshold method for mlresult
 }}
+
 \examples{
 prediction <- matrix(runif(16), ncol = 4)
 rcut_threshold(prediction, 2)
@@ -51,4 +52,3 @@ Other threshold: \code{\link{fixed_threshold}},
   \code{\link{scut_threshold}},
   \code{\link{subset_correction}}
 }
-

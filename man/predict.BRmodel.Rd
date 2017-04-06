@@ -52,4 +52,3 @@ pred <- predict(model, dataset$test, na.action = na.fail)
 \seealso{
 \code{\link[=br]{Binary Relevance (BR)}}
 }
-

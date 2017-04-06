@@ -20,4 +20,3 @@ A list with two values "bipartition" and "probability".
 Compute the prediction for a single-label using the average votes schema.
 The probabilities result is computed using the averaged values.
 }
-

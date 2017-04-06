@@ -67,4 +67,3 @@ Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
 \seealso{
 \code{\link[=dbr]{Dependent Binary Relevance (DBR)}}
 }
-

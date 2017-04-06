@@ -35,4 +35,3 @@ Other pre process: \code{\link{fill_sparce_mldata}},
   \code{\link{remove_unique_attributes}},
   \code{\link{remove_unlabeled_instances}}
 }
-

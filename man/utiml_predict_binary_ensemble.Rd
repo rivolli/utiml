@@ -17,4 +17,3 @@ A binary.prediction object
 \description{
 Is very simillar from utiml_compute_ensemble but differs from arguments
 }
-

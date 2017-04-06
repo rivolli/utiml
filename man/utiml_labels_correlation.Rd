@@ -39,4 +39,3 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
 \seealso{
 \code{\link[=mbr]{Meta-BR (MBR or 2BR)}}
 }
-

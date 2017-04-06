@@ -45,9 +45,6 @@ Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
    multi-label scene classification. Pattern Recognition, 37(9), 1757-1771.
 }
 \seealso{
-Other Powerset: \code{\link{eps}}, \code{\link{ppt}},
-  \code{\link{ps}}, \code{\link{rakel}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -57,5 +54,7 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Powerset: \code{\link{eps}}, \code{\link{ppt}},
+  \code{\link{ps}}, \code{\link{rakel}}
+}

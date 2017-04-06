@@ -15,4 +15,3 @@ The method name that will compute the votes
 \description{
 Define the method name related with the vote schema
 }
-

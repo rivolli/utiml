@@ -19,4 +19,3 @@ Loza Mencia, E., & Furnkranz, J. (2010). Efficient Multilabel
 Classification Algorithms for Large-Scale Problems in the Legal Domain.
 In Semantic Processing of Legal Texts (pp. 192-215).
 }
-

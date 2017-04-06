@@ -18,4 +18,3 @@ Multi-label Micro-Precision Measure
 Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel
  Learning. ACM Comput. Surv., 47(3), 52:1-52:38.
 }
-

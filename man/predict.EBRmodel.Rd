@@ -54,4 +54,3 @@ pred <- predict(model, toyml, vote = 'max')
 \code{\link[=ebr]{Ensemble of Binary Relevance (EBR)}} \code{
    \link[=compute_multilabel_predictions]{Compute Multi-label Predictions}}
 }
-

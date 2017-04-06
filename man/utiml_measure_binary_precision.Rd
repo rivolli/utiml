@@ -21,4 +21,3 @@ Precision value between 0 and 1
 \description{
 Compute the binary precision
 }
-

@@ -74,4 +74,3 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{ppt}}, \code{\link{prudent}},
   \code{\link{ps}}, \code{\link{rakel}}, \code{\link{rpc}}
 }
-

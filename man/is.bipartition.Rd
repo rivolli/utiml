@@ -15,4 +15,3 @@ logical value
 \description{
 Test if a mlresult contains crisp values as default
 }
-

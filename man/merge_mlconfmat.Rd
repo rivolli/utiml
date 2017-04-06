@@ -17,4 +17,3 @@ mlconfmat
 \description{
 Join a list of multi-label confusion matrix
 }
-

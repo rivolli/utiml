@@ -2,18 +2,18 @@
 % Please edit documentation in R/base_learner.R
 \name{mltrain}
 \alias{mltrain}
+\alias{mltrain.default}
+\alias{mltrain.baseSVM}
+\alias{mltrain.baseSMO}
+\alias{mltrain.baseJ48}
 \alias{mltrain.baseC5.0}
 \alias{mltrain.baseCART}
-\alias{mltrain.baseJ48}
-\alias{mltrain.baseKNN}
-\alias{mltrain.baseMAJORITY}
-\alias{mltrain.baseNB}
-\alias{mltrain.baseRANDOM}
 \alias{mltrain.baseRF}
-\alias{mltrain.baseSMO}
-\alias{mltrain.baseSVM}
+\alias{mltrain.baseNB}
+\alias{mltrain.baseKNN}
 \alias{mltrain.baseXGB}
-\alias{mltrain.default}
+\alias{mltrain.baseMAJORITY}
+\alias{mltrain.baseRANDOM}
 \title{Build transformation models}
 \usage{
 mltrain(object, ...)
@@ -99,6 +99,7 @@ To create a new predict model see \code{\link{mlpredict}} documentation.
 
 \item \code{baseRANDOM}: Random model
 }}
+
 \section{How to create a new train base method}{
 
 First, is necessary to define a name of your classifier, because this name
@@ -118,6 +119,7 @@ Finally, your method should return a model that will be used by the mlpredict
 method. Remember, that your method may be used to buid binary and multi-class
 models.
 }
+
 \examples{
 # Create a empty model of type FOO
 mltrain.baseFOO <- function (object, ...) {
@@ -143,4 +145,3 @@ mltrain.baseSVM <- function (object, ...) {
 }
 }
 }
-

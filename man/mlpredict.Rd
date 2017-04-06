@@ -2,19 +2,19 @@
 % Please edit documentation in R/base_learner.R
 \name{mlpredict}
 \alias{mlpredict}
-\alias{mlpredict.C5.0}
-\alias{mlpredict.J48}
-\alias{mlpredict.SMO}
-\alias{mlpredict.baseKNN}
 \alias{mlpredict.default}
-\alias{mlpredict.emptyModel}
-\alias{mlpredict.majorityModel}
-\alias{mlpredict.naiveBayes}
-\alias{mlpredict.randomForest}
-\alias{mlpredict.randomModel}
-\alias{mlpredict.rpart}
 \alias{mlpredict.svm}
+\alias{mlpredict.SMO}
+\alias{mlpredict.J48}
+\alias{mlpredict.C5.0}
+\alias{mlpredict.rpart}
+\alias{mlpredict.randomForest}
+\alias{mlpredict.naiveBayes}
+\alias{mlpredict.baseKNN}
 \alias{mlpredict.xgb.Booster}
+\alias{mlpredict.majorityModel}
+\alias{mlpredict.randomModel}
+\alias{mlpredict.emptyModel}
 \title{Prediction transformation problems}
 \usage{
 mlpredict(model, newdata, ...)
@@ -97,6 +97,7 @@ To create a new train method see \code{\link{mltrain}} documentation.
 
 \item \code{emptyModel}: Empty model to fix the cases with few train examples
 }}
+
 \section{How to create a new prediction base method}{
 
 Fist is necessary to know the class of model generate by the respective train
@@ -113,6 +114,7 @@ The return of this method must be a data.frame with two columns called
 predicted classe and the second the probability/score/confidence of this
 prediction. The rows represents the examples.
 }
+
 \examples{
 
 # Create a method that predict always the first class
@@ -138,4 +140,3 @@ mlpredict.svm <- function (dataset, newdata, ...) {
 }
 }
 }
-

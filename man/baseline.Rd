@@ -61,4 +61,3 @@ Metz, J., Abreu, L. F. de, Cherman, E. A., & Monard, M. C. (2012). On the
  Learning. In 13th Ibero-American Conference on AI (pp. 189-198).
  Cartagena de Indias, Colombia.
 }
-
