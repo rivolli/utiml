@@ -18,4 +18,3 @@ Multi-label Coverage Measure
 Schapire, R. E., & Singer, Y. (2000). BoosTexter: A boosting-
 based system for text categorization. Machine Learning, 39(2), 135-168.
 }
-

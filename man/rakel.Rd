@@ -4,26 +4,26 @@
 \alias{rakel}
 \title{Random k-labelsets for multilabel classification}
 \usage{
-rakel(mdata, base.method = getOption("utiml.base.method", "SVM"), k = 3,
-  m = 2 * mdata$measures$num.labels, overlapping = TRUE, ...,
+rakel(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  k = 3, m = 2 * mdata$measures$num.labels, overlapping = TRUE, ...,
   cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{k}{The number of labels used in each labelset. (Default: \code{3})}
 
 \item{m}{The number of LP models. Used when overlapping is TRUE, otherwise it
 is ignored. (Default: \code{2 * length(labels)})}
 
-\item{overlapping}{Logical value define if the method must overlapping the
-labelsets. If FALSE the method uses disjoint labelsets.
+\item{overlapping}{Logical value, that defines if the method must overlapping
+the labelsets. If FALSE the method uses disjoint labelsets.
 (Default: \code{TRUE})}
 
-\item{...}{Others arguments passed to the base method for all subproblems}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -66,9 +66,6 @@ Tsoumakas, G., Katakis, I., & Vlahavas, I. (2011). Random k-labelsets for
  Engineering, 23(7), 1079-1089.
 }
 \seealso{
-Other Powerset: \code{\link{eps}}, \code{\link{lp}},
-  \code{\link{ppt}}, \code{\link{ps}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -77,5 +74,7 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
   \code{\link{ppt}}, \code{\link{prudent}},
   \code{\link{ps}}, \code{\link{rdbr}}, \code{\link{rpc}}
-}
 
+Other Powerset: \code{\link{eps}}, \code{\link{lp}},
+  \code{\link{ppt}}, \code{\link{ps}}
+}

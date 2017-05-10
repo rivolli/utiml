@@ -39,6 +39,7 @@ different fixed thresholds, one for each label.
 
 \item \code{mlresult}: Fixed Threshold for mlresult
 }}
+
 \examples{
 # Create a prediction matrix with scores
 result <- matrix(
@@ -66,4 +67,3 @@ Other threshold: \code{\link{lcard_threshold}},
   \code{\link{scut_threshold}},
   \code{\link{subset_correction}}
 }
-

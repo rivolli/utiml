@@ -8,11 +8,11 @@
 #'
 #' @family Transformation methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param ratio Controll the number of clusters being retained. Must be between
 #'  0 and 1. (Default: \code{0.1})
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -38,9 +38,10 @@
 #' # Runing lift with a specific ratio
 #' model <- lift(toyml, "RF", 0.15)
 #' }
-lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
-               ratio = 0.1, ..., cores = getOption("utiml.cores", 1),
-               seed = getOption("utiml.seed", NA)) {
+lift <- function(mdata,
+                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+                 ratio = 0.1, ..., cores = getOption("utiml.cores", 1),
+                 seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
@@ -85,7 +86,8 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 
     #Induce the model using the base algorithm
     model <- utiml_create_model(
-      utiml_prepare_data(dataset, "mldLIFT", mdata$name, "lift", base.method),
+      utiml_prepare_data(dataset, "mldLIFT", mdata$name,
+                         "lift", base.algorithm),
       ...
     )
 
@@ -115,7 +117,7 @@ lift <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:

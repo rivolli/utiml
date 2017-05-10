@@ -22,4 +22,3 @@ Random split of a dataset
 utiml_random_split(emotions, c(0.6, 0.2, 0.2))
 }
 }
-

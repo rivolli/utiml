@@ -35,6 +35,7 @@ Compute the multi-label ensemble predictions based on some vote schema
 \itemize{
 \item \code{utiml_predict_ensemble}: Internal version
 }}
+
 \note{
 You can create your own vote schema, just create a method that receive
  two matrix (bipartitions and probabilities) and return a list with the
@@ -67,4 +68,3 @@ random_choice <- function (bipartition, probability) {
 result <- compute_multilabel_predictions(predictions, "random_choice")
 }
 }
-

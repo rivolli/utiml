@@ -8,15 +8,15 @@
 #'
 #' @family Transformation methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param clusters Number maximum of nodes in each level. (Default: 3)
 #' @param method The strategy used to organize the labels (create the
 #'  meta-labels). The options are: "balanced", "clustering" and "random".
 #'    (Default: "balanced").
 #' @param iteration The number max of iterations, used by balanced or clustering
 #'  methods.
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -44,7 +44,8 @@
 #' ##Change default configurations
 #' model <- homer(toyml, "RF", clusters=5, method="clustering", iteration=10)
 #' }
-homer <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
+homer <- function (mdata,
+                   base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                    clusters = 3, method = c("balanced", "clustering", "random"),
                    iteration = 100, ..., cores = getOption("utiml.cores", 1),
                    seed = getOption("utiml.seed", NA)) {
@@ -72,7 +73,7 @@ homer <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
     set.seed(seed)
   }
 
-  hmodel$models <- buildLabelHierarchy(mdata, base.method, method, clusters,
+  hmodel$models <- buildLabelHierarchy(mdata, base.algorithm, method, clusters,
                                        iteration, ..., cores=cores, seed=seed)
 
   utiml_restore_seed()
@@ -90,7 +91,7 @@ homer <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the prediction. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
@@ -191,7 +192,7 @@ predictLabelHierarchy <- function(node, newdata, ..., cores, seed) {
   )
 }
 
-buildLabelHierarchy <- function (mdata, base.method, method, k, it,
+buildLabelHierarchy <- function (mdata, base.algorithm, method, k, it,
                                  ..., cores, seed) {
   node <- list(labels = rownames(mdata$labels), metalabels = list())
 
@@ -224,14 +225,14 @@ buildLabelHierarchy <- function (mdata, base.method, method, k, it,
   mtlbl <- paste(sapply(node$metalabels, paste, collapse='*'), collapse="|")
 
   node$attributes <- colnames(ndata$dataset[, ndata$attributesIndexes])
-  node$model <- br(ndata, base.method, ..., cores=cores, seed=seed)
+  node$model <- br(ndata, base.algorithm, ..., cores=cores, seed=seed)
   rm(ndata)
 
   node$children <- lapply(node$metalabels, function (metalabels) {
     if (length(metalabels) > 1) {
       excluded.label <- node$labels[!node$labels %in% metalabels]
       ndata <- remove_unlabeled_instances(remove_labels(mdata, excluded.label))
-      buildLabelHierarchy(ndata, base.method, method, k, it, ...,
+      buildLabelHierarchy(ndata, base.algorithm, method, k, it, ...,
                           cores=cores, seed=seed)
     } else {
       NULL

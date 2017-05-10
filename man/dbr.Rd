@@ -4,22 +4,22 @@
 \alias{dbr}
 \title{Dependent Binary Relevance (DBR) for multi-label Classification}
 \usage{
-dbr(mdata, base.method = getOption("utiml.base.method", "SVM"),
+dbr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
   estimate.models = TRUE, ..., cores = getOption("utiml.cores", 1),
   seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{estimate.models}{Logical value indicatind whether is necessary build
 Binary Relevance classifier for estimate process. The default implementaion
 use BR as estimators, however when other classifier is desirable then use
 the value \code{FALSE} to skip this process. (Default: \code{TRUE}).}
 
-\item{...}{Others arguments passed to the base method for all subproblems.}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -50,7 +50,7 @@ model <- dbr(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
 \dontrun{
-# Use Random Forest as base method and 4 cores
+# Use Random Forest as base algorithm and 4 cores
 model <- dbr(toyml, 'RF', cores = 4)
 }
 }
@@ -72,4 +72,3 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
 }
-

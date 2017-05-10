@@ -11,8 +11,8 @@
 #' @family Transformation methods
 #' @family Ensemble methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param m The number of Classifier Chains models used in the ensemble.
 #'    (Default: 10)
 #' @param subsample A value between 0.1 and 1 to determine the percentage of
@@ -21,7 +21,7 @@
 #'    attributes that must be used for each classifier. (Default: 0.50)
 #' @param replacement Bollean value to define if use sampling with replacement
 #'    to create the data of the models of the ensemble. (Default: TRUE)
-#' @param ... Others arguments passed to the base method for all subproblems.
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -62,7 +62,8 @@
 #' # Running in 4 cores and define a specific seed
 #' model1 <- ecc(toyml, cores=4, seed=123)
 #' }
-ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
+ecc <- function(mdata,
+                base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                 m = 10, subsample = 0.75, attr.space = 0.5, replacement = TRUE,
                 ..., cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
@@ -109,7 +110,7 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     ndata <- create_subset(mdata, idx[[iteration]]$rows, idx[[iteration]]$cols)
     chain <- idx[[iteration]]$chain
 
-    ccmodel <- cc(ndata, base.method, chain, ..., cores = cores, seed = seed)
+    ccmodel <- cc(ndata, base.algorithm, chain, ..., cores = cores, seed = seed)
     ccmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
     rm(ndata)
 
@@ -133,7 +134,7 @@ ecc <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  then all predictions are returned. (Default: \code{'maj'})
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:

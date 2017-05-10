@@ -4,7 +4,7 @@
 \alias{homer}
 \title{Hierarchy Of Multilabel classifiER (HOMER)}
 \usage{
-homer(mdata, base.method = getOption("utiml.base.method", "SVM"),
+homer(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
   clusters = 3, method = c("balanced", "clustering", "random"),
   iteration = 100, ..., cores = getOption("utiml.cores", 1),
   seed = getOption("utiml.seed", NA))
@@ -12,8 +12,8 @@ homer(mdata, base.method = getOption("utiml.base.method", "SVM"),
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{clusters}{Number maximum of nodes in each level. (Default: 3)}
 
@@ -24,7 +24,7 @@ meta-labels). The options are: "balanced", "clustering" and "random".
 \item{iteration}{The number max of iterations, used by balanced or clustering
 methods.}
 
-\item{...}{Others arguments passed to the base method for all subproblems}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -75,4 +75,3 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{ps}}, \code{\link{rakel}},
   \code{\link{rdbr}}, \code{\link{rpc}}
 }
-

@@ -17,7 +17,7 @@ matrix, data.frame or a mldr object.}
 \item{probability}{Logical indicating whether class probabilities should be
 returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
-\item{...}{Others arguments passed to the base method prediction for all
+\item{...}{Others arguments passed to the base algorithm prediction for all
 subproblems.}
 
 \item{cores}{The number of cores to parallelize the prediction. Values higher
@@ -41,4 +41,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=homer]{Hierarchy Of Multilabel classifiER (HOMER)}}
 }
-

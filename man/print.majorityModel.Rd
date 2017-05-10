@@ -14,4 +14,3 @@
 \description{
 Print Majority model
 }
-

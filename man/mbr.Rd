@@ -4,15 +4,15 @@
 \alias{mbr}
 \title{Meta-BR or 2BR for multi-label Classification}
 \usage{
-mbr(mdata, base.method = getOption("utiml.base.method", "SVM"), folds = 1,
-  phi = 0, ..., predict.params = list(), cores = getOption("utiml.cores",
-  1), seed = getOption("utiml.seed", NA))
+mbr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  folds = 1, phi = 0, ..., predict.params = list(),
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{folds}{The number of folds used in internal prediction. If this value
 is 1 all dataset will be used in the first prediction. (Default: 1)}
@@ -21,10 +21,10 @@ is 1 all dataset will be used in the first prediction. (Default: 1)}
 The value 0 include all labels in the second phase and the 1 only the
 predicted label. (Default: 0)}
 
-\item{...}{Others arguments passed to the base method for all subproblems.}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{predict.params}{A list of default arguments passed to the predictor
-method. (Default: \code{list()})}
+algorithm. (Default: \code{list()})}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -81,8 +81,6 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
    Classification. In Data Mining and Knowledge Discovery (pp. 1-26).
 }
 \seealso{
-Other Stacking methods: \code{\link{brplus}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -92,5 +90,6 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Stacking methods: \code{\link{brplus}}
+}

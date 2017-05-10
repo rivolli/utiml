@@ -45,6 +45,7 @@ results it returs the threshold values for each label.
 
 \item \code{mlresult}: Mlresult scut_threshold
 }}
+
 \note{
 The loss function is a R method that receive two vectors, the expected
  values of the label and the predicted values, respectively. Positive values
@@ -83,4 +84,3 @@ Other threshold: \code{\link{fixed_threshold}},
   \code{\link{rcut_threshold}},
   \code{\link{subset_correction}}
 }
-

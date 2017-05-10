@@ -4,15 +4,15 @@
 \alias{ecc}
 \title{Ensemble of Classifier Chains for multi-label Classification}
 \usage{
-ecc(mdata, base.method = getOption("utiml.base.method", "SVM"), m = 10,
-  subsample = 0.75, attr.space = 0.5, replacement = TRUE, ...,
+ecc(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  m = 10, subsample = 0.75, attr.space = 0.5, replacement = TRUE, ...,
   cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{m}{The number of Classifier Chains models used in the ensemble.
 (Default: 10)}
@@ -26,7 +26,7 @@ attributes that must be used for each classifier. (Default: 0.50)}
 \item{replacement}{Bollean value to define if use sampling with replacement
 to create the data of the models of the ensemble. (Default: TRUE)}
 
-\item{...}{Others arguments passed to the base method for all subproblems.}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -85,9 +85,6 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
    5782, 254-269.
 }
 \seealso{
-Other Ensemble methods: \code{\link{ebr}},
-  \code{\link{eps}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -97,5 +94,7 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Ensemble methods: \code{\link{ebr}},
+  \code{\link{eps}}
+}

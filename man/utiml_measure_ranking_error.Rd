@@ -21,4 +21,3 @@ Park, S.-H., & Furnkranz, J. (2008). Multi-Label Classification
  with Label Constraints. Proceedings of the ECML PKDD 2008 Workshop on
  Preference Learning (PL-08, Antwerp, Belgium), 157-171.
 }
-

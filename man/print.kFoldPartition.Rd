@@ -14,4 +14,3 @@
 \description{
 Print a kFoldPartition object
 }
-

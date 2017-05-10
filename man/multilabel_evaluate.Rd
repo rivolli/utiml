@@ -2,8 +2,8 @@
 % Please edit documentation in R/evaluation.R
 \name{multilabel_evaluate}
 \alias{multilabel_evaluate}
-\alias{multilabel_evaluate.mlconfmat}
 \alias{multilabel_evaluate.mldr}
+\alias{multilabel_evaluate.mlconfmat}
 \title{Evaluate multi-label predictions}
 \usage{
 multilabel_evaluate(object, ...)
@@ -40,6 +40,7 @@ You can also especify whiches measures do you desire use.
 
 \item \code{mlconfmat}: Default S3 method
 }}
+
 \examples{
 \dontrun{
 prediction <- predict(br(toyml), toyml)
@@ -70,4 +71,3 @@ Madjarov, G., Kocev, D., Gjorgjevikj, D., & Dzeroski, S. (2012). An
  Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel Learning.
    ACM Comput. Surv., 47(3), 52:1-2:38.
 }
-

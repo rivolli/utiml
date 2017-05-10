@@ -4,16 +4,16 @@
 \alias{brplus}
 \title{BR+ or BRplus for multi-label Classification}
 \usage{
-brplus(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
+brplus(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
   cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
-\item{...}{Others arguments passed to the base method for all subproblems.}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -44,12 +44,12 @@ This implementation has different strategy to predict the final set of labels
 for unlabeled examples, as proposed in original paper.
 }
 \examples{
-# Use SVM as base method
+# Use SVM as base algorithm
 model <- brplus(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
 \dontrun{
-# Use Random Forest as base method and 4 cores
+# Use Random Forest as base algorithm and 4 cores
 model <- brplus(toyml, 'RF', cores = 4, seed = 123)
 }
 }
@@ -59,8 +59,6 @@ Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
    classification. Expert Systems with Applications, 39(2), 1647-1655.
 }
 \seealso{
-Other Stacking methods: \code{\link{mbr}}
-
 Other Transformation methods: \code{\link{br}},
   \code{\link{cc}}, \code{\link{clr}}, \code{\link{ctrl}},
   \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
@@ -70,5 +68,6 @@ Other Transformation methods: \code{\link{br}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Stacking methods: \code{\link{mbr}}
+}

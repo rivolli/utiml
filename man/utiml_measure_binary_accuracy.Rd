@@ -23,4 +23,3 @@ Accuracy value between 0 and 1
 BINARY MEASURES -----------------------------------------------------------
 Compute the binary accuracy
 }
-

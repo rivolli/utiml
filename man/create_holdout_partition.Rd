@@ -80,4 +80,3 @@ Other sampling: \code{\link{create_kfold_partition}},
   \code{\link{create_random_subset}},
   \code{\link{create_subset}}
 }
-

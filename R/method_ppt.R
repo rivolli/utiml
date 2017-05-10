@@ -8,14 +8,14 @@
 #' @family Transformation methods
 #' @family Powerset
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param p Number of instances to prune. All labelsets that occurs p times or
 #'  less in the training data is removed. (Default: 3)
 #' @param info.loss Logical value where \code{TRUE} means discard infrequent
 #'  labelsets and \code{FALSE} means reintroduce infrequent labelsets via
 #'  subsets. (Default: FALSE)
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param ... Others arguments passed to the base algorithm for all subproblems
 #' @param cores Not used
 #' @param seed An optional integer used to set the seed. (Default:
 #' \code{options("utiml.seed", NA)})
@@ -39,10 +39,11 @@
 #' ##Change default configurations
 #' model <- ppt(toyml, "RF", p=4, info.loss=TRUE)
 #' }
-ppt <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
+ppt <- function (mdata,
+                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                  p = 3, info.loss = FALSE, ...,
-                cores = getOption("utiml.cores", 1),
-                seed = getOption("utiml.seed", NA)) {
+                 cores = getOption("utiml.cores", 1),
+                 seed = getOption("utiml.seed", NA)) {
   # Validations
   if (class(mdata) != "mldr") {
     stop("First argument must be an mldr object")
@@ -103,7 +104,7 @@ ppt <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
                                     labelsets)
   }
 
-  pptmodel$model <- lp(ndata, base.method=base.method, seed=seed)
+  pptmodel$model <- lp(ndata, base.algorithm=base.algorithm, seed=seed)
 
   utiml_restore_seed()
   class(pptmodel) <- "PPTmodel"
@@ -120,7 +121,7 @@ ppt <- function (mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores Not used
 #' @param seed An optional integer used to set the seed. (Default:

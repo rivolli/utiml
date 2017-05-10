@@ -12,8 +12,8 @@
 #'
 #' @family Transformation methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param m The max number of Binary Relevance models used in the binary
 #'  ensemble. (Default: 5)
 #' @param validation.size The size of validation set, used internally to prunes
@@ -21,9 +21,9 @@
 #'  (Default: 0.3)
 #' @param validation.threshold Thresholding parameter determining whether any
 #'  class label in Y is regarded as error-prone or not. (Default: 0.3)
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param ... Others arguments passed to the base algorithm for all subproblems
 #' @param predict.params A list of default arguments passed to the predictor
-#'  method. (default: \code{list()})
+#'  algorithm. (default: \code{list()})
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -68,7 +68,8 @@
 #' # Set a parameters for all subproblems
 #' model <- ctrl(dataset$train, 'KNN', k=5)
 #' }
-ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
+ctrl <- function(mdata,
+                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                  m = 5, validation.size = 0.3, validation.threshold = 0.3, ...,
                  predict.params = list(), cores = getOption("utiml.cores", 1),
                  seed = getOption("utiml.seed", NA)) {
@@ -115,7 +116,7 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   partitions <- c(train = 1 - validation.size, test = validation.size)
   val.set <- create_holdout_partition(mdata, partitions, "iterative")
 
-  val.model <- br(val.set$train, base.method, ..., cores=cores, seed=seed)
+  val.model <- br(val.set$train, base.algorithm, ..., cores=cores, seed=seed)
   params <- list(object = val.model, newdata = val.set$test,
                  probability = FALSE, cores = cores, seed = seed)
   val.pred <- do.call(predict.BRmodel, c(params, predict.params))
@@ -153,7 +154,7 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
       utiml_create_model(
         utiml_prepare_data(
           utiml_create_binary_data(mdata, labelname),
-          "mldBR", mdata$name, "ctrl", base.method
+          "mldBR", mdata$name, "ctrl", base.algorithm
         ), ...)
     )
 
@@ -161,7 +162,7 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
       utiml_create_model(
         utiml_prepare_data(
           utiml_create_binary_data(mdata, labelname, labeldata[k]),
-          "mldBR", mdata$name, "ctrl", base.method
+          "mldBR", mdata$name, "ctrl", base.algorithm
         ), ...)
     }))
 
@@ -187,7 +188,7 @@ ctrl <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  (Default: \code{'maj'})
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:

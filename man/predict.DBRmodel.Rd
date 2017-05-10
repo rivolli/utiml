@@ -21,7 +21,7 @@ predictions.}
 \item{probability}{Logical indicating whether class probabilities should be
 returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
-\item{...}{Others arguments passed to the base method prediction for all
+\item{...}{Others arguments passed to the base algorithm prediction for all
 subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
@@ -50,7 +50,7 @@ a result of other multi-label algorithm.
 model <- dbr(toyml)
 pred <- predict(model, toyml)
 
-# Passing a specif parameter for SVM predict method
+# Passing a specif parameter for SVM predict algorithm
 pred <- predict(model, toyml, na.action = na.fail)
 
 # Using other classifier (EBR) to made the labels estimatives
@@ -67,4 +67,3 @@ Montanes, E., Senge, R., Barranquero, J., Ramon Quevedo, J., Jose Del Coz,
 \seealso{
 \code{\link[=dbr]{Dependent Binary Relevance (DBR)}}
 }
-

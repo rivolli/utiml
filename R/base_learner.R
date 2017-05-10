@@ -478,7 +478,7 @@ mlpredict.xgb.Booster <- function(model, newdata, ...) {
   }
 
   classes <- attr(model, "classes")
-  pred <- xgboost::predict(model, as.matrix(rep_nom_attr(newdata)), ...)
+  pred <- stats::predict(model, as.matrix(rep_nom_attr(newdata)), ...)
   if (length(classes) == 2) {
     bipartitions <- as.numeric(pred >= 0.5)
     probabilities <- ifelse(bipartitions == 1, pred, 1 - pred)

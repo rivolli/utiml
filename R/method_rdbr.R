@@ -10,13 +10,13 @@
 #'
 #' @family Transformation methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param estimate.models Logical value indicatind whether is necessary build
 #'  Binary Relevance classifier for estimate process. The default implementaion
 #'  use BR as estimators, however when other classifier is desirable then use
 #'  the value \code{FALSE} to skip this process. (Default: \code{TRUE}).
-#' @param ... Others arguments passed to the base method for all subproblems.
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -42,14 +42,15 @@
 #' pred <- predict(model, toyml)
 #'
 #' \dontrun{
-#' # Use Random Forest as base method and 4 cores
+#' # Use Random Forest as base algorithm and 4 cores
 #' model <- rdbr(toyml, 'RF', cores = 4, seed = 123)
 #' }
-rdbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
+rdbr <- function(mdata,
+                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                  estimate.models = TRUE, ...,
                  cores = getOption("utiml.cores", 1),
                  seed = getOption("utiml.seed", NA)) {
-  rdbrmodel <- dbr(mdata, base.method, estimate.models, ...,
+  rdbrmodel <- dbr(mdata, base.algorithm, estimate.models, ...,
                    cores=cores, seed=seed)
   class(rdbrmodel) <- "RDBRmodel"
   rdbrmodel
@@ -80,7 +81,7 @@ rdbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  (Default: \code{FALSE})
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
@@ -101,7 +102,7 @@ rdbr <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #' model <- rdbr(toyml)
 #' pred <- predict(model, toyml)
 #'
-#' # Passing a specif parameter for SVM predict method
+#' # Passing a specif parameter for SVM predict algorithm
 #' pred <- predict(model, toyml, na.action = na.fail)
 #'
 #' # Use the batch mode and increase the max number of iteration to 10

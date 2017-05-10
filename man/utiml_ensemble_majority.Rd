@@ -22,4 +22,3 @@ The probabilities result is computed using only the majority instances.
 In others words, if a example is predicted as posivite, only the positive
 confidences are used to compute the averaged value.
 }
-

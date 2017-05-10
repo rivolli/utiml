@@ -18,4 +18,3 @@ Fix the mldr dataset to use factors
 \examples{
 toyml <- mldata(toyml)
 }
-

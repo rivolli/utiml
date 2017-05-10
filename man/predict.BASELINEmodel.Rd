@@ -32,4 +32,3 @@ pred <- predict(model, toyml)
 \seealso{
 \code{\link[=baseline]{Baseline}}
 }
-

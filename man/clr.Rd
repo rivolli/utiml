@@ -4,16 +4,16 @@
 \alias{clr}
 \title{Calibrated Label Ranking (CLR) for multi-label Classification}
 \usage{
-clr(mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
+clr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
   cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
-\item{...}{Others arguments passed to the base method for all subproblems}
+\item{...}{Others arguments passed to the base algorithm for all subproblems}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -55,8 +55,6 @@ Brinker, K., Furnkranz, J., & Hullermeier, E. (2006). A unified model for
    Machine Learning, 73(2), 133-153.
 }
 \seealso{
-Other Pairwise methods: \code{\link{rpc}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
   \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
@@ -66,5 +64,6 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{prudent}}, \code{\link{ps}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Pairwise methods: \code{\link{rpc}}
+}

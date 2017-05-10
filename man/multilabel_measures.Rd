@@ -15,4 +15,3 @@ Return the name of all measures
 \examples{
 multilabel_measures()
 }
-

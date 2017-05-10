@@ -28,7 +28,7 @@ based on the final results. This argument is used only when the
 \item{probability}{Logical indicating whether class probabilities should be
 returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
-\item{...}{Others arguments passed to the base method prediction for all
+\item{...}{Others arguments passed to the base algorithm prediction for all
 subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
@@ -93,4 +93,3 @@ Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
 \seealso{
 \code{\link[=brplus]{BR+}}
 }
-

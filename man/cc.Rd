@@ -4,21 +4,21 @@
 \alias{cc}
 \title{Classifier Chains for multi-label Classification}
 \usage{
-cc(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = NA,
-  ..., cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+cc(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  chain = NA, ..., cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{chain}{A vector with the label names to define the chain order. If
 empty the chain is the default label sequence of the dataset. (Default:
 \code{NA})}
 
-\item{...}{Others arguments passed to the base method for all subproblems.}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
 than 1 require the \pkg{parallel} package. (Default:
@@ -80,4 +80,3 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
 }
-

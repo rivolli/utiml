@@ -4,24 +4,24 @@
 \alias{ns}
 \title{Nested Stacking for multi-label Classification}
 \usage{
-ns(mdata, base.method = getOption("utiml.base.method", "SVM"), chain = NA,
-  ..., predict.params = list(), cores = NULL,
+ns(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  chain = NA, ..., predict.params = list(), cores = NULL,
   seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{chain}{A vector with the label names to define the chain order. If
 empty the chain is the default label sequence of the dataset. (Default:
 \code{NA})}
 
-\item{...}{Others arguments passed to the base method for all subproblems.}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{predict.params}{A list of default arguments passed to the predict
-method. (default: \code{list()})}
+algorithm. (default: \code{list()})}
 
 \item{cores}{Ignored because this method does not support multi-core.}
 
@@ -76,4 +76,3 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
 }
-

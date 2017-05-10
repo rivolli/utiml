@@ -36,6 +36,7 @@ calibrates the threshold(s) from the training data globally or per label.
 
 \item \code{mlresult}: Proportional Thresholding (PCut) for mlresult
 }}
+
 \examples{
 prediction <- matrix(runif(16), ncol = 4)
 pcut_threshold(prediction, .45)
@@ -57,4 +58,3 @@ Other threshold: \code{\link{fixed_threshold}},
   \code{\link{scut_threshold}},
   \code{\link{subset_correction}}
 }
-

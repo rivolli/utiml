@@ -19,4 +19,3 @@ Godbole, S., & Sarawagi, S. (2004). Discriminative Methods for
 Multi-labeled Classification. In Proceedings of the 8th Pacific-Asia
 Conference on Knowledge Discovery and Data Mining (PAKDD 2004) (pp. 22-30).
 }
-

@@ -20,4 +20,3 @@ matrix with ranking values
 \description{
 Convert a mlresult to a ranking matrix
 }
-

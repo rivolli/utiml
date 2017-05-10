@@ -12,9 +12,9 @@
 #' @family Transformation methods
 #' @family Stacking methods
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
-#' @param ... Others arguments passed to the base method for all subproblems.
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
+#' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
@@ -35,15 +35,16 @@
 #' @export
 #'
 #' @examples
-#' # Use SVM as base method
+#' # Use SVM as base algorithm
 #' model <- brplus(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
 #' \dontrun{
-#' # Use Random Forest as base method and 4 cores
+#' # Use Random Forest as base algorithm and 4 cores
 #' model <- brplus(toyml, 'RF', cores = 4, seed = 123)
 #' }
-brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
+brplus <- function(mdata,
+                   base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                    ..., cores = getOption("utiml.cores", 1),
                    seed = getOption("utiml.seed", NA)) {
   # Validations
@@ -62,7 +63,7 @@ brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
   names(freq) <- brpmodel$labels
   brpmodel$freq <- sort(freq)
 
-  brpmodel$initial <- br(mdata, base.method, ..., cores = cores, seed = seed)
+  brpmodel$initial <- br(mdata, base.algorithm, ..., cores = cores, seed = seed)
 
   labeldata <- as.data.frame(mdata$dataset[mdata$labels$index])
   labels <- utiml_rename(seq(mdata$measures$num.labels), brpmodel$labels)
@@ -70,7 +71,7 @@ brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
     basedata <- utiml_create_binary_data(mdata, brpmodel$labels[li],
                                          labeldata[-li])
     dataset <- utiml_prepare_data(basedata, "mldBRP", mdata$name, "brplus",
-                                  base.method)
+                                  base.algorithm)
     utiml_create_model(dataset, ...)
   }, cores, seed)
 
@@ -119,7 +120,7 @@ brplus <- function(mdata, base.method = getOption("utiml.base.method", "SVM"),
 #'  \code{strategy = 'Ord'} (Default: \code{list()})
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:

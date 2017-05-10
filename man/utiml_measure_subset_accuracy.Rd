@@ -20,4 +20,3 @@ Zhu, S., Ji, X., Xu, W., & Gong, Y. (2005). Multilabelled
  Annual International ACM SIGIR Conference on Research and Development in
  Information Retrieval (SIGIR'05) (pp. 274-281).
 }
-

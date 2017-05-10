@@ -92,7 +92,7 @@ utiml_predict_multiclass_model <- function (model, newdata, labels, probability,
 }
 
 utiml_prepare_data <- function(dataset, classname, mldataset, mlmethod,
-                               base.method, ...) {
+                               base.algorithm, ...) {
   label <- colnames(dataset)[ncol(dataset)]
 
   # Convert the class column as factor
@@ -105,7 +105,7 @@ utiml_prepare_data <- function(dataset, classname, mldataset, mlmethod,
     labelindex = ncol(dataset),
     mldataset = mldataset,
     mlmethod = mlmethod,
-    base.method = base.method
+    base.algorithm = base.algorithm
   )
 
   extra <- list(...)
@@ -113,7 +113,7 @@ utiml_prepare_data <- function(dataset, classname, mldataset, mlmethod,
     object[[nextra]] <- extra[[nextra]]
   }
 
-  basename <- paste("base", base.method, sep = "")
+  basename <- paste("base", base.algorithm, sep = "")
   class(object) <- c(classname, basename, "mltransformation")
 
   object

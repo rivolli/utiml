@@ -21,4 +21,3 @@ A binary.prediction object
 \description{
 Compute binary predictions
 }
-

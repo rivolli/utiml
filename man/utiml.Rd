@@ -74,6 +74,7 @@ details and examples are available on
  We use the \code{\link{mldr}} package, to manipulate multi-label data.
  See its documentation to more information about handle multi-label dataset.
 }
+
 \author{
 \itemize{
    \item Adriano Rivolli <rivolli@utfpr.edu.br>
@@ -83,4 +84,3 @@ details and examples are available on
 
  PhD advisor: Andre C. P. L. F. de Carvalho
 }
-

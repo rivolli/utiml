@@ -17,7 +17,7 @@ matrix, data.frame or a mldr object.}
 \item{probability}{Logical indicating whether class probabilities should be
 returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
-\item{...}{Others arguments passed to the base method prediction for all
+\item{...}{Others arguments passed to the base algorithm prediction for all
 subproblems.}
 
 \item{cores}{The number of cores to parallelize the training. Values higher
@@ -45,11 +45,10 @@ pred <- predict(model, toyml)
 # Predict SVM bipartitions running in 4 cores
 pred <- predict(model, toyml, probability = FALSE, CORES = 4)
 
-# Passing a specif parameter for SVM predict method
+# Passing a specif parameter for SVM predict algorithm
 pred <- predict(model, dataset$test, na.action = na.fail)
 }
 }
 \seealso{
 \code{\link[=br]{Binary Relevance (BR)}}
 }
-

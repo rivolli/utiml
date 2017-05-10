@@ -24,4 +24,3 @@ utiml_rename(c("a", "b", "c"))
 utiml_rename(c(1, 2, 3), c("a", "b", "c"))
 ## c(a=1, b=2, c=3)
 }
-

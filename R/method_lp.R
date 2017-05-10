@@ -9,9 +9,9 @@
 #' @family Transformation methods
 #' @family Powerset
 #' @param mdata A mldr dataset used to train the binary models.
-#' @param base.method A string with the name of the base method. (Default:
-#'  \code{options("utiml.base.method", "SVM")})
-#' @param ... Others arguments passed to the base method for all subproblems
+#' @param base.algorithm A string with the name of the base algorithm. (Default:
+#'  \code{options("utiml.base.algorithm", "SVM")})
+#' @param ... Others arguments passed to the base algorithm for all subproblems
 #' @param cores Not used
 #' @param seed An optional integer used to set the seed. (Default:
 #' \code{options("utiml.seed", NA)})
@@ -29,7 +29,8 @@
 #' @examples
 #' model <- lp(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
-lp <- function (mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
+lp <- function (mdata,
+                base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
                 cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
@@ -48,7 +49,7 @@ lp <- function (mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
     utiml_create_model(
       utiml_prepare_data(
         utiml_create_lp_data(mdata),
-        "mldLP", mdata$name, "lp", base.method
+        "mldLP", mdata$name, "lp", base.algorithm
       ), ...
     )
   }, 1, seed)[[1]]
@@ -66,7 +67,7 @@ lp <- function (mdata, base.method = getOption("utiml.base.method", "SVM"), ...,
 #'  matrix, data.frame or a mldr object.
 #' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
-#' @param ... Others arguments passed to the base method prediction for all
+#' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.
 #' @param cores Not used
 #' @param seed An optional integer used to set the seed. (Default:

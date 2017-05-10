@@ -4,15 +4,15 @@
 \alias{ps}
 \title{Pruned Set for multi-label Classification}
 \usage{
-ps(mdata, base.method = getOption("utiml.base.method", "SVM"), p = 3,
+ps(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), p = 3,
   strategy = c("A", "B"), b = 2, ..., cores = getOption("utiml.cores", 1),
   seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
 
-\item{base.method}{A string with the name of the base method. (Default:
-\code{options("utiml.base.method", "SVM")})}
+\item{base.algorithm}{A string with the name of the base algorithm. (Default:
+\code{options("utiml.base.algorithm", "SVM")})}
 
 \item{p}{Number of instances to prune. All labelsets that occurs p times or
 less in the training data is removed. (Default: 3)}
@@ -22,7 +22,7 @@ less in the training data is removed. (Default: 3)}
 
 \item{b}{The number used by the strategy for processing infrequent labelsets.}
 
-\item{...}{Others arguments passed to the base method for all subproblems}
+\item{...}{Others arguments passed to the base algorithm for all subproblems.}
 
 \item{cores}{Not used}
 
@@ -59,9 +59,6 @@ Read, J. (2008). A pruned problem transformation method for multi-label
  Student Conference (pp. 143-150).
 }
 \seealso{
-Other Powerset: \code{\link{eps}}, \code{\link{lp}},
-  \code{\link{ppt}}, \code{\link{rakel}}
-
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
@@ -71,5 +68,7 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{ppt}}, \code{\link{prudent}},
   \code{\link{rakel}}, \code{\link{rdbr}},
   \code{\link{rpc}}
-}
 
+Other Powerset: \code{\link{eps}}, \code{\link{lp}},
+  \code{\link{ppt}}, \code{\link{rakel}}
+}
