@@ -66,6 +66,9 @@ brplus <- function(mdata,
   brpmodel$initial <- br(mdata, base.algorithm, ..., cores = cores, seed = seed)
 
   labeldata <- as.data.frame(mdata$dataset[mdata$labels$index])
+  for (i in seq(ncol(labeldata))) {
+    labeldata[, i] <- factor(labeldata[, i], levels=c(0, 1))
+  }
   labels <- utiml_rename(seq(mdata$measures$num.labels), brpmodel$labels)
   brpmodel$models <- utiml_lapply(labels, function(li) {
     basedata <- utiml_create_binary_data(mdata, brpmodel$labels[li],
