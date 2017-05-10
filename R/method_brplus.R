@@ -182,10 +182,11 @@ predict.BRPmodel <- function(object, newdata,
   newdata <- utiml_newdata(newdata)
   initial.preds <- predict.BRmodel(object$initial, newdata, probability=FALSE,
                                    ..., cores=cores, seed=seed)
-  labeldata <- as.bipartition(initial.preds)
+  labeldata <- as.data.frame(as.bipartition(initial.preds))
   for (i in seq(ncol(labeldata))) {
     labeldata[, i] <- factor(labeldata[, i], levels=c(0, 1))
   }
+
   if (strategy == "NU") {
     indices <- utiml_rename(seq_along(labels), labels)
     predictions <- utiml_lapply(indices, function(li) {
