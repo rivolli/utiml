@@ -1,5 +1,10 @@
 # Changelog
 
+## utiml 0.1.3.9001
+
+### Bug fixes
+* Bugfix in `brplus` because the newfeatures were using different levels
+
 ## utiml 0.1.2
 
 ### Major changes
