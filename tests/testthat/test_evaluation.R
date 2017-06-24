@@ -61,13 +61,13 @@ test_that("Bipartition measures", {
   expect_equal(utiml_measure_recall(mlconfmat), 1)
   expect_equal(utiml_measure_hamming_loss(mlconfmat), 0)
 
-  expect_equal(utiml_measure_macro_AUC(mlconfmat), 1)
-  expect_equal(utiml_measure_macro_precision(mlconfmat), 1)
-  expect_equal(utiml_measure_micro_precision(mlconfmat), 1)
-  expect_equal(utiml_measure_macro_recall(mlconfmat), 1)
+  expect_equal(sum(utiml_measure_macro_AUC(mlconfmat)), 5)
   expect_equal(utiml_measure_micro_AUC(mlconfmat), 1)
+  expect_equal(sum(utiml_measure_macro_precision(mlconfmat)), 5)
+  expect_equal(utiml_measure_micro_precision(mlconfmat), 1)
+  expect_equal(sum(utiml_measure_macro_recall(mlconfmat)), 5)
   expect_equal(utiml_measure_micro_recall(mlconfmat), 1)
-  expect_equal(utiml_measure_macro_f1(mlconfmat), 1)
+  expect_equal(sum(utiml_measure_macro_f1(mlconfmat)), 5)
   expect_equal(utiml_measure_micro_f1(mlconfmat), 1)
 
   #100% incorrect
@@ -86,13 +86,13 @@ test_that("Bipartition measures", {
   expect_equal(utiml_measure_recall(mlconfmat), 0)
   expect_equal(utiml_measure_hamming_loss(mlconfmat), 1)
 
-  expect_equal(utiml_measure_macro_AUC(mlconfmat), 0)
-  expect_equal(utiml_measure_macro_precision(mlconfmat), 0)
-  expect_equal(utiml_measure_micro_precision(mlconfmat), 0)
-  expect_equal(utiml_measure_macro_recall(mlconfmat), 0)
+  expect_equal(mean(utiml_measure_macro_AUC(mlconfmat)), 0)
   expect_equal(utiml_measure_micro_AUC(mlconfmat), 0)
+  expect_equal(mean(utiml_measure_macro_precision(mlconfmat)), 0)
+  expect_equal(utiml_measure_micro_precision(mlconfmat), 0)
+  expect_equal(mean(utiml_measure_macro_recall(mlconfmat)), 0)
   expect_equal(utiml_measure_micro_recall(mlconfmat), 0)
-  expect_equal(utiml_measure_macro_f1(mlconfmat), 0)
+  expect_equal(mean(utiml_measure_macro_f1(mlconfmat)), 0)
   expect_equal(utiml_measure_micro_f1(mlconfmat), 0)
 
   #Random
@@ -144,13 +144,13 @@ test_that("Bipartition measures", {
   expect_equal(utiml_measure_recall(mlconfmat), measures$Recall)
   expect_equal(utiml_measure_hamming_loss(mlconfmat), measures$HammingLoss)
 
-  expect_equal(utiml_measure_macro_precision(mlconfmat),
+  expect_equal(mean(utiml_measure_macro_precision(mlconfmat)),
                measures$MacroPrecision)
   expect_equal(utiml_measure_micro_precision(mlconfmat),
                measures$MicroPrecision)
-  expect_equal(utiml_measure_macro_recall(mlconfmat), measures$MacroRecall)
+  expect_equal(mean(utiml_measure_macro_recall(mlconfmat)), measures$MacroRecall)
   expect_equal(utiml_measure_micro_recall(mlconfmat), measures$MicroRecall)
-  expect_equal(utiml_measure_macro_f1(mlconfmat), measures$MacroFMeasure)
+  expect_equal(mean(utiml_measure_macro_f1(mlconfmat)), measures$MacroFMeasure)
   expect_equal(utiml_measure_micro_f1(mlconfmat), measures$MicroFMeasure)
 })
 

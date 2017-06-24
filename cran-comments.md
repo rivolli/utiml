@@ -18,7 +18,6 @@ There was 1 NOTE:
   pre (10:69)
   
 Those words are correct and they are names of things and authors.
-It occurs only on win-builder.
 
 ## Downstream dependencies
 There are no downstream dependencies.

@@ -1,6 +1,8 @@
 # Changelog
 
-## utiml 0.1.3.9001
+## utiml 0.1.3.9002
+### Major changes
+* Change `multilabel_evaluation` to also return the label measures
 
 ### Bug fixes
 * Bugfix in `brplus` because the newfeatures were using different levels

@@ -1,7 +1,7 @@
 Package: utiml
 Type: Package
 Title: Utilities for Multi-Label Learning
-Version: 0.1.3.9001
+Version: 0.1.3.9002
 Date: 2017-04-05
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
