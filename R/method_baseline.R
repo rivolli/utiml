@@ -72,7 +72,12 @@ baseline <- function (mdata, metric = c("general", "F1", "hamming-loss",
       rownames(mdata$labels)[freq[seq(round(mdata$measures$cardinality,0))]]
     },
     "hamming-loss" = function (mdata){
-      rownames(mdata$labels)[mdata$labels$freq > 0.5]
+      if (any(mdata$labels$freq > 0.5)) {
+        rownames(mdata$labels)[mdata$labels$freq > 0.5]
+      } else {
+        #Avoid empty predictions, recommend only the most frequent label
+        rownames(mdata$labels[order(mdata$labels$freq, decreasing=TRUE)])[1]
+      }
     },
     "subset-accuracy" = function (mdata){
       lbl <- as.numeric(unlist(strsplit(names(which.max(mdata$labelsets)), "")))
