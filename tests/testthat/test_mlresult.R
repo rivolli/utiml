@@ -34,10 +34,10 @@ test_that("multilabel_prediction", {
   probs[1:5, c(1,2)] <- 0.45
   probs[6:10, -c(1,2)] <- 0.47
   mres4 = multilabel_prediction(classes, probs, FALSE)
-  expect_true(all(rowSums(mres4[1:5, c(1,2)]) == 2))
+  expect_true(all(rowSums(mres4[1:5, c(1,2)]) == 1))
   expect_true(all(rowSums(mres4[6:10, c(1,2)]) == 0))
   expect_true(all(rowSums(mres4[1:5, -c(1,2)]) == 0))
-  expect_true(all(rowSums(mres4[6:10, -c(1,2)]) == 3))
+  expect_true(all(rowSums(mres4[6:10, -c(1,2)]) == 1))
 })
 
 test_that("as.ranking", {

@@ -128,6 +128,7 @@ ctrl <- function(mdata,
   ctrlmodel$Y <- Yc <- names(which(val.result >= validation.threshold))
   rm(val.set, val.model, val.pred, val.result)
 
+
   # Step2 - Identify close-related labels within Yc using feature selection
   #         technique (6-10)
   classes <- mdata$dataset[Yc]

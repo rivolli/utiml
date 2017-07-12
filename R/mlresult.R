@@ -138,9 +138,8 @@ multilabel_prediction <- function(bipartitions, probabilities,
                               getOption("utiml.empty.prediction", FALSE)) {
   if (!empty.prediction) {
     # At least one label is predict
-    for (row in seq(nrow(bipartitions))) {
-      bipartitions[row, probabilities[row, ] == max(probabilities[row, ])] <- 1
-    }
+    poslab <- apply(probabilities, 1, which.max)
+    bipartitions[cbind(seq_along(poslab),poslab)] <- 1
   }
 
   bipartitions <- as.matrix(bipartitions)
@@ -184,8 +183,8 @@ print.mlresult <- function(x, ...) {
     bipartition <- as.bipartition(mlresult)
     probability <- as.probability(mlresult)
 
-    multilabel_prediction(bipartition[rowFilter, ],
-                          probability[rowFilter, ],
+    multilabel_prediction(bipartition[rowFilter, , drop=FALSE],
+                          probability[rowFilter, , drop=FALSE],
                           is.probability(mlresult))
   } else {
     as.matrix(mlresult)[rowFilter, colFilter, ...]

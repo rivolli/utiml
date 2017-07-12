@@ -1,12 +1,13 @@
 # Changelog
 
-## utiml 0.1.3.9003
+## utiml 0.1.3
 ### Major changes
 * Change `multilabel_evaluation` to also return the label measures
 
 ### Bug fixes
 * Bugfix in `brplus` because the newfeatures were using different levels
-* Fix `baseline` using hamming-loss to prevent empty label prediction  
+* Fix `baseline` using hamming-loss to prevent empty label prediction
+* Fix empty prediction when all labels have the same probability
 
 ## utiml 0.1.2
 
