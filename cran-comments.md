@@ -1,5 +1,5 @@
 ## Test environments
-* local Ubuntu install, R 3.3.2
+* local Ubuntu install, R 3.3.3
 * Ubuntu on Travis CI, R 3.3.3
 * win-builder (devel and release)
 

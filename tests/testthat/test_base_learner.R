@@ -9,9 +9,11 @@ testdataset <- list(
 testdataset$data$y3 <- as.factor(testdataset$data$y3)
 
 test_that("test train/prediction base learner algorithms", {
-  methods <- c("baseSVM", "baseJ48", "baseC5.0", "baseCART", "baseRF",
+  methods <- c("baseSVM", #"baseJ48",
+               "baseC5.0", "baseCART", "baseRF",
                "baseNB", "baseKNN", "baseMAJORITY", "baseRANDOM")
-  names(methods) <- c("svm", "J48", "C5.0", "rpart", "randomForest",
+  names(methods) <- c("svm", #"J48",
+                      "C5.0", "rpart", "randomForest",
                       "naiveBayes", "baseKNN", "majorityModel", "randomModel")
   for (modelname in names(methods)) {
     class(testdataset) <- methods[modelname]

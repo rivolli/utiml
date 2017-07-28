@@ -1,8 +1,8 @@
 Package: utiml
 Type: Package
 Title: Utilities for Multi-Label Learning
-Version: 0.1.3.9005
-Date: 2017-04-05
+Version: 0.1.3
+Date: 2017-07-28
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
 Description: Multi-label learning strategies and others procedures to support multi-
@@ -32,7 +32,7 @@ Suggests:
     rpart,
     RWeka(>= 0.4),
     testthat,
-    xgboost
+    xgboost(>= 0.6-4)
 License: GPL | file LICENSE
 LazyData: true
 BugReports: https://github.com/rivolli/utiml
