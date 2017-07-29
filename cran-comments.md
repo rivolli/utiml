@@ -1,6 +1,6 @@
 ## Test environments
-* local Ubuntu install, R 3.3.3
-* Ubuntu on Travis CI, R 3.3.3
+* local Ubuntu install, R 3.4.1
+* Ubuntu on Travis CI, R 3.4.1
 * win-builder (devel and release)
 
 ## R CMD check results
