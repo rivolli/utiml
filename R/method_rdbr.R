@@ -12,7 +12,7 @@
 #' @param mdata A mldr dataset used to train the binary models.
 #' @param base.algorithm A string with the name of the base algorithm. (Default:
 #'  \code{options("utiml.base.algorithm", "SVM")})
-#' @param estimate.models Logical value indicadind whether is necessary build
+#' @param estimate.models Logical value indicating whether is necessary build
 #'  Binary Relevance classifier for estimate process. The default implementation
 #'  use BR as estimators, however when other classifier is desirable then use
 #'  the value \code{FALSE} to skip this process. (Default: \code{TRUE}).

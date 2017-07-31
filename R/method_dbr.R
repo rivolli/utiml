@@ -10,7 +10,7 @@
 #' @param mdata A mldr dataset used to train the binary models.
 #' @param base.algorithm A string with the name of the base algorithm. (Default:
 #'  \code{options("utiml.base.algorithm", "SVM")})
-#' @param estimate.models Logical value indicatind whether is necessary build
+#' @param estimate.models Logical value indicating whether is necessary build
 #'  Binary Relevance classifier for estimate process. The default implementation
 #'  use BR as estimators, however when other classifier is desirable then use
 #'  the value \code{FALSE} to skip this process. (Default: \code{TRUE}).
@@ -104,7 +104,7 @@ dbr <- function(mdata,
 #' @param estimative A matrix containing the bipartition result of other
 #'  multi-label classification algorithm or an mlresult object with the
 #'  predictions.
-#' @param probability Logical indicading whether class probabilities should be
+#' @param probability Logical indicating whether class probabilities should be
 #'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
 #' @param ... Others arguments passed to the base algorithm prediction for all
 #'   subproblems.

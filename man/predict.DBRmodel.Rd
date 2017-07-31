@@ -18,7 +18,7 @@ matrix, data.frame or a mldr object.}
 multi-label classification algorithm or an mlresult object with the
 predictions.}
 
-\item{probability}{Logical indicading whether class probabilities should be
+\item{probability}{Logical indicating whether class probabilities should be
 returned. (Default: \code{getOption("utiml.use.probs", TRUE)})}
 
 \item{...}{Others arguments passed to the base algorithm prediction for all
