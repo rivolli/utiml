@@ -11,7 +11,7 @@ utiml_lapply(mylist, myfnc, utiml.cores, utiml.seed = NA, ...)
 
 \item{myfnc}{The function to be applied to each element of the mylist.}
 
-\item{utiml.cores}{The number of cores to use. If 1 use lapply oterwise use
+\item{utiml.cores}{The number of cores to use. If 1 use lapply otherwise use
 mclapply.}
 
 \item{utiml.seed}{A numeric value to set a seed to execute in parallel mode.}

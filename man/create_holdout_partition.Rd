@@ -36,7 +36,7 @@ A list with at least two datasets sampled as specified in partitions
 This method creates multi-label dataset for train, test, validation or other
 proposes the partition method defined in \code{method}. The number of
 partitions is defined in \code{partitions} parameter. Each instance is used
-in only one partition of divistion.
+in only one partition of division.
 }
 \note{
 To create your own split method, you need to build a function that

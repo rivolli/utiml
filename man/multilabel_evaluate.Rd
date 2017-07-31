@@ -38,7 +38,7 @@ If labels is FALSE return a vector with the expected multi-label
 \description{
 This method is used to evaluate multi-label predictions. You can create a
 confusion matrix object or use directly the test dataset and the predictions.
-You can also especify whiches measures do you desire use.
+You can also specify which measures do you desire use.
 }
 \section{Methods (by class)}{
 \itemize{

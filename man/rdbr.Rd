@@ -14,8 +14,8 @@ rdbr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
 \item{base.algorithm}{A string with the name of the base algorithm. (Default:
 \code{options("utiml.base.algorithm", "SVM")})}
 
-\item{estimate.models}{Logical value indicatind whether is necessary build
-Binary Relevance classifier for estimate process. The default implementaion
+\item{estimate.models}{Logical value indicadind whether is necessary build
+Binary Relevance classifier for estimate process. The default implementation
 use BR as estimators, however when other classifier is desirable then use
 the value \code{FALSE} to skip this process. (Default: \code{TRUE}).}
 
@@ -39,13 +39,13 @@ An object of class \code{RDBRmodel} containing the set of fitted
  }
 }
 \description{
-Create a RDBR classifier to predic multi-label data. This is a recursive
+Create a RDBR classifier to predict multi-label data. This is a recursive
 approach that enables the binary classifiers to discover existing label
-dependency by themselves. The idea of RDBR is running DBR recursivelly until
+dependency by themselves. The idea of RDBR is running DBR recursively until
 the results stabilization of the result.
 }
 \details{
-The train method is exactly the same of DBR the recursivity is in the predict
+The train method is exactly the same of DBR the recursion is in the predict
 method.
 }
 \examples{

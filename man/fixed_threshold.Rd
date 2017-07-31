@@ -29,9 +29,9 @@ the score between 0 and 1, otherwise the values are bipartition 0 or 1.
 A mlresult object.
 }
 \description{
-Transfom a prediction matrix with scores/probabilities in a mlresult applying
-a fixed threshold. A global fixed threshold can be used of all labels or
-different fixed thresholds, one for each label.
+Transform a prediction matrix with scores/probabilities in a mlresult
+applying a fixed threshold. A global fixed threshold can be used of all
+labels or different fixed thresholds, one for each label.
 }
 \section{Methods (by class)}{
 \itemize{

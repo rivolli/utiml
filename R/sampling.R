@@ -3,7 +3,7 @@
 #' This method creates multi-label dataset for train, test, validation or other
 #' proposes the partition method defined in \code{method}. The number of
 #' partitions is defined in \code{partitions} parameter. Each instance is used
-#' in only one partition of divistion.
+#' in only one partition of division.
 #'
 #' @family sampling
 #' @param mdata A mldr dataset.
@@ -230,10 +230,10 @@ create_subset <- function(mdata, rows, cols = NULL) {
 #'  \link{create_kfold_partition}.
 #' @param n The number of the fold to separated train and test subsets.
 #' @param has.validation Logical value that indicate if a validation
-#'  dataset will be used. (Defaul: \code{FALSE})
+#'  dataset will be used. (Default: \code{FALSE})
 #' @return A list contained train and test mldr dataset:
 #'  \describe{
-#'    \code{train}{The mldr dataset with train examples, that inclue all
+#'    \code{train}{The mldr dataset with train examples, that includes all
 #'      examples except those that are in test and validation samples}
 #'    \code{test}{The mldr dataset with test examples, defined by the
 #'      number of the fold}

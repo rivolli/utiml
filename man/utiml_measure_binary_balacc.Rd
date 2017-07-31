@@ -16,7 +16,7 @@ utiml_measure_binary_balacc(TP, FP, TN, FN)
 \item{FN}{The number of False Negative values}
 }
 \value{
-Balcanced accuracy value between 0 and 1
+Balanced accuracy value between 0 and 1
 }
 \description{
 Compute the binary balanced accuracy

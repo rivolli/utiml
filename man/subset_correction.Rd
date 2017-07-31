@@ -28,13 +28,13 @@ that are predicted but are not found on training data is replaced by the most
 similar labelset.
 }
 \details{
-If the most simillar is not unique, those label combinations with higher
+If the most similar is not unique, those label combinations with higher
 frequency in the training data are preferred. The Hamming loss distance is
 used to determine the difference between the labelsets.
 }
 \note{
 The original paper describes a method to create only bipartitions
- result, but we adapeted the method to change the scores. Based on the
+ result, but we adapted the method to change the scores. Based on the
  base.threshold value the scores higher than the threshold value, but must be
  lower are changed to respect this restriction. If \code{NULL} this
  correction will be ignored.

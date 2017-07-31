@@ -108,7 +108,7 @@ cc <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
 #'  (Default: \code{options("utiml.seed", NA)})
 #' @return An object of type mlresult, based on the parameter probability.
 #' @seealso \code{\link[=cc]{Classifier Chains (CC)}}
-#' @note The Classifier Chains prediction can not be parellelized.
+#' @note The Classifier Chains prediction can not be parallelized
 #' @export
 #'
 #' @examples

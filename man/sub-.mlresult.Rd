@@ -17,9 +17,9 @@
 }
 \value{
 mlresult or matrix. If column filter is performed, then the result
- will be a matrix. Otherwhise, the result will be a mlresult.
+ will be a matrix. Otherwise, the result will be a mlresult.
 }
 \description{
-If column filter is performed, then the result will be a matrix. Otherwhise,
+If column filter is performed, then the result will be a matrix. Otherwise,
 the result will be a mlresult.
 }

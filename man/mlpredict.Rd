@@ -111,7 +111,7 @@ The model built on mltrain is available on \code{model} parameter and the
 
 The return of this method must be a data.frame with two columns called
 \code{"prediction"} and \code{"probability"}. The first column contains the
-predicted classe and the second the probability/score/confidence of this
+predicted class and the second the probability/score/confidence of this
 prediction. The rows represents the examples.
 }
 

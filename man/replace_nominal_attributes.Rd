@@ -27,7 +27,7 @@ new.toy$dataset$ratt10 <- new.column
 head(replace_nominal_attributes(new.toy))
 }
 \seealso{
-Other pre process: \code{\link{fill_sparce_mldata}},
+Other pre process: \code{\link{fill_sparse_mldata}},
   \code{\link{normalize_mldata}},
   \code{\link{remove_attributes}},
   \code{\link{remove_labels}},

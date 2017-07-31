@@ -9,6 +9,9 @@
 * Fix `baseline` using hamming-loss to prevent empty label prediction
 * Fix empty prediction when all labels have the same probability
 
+### Minor changes
+* Fix type mistakes in documentation
+
 ## utiml 0.1.2
 
 ### Major changes
@@ -64,7 +67,7 @@ First release of **utiml**:
   `Meta-Binary Relevance (MBR or 2BR)`; `Nested Stacking (NS)`; 
   `Pruned and Confident Stacking Approach (Prudent)`; and, `Recursive Dependent Binary Relevance (RDBR)`
 * Evaluation methods: Create a multi-label confusion matrix and multi-label measures
-* Pre-process utilities: fill sparce data; normalize data; remove attributes; 
+* Pre-process utilities: fill sparse data; normalize data; remove attributes; 
    remove labels; remove skewness labels; remove unique attributes; 
    remove unlabeled instances; and, replace nominal attributes
 * Sampling methods: Create subsets of multi-label dataset; 

@@ -48,7 +48,7 @@ An object of class \code{MBRmodel} containing the set of fitted
   }
 }
 \description{
-Create a Meta-BR (MBR) classifier to predic multi-label data. To this, two
+Create a Meta-BR (MBR) classifier to predict multi-label data. To this, two
 round of Binary Relevance is executed, such that, the first step generates
 new attributes to enrich the second prediction.
 }

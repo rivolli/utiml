@@ -33,7 +33,7 @@ An object of class \code{BRPmodel} containing the set of fitted
  }
 }
 \description{
-Create a BR+ classifier to predic multi-label data. This is a simple approach
+Create a BR+ classifier to predict multi-label data. This is a simple approach
 that enables the binary classifiers to discover existing label dependency by
 themselves. The main idea of BR+ is to increment the feature space of the
 binary classifiers to let them discover existing label dependency by

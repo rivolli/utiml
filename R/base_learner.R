@@ -24,8 +24,8 @@
 #' \code{object$mldataset} and \code{object$mlmethod}, respectively.
 #'
 #' Finally, your method should return a model that will be used by the mlpredict
-#' method. Remember, that your method may be used to buid binary and multi-class
-#' models.
+#' method. Remember, that your method may be used to build binary and
+#' multi-class models.
 #'
 #' @param object A \code{mltransformation} object. This is used as a list and
 #' contains at least five values:
@@ -94,7 +94,7 @@ mltrain <- function(object, ...) {
 #'
 #' The return of this method must be a data.frame with two columns called
 #' \code{"prediction"} and \code{"probability"}. The first column contains the
-#' predicted classe and the second the probability/score/confidence of this
+#' predicted class and the second the probability/score/confidence of this
 #' prediction. The rows represents the examples.
 #'
 #' @param model An object model returned by some mltrain method, its class
@@ -559,7 +559,7 @@ mlpredict.emptyModel <- function (model, newdata, ...) {
 print.majorityModel <- function (x, ...) {
   cat("Majority Base Model\n\n")
   cat("Label: ", attr(x, "label"), "\n")
-  cat("Classes: ", paste(x$classes, collapse = ' | '))
+  cat("Class: ", paste(x$classes, collapse = ' | '))
   cat("Predict: ", x$predict)
 }
 
@@ -570,5 +570,5 @@ print.majorityModel <- function (x, ...) {
 print.randomModel <- function (x, ...) {
   cat("Random Base Model\n\n")
   cat("Label: ", attr(x, "label"), "\n")
-  cat("Classes: ", paste(x$classes, collapse = ' | '))
+  cat("Class: ", paste(x$classes, collapse = ' | '))
 }

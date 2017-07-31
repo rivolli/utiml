@@ -16,7 +16,7 @@
 #'    training instances that must be used for each classifier. (Default: 0.75)
 #' @param attr.space A value between 0.1 and 1 to determine the percentage of
 #'    attributes that must be used for each classifier. (Default: 0.50)
-#' @param replacement Bollean value to define if use sampling with replacement
+#' @param replacement Boolean value to define if use sampling with replacement
 #'    to create the data of the models of the ensemble. (Default: TRUE)
 #' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher
@@ -30,7 +30,7 @@
 #'   \item{models}{A list of BR models.}
 #'   \item{nrow}{The number of instances used in each training dataset.}
 #'   \item{ncol}{The number of attributes used in each training dataset.}
-#'   \item{rounds}{The number of interations.}
+#'   \item{rounds}{The number of interactions.}
 #' }
 #' @references
 #'    Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier

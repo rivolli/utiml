@@ -22,7 +22,7 @@ based on a specific threshold value.
 remove_skewness_labels(toyml, 20)
 }
 \seealso{
-Other pre process: \code{\link{fill_sparce_mldata}},
+Other pre process: \code{\link{fill_sparse_mldata}},
   \code{\link{normalize_mldata}},
   \code{\link{remove_attributes}},
   \code{\link{remove_labels}},

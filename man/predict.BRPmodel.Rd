@@ -45,7 +45,7 @@ An object of type mlresult, based on the parameter probability.
 This function predicts values based upon a model trained by \code{brplus}.
 }
 \details{
-The strategies of estimate the values of the new features are separeted in
+The strategies of estimate the values of the new features are separated in
 two groups:
 \describe{
  \item{No Update (\code{NU})}{This use the initial prediction of BR to all

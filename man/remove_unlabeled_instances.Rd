@@ -20,7 +20,7 @@ new.toy <- remove_labels(toyml, c(12,14))
 remove_unlabeled_instances(new.toy)
 }
 \seealso{
-Other pre process: \code{\link{fill_sparce_mldata}},
+Other pre process: \code{\link{fill_sparse_mldata}},
   \code{\link{normalize_mldata}},
   \code{\link{remove_attributes}},
   \code{\link{remove_labels}},

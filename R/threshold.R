@@ -1,9 +1,9 @@
 # FIXED ------------------------------------------------------------------------
 #' Apply a fixed threshold in the results
 #'
-#' Transfom a prediction matrix with scores/probabilities in a mlresult applying
-#' a fixed threshold. A global fixed threshold can be used of all labels or
-#' different fixed thresholds, one for each label.
+#' Transform a prediction matrix with scores/probabilities in a mlresult
+#' applying a fixed threshold. A global fixed threshold can be used of all
+#' labels or different fixed thresholds, one for each label.
 #'
 #' @family threshold
 #' @param prediction A matrix with scores/probabilities where the columns
@@ -313,13 +313,13 @@ score_driven_threshold <- function () {
 #' achieve a specific loss function using a validation set or cross validation.
 #'
 #' Different from the others threshold methods instead of return the bipartition
-#' results it returs the threshold values for each label.
+#' results, it returns the threshold values for each label.
 #'
 #' @family threshold
 #' @param prediction A matrix or mlresult.
 #' @param expected The expected labels for the prediction. May be a matrix with
 #'  the label values or a mldr object.
-#' @param loss.function A loss function to be optmized. If you want to use your
+#' @param loss.function A loss function to be optimized. If you want to use your
 #'  own error function see the notes and example. (Default: Mean Squared Error)
 #' @param cores The number of cores to parallelize the computation Values higher
 #'  than 1 require the \pkg{parallel} package. (Default:
@@ -420,7 +420,7 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = NA,
 #' that are predicted but are not found on training data is replaced by the most
 #' similar labelset.
 #'
-#' If the most simillar is not unique, those label combinations with higher
+#' If the most similar is not unique, those label combinations with higher
 #' frequency in the training data are preferred. The Hamming loss distance is
 #' used to determine the difference between the labelsets.
 #'
@@ -435,7 +435,7 @@ scut_threshold.mlresult <- function (prediction, expected, loss.function = NA,
 #' @return A new mlresult where all results are present in the training
 #'  labelsets.
 #' @note The original paper describes a method to create only bipartitions
-#'  result, but we adapeted the method to change the scores. Based on the
+#'  result, but we adapted the method to change the scores. Based on the
 #'  base.threshold value the scores higher than the threshold value, but must be
 #'  lower are changed to respect this restriction. If \code{NULL} this
 #'  correction will be ignored.

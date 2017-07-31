@@ -39,7 +39,7 @@ Compute the multi-label ensemble predictions based on some vote schema
 \note{
 You can create your own vote schema, just create a method that receive
  two matrix (bipartitions and probabilities) and return a list with the
- final bipartions and probabilities.
+ final bipartitions and probabilities.
 
  Remember that this method will compute the ensemble votes for each label.
  Thus the bipartition and probability matrix passed as argument for this

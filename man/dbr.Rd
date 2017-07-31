@@ -15,7 +15,7 @@ dbr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
 \code{options("utiml.base.algorithm", "SVM")})}
 
 \item{estimate.models}{Logical value indicatind whether is necessary build
-Binary Relevance classifier for estimate process. The default implementaion
+Binary Relevance classifier for estimate process. The default implementation
 use BR as estimators, however when other classifier is desirable then use
 the value \code{FALSE} to skip this process. (Default: \code{TRUE}).}
 
@@ -39,7 +39,7 @@ An object of class \code{DBRmodel} containing the set of fitted
  }
 }
 \description{
-Create a DBR classifier to predic multi-label data. This is a simple approach
+Create a DBR classifier to predict multi-label data. This is a simple approach
 that enables the binary classifiers to discover existing label dependency by
 themselves. The idea of DBR is exactly the same used in BR+ (the training
 method is the same, excepted by the argument \code{estimate.models} that

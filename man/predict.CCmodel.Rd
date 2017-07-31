@@ -32,7 +32,7 @@ An object of type mlresult, based on the parameter probability.
 This function predicts values based upon a model trained by \code{cc}.
 }
 \note{
-The Classifier Chains prediction can not be parellelized.
+The Classifier Chains prediction can not be parallelized
 }
 \examples{
 model <- cc(toyml, "RANDOM")

@@ -1,6 +1,6 @@
 #' BR+ or BRplus for multi-label Classification
 #'
-#' Create a BR+ classifier to predic multi-label data. This is a simple approach
+#' Create a BR+ classifier to predict multi-label data. This is a simple approach
 #' that enables the binary classifiers to discover existing label dependency by
 #' themselves. The main idea of BR+ is to increment the feature space of the
 #' binary classifiers to let them discover existing label dependency by
@@ -87,7 +87,7 @@ brplus <- function(mdata,
 #'
 #' This function predicts values based upon a model trained by \code{brplus}.
 #'
-#' The strategies of estimate the values of the new features are separeted in
+#' The strategies of estimate the values of the new features are separated in
 #' two groups:
 #' \describe{
 #'  \item{No Update (\code{NU})}{This use the initial prediction of BR to all

@@ -9,7 +9,7 @@ utiml_measure_ranking_error(mlconfmat, ranking, ...)
 \arguments{
 \item{mlconfmat}{Confusion matrix}
 
-\item{ranking}{A matriz ranking}
+\item{ranking}{A matrix ranking}
 
 \item{...}{ignored}
 }

@@ -116,8 +116,8 @@ If you need to know which are the multi-label dataset and method, use
 \code{object$mldataset} and \code{object$mlmethod}, respectively.
 
 Finally, your method should return a model that will be used by the mlpredict
-method. Remember, that your method may be used to buid binary and multi-class
-models.
+method. Remember, that your method may be used to build binary and
+multi-class models.
 }
 
 \examples{

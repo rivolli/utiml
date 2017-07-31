@@ -1,6 +1,6 @@
 context("Pre-process tests")
 
-test_that("Sparce data", {
+test_that("Sparse data", {
   df <- data.frame(
     X1 = factor(c("1", "2", rep(NA, 98))),
     X2 = c(1, 2, rep(NA, 98)),
@@ -13,7 +13,7 @@ test_that("Sparce data", {
   df$Label2 <- c(sample(c(0,1), 100, replace = TRUE))
   mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(7, 8), name = "testMLDR")
 
-  new.data <- fill_sparce_mldata(mdata)
+  new.data <- fill_sparse_mldata(mdata)
   expect_equal(as.numeric(new.data$dataset[, 1]),  c(1, 2, rep(0, 98)))
   expect_equal(as.numeric(new.data$dataset[, 2]),  c(1, 2, rep(0, 98)))
   expect_equal(as.character(new.data$dataset[, 3]),  c("a", "b", rep("", 98)))
@@ -184,7 +184,7 @@ test_that("Alternatives datasets", {
   df[df$Label1 == 0 & df$Label2 == 0,"Label3"] <- 1
   mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(1, 2, 3), name = "testMLDR")
 
-  ndata <- fill_sparce_mldata(mdata)
+  ndata <- fill_sparse_mldata(mdata)
   expect_equal(ndata$measures, mdata$measures)
   expect_equal(ndata$labels, mdata$labels)
   expect_equal(ndata$name, mdata$name)

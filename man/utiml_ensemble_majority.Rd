@@ -19,6 +19,6 @@ A list with two values "bipartition" and "probability".
 \description{
 Compute the single-label prediction using the majority votes schema.
 The probabilities result is computed using only the majority instances.
-In others words, if a example is predicted as posivite, only the positive
+In others words, if a example is predicted as positive, only the positive
 confidences are used to compute the averaged value.
 }

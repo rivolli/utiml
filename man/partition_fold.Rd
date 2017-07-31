@@ -13,12 +13,12 @@ partition_fold(kfold, n, has.validation = FALSE)
 \item{n}{The number of the fold to separated train and test subsets.}
 
 \item{has.validation}{Logical value that indicate if a validation
-dataset will be used. (Defaul: \code{FALSE})}
+dataset will be used. (Default: \code{FALSE})}
 }
 \value{
 A list contained train and test mldr dataset:
  \describe{
-   \code{train}{The mldr dataset with train examples, that inclue all
+   \code{train}{The mldr dataset with train examples, that includes all
      examples except those that are in test and validation samples}
    \code{test}{The mldr dataset with test examples, defined by the
      number of the fold}

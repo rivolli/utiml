@@ -21,7 +21,7 @@ scut_threshold(prediction, expected, loss.function = NA,
 \item{expected}{The expected labels for the prediction. May be a matrix with
 the label values or a mldr object.}
 
-\item{loss.function}{A loss function to be optmized. If you want to use your
+\item{loss.function}{A loss function to be optimized. If you want to use your
 own error function see the notes and example. (Default: Mean Squared Error)}
 
 \item{cores}{The number of cores to parallelize the computation Values higher
@@ -37,7 +37,7 @@ achieve a specific loss function using a validation set or cross validation.
 }
 \details{
 Different from the others threshold methods instead of return the bipartition
-results it returs the threshold values for each label.
+results, it returns the threshold values for each label.
 }
 \section{Methods (by class)}{
 \itemize{

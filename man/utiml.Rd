@@ -35,7 +35,7 @@ Currently, the main methods supported are:
  }
  \item{
    \strong{Pre-process utilities}:
-    \code{\link[=fill_sparce_mldata]{Fill sparce data}},
+    \code{\link[=fill_sparse_mldata]{Fill sparse data}},
     \code{\link[=normalize_mldata]{Normalize data}},
     \code{\link[=remove_attributes]{Remove attributes}},
     \code{\link[=remove_labels]{Remove labels}},

@@ -15,5 +15,5 @@ utiml_predict_binary_ensemble(predictions, vote.schema)
 A binary.prediction object
 }
 \description{
-Is very simillar from utiml_compute_ensemble but differs from arguments
+Is very similar from utiml_compute_ensemble but differs from arguments
 }

@@ -1,6 +1,6 @@
-#' Fill sparce dataset with 0 or '' values
+#' Fill sparse dataset with 0 or '' values
 #'
-#' Transform a sparce dataset filling NA values to 0 or '' based on the column
+#' Transform a sparse dataset filling NA values to 0 or '' based on the column
 #' type. Text columns with numeric values will be modified to numerical.
 #'
 #' @family pre process
@@ -9,10 +9,10 @@
 #' @export
 #'
 #' @examples
-#' sparce.toy <- toyml
-#' sparce.toy$dataset$ratt10[sample(100, 30)] <- NA
-#' complete.toy <- fill_sparce_mldata(sparce.toy)
-fill_sparce_mldata <- function(mdata) {
+#' sparse.toy <- toyml
+#' sparse.toy$dataset$ratt10[sample(100, 30)] <- NA
+#' complete.toy <- fill_sparse_mldata(sparse.toy)
+fill_sparse_mldata <- function(mdata) {
   is.letter <- function(x) {
     grepl("[[:alpha:]]", x)
   }
@@ -68,7 +68,7 @@ normalize_mldata <- function(mdata) {
 
 #' Remove attributes from the dataset
 #'
-#' Remove spectified attributes generating a new multi-label dataset.
+#' Remove specified attributes generating a new multi-label dataset.
 #'
 #' @family pre process
 #' @param mdata The mldr dataset to remove labels.
@@ -92,7 +92,7 @@ remove_attributes <- function (mdata, attributes) {
 
 #' Remove labels from the dataset
 #'
-#' Remove spectified labels generating a new multi-label dataset.
+#' Remove specified labels generating a new multi-label dataset.
 #'
 #' @family pre process
 #' @param mdata The mldr dataset to remove labels.

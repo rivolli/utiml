@@ -14,7 +14,7 @@ lift(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
 \item{base.algorithm}{A string with the name of the base algorithm. (Default:
 \code{options("utiml.base.algorithm", "SVM")})}
 
-\item{ratio}{Controll the number of clusters being retained. Must be between
+\item{ratio}{Control the number of clusters being retained. Must be between
 0 and 1. (Default: \code{0.1})}
 
 \item{...}{Others arguments passed to the base algorithm for all subproblems.}

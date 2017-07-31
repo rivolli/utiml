@@ -15,7 +15,7 @@ remove_labels(mdata, labels)
 a new mldr object.
 }
 \description{
-Remove spectified labels generating a new multi-label dataset.
+Remove specified labels generating a new multi-label dataset.
 }
 \note{
 If invalid labels names or indexes were informed, they will be ignored.
@@ -25,7 +25,7 @@ toyml1 <- remove_labels(toyml, c("y1","y5"))
 toyml2 <- remove_labels(toyml, c(11, 15))
 }
 \seealso{
-Other pre process: \code{\link{fill_sparce_mldata}},
+Other pre process: \code{\link{fill_sparse_mldata}},
   \code{\link{normalize_mldata}},
   \code{\link{remove_attributes}},
   \code{\link{remove_skewness_labels}},

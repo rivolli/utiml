@@ -20,7 +20,7 @@ utiml_ifelse <- function(test, yes, no) {
 #'
 #' @param mylist a list to iterate.
 #' @param myfnc The function to be applied to each element of the mylist.
-#' @param utiml.cores The number of cores to use. If 1 use lapply oterwise use
+#' @param utiml.cores The number of cores to use. If 1 use lapply otherwise use
 #'    mclapply.
 #' @param utiml.seed A numeric value to set a seed to execute in parallel mode.
 #' @param ... Extra arguments to myfnc.

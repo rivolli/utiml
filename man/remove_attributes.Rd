@@ -15,7 +15,7 @@ remove_attributes(mdata, attributes)
 a new mldr object.
 }
 \description{
-Remove spectified attributes generating a new multi-label dataset.
+Remove specified attributes generating a new multi-label dataset.
 }
 \note{
 If invalid attributes names or indexes were informed, they will be
@@ -26,7 +26,7 @@ toyml1 <- remove_attributes(toyml, c("iatt8","iatt9", "ratt10"))
 toyml2 <- remove_attributes(toyml, 10)
 }
 \seealso{
-Other pre process: \code{\link{fill_sparce_mldata}},
+Other pre process: \code{\link{fill_sparse_mldata}},
   \code{\link{normalize_mldata}},
   \code{\link{remove_labels}},
   \code{\link{remove_skewness_labels}},

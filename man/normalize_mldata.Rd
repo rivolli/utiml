@@ -20,7 +20,7 @@ value is changed to 1 and the lowest value to 0.
 norm.toy <- normalize_mldata(toyml)
 }
 \seealso{
-Other pre process: \code{\link{fill_sparce_mldata}},
+Other pre process: \code{\link{fill_sparse_mldata}},
   \code{\link{remove_attributes}},
   \code{\link{remove_labels}},
   \code{\link{remove_skewness_labels}},

@@ -42,8 +42,8 @@ An object of class \code{PruDentmodel} containing the set of fitted
 }
 }
 \description{
-Create a PruDent classifier to predic multi-label data. To this, two
-round of Binary Relevance is executed, such that, the first iteraction
+Create a PruDent classifier to predict multi-label data. To this, two
+round of Binary Relevance is executed, such that, the first iteration
 generates new attributes to enrich the second prediction.
 }
 \details{

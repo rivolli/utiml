@@ -14,7 +14,7 @@
 #' @return A mlresult with computed predictions.
 #' @note You can create your own vote schema, just create a method that receive
 #'  two matrix (bipartitions and probabilities) and return a list with the
-#'  final bipartions and probabilities.
+#'  final bipartitions and probabilities.
 #'
 #'  Remember that this method will compute the ensemble votes for each label.
 #'  Thus the bipartition and probability matrix passed as argument for this
@@ -115,7 +115,7 @@ utiml_ensemble_check_voteschema <- function (vote.schema, accept.null = TRUE) {
 #'
 #' Compute the single-label prediction using the majority votes schema.
 #' The probabilities result is computed using only the majority instances.
-#' In others words, if a example is predicted as posivite, only the positive
+#' In others words, if a example is predicted as positive, only the positive
 #' confidences are used to compute the averaged value.
 #'
 #' @param bipartition A matrix with all bipartition predictions for a single
@@ -208,7 +208,7 @@ utiml_compute_ensemble <- function (bipartitions, probabilities,
 
 #' Predict binary predictions
 #'
-#' Is very simillar from utiml_compute_ensemble but differs from arguments
+#' Is very similar from utiml_compute_ensemble but differs from arguments
 #'
 #' @param predictions A list of binary predictions.
 #' @param vote.schema The name of vote schema.

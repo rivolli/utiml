@@ -23,7 +23,7 @@ training instances that must be used for each classifier. (Default: 0.75)}
 \item{attr.space}{A value between 0.1 and 1 to determine the percentage of
 attributes that must be used for each classifier. (Default: 0.50)}
 
-\item{replacement}{Bollean value to define if use sampling with replacement
+\item{replacement}{Boolean value to define if use sampling with replacement
 to create the data of the models of the ensemble. (Default: TRUE)}
 
 \item{...}{Others arguments passed to the base algorithm for all subproblems.}
@@ -39,7 +39,7 @@ the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
 An object of class \code{ECCmodel} containing the set of fitted
   CC models, including:
 \describe{
-  \item{rounds}{The number of interations}
+  \item{rounds}{The number of interactions}
   \item{models}{A list of BR models.}
   \item{nrow}{The number of instances used in each training dataset}
   \item{ncol}{The number of attributes used in each training dataset}

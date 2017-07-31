@@ -10,7 +10,7 @@
 #' @param mdata A mldr dataset used to train the binary models.
 #' @param base.algorithm A string with the name of the base algorithm. (Default:
 #'  \code{options("utiml.base.algorithm", "SVM")})
-#' @param ratio Controll the number of clusters being retained. Must be between
+#' @param ratio Control the number of clusters being retained. Must be between
 #'  0 and 1. (Default: \code{0.1})
 #' @param ... Others arguments passed to the base algorithm for all subproblems.
 #' @param cores The number of cores to parallelize the training. Values higher

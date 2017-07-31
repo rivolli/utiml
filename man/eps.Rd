@@ -40,7 +40,7 @@ than 1 require the \pkg{parallel} package. (Default:
 An object of class \code{EPSmodel} containing the set of fitted
   models, including:
   \describe{
-   \item{rounds}{The number of interations}
+   \item{rounds}{The number of interactions}
    \item{models}{A list of PS models.}
   }
 }
@@ -50,7 +50,7 @@ Create an Ensemble of Pruned Set model for multilabel classification.
 \details{
 Pruned Set (PS) is a multi-class transformation that remove the less common
 classes to predict multi-label data. The ensemble is created with different
-subests of the orignal multi-label data.
+subsets of the original multi-label data.
 }
 \examples{
 model <- eps(toyml, "RANDOM")

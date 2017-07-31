@@ -168,7 +168,7 @@ print.mlresult <- function(x, ...) {
 
 #' Filter a Multi-Label Result
 #'
-#' If column filter is performed, then the result will be a matrix. Otherwhise,
+#' If column filter is performed, then the result will be a matrix. Otherwise,
 #' the result will be a mlresult.
 #'
 #' @param mlresult A mlresult object
@@ -176,7 +176,7 @@ print.mlresult <- function(x, ...) {
 #' @param colFilter A list of columns to filter
 #' @param ... Extra parameters to be used as the filter
 #' @return mlresult or matrix. If column filter is performed, then the result
-#'  will be a matrix. Otherwhise, the result will be a mlresult.
+#'  will be a matrix. Otherwise, the result will be a mlresult.
 #' @export
 `[.mlresult` <- function (mlresult, rowFilter = T, colFilter, ...) {
   if (missing(colFilter)) {

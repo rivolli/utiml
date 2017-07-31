@@ -154,7 +154,7 @@ merge_mlconfmat <- function (object, ...) {
 #'
 #' This method is used to evaluate multi-label predictions. You can create a
 #' confusion matrix object or use directly the test dataset and the predictions.
-#' You can also especify whiches measures do you desire use.
+#' You can also specify which measures do you desire use.
 #'
 #' @param object A mldr dataset or a mlconfmat confusion matrix
 #' @param mlresult The prediction result (Optional, required only when the
@@ -519,7 +519,7 @@ utiml_measure_precision <- function (mlconfmat, ...) {
 
 #' Multi-label Ranking Error Measure
 #' @param mlconfmat Confusion matrix
-#' @param ranking A matriz ranking
+#' @param ranking A matrix ranking
 #' @param ... ignored
 #' @references Park, S.-H., & Furnkranz, J. (2008). Multi-Label Classification
 #'  with Label Constraints. Proceedings of the ECML PKDD 2008 Workshop on
@@ -604,7 +604,7 @@ utiml_measure_binary_AUC <- function (scores, labels) {
 #' @param TN The number of True Negative values
 #' @param FN The number of False Negative values
 #'
-#' @return Balcanced accuracy value between 0 and 1
+#' @return Balanced accuracy value between 0 and 1
 utiml_measure_binary_balacc <- function (TP, FP, TN, FN) {
   (TP / (TP + FN) + TN / (TN + FP)) / 2
 }
