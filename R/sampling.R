@@ -359,6 +359,9 @@ utiml_iterative_split <- function(mdata, r) {
     }
   }
 
+  #Confirm that all instances has at least one label
+  D <- D[rowSums(mdata$dataset[D, mdata$labels$index]) > 0]
+
   while (length(D) > 0) {
     # Find the label with the fewest (but at least one) remaining examples,
     # Do not use apply because sometimes its returns is a matrix

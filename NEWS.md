@@ -1,5 +1,12 @@
 # Changelog
 
+## utiml 0.1.4
+
+### Major changes
+
+### Bug fixes
+* Stratification sampling to support instances without labels
+
 ## utiml 0.1.3
 ### Major changes
 * Change `multilabel_evaluation` to also return the label measures
