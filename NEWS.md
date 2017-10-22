@@ -2,7 +2,8 @@
 
 ## utiml 0.1.4
 
-### Major changes
+### New Features
+* MLKNN algorithm
 
 ### Bug fixes
 * Stratification sampling to support instances without labels
