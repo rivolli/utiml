@@ -1,17 +1,51 @@
-#Zhang, M.-L. L., & Zhou, Z.-H. H. (2007). ML-KNN: A lazy learning approach to
-# multi-label learning. Pattern Recognition, 40(7), 2038–2048.
-# http://doi.org/10.1016/j.patcog.2006.12.019
-mlknn <- function(mdata, k, s=1, ..., cores = getOption("utiml.cores", 1),
-                seed = getOption("utiml.seed", NA)){
-
+#' Multi-label KNN (ML-KNN) for multi-label Classification
+#'
+#' Create a ML-KNN classifier to predict multi-label data. It is a multi-label
+#' lazy learning, which is derived from the traditional K-nearest neighbor (KNN)
+#' algorithm. For each unseen instance, its K nearest neighbors in the training
+#' set are identified and based on statistical information gained from the label
+#' sets of these neighboring instances, the maximum a posteriori (MAP) principle
+#' is utilized to determine the label set for the unseen instance.
+#'
+#' @family Adaptatio methods
+#' @param mdata A mldr dataset used to train the binary models.
+#' @param k The number of neighbors. (Default: \code{10})
+#' @param s Smoothing parameter controlling the strength of uniform prior. When
+#'  it is set to be 1, we have the Laplace smoothing. (Default: \code{1}).
+#' @param distance The name of method used to compute the distance. See
+#'  \code{\link[stats]{dist}} to the list of options.
+#'  (Default: \code{"euclidian"})
+#' @param ... Not used.
+#' @param cores Ignored because this method does not support multi-core.
+#' @param seed Ignored because this method is deterministic.
+#' @return An object of class \code{MLKNNmodel} containing the set of fitted
+#'  models, including:
+#'  \describe{
+#'    \item{labels}{A vector with the label names.}
+#'    \item{prior}{The prior probability of each label to occur.}
+#'    \item{posterior}{The posterior probability of each label to occur given
+#'      that k neighbors have it.}
+#'  }
+#' @references
+#'  Zhang, M.-L. L., & Zhou, Z.-H. H. (2007). ML-KNN: A lazy learning approach
+#'    to multi-label learning. Pattern Recognition, 40(7), 2038–2048.
+#' @export
+#'
+#' @examples
+#' model <- mlknn(toyml, k=3)
+#' pred <- predict(model, toyml)
+mlknn <- function(mdata, k=10, s=1, distance="euclidean", ...,
+                  cores = getOption("utiml.cores", 1),
+                  seed = getOption("utiml.seed", NA)){
   # KNN Model class
   knnmodel <- list(labels = rownames(mdata$labels), call = match.call(),
-                   k=k, s=s)
+                   k=k, s=s, distance=distance)
 
   Prior <- (s + mdata$labels$count) / (s * 2 + mdata$measures$num.instances)
   names(Prior) <- knnmodel$labels
 
-  dm <- as.matrix(dist(mdata$dataset[,mdata$attributesIndexes]))
+  dm <- as.matrix(stats::dist(mdata$dataset[,mdata$attributesIndexes],
+                              method=distance))
   colnames(dm) <- rownames(dm) <- seq(mdata$measures$num.instances)
   diag(dm) <- Inf
   Cx <- t(apply(dm, 1, function(dx) {
@@ -39,6 +73,25 @@ mlknn <- function(mdata, k, s=1, ..., cores = getOption("utiml.cores", 1),
   knnmodel
 }
 
+#' Predict Method for ML-KNN
+#'
+#' This function predicts values based upon a model trained by \code{mlknn}.
+#' '
+#' @param object Object of class '\code{MLKNNmodel}'.
+#' @param newdata An object containing the new input data. This must be a
+#'  matrix, data.frame or a mldr object.
+#' @param probability Logical indicating whether class probabilities should be
+#'  returned. (Default: \code{getOption("utiml.use.probs", TRUE)})
+#' @param ... Not used.
+#' @param cores Ignored because this method does not support multi-core.
+#' @param seed Ignored because this method is deterministic.
+#' @return An object of type mlresult, based on the parameter probability.
+#' @seealso \code{\link[=mlknn]{ML-KNN}}
+#' @export
+#'
+#' @examples
+#' model <- mlknn(toyml)
+#' pred <- predict(model, toyml)
 predict.MLKNNmodel <- function(object, newdata,
                                probability = getOption("utiml.use.probs", TRUE),
                                ..., cores = getOption("utiml.cores", 1),
@@ -54,7 +107,7 @@ predict.MLKNNmodel <- function(object, newdata,
 
   Cx <- t(apply(newdata, 1, function(test.inst){
     dx <- apply(train.data, 1, function(train.inst){
-      dist(rbind(test.inst, train.inst))
+      stats::dist(rbind(test.inst, train.inst), method=object$distance)
     })
     names(dx) <- seq(length(dx))
 
