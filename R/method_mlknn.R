@@ -27,8 +27,8 @@
 #'      that k neighbors have it.}
 #'  }
 #' @references
-#'  Zhang, M.-L. L., & Zhou, Z.-H. H. (2007). ML-KNN: A lazy learning approach
-#'    to multi-label learning. Pattern Recognition, 40(7), 2038–2048.
+#'  Zhang, M.L. L., & Zhou, Z.H. H. (2007). ML-KNN: A lazy learning approach
+#'    to multi-label learning. Pattern Recognition, 40(7), 2038-2048.
 #' @export
 #'
 #' @examples
@@ -54,7 +54,7 @@ mlknn <- function(mdata, k=10, s=1, distance="euclidean", ...,
   }))
 
   Ck <- sapply(knnmodel$labels, function(label){
-    klabel <- factor(Cx[,label], level=seq(0, k))
+    klabel <- factor(Cx[,label], levels=seq(0, k))
     has.label <- mdata$dataset[,label] == 1
     rbind(c1=table(klabel[has.label]), c0=table(klabel[!has.label]))
   }, simplify = FALSE)
@@ -140,7 +140,7 @@ predict.MLKNNmodel <- function(object, newdata,
 print.MLKNNmodel <- function(x, ...) {
   cat("Classifier MLKNN\n\nCall:\n")
   print(x$call)
-  cat("\nk = ", k, "\nPrior positive probabilits:\n")
+  cat("\nk = ", x$k, "\nPrior positive probabilits:\n")
   print(x$prior)
 }
 

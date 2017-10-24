@@ -237,6 +237,14 @@ test_that("LIFT", {
 test_that("HOMER", {
   model <- homer(train, "RANDOM")
   expect_is(model, "HOMERmodel")
+  predictionTest(model)
+
   model <- homer(train, "RANDOM", clusters=2, method="random")
   expect_error(homer(train, "RANDOM", clusters=0))
+})
+
+test_that("ML-knn", {
+  model <- mlknn(train)
+  expect_is(model, "MLKNNmodel")
+  predictionTest(model)
 })

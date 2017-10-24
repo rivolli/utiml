@@ -48,6 +48,6 @@ model <- mlknn(toyml, k=3)
 pred <- predict(model, toyml)
 }
 \references{
-Zhang, M.-L. L., & Zhou, Z.-H. H. (2007). ML-KNN: A lazy learning approach
-   to multi-label learning. Pattern Recognition, 40(7), 2038–2048.
+Zhang, M.L. L., & Zhou, Z.H. H. (2007). ML-KNN: A lazy learning approach
+   to multi-label learning. Pattern Recognition, 40(7), 2038-2048.
 }
