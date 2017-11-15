@@ -4,8 +4,8 @@
 \alias{baseline}
 \title{Baseline reference for multilabel classification}
 \usage{
-baseline(mdata, metric = c("general", "F1", "hamming-loss",
-  "subset-accuracy"), ...)
+baseline(mdata, metric = c("general", "F1", "hamming-loss", "subset-accuracy",
+  "ranking-loss"), ...)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -45,6 +45,8 @@ The follow strategies are available:
  \item{\code{hamming-loss}}{Predict the labels that are associated with more
   than 50\% of instances.}
  \item{\code{subset-accuracy}}{Predict the most common labelset.}
+ \item{\code{ranking-loss}}{Predict a ranking based on the most frequent
+  labels.}
 }
 }
 \examples{
