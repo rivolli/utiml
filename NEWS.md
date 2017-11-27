@@ -5,6 +5,7 @@
 ### New Features
 * MLKNN algorithm
 * ranking-loss baseline
+* label problem evaluation measures
 
 ### Bug fixes
 * Stratification sampling to support instances without labels

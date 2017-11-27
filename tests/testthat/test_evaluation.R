@@ -247,6 +247,39 @@ test_that("Ranking measures", {
   expect_equal(utiml_measure_is_error(mlconfmat, dif.rank), measures$IsError)
 })
 
+test_that("Label-problem measures", {
+  labels <- as.matrix(parts$test$dataset[, parts$test$labels$index])
+  expected <- parts$test$dataset[, parts$test$labels$index]
+
+  #Constant labels
+  expect_equal(c(clp=0), multilabel_evaluate(parts$test, labels, "clp"))
+  lapply(seq(ncol(labels)), function(i){
+    labels[,seq(i)] <- 1
+    expect_equal(c(clp=i/ncol(labels)), multilabel_evaluate(parts$test, labels, "clp"))
+  })
+
+  #Missing labels
+  options(utiml.empty.prediction = TRUE)
+  expect_equal(c(mlp=0), multilabel_evaluate(parts$test, labels, "mlp"))
+  expect_equal(c(wlp=0), multilabel_evaluate(parts$test, labels, "wlp"))
+  lapply(seq(ncol(labels)), function(i){
+    labels[,seq(i)] <- 0
+    expect_equal(c(mlp=i/ncol(labels)), multilabel_evaluate(parts$test, labels, "mlp"))
+    expect_equal(c(wlp=i/ncol(labels)), multilabel_evaluate(parts$test, labels, "wlp"))
+  })
+
+  #Wrong labels
+  lapply(seq(ncol(labels)), function(i){
+    for (j in seq(i)) {
+      labels[,j] <- ifelse(expected[,j] == 1, 0, 1)
+    }
+    expect_equal(c(mlp=0), multilabel_evaluate(parts$test, labels, "mlp"))
+    expect_equal(c(wlp=i/ncol(labels)), multilabel_evaluate(parts$test, labels, "wlp"))
+  })
+  options(utiml.empty.prediction = FALSE)
+
+})
+
 test_that("Measures names", {
   expect_equal(utiml_measure_names("abc"), c("abc"))
 
@@ -268,8 +301,11 @@ test_that("Measures names", {
                "subset-accuracy"))
   expect_equal(utiml_measure_names("example-based"), example)
 
+  label <- c("clp", "mlp", "wlp")
+  expect_equal(utiml_measure_names("label-problem"), label)
+
   expect_equal(utiml_measure_names(),
-               sort(c(rankings, example, macro, micro)))
+               sort(c(rankings, example, macro, micro, label)))
 })
 
 test_that("Evaluate", {

@@ -251,7 +251,10 @@ multilabel_evaluate.mlconfmat <- function (object, measures = c("all"),
     'ranking-error' = "utiml_measure_ranking_error",
     'ranking-loss' = "utiml_measure_ranking_loss",
     'recall' = "utiml_measure_recall",
-    'subset-accuracy' = "utiml_measure_subset_accuracy"
+    'subset-accuracy' = "utiml_measure_subset_accuracy",
+    "clp" = "utiml_measure_clp",
+    "mlp" = "utiml_measure_mlp",
+    "wlp" = "utiml_measure_wlp"
   )
 
   #Extra methods
@@ -644,6 +647,19 @@ utiml_measure_binary_f1 <- function (TP, FP, TN, FN) {
   ifelse(prec + rec == 0, 0, 2 * prec * rec / (prec + rec))
 }
 
+
+utiml_measure_clp <- function(mlconfmat, ...) {
+  sum(mlconfmat$TNl + mlconfmat$FNl == 0) / ncol(mlconfmat$Y)
+}
+
+utiml_measure_mlp <- function(mlconfmat, ...) {
+  sum(mlconfmat$TPl + mlconfmat$FPl == 0) / ncol(mlconfmat$Y)
+}
+
+utiml_measure_wlp <- function(mlconfmat, ...) {
+  sum(mlconfmat$TPl == 0) / ncol(mlconfmat$Y)
+}
+
 #' MEASURES METHODS ----------------------------------------------------------
 
 #' Return the tree with the measure names
@@ -652,7 +668,8 @@ utiml_all_measures_names <- function (){
   list(
     'all' = c(
       "bipartition",
-      "ranking"
+      "ranking",
+      "label-problem"
     ),
     'bipartition' = c(
       "label-based",
@@ -688,6 +705,11 @@ utiml_all_measures_names <- function (){
       "micro-precision",
       "micro-recall",
       "micro-F1"
+    ),
+    "label-problem" = c(
+      "mlp",
+      "wlp",
+      "clp"
     )
   )
 }
