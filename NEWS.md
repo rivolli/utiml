@@ -6,6 +6,11 @@
 * MLKNN algorithm
 * ranking-loss baseline
 * label problem evaluation measures
+* kfold bult-in method
+* The foodtruck dataset
+
+### Minor changes
+* confusion matrix in matrix format 
 
 ### Bug fixes
 * Stratification sampling to support instances without labels

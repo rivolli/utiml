@@ -792,3 +792,11 @@ print.mlconfmat <- function (x, ...) {
                     "MeanRanking", "MeanScore")
   print(as.data.frame(cm))
 }
+
+#' Convert a multi-label Confusion Matrix to matrix
+#' @param x The mlconfmat
+#' @param ... passed to as.matrix
+#' @export
+as.matrix.mlconfmat <- function (x, ...) {
+  as.matrix(data.frame(TP=x$TPl, TN=x$TNl, FP=x$FPl, FN=x$FNl), ...)
+}

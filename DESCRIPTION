@@ -1,7 +1,7 @@
 Package: utiml
 Type: Package
 Title: Utilities for Multi-Label Learning
-Version: 0.1.4.9004
+Version: 0.1.4.9005
 Date: 2017-07-28
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
@@ -14,7 +14,8 @@ Description: Multi-label learning strategies and others procedures to support mu
 URL: https://github.com/rivolli/utiml
 Depends:
     R (>= 3.0.0),
-    mldr(>= 0.3.22)
+    mldr(>= 0.3.22),
+    parallel
 Imports:
     stats,
     utils
@@ -25,7 +26,6 @@ Suggests:
     infotheo,
     kknn,
     knitr,
-    parallel,
     randomForest,
     rJava(>= 0.9),
     rmarkdown,

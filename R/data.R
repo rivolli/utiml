@@ -46,3 +46,26 @@
 #'   \item Minimum Radius/Half-Edge of the Hyperspheres/Hypercubes: ((q/10)+1)/q
 #' }
 "toyml"
+
+#' Foodtruck multi-label dataset.
+#'
+#' The foodtruck multi-label dataset is a real multi-label dataset, which uses
+#' habits and personal information to predict food truck cuisines.
+#'
+#' @format A mldr object with 407 instances, 21 features and 12 labels:
+#'
+#' @details General Information
+#' \itemize{
+#'  \item Cardinality: 2.28
+#'  \item Density: 0.19
+#'  \item Distinct multi-labels: 117
+#'  \item Number of single labelsets: 74
+#'  \item Max frequency: 114
+#' }
+#'
+#' @source The dataset is described in:
+#' Rivolli A., Parker L.C., de Carvalho A.C.P.L.F. (2017) Food Truck
+#' Recommendation Using Multi-label Classification. In: Oliveira E., Gama J.,
+#' Vale Z., Lopes Cardoso H. (eds) Progress in Artificial Intelligence. EPIA
+#' 2017. Lecture Notes in Computer Science, vol 10423. Springer, Cham
+"foodtruck"
