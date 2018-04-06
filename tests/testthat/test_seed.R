@@ -3,7 +3,7 @@ smalltoyml <- create_subset(toyml, seq(3, 100, 3))
 
 testTrainMethod <- function (method, name, ...) {
   name <- paste(name, "Training")
-  if (parallel::detectCores() <= 1) {
+  if (parallel::detectCores() <= 1 | Sys.info()["sysname"] == "Windows") {
     skip(name)
     return(FALSE)
   }
@@ -26,7 +26,7 @@ testTrainMethod <- function (method, name, ...) {
 
 testPredictMethod <- function (method, name, ...) {
   name <- paste(name, "Prediction")
-  if (parallel::detectCores() <= 1) {
+  if (parallel::detectCores() <= 1 | Sys.info()["sysname"] == "Windows") {
     skip(name)
     return(FALSE)
   }
@@ -54,7 +54,7 @@ testPredictMethod <- function (method, name, ...) {
 
 testSeedEffectMethod <- function (method, name, ...) {
   name <- paste(name, "Seed Effect")
-  if (parallel::detectCores() <= 1) {
+  if (parallel::detectCores() <= 1 | Sys.info()["sysname"] == "Windows") {
     skip(name)
     return(FALSE)
   }

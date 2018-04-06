@@ -76,6 +76,7 @@
 #'  PhD advisor: Andre C. P. L. F. de Carvalho
 #'
 #' @import mldr
+#' @import parallel
 #' @docType package
 #' @name utiml
 NULL

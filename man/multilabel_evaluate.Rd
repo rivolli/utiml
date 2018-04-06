@@ -23,10 +23,10 @@ multilabel_evaluate(object, ...)
 mldr is used).}
 
 \item{measures}{The measures names to be computed. Call
-\code{multilabel_measures()} to see the expected measures. You also can
+\code{multilabel_measures()} to see the expected measures. You can also
 use \code{"bipartition"}, \code{"ranking"}, \code{"label-based"},
-\code{"example-based"}, \code{"macro-based"} and \code{"micro-based"} to
-include a set of measures. (Default: "all").}
+\code{"example-based"}, \code{"macro-based"}, \code{"micro-based"} and
+\code{"label-problem"} to include a set of measures. (Default: "all").}
 
 \item{labels}{Logical value defining if the label results should be also
 returned. (Default: \code{FALSE})}
@@ -77,4 +77,9 @@ Madjarov, G., Kocev, D., Gjorgjevikj, D., & Dzeroski, S. (2012). An
    1819-1837.
  Gibaja, E., & Ventura, S. (2015). A Tutorial on Multilabel Learning.
    ACM Comput. Surv., 47(3), 52:1-2:38.
+}
+\seealso{
+Other evaluation: \code{\link{cv}},
+  \code{\link{multilabel_confusion_matrix}},
+  \code{\link{multilabel_measures}}
 }

@@ -11,8 +11,7 @@
 #' @param base.algorithm A string with the name of the base algorithm (Default:
 #'  \code{options("utiml.base.algorithm", "SVM")})
 #' @param ... Others arguments passed to the base algorithm for all subproblems
-#' @param cores The number of cores to parallelize the training. Values higher
-#'  than 1 require the \pkg{parallel} package. (Default:
+#' @param cores The number of cores to parallelize the training. (Default:
 #'  \code{options("utiml.cores", 1)})
 #' @param seed An optional integer used to set the seed. This is useful when
 #'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})

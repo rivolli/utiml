@@ -3,7 +3,8 @@
 #' The multi-label confusion matrix is an object that contains the prediction,
 #' the expected values and also a lot of pre-processed information related with
 #' these data.
-#
+#'
+#' @family evaluation
 #' @param mdata A mldr dataset
 #' @param mlresult A mlresult prediction
 #'
@@ -156,14 +157,15 @@ merge_mlconfmat <- function (object, ...) {
 #' confusion matrix object or use directly the test dataset and the predictions.
 #' You can also specify which measures do you desire use.
 #'
+#' @family evaluation
 #' @param object A mldr dataset or a mlconfmat confusion matrix
 #' @param mlresult The prediction result (Optional, required only when the
 #'  mldr is used).
 #' @param measures The measures names to be computed. Call
-#'  \code{multilabel_measures()} to see the expected measures. You also can
+#'  \code{multilabel_measures()} to see the expected measures. You can also
 #'  use \code{"bipartition"}, \code{"ranking"}, \code{"label-based"},
-#'  \code{"example-based"}, \code{"macro-based"} and \code{"micro-based"} to
-#'  include a set of measures. (Default: "all").
+#'  \code{"example-based"}, \code{"macro-based"}, \code{"micro-based"} and
+#'  \code{"label-problem"} to include a set of measures. (Default: "all").
 #' @param labels Logical value defining if the label results should be also
 #'  returned. (Default: \code{FALSE})
 #' @param ... Extra parameters to specific measures.
@@ -741,6 +743,7 @@ utiml_measure_names <- function (measures =  c("all")) {
 
 #' Return the name of all measures
 #'
+#' @family evaluation
 #' @return array of character contained the measures names.
 #' @export
 #'
