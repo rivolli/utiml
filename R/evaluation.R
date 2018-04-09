@@ -275,7 +275,7 @@ multilabel_evaluate.mlconfmat <- function (object, measures = c("all"),
   measures <- sapply(all.methods, function (mname) {
     params <- c(list(mlconfmat = mlconfmat), extra)
     do.call(mname, params)
-  })
+  }, simplify = FALSE)
 
   mlvalues <- sapply(measures, mean)
   if (labels) {

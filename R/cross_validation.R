@@ -3,11 +3,11 @@
 #' Perform the cross validation procedure for multi-label learning.
 #'
 #' @family evaluation
+#' @param mdata A mldr dataset.
 #' @param method The multi-label classification method. It also accepts the name
 #'  of the method as a string.
-#' @param mdata A mldr dataset.
 #' @param ... Additional parameters required by the method.
-#' @param cv.folds Number of folds.
+#' @param cv.folds Number of folds. (Default: 10)
 #' @param cv.sampling The method to split the data. The default methods are:
 #' \describe{
 #'    \item{random}{Split randomly the folds.}
@@ -37,12 +37,12 @@
 #'
 #' @examples
 #' #Run 10 folds for BR method
-#' res1 <- cv(br, toyml, base.algorithm="RANDOM", cv.folds=10)
+#' res1 <- cv(toyml, br, base.algorithm="RANDOM", cv.folds=10)
 #'
 #' #Run 3 folds for RAkEL method and get the fold results
-#' res2 <- cv(method="rakel", mdata=toyml, base.algorithm="RANDOM", k=2, m=10,
+#' res2 <- cv(toyml, method="rakel",base.algorithm="RANDOM", k=2, m=10,
 #'  cv.folds=3, cv.results=TRUE)
-cv <- function(method, mdata, ..., cv.folds=10,
+cv <- function(mdata, method, ..., cv.folds=10,
                cv.sampling=c("random", "iterative", "stratified"),
                cv.results=FALSE, cv.measures="all",
                cv.cores=getOption("utiml.cores", 1),
