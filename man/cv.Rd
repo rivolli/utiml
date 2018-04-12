@@ -4,20 +4,20 @@
 \alias{cv}
 \title{Multi-label cross-validation}
 \usage{
-cv(method, mdata, ..., cv.folds = 10, cv.sampling = c("random", "iterative",
+cv(mdata, method, ..., cv.folds = 10, cv.sampling = c("random", "iterative",
   "stratified"), cv.results = FALSE, cv.measures = "all",
   cv.cores = getOption("utiml.cores", 1), cv.seed = getOption("utiml.seed",
   NA))
 }
 \arguments{
+\item{mdata}{A mldr dataset.}
+
 \item{method}{The multi-label classification method. It also accepts the name
 of the method as a string.}
 
-\item{mdata}{A mldr dataset.}
-
 \item{...}{Additional parameters required by the method.}
 
-\item{cv.folds}{Number of folds.}
+\item{cv.folds}{Number of folds. (Default: 10)}
 
 \item{cv.sampling}{The method to split the data. The default methods are:
 \describe{
@@ -54,10 +54,10 @@ Perform the cross validation procedure for multi-label learning.
 }
 \examples{
 #Run 10 folds for BR method
-res1 <- cv(br, toyml, base.algorithm="RANDOM", cv.folds=10)
+res1 <- cv(toyml, br, base.algorithm="RANDOM", cv.folds=10)
 
 #Run 3 folds for RAkEL method and get the fold results
-res2 <- cv(method="rakel", mdata=toyml, base.algorithm="RANDOM", k=2, m=10,
+res2 <- cv(mdata=toyml, method="rakel", base.algorithm="RANDOM", k=2, m=10,
  cv.folds=3, cv.results=TRUE)
 }
 \seealso{

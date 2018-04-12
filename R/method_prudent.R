@@ -197,14 +197,14 @@ predict.PruDentmodel <- function(object, newdata,
   utiml_predict(predictions, probability)
 }
 
-#' Calculate the Information Gain for each pair of labels
-#'
-#' @param mdata A mldr dataset containing the label information.
-#' @return A matrix where the rows and columns represents the labels.
-#' @references
-#'  Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
-#'   Approach for Multi-Label Classification. IEEE Transactions on Knowledge
-#'   and Data Engineering, 27(9), 2480-2493.
+# Calculate the Information Gain for each pair of labels
+#
+# @param mdata A mldr dataset containing the label information.
+# @return A matrix where the rows and columns represents the labels.
+# @references
+#  Alali, A., & Kubat, M. (2015). PruDent: A Pruned and Confident Stacking
+#   Approach for Multi-Label Classification. IEEE Transactions on Knowledge
+#   and Data Engineering, 27(9), 2480-2493.
 utiml_labels_IG <- function (mdata) {
   entropy <- function (prob) {
     prob0 <- 1 - prob

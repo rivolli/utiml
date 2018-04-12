@@ -6,29 +6,44 @@
 \alias{utiml-package}
 \title{utiml: Utilities for Multi-Label Learning}
 \description{
-The utiml package is a framework to support multi-label processing, like
-Mulan on Weka. The main utiml advantage is because it is in R, that in other
-others, it is simple to use and extend.
+The utiml package is a framework for the application of classification
+algorithms to multi-label data. Like the well known MULAN used with Weka, it
+provides a set of multi-label procedures such as sampling methods,
+transformation strategies, threshold functions, pre-processing techniques and
+evaluation metrics. The package was designed to allow users to easily
+perform complete multi-label classification experiments in the R environment.
 }
 \details{
 Currently, the main methods supported are:
 \enumerate{
  \item{
   \strong{Classification methods}:
+   \code{\link[=baseline]{ML Baselines}},
    \code{\link[=br]{Binary Relevance (BR)}},
    \code{\link[=brplus]{BR+}},
    \code{\link[=cc]{Classifier Chains}},
+   \code{\link[=clr]{Calibrated Label Ranking (CLR)}},
    \code{\link[=ctrl]{ConTRolled Label correlation exploitation (CTRL)}},
    \code{\link[=dbr]{Dependent Binary Relevance (DBR)}},
    \code{\link[=ebr]{Ensemble of Binary Relevance (EBR)}},
    \code{\link[=ecc]{Ensemble of Classifier Chains (ECC)}},
+   \code{\link[=eps]{Ensemble of Pruned Set (EPS)}},
+   \code{\link[=homer]{Hierarchy Of Multilabel classifiER (HOMER)}},
+   \code{\link[=lift]{Label specIfic FeaTures (LIFT)}},
+   \code{\link[=lp]{Label Powerset (LP)}},
    \code{\link[=mbr]{Meta-Binary Relevance (MBR or 2BR)}},
+   \code{\link[=mlknn]{Multi-label KNN (ML-KNN)}},
    \code{\link[=ns]{Nested Stacking (NS)}},
+   \code{\link[=ppt]{Pruned Problem Transformation (PPT)}},
    \code{\link[=prudent]{Pruned and Confident Stacking Approach (Prudent)}},
-   \code{\link[=rdbr]{Recursive Dependent Binary Relevance (RDBR)}}
+   \code{\link[=ps]{Pruned Set (PS)}},
+   \code{\link[=rakel]{Random k-labelsets (RAkEL)}},
+   \code{\link[=rdbr]{Recursive Dependent Binary Relevance (RDBR)}},
+   \code{\link[=rpc]{Ranking by Pairwise Comparison (RPC)}}
  }
  \item{
   \strong{Evaluation methods}:
+   \code{\link[=cv]{Performing a cross-validation procedure}},
    \code{\link[=multilabel_confusion_matrix]{Confusion Matrix}},
    \code{\link[=multilabel_evaluate]{Evaluate}},
    \code{\link[=multilabel_measures]{Supported measures}}
@@ -55,6 +70,7 @@ Currently, the main methods supported are:
  \item{
    \strong{Threshold methods}:
     \code{\link[=fixed_threshold]{Fixed threshold}},
+    \code{\link[=lcard_threshold]{Cardinality threshold}},
     \code{\link[=mcut_threshold]{MCUT}},
     \code{\link[=pcut_threshold]{PCUT}},
     \code{\link[=rcut_threshold]{RCUT}},

@@ -134,16 +134,14 @@ mlpredict <- function(model, newdata, ...) {
 }
 
 # DEFAULT METHOD -------------------------------------------------------------
-#' @describeIn mltrain Default S3 method
-#' @export
+# @describeIn mltrain Default S3 method
 mltrain.default <- function(object, ...) {
   funcname <- paste("mltrain.base", object$base.method, sep = "")
   stop(paste("The function '", funcname, "(object, ...)' is not implemented",
              sep = ""))
 }
 
-#' @describeIn mlpredict Default S3 method
-#' @export
+# @describeIn mlpredict Default S3 method
 mlpredict.default <- function(model, newdata, ...) {
   funcname <- paste("mlpredict.", class(model), sep = "")
   stop(paste("The function '", funcname,
@@ -151,8 +149,7 @@ mlpredict.default <- function(model, newdata, ...) {
 }
 
 # SVM METHOD ------------------------------------------------------------------
-#' @describeIn mltrain SVM implementation (require \pkg{e1071} package to use)
-#' @export
+# @describeIn mltrain SVM implementation (require \pkg{e1071} package to use)
 mltrain.baseSVM <- function(object, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
     formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
@@ -165,8 +162,7 @@ mltrain.baseSVM <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict SVM implementation (require \pkg{e1071} package to use)
-#' @export
+# @describeIn mlpredict SVM implementation (require \pkg{e1071} package to use)
 mlpredict.svm <- function(model, newdata, ...) {
   if (!requireNamespace("e1071", quietly = TRUE)) {
     stop(paste("There are no installed package 'e1071' to use SVM classifier",
@@ -185,8 +181,7 @@ mlpredict.svm <- function(model, newdata, ...) {
 }
 
 # SMO METHOD -------------------------------------------------------------
-#' @describeIn mltrain SMO implementation (require \pkg{RWeka} package to use)
-#' @export
+# @describeIn mltrain SMO implementation (require \pkg{RWeka} package to use)
 mltrain.baseSMO <- function(object, ...) {
   if (requireNamespace("RWeka", quietly = TRUE) &&
       requireNamespace("rJava", quietly = TRUE)) {
@@ -201,8 +196,7 @@ mltrain.baseSMO <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict SMO implementation (require \pkg{RWeka} package to use)
-#' @export
+# @describeIn mlpredict SMO implementation (require \pkg{RWeka} package to use)
 mlpredict.SMO <- function(model, newdata, ...) {
   if (!requireNamespace("RWeka", quietly = TRUE)) {
     stop(paste("There are no installed package 'RWeka' to use SMO classifier",
@@ -219,8 +213,7 @@ mlpredict.SMO <- function(model, newdata, ...) {
 }
 
 # J48 METHOD -------------------------------------------------------------
-#' @describeIn mltrain J48 implementation (require \pkg{RWeka} package to use)
-#' @export
+# @describeIn mltrain J48 implementation (require \pkg{RWeka} package to use)
 mltrain.baseJ48 <- function(object, ...) {
   #http://r.789695.n4.nabble.com/How-to-save-load-RWeka-models-into-from-a-file-td870876.html
   #https://github.com/s-u/rJava/issues/25
@@ -238,8 +231,7 @@ mltrain.baseJ48 <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict J48 implementation (require \pkg{RWeka} package to use)
-#' @export
+# @describeIn mlpredict J48 implementation (require \pkg{RWeka} package to use)
 mlpredict.J48 <- function(model, newdata, ...) {
   if (!requireNamespace("RWeka", quietly = TRUE)) {
     stop(paste("There are no installed package 'RWeka' to use J48 classifier",
@@ -256,8 +248,7 @@ mlpredict.J48 <- function(model, newdata, ...) {
 }
 
 # C5.0 METHOD ------------------------------------------------------------------
-#' @describeIn mltrain C5.0 implementation (require \pkg{C50} package to use)
-#' @export
+# @describeIn mltrain C5.0 implementation (require \pkg{C50} package to use)
 mltrain.baseC5.0 <- function(object, ...) {
   if (requireNamespace("C50", quietly = TRUE)) {
     formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
@@ -270,8 +261,7 @@ mltrain.baseC5.0 <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict C5.0 implementation (require \pkg{C50} package to use)
-#' @export
+# @describeIn mlpredict C5.0 implementation (require \pkg{C50} package to use)
 mlpredict.C5.0 <- function(model, newdata, ...) {
   if (!requireNamespace("C50", quietly = TRUE)) {
     stop(paste("There are no installed package 'C50' to use C5.0 classifier",
@@ -287,8 +277,7 @@ mlpredict.C5.0 <- function(model, newdata, ...) {
 }
 
 # CART METHOD -----------------------------------------------------------------
-#' @describeIn mltrain CART implementation (require \pkg{rpart} package to use)
-#' @export
+# @describeIn mltrain CART implementation (require \pkg{rpart} package to use)
 mltrain.baseCART <- function(object, ...) {
   if (requireNamespace("rpart", quietly = TRUE)) {
     formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
@@ -301,8 +290,7 @@ mltrain.baseCART <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict CART implementation (require \pkg{rpart} package)
-#' @export
+# @describeIn mlpredict CART implementation (require \pkg{rpart} package)
 mlpredict.rpart <- function(model, newdata, ...) {
   if (!requireNamespace("rpart", quietly = TRUE))  {
     stop(paste("There are no installed package 'rpart' to use Cart classifier",
@@ -319,9 +307,8 @@ mlpredict.rpart <- function(model, newdata, ...) {
 }
 
 # RANDOM FOREST METHOD --------------------------------------------------------
-#' @describeIn mltrain Random Forest (RF) implementation (require
-#'  \pkg{randomForest} package to use)
-#' @export
+# @describeIn mltrain Random Forest (RF) implementation (require
+#  \pkg{randomForest} package to use)
 mltrain.baseRF <- function(object, ...) {
   if (requireNamespace("randomForest", quietly = TRUE)) {
     traindata <- object$data[, -object$labelindex]
@@ -335,9 +322,8 @@ mltrain.baseRF <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict Random Forest (RF) implementation (require
-#'  \pkg{randomForest} package to use)
-#' @export
+# @describeIn mlpredict Random Forest (RF) implementation (require
+#  \pkg{randomForest} package to use)
 mlpredict.randomForest <- function(model, newdata, ...) {
   if (!requireNamespace("randomForest", quietly = TRUE)) {
     stop(paste("There are no installed package 'randomForest' to use",
@@ -354,9 +340,8 @@ mlpredict.randomForest <- function(model, newdata, ...) {
 }
 
 # NAIVE BAYES METHOD ----------------------------------------------------------
-#' @describeIn mltrain Naive Bayes (NB) implementation (require
-#'  \pkg{e1071} package to use)
-#' @export
+# @describeIn mltrain Naive Bayes (NB) implementation (require
+#  \pkg{e1071} package to use)
 mltrain.baseNB <- function(object, ...) {
   if (requireNamespace("e1071", quietly = TRUE)) {
     formula <- stats::as.formula(paste("`", object$labelname, "` ~ .", sep=""))
@@ -376,9 +361,8 @@ mltrain.baseNB <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict Naive Bayes (NB) implementation (require
-#'  \pkg{e1071} package to use)
-#' @export
+# @describeIn mlpredict Naive Bayes (NB) implementation (require
+#  \pkg{e1071} package to use)
 mlpredict.naiveBayes <- function(model, newdata, ...) {
   if (!requireNamespace("e1071", quietly = TRUE)) {
     stop(paste("There are no installed package 'e1071' to use naiveBayes",
@@ -396,8 +380,7 @@ mlpredict.naiveBayes <- function(model, newdata, ...) {
 }
 
 # KNN METHOD ------------------------------------------------------------------
-#' @describeIn mltrain kNN implementation (require \pkg{kknn} package to use)
-#' @export
+# @describeIn mltrain kNN implementation (require \pkg{kknn} package to use)
 mltrain.baseKNN <- function(object, ...) {
   if (!requireNamespace("kknn", quietly = TRUE)) {
     stop(paste("There are no installed package 'kknn' to use kNN classifier as",
@@ -408,8 +391,7 @@ mltrain.baseKNN <- function(object, ...) {
   object
 }
 
-#' @describeIn mlpredict kNN implementation (require \pkg{kknn} package to use)
-#' @export
+# @describeIn mlpredict kNN implementation (require \pkg{kknn} package to use)
 mlpredict.baseKNN <- function(model, newdata, ...) {
   if (!requireNamespace("kknn", quietly = TRUE)) {
     stop(paste("There are no installed package 'kknn' to use kNN classifier as",
@@ -438,8 +420,7 @@ mlpredict.baseKNN <- function(model, newdata, ...) {
 }
 
 # XGBoost METHOD ------------------------------------------------------------------
-#' @describeIn mltrain XGBoost implementation (require \pkg{xgboost} package)
-#' @export
+# @describeIn mltrain XGBoost implementation (require \pkg{xgboost} package)
 mltrain.baseXGB <- function(object, ...) {
   if (!requireNamespace("xgboost", quietly = TRUE)) {
     stop(paste("There are no installed package 'xgboost' to use xgboost",
@@ -469,8 +450,7 @@ mltrain.baseXGB <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict XGBoost implementation (require \pkg{xgboost} package)
-#' @export
+# @describeIn mlpredict XGBoost implementation (require \pkg{xgboost} package)
 mlpredict.xgb.Booster <- function(model, newdata, ...) {
   if (!requireNamespace("xgboost", quietly = TRUE)) {
     stop(paste("There are no installed package 'xgboost' to use xgboost",
@@ -497,8 +477,7 @@ mlpredict.xgb.Booster <- function(model, newdata, ...) {
 }
 
 # Majority METHOD ------------------------------------------------------------
-#' @describeIn mltrain Majority model
-#' @export
+# @describeIn mltrain Majority model
 mltrain.baseMAJORITY <- function(object, ...) {
   values <- table(object$data[, object$labelindex])
   model <- list(
@@ -509,8 +488,7 @@ mltrain.baseMAJORITY <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict Majority prediction
-#' @export
+# @describeIn mlpredict Majority prediction
 mlpredict.majorityModel <- function(model, newdata, ...) {
   data.frame(
     prediction = rep(model$predict, nrow(newdata)),
@@ -520,8 +498,7 @@ mlpredict.majorityModel <- function(model, newdata, ...) {
 }
 
 # Random METHOD ------------------------------------------------------------
-#' @describeIn mltrain Random model
-#' @export
+# @describeIn mltrain Random model
 mltrain.baseRANDOM <- function(object, ...) {
   model <- list(
     classes = as.character(unique(object$data[, object$labelindex]))
@@ -530,8 +507,7 @@ mltrain.baseRANDOM <- function(object, ...) {
   model
 }
 
-#' @describeIn mlpredict Majority prediction
-#' @export
+# @describeIn mlpredict Majority prediction
 mlpredict.randomModel <- function(model, newdata, ...) {
   data.frame(
     prediction = sample(model$classes, nrow(newdata), replace = TRUE),
@@ -542,8 +518,7 @@ mlpredict.randomModel <- function(model, newdata, ...) {
   )
 }
 
-#' @describeIn mlpredict Empty model to fix the cases with few train examples
-#' @export
+# @describeIn mlpredict Empty model to fix the cases with few train examples
 mlpredict.emptyModel <- function (model, newdata, ...) {
   data.frame(
     prediction = rep(0, nrow(newdata)),

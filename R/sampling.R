@@ -292,10 +292,10 @@ partition_fold <- function(kfold, n, has.validation = FALSE) {
 
 # Internal methods -------------------------------------------------------------
 
-#' Return the name of split method and validate if it is valid
-#'
-#' @param method The method name
-#' @return The correct name of split method
+# Return the name of split method and validate if it is valid
+#
+# @param method The method name
+# @return The correct name of split method
 utiml_validate_splitmethod <- function (method) {
   DEFAULT.METHODS <- c("random", "iterative", "stratified")
   method.name <- ifelse(method %in% DEFAULT.METHODS,
@@ -310,26 +310,26 @@ utiml_validate_splitmethod <- function (method) {
   method.name
 }
 
-#' Internal Iterative Stratification
-#'
-#' Create the indexes using the Iterative Stratification algorithm.
-#'
-#' @param mdata A mldr dataset.
-#' @param r Desired proportion of examples in each subset r1, . . . rk.
-#' @return A list with k disjoint indexes subsets S1, . . .Sk.
-#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
-#'  stratification of multi-label data. In Proceedings of the Machine
-#'  Learningand Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145-158).
-#'
-#' @examples
-#' \dontrun{
-#' # Create 3 partitions for train, validation and test
-#' indexes <- utiml_iterative_split(emotions, c(0.6,0.1,0.3))
-#'
-#' # Create a stratified 10-fold
-#' indexes <- utiml_iterative_split(emotions, rep(0.1,10))
-#' }
+# Internal Iterative Stratification
+#
+# Create the indexes using the Iterative Stratification algorithm.
+#
+# @param mdata A mldr dataset.
+# @param r Desired proportion of examples in each subset r1, . . . rk.
+# @return A list with k disjoint indexes subsets S1, . . .Sk.
+# @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#  stratification of multi-label data. In Proceedings of the Machine
+#  Learningand Knowledge Discovery in Databases - European Conference,
+#  ECML PKDD (pp. 145-158).
+#
+# @examples
+# \dontrun{
+# # Create 3 partitions for train, validation and test
+# indexes <- utiml_iterative_split(emotions, c(0.6,0.1,0.3))
+#
+# # Create a stratified 10-fold
+# indexes <- utiml_iterative_split(emotions, rep(0.1,10))
+# }
 utiml_iterative_split <- function(mdata, r) {
   D <- rownames(mdata$dataset)
   S <- lapply(seq(length(r)), function(i) character())
@@ -401,16 +401,16 @@ utiml_iterative_split <- function(mdata, r) {
   S
 }
 
-#' Random split of a dataset
-#'
-#' @param mdata A mldr dataset.
-#' @param r Desired proportion of examples in each subset r1, . . . rk.
-#' @return A list with k disjoint indexes subsets S1, . . .Sk.
-#'
-#' @examples
-#' \dontrun{
-#' utiml_random_split(emotions, c(0.6, 0.2, 0.2))
-#' }
+# Random split of a dataset
+#
+# @param mdata A mldr dataset.
+# @param r Desired proportion of examples in each subset r1, . . . rk.
+# @return A list with k disjoint indexes subsets S1, . . .Sk.
+#
+# @examples
+# \dontrun{
+# utiml_random_split(emotions, c(0.6, 0.2, 0.2))
+# }
 utiml_random_split <- function(mdata, r) {
   index <- c()
   amount <- round(mdata$measures$num.instances * r)
@@ -432,25 +432,25 @@ utiml_random_split <- function(mdata, r) {
   S
 }
 
-#' Labelsets Stratification
-#' Create the indexes using the Labelsets Stratification approach.
-#'
-#' @param mdata A mldr dataset
-#' @param r Desired proportion of examples in each subset, r1, . . . rk
-#' @return A list with k disjoint indexes subsets S1, . . .Sk
-#' @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
-#'  stratification of multi-label data. In Proceedings of the Machine
-#'  Learningand Knowledge Discovery in Databases - European Conference,
-#'  ECML PKDD (pp. 145-158).
-#'
-#' @examples
-#' \dontrun{
-#' # Create 3 partitions for train, validation and test
-#' indexes <- utiml_stratified_split(emotions, c(0.6,0.1,0.3))
-#'
-#' # Create a stratified 10-fold
-#' indexes <- utiml_stratified_split(emotions, rep(0.1,10))
-#' }
+# Labelsets Stratification
+# Create the indexes using the Labelsets Stratification approach.
+#
+# @param mdata A mldr dataset
+# @param r Desired proportion of examples in each subset, r1, . . . rk
+# @return A list with k disjoint indexes subsets S1, . . .Sk
+# @references Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
+#  stratification of multi-label data. In Proceedings of the Machine
+#  Learningand Knowledge Discovery in Databases - European Conference,
+#  ECML PKDD (pp. 145-158).
+#
+# @examples
+# \dontrun{
+# # Create 3 partitions for train, validation and test
+# indexes <- utiml_stratified_split(emotions, c(0.6,0.1,0.3))
+#
+# # Create a stratified 10-fold
+# indexes <- utiml_stratified_split(emotions, rep(0.1,10))
+# }
 utiml_stratified_split <- function(mdata, r) {
   D <- sample(mdata$measures$num.instances)
   S <- lapply(1:length(r), function(i) integer())

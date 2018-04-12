@@ -2,13 +2,10 @@
 % Please edit documentation in R/ensemble.R
 \name{compute_multilabel_predictions}
 \alias{compute_multilabel_predictions}
-\alias{utiml_predict_ensemble}
 \title{Compute the multi-label ensemble predictions based on some vote schema}
 \usage{
 compute_multilabel_predictions(predictions, vote.schema = "maj",
   probability = getOption("utiml.use.probs", TRUE))
-
-utiml_predict_ensemble(predictions, vote.schema, probability)
 }
 \arguments{
 \item{predictions}{A list of multi-label predictions (mlresult).}
@@ -31,11 +28,6 @@ A mlresult with computed predictions.
 \description{
 Compute the multi-label ensemble predictions based on some vote schema
 }
-\section{Functions}{
-\itemize{
-\item \code{utiml_predict_ensemble}: Internal version
-}}
-
 \note{
 You can create your own vote schema, just create a method that receive
  two matrix (bipartitions and probabilities) and return a list with the

@@ -219,33 +219,33 @@ predict.MBRmodel <- function(object, newdata,
   utiml_predict(predictions, probability)
 }
 
-#' Phi Correlation Coefficient
-#'
-#' Calculate all labels phi correlation coefficient. This is a specialized
-#' version of the Pearson product moment correlation coefficient for categorical
-#' variables with two values, also called dichotomous variables. This is also
-#' called of Pearson product moment Correlation Coefficient (PCC)
-#'
-#' @param mdata A mldr multi-label dataset
-#' @return A matrix with all labels correlation coefficient. The rows and
-#'  columns have the labels and each value are the correlation between the
-#'  labels. The main diagonal have the 1 value that represents the correlation
-#'  of a label with itself.
-#' @references
-#' Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
-#'  Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance
-#'  models for multi-label learning. In Proceedings of the Workshop on Learning
-#'  from Multi-Label Data (MLD'09) (pp. 22-30).
-#' @seealso \code{\link[=mbr]{Meta-BR (MBR or 2BR)}}
-#'
-#' @examples
-#' ## result <- utiml_labels_correlation(toyml)
-#'
-#' # Get the phi coefficient between the labels 'y1' and 'y2'
-#' ## result['y1', 'y2']
-#'
-#' # Get all coefficients of a specific label
-#' ## result[4, -4]
+# Phi Correlation Coefficient
+#
+# Calculate all labels phi correlation coefficient. This is a specialized
+# version of the Pearson product moment correlation coefficient for categorical
+# variables with two values, also called dichotomous variables. This is also
+# called of Pearson product moment Correlation Coefficient (PCC)
+#
+# @param mdata A mldr multi-label dataset
+# @return A matrix with all labels correlation coefficient. The rows and
+#  columns have the labels and each value are the correlation between the
+#  labels. The main diagonal have the 1 value that represents the correlation
+#  of a label with itself.
+# @references
+# Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
+#  Vlahavas, I. (2009). Correlation-based pruning of stacked binary relevance
+#  models for multi-label learning. In Proceedings of the Workshop on Learning
+#  from Multi-Label Data (MLD'09) (pp. 22-30).
+# @seealso \code{\link[=mbr]{Meta-BR (MBR or 2BR)}}
+#
+# @examples
+# ## result <- utiml_labels_correlation(toyml)
+#
+# # Get the phi coefficient between the labels 'y1' and 'y2'
+# ## result['y1', 'y2']
+#
+# # Get all coefficients of a specific label
+# ## result[4, -4]
 utiml_labels_correlation <- function(mdata) {
   label.names <- rownames(mdata$labels)
   classes <- lapply(mdata$labels$index, function (col) {

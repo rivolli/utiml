@@ -73,16 +73,16 @@ compute_multilabel_predictions <- function(predictions,
 }
 
 # Internal methods -------------------------------------------------------------
-#' Average vote combination for a single-label prediction
-#'
-#' Compute the prediction for a single-label using the average votes schema.
-#' The probabilities result is computed using the averaged values.
-#'
-#' @param bipartition A matrix with all bipartition predictions for a single
-#'  label. The column are the predictions and the rows the examples.
-#' @param probability A matrix with all probability predictions for a single
-#'  label The column are the predictions and the rows the examples.
-#' @return A list with two values "bipartition" and "probability".
+# Average vote combination for a single-label prediction
+#
+# Compute the prediction for a single-label using the average votes schema.
+# The probabilities result is computed using the averaged values.
+#
+# @param bipartition A matrix with all bipartition predictions for a single
+#  label. The column are the predictions and the rows the examples.
+# @param probability A matrix with all probability predictions for a single
+#  label The column are the predictions and the rows the examples.
+# @return A list with two values "bipartition" and "probability".
 utiml_ensemble_average <- function (bipartition, probability) {
   list(
     bipartition = as.numeric(rowMeans(bipartition) >= 0.5),
@@ -90,12 +90,12 @@ utiml_ensemble_average <- function (bipartition, probability) {
   )
 }
 
-#' Verify if a schema vote name is valid
-#'
-#' @param vote.schema The name of schema vote
-#' @param accept.null Logical value determine if the vote.schema = NULL is
-#'  also valid. (Default: TRUE)
-#' @return TRUE or throw an error message otherwise
+# Verify if a schema vote name is valid
+#
+# @param vote.schema The name of schema vote
+# @param accept.null Logical value determine if the vote.schema = NULL is
+#  also valid. (Default: TRUE)
+# @return TRUE or throw an error message otherwise
 utiml_ensemble_check_voteschema <- function (vote.schema, accept.null = TRUE) {
   if (is.null(vote.schema)) {
     if (!accept.null) {
@@ -111,18 +111,18 @@ utiml_ensemble_check_voteschema <- function (vote.schema, accept.null = TRUE) {
   invisible(TRUE)
 }
 
-#' Majority vote combination for single-label prediction
-#'
-#' Compute the single-label prediction using the majority votes schema.
-#' The probabilities result is computed using only the majority instances.
-#' In others words, if a example is predicted as positive, only the positive
-#' confidences are used to compute the averaged value.
-#'
-#' @param bipartition A matrix with all bipartition predictions for a single
-#'  label. The column are the predictions and the rows the examples.
-#' @param probability A matrix with all probability predictions for a single
-#'  label The column are the predictions and the rows the examples.
-#' @return A list with two values "bipartition" and "probability".
+# Majority vote combination for single-label prediction
+#
+# Compute the single-label prediction using the majority votes schema.
+# The probabilities result is computed using only the majority instances.
+# In others words, if a example is predicted as positive, only the positive
+# confidences are used to compute the averaged value.
+#
+# @param bipartition A matrix with all bipartition predictions for a single
+#  label. The column are the predictions and the rows the examples.
+# @param probability A matrix with all probability predictions for a single
+#  label The column are the predictions and the rows the examples.
+# @return A list with two values "bipartition" and "probability".
 utiml_ensemble_majority <- function (bipartition, probability) {
   probs <- rowMeans(bipartition)
   list(
@@ -131,16 +131,16 @@ utiml_ensemble_majority <- function (bipartition, probability) {
   )
 }
 
-#' Maximum vote combination for single-label prediction
-#'
-#' Compute the single-label prediction using the maximum votes schema. The
-#' probabilities result is computed using the maximum value.
-#'
-#' @param bipartition A matrix with all bipartition predictions for a single
-#'  label. The column are the predictions and the rows the examples.
-#' @param probability A matrix with all probability predictions for a single
-#'  label The column are the predictions and the rows the examples.
-#' @return A list with two values "bipartition" and "probability".
+# Maximum vote combination for single-label prediction
+#
+# Compute the single-label prediction using the maximum votes schema. The
+# probabilities result is computed using the maximum value.
+#
+# @param bipartition A matrix with all bipartition predictions for a single
+#  label. The column are the predictions and the rows the examples.
+# @param probability A matrix with all probability predictions for a single
+#  label The column are the predictions and the rows the examples.
+# @return A list with two values "bipartition" and "probability".
 utiml_ensemble_maximum <- function (bipartition, probability) {
   list(
     bipartition = apply(bipartition, 1, max),
@@ -148,10 +148,10 @@ utiml_ensemble_maximum <- function (bipartition, probability) {
   )
 }
 
-#' Define the method name related with the vote schema
-#'
-#' @param vote.schema Define the way that ensemble must compute the predictions.
-#' @return The method name that will compute the votes
+# Define the method name related with the vote schema
+#
+# @param vote.schema Define the way that ensemble must compute the predictions.
+# @return The method name that will compute the votes
 utiml_ensemble_method <- function(vote.schema) {
   votes <- c(
     avg  = "utiml_ensemble_average",
@@ -164,16 +164,16 @@ utiml_ensemble_method <- function(vote.schema) {
                       vote.schema, votes[vote.schema]))
 }
 
-#' Minimum vote combination for single-label prediction
-#'
-#' Compute the single-label prediction using the minimum votes schema. The
-#' probabilities result is computed using the minimum value.
-#'
-#' @param bipartition A matrix with all bipartition predictions for a single
-#'  label. The column are the predictions and the rows the examples.
-#' @param probability A matrix with all probability predictions for a single
-#'  label The column are the predictions and the rows the examples.
-#' @return A list with two values "bipartition" and "probability".
+# Minimum vote combination for single-label prediction
+#
+# Compute the single-label prediction using the minimum votes schema. The
+# probabilities result is computed using the minimum value.
+#
+# @param bipartition A matrix with all bipartition predictions for a single
+#  label. The column are the predictions and the rows the examples.
+# @param probability A matrix with all probability predictions for a single
+#  label The column are the predictions and the rows the examples.
+# @return A list with two values "bipartition" and "probability".
 utiml_ensemble_minimum <- function (bipartition, probability) {
   list(
     bipartition = apply(bipartition, 1, min),
@@ -181,7 +181,7 @@ utiml_ensemble_minimum <- function (bipartition, probability) {
   )
 }
 
-#' @describeIn compute_multilabel_predictions Internal version
+# @describeIn compute_multilabel_predictions Internal version
 utiml_predict_ensemble <- function(predictions, vote.schema,
                                             probability) {
   if (is.null(vote.schema)) {
@@ -191,14 +191,14 @@ utiml_predict_ensemble <- function(predictions, vote.schema,
   }
 }
 
-#' Compute binary predictions
-#'
-#' @param bipartitions A matrix with bipartitions values.
-#' @param probabilities A matrix with probabilities values.
-#' @param vote.methods The vote schema method.
-#' @param rnames The row names.
-#'
-#' @return A binary.prediction object
+# Compute binary predictions
+#
+# @param bipartitions A matrix with bipartitions values.
+# @param probabilities A matrix with probabilities values.
+# @param vote.methods The vote schema method.
+# @param rnames The row names.
+#
+# @return A binary.prediction object
 utiml_compute_ensemble <- function (bipartitions, probabilities,
                                     vote.methods, rnames) {
   result <- do.call(vote.methods, list(bipartitions, probabilities))
@@ -206,14 +206,14 @@ utiml_compute_ensemble <- function (bipartitions, probabilities,
   utiml_binary_prediction(result$bipartition, result$probability)
 }
 
-#' Predict binary predictions
-#'
-#' Is very similar from utiml_compute_ensemble but differs from arguments
-#'
-#' @param predictions A list of binary predictions.
-#' @param vote.schema The name of vote schema.
-#'
-#' @return A binary.prediction object
+# Predict binary predictions
+#
+# Is very similar from utiml_compute_ensemble but differs from arguments
+#
+# @param predictions A list of binary predictions.
+# @param vote.schema The name of vote schema.
+#
+# @return A binary.prediction object
 utiml_predict_binary_ensemble <- function(predictions, vote.schema) {
   lpreds <- do.call(cbind,
                     lapply(predictions, function (pred) pred$bipartition))

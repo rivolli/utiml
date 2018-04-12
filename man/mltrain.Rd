@@ -2,45 +2,9 @@
 % Please edit documentation in R/base_learner.R
 \name{mltrain}
 \alias{mltrain}
-\alias{mltrain.default}
-\alias{mltrain.baseSVM}
-\alias{mltrain.baseSMO}
-\alias{mltrain.baseJ48}
-\alias{mltrain.baseC5.0}
-\alias{mltrain.baseCART}
-\alias{mltrain.baseRF}
-\alias{mltrain.baseNB}
-\alias{mltrain.baseKNN}
-\alias{mltrain.baseXGB}
-\alias{mltrain.baseMAJORITY}
-\alias{mltrain.baseRANDOM}
 \title{Build transformation models}
 \usage{
 mltrain(object, ...)
-
-\method{mltrain}{default}(object, ...)
-
-\method{mltrain}{baseSVM}(object, ...)
-
-\method{mltrain}{baseSMO}(object, ...)
-
-\method{mltrain}{baseJ48}(object, ...)
-
-\method{mltrain}{baseC5.0}(object, ...)
-
-\method{mltrain}{baseCART}(object, ...)
-
-\method{mltrain}{baseRF}(object, ...)
-
-\method{mltrain}{baseNB}(object, ...)
-
-\method{mltrain}{baseKNN}(object, ...)
-
-\method{mltrain}{baseXGB}(object, ...)
-
-\method{mltrain}{baseMAJORITY}(object, ...)
-
-\method{mltrain}{baseRANDOM}(object, ...)
 }
 \arguments{
 \item{object}{A \code{mltransformation} object. This is used as a list and
@@ -71,35 +35,6 @@ problems. To create a new base classifier, two steps are necessary:
 This section is about how to create the first step: a train method.
 To create a new predict model see \code{\link{mlpredict}} documentation.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{default}: Default S3 method
-
-\item \code{baseSVM}: SVM implementation (require \pkg{e1071} package to use)
-
-\item \code{baseSMO}: SMO implementation (require \pkg{RWeka} package to use)
-
-\item \code{baseJ48}: J48 implementation (require \pkg{RWeka} package to use)
-
-\item \code{baseC5.0}: C5.0 implementation (require \pkg{C50} package to use)
-
-\item \code{baseCART}: CART implementation (require \pkg{rpart} package to use)
-
-\item \code{baseRF}: Random Forest (RF) implementation (require
-\pkg{randomForest} package to use)
-
-\item \code{baseNB}: Naive Bayes (NB) implementation (require
-\pkg{e1071} package to use)
-
-\item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
-
-\item \code{baseXGB}: XGBoost implementation (require \pkg{xgboost} package)
-
-\item \code{baseMAJORITY}: Majority model
-
-\item \code{baseRANDOM}: Random model
-}}
-
 \section{How to create a new train base method}{
 
 First, is necessary to define a name of your classifier, because this name

@@ -2,48 +2,9 @@
 % Please edit documentation in R/base_learner.R
 \name{mlpredict}
 \alias{mlpredict}
-\alias{mlpredict.default}
-\alias{mlpredict.svm}
-\alias{mlpredict.SMO}
-\alias{mlpredict.J48}
-\alias{mlpredict.C5.0}
-\alias{mlpredict.rpart}
-\alias{mlpredict.randomForest}
-\alias{mlpredict.naiveBayes}
-\alias{mlpredict.baseKNN}
-\alias{mlpredict.xgb.Booster}
-\alias{mlpredict.majorityModel}
-\alias{mlpredict.randomModel}
-\alias{mlpredict.emptyModel}
 \title{Prediction transformation problems}
 \usage{
 mlpredict(model, newdata, ...)
-
-\method{mlpredict}{default}(model, newdata, ...)
-
-\method{mlpredict}{svm}(model, newdata, ...)
-
-\method{mlpredict}{SMO}(model, newdata, ...)
-
-\method{mlpredict}{J48}(model, newdata, ...)
-
-\method{mlpredict}{C5.0}(model, newdata, ...)
-
-\method{mlpredict}{rpart}(model, newdata, ...)
-
-\method{mlpredict}{randomForest}(model, newdata, ...)
-
-\method{mlpredict}{naiveBayes}(model, newdata, ...)
-
-\method{mlpredict}{baseKNN}(model, newdata, ...)
-
-\method{mlpredict}{xgb.Booster}(model, newdata, ...)
-
-\method{mlpredict}{majorityModel}(model, newdata, ...)
-
-\method{mlpredict}{randomModel}(model, newdata, ...)
-
-\method{mlpredict}{emptyModel}(model, newdata, ...)
 }
 \arguments{
 \item{model}{An object model returned by some mltrain method, its class
@@ -67,37 +28,6 @@ problems. To create a new base classifier, two steps are necessary:
 This section is about how to create the second step: a prediction method.
 To create a new train method see \code{\link{mltrain}} documentation.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{default}: Default S3 method
-
-\item \code{svm}: SVM implementation (require \pkg{e1071} package to use)
-
-\item \code{SMO}: SMO implementation (require \pkg{RWeka} package to use)
-
-\item \code{J48}: J48 implementation (require \pkg{RWeka} package to use)
-
-\item \code{C5.0}: C5.0 implementation (require \pkg{C50} package to use)
-
-\item \code{rpart}: CART implementation (require \pkg{rpart} package)
-
-\item \code{randomForest}: Random Forest (RF) implementation (require
-\pkg{randomForest} package to use)
-
-\item \code{naiveBayes}: Naive Bayes (NB) implementation (require
-\pkg{e1071} package to use)
-
-\item \code{baseKNN}: kNN implementation (require \pkg{kknn} package to use)
-
-\item \code{xgb.Booster}: XGBoost implementation (require \pkg{xgboost} package)
-
-\item \code{majorityModel}: Majority prediction
-
-\item \code{randomModel}: Majority prediction
-
-\item \code{emptyModel}: Empty model to fix the cases with few train examples
-}}
-
 \section{How to create a new prediction base method}{
 
 Fist is necessary to know the class of model generate by the respective train
