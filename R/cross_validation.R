@@ -17,7 +17,7 @@
 #'    \item{stratified}{Split the folds considering the labelset proportions.}
 #'  }
 #'  (Default: "random")
-#' @param cv.results Logical value indicading if the folds results should be reported
+#' @param cv.results Logical value indicating if the folds results should be reported
 #'  (Default: FALSE).
 #' @param cv.measures The measures names to be computed. Call
 #'  \code{multilabel_measures()} to see the expected measures. You can also
