@@ -9,15 +9,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-**Version:** 0.1.0.9000
+**Version:** 0.1.4
 
 The utiml package is a framework to support multi-label processing, like Mulan on Weka. 
 It is simple to use and extend. This tutorial explain the main topics related with the utiml package. 
 More details and examples are available on [utiml repository](https://github.com/rivolli/utiml).
-
-_**Note:** Currently, just few one-agains-all transformation methods are available, but in the future we intend
-remove this note and have a full range of multi-label classification methods. If you want to 
-contribute with your code or your tallent, read the last section about how to contribute._
 
 
 ## 1. Introduction
@@ -44,69 +40,74 @@ After installed, you can now load the **utiml** package (The mldr package will b
 library("utiml")
 ```
 
-The **utiml** brings a synthetic multi-label dataset called `toyml`, all examples illustrated in this
-tutorial use it. To understand how to load your own dataset, we suggest the read of [mldr](https://cran.r-project.org/web/packages/mldr/index.html) documentation. The `toyml` contains
-100 instances, 10 features and 5 labels, its prupose is to be used for small tests and examples.
-```r
+The **utiml** brings two multi-label datasets. A synthetic toy dataset called `toyml` and a real world dataset called `foodtruck`. To understand how to load your own dataset, we suggest the read of [mldr](https://cran.r-project.org/web/packages/mldr/index.html) documentation. The `toyml` contains 100 instances, 10 features and 5 labels, its prupose is to be used for small tests and examples.
+```{r}
 head(toyml)
 ```
 
-In the following section, an overview of how to conduct a multi-label experiment are explained. Next, 
-we explores each group of methods and its particularity. Finally, how to extend the **utiml** is
-aborded and illustrated, then the final considerations are made.
+The `foodtruck` contains different types of cousines to be predicted from user
+preferences and habits. The dataset has 12 labels:
+```{r}
+foodtruck$labels
+```
+
+In the following section, an overview of how to conduct a multi-label experiment are explained. Next, we explores each group of methods and its particularity.
 
 ## 2. Overview
 
-After load the multi-label dataset some data processing may be necessary. The pre-processing
-methods are utilities that manipulate the `mldr` datasets. Suppose that we want to normalize
-the attributes values (between 0 and 1), we can do:
-```r
+After load the multi-label dataset some data processing may be necessary. The pre-processing methods are utilities that manipulate the `mldr` datasets. 
+Suppose that we want to normalize the attributes values (between 0 and 1), 
+we can do:
+```{r}
 mytoy <- normalize_mldata(toyml)
 ```
 
 Next, we want to stratification the dataset in two partitions (train and test), 
 containing 65% and 35% of instances respectively, then we can do:
-```r
+```{r}
 ds <- create_holdout_partition(mytoy, c(train=0.65, test=0.35), "iterative")
+names(ds)
 ```
 
-Now, the `ds` object has two elements `ds$train` and `ds$test`, where the first will
-be used to create a model and the second to test the model. For example, using the 
-*Binary Relevance* multi-label method with the base algorithm *Random Forest*^[Requires the 
+Now, the `ds` object has two elements `ds$train` and `ds$test`, where the first will be used to create a model and the second to test the model. For example, using the *Binary Relevance* multi-label method with the base algorithm *Random Forest*^[Requires the 
 [randomForest](https://cran.r-project.org/web/packages/randomForest/) package.], we can do:
-```r
+```{r}
 brmodel <- br(ds$train, "RF", seed=123)
 prediction <- predict(brmodel, ds$test)
 ```
 
-The `prediction` is an object of class `mlresult` that contains the probability (also called confidence or score)
-and the bipartitions values:
-```r
+The `prediction` is an object of class `mlresult` that contains the probability (also called confidence or score) and the bipartitions values:
+```{r}
 head(as.bipartition(prediction))
 head(as.probability(prediction))
 head(as.ranking(prediction))
 ```
 
-A threshold strategy can be applied and generate a refined prediction:
-```r
+A threshold strategy can be applied:
+```{r}
 newpred <- rcut_threshold(prediction, 2)
+head(newpred)
 ```
 
-Now we can evaluate the model and compare if the use of MCUT threshold improve the results:
-```r
+Now we can evaluate the models and compare if the use of the MCUT threshold improved the results:
+```{r}
 result <- multilabel_evaluate(ds$tes, prediction, "bipartition")
 thresres <- multilabel_evaluate(ds$tes, newpred, "bipartition")
 
-measures <- c("accuracy", "F1", "precision", "recall", "subset-accuracy")
 round(cbind(Default=result, RCUT=thresres), 3)
 ```
 
-## 3. Pre-processing
-The pre processing methods were developed to facilitate some operation with the multi-label data.
-All pre-processing methods receive a mldr dataset and return other mldr dataset. You can use them
-as needed.
+Details of the labels evaluation can be obtained using:
+```{r}
+result <- multilabel_evaluate(ds$tes, prediction, "bipartition", labels=TRUE)
+result$labels
+```
 
-Here, a overview of the pre-processing methods:
+
+## 3. Pre-processing
+The pre-processing methods were developed to facilitate some operations with the multi-label data. Each pre-processing method receives a mldr dataset and returns other mldr dataset. You can use them as needed.
+
+Here, an overview of the pre-processing methods:
 ```r
 # Fill sparce data
 mdata <- fill_sparce_mldata(toyml)
@@ -136,10 +137,9 @@ mdata <- normalize_mldata(mdata)
 ## 4. Sampling
 
 ### 4.1 Subsets
-If you want to create a specific or a random subset of a dataset, you can use the methods `create_subset` and 
-`create_random_subset`, respectively. In the first case, you should specify which rows and
-optionally attributes, do you want. In the second case, you just define the number of instances 
-and optionally the number of attributes. 
+If you want to create a specific or a random subset of a dataset, you can use 
+the methods `create_subset` and `create_random_subset`, respectively. In the first case, you should specify which rows and optionally attributes, you want. 
+In the second case, you just define the number of instances and optionally the number of attributes. 
 ```r
 # Create a subset of toyml dataset with the even instances and the first five attributes
 mdata <- create_subset(toyml, seq(1, 100, 2), 1:5)
@@ -155,10 +155,7 @@ mdata <- create_random_subset(toyml, 7)
 ```
 
 ### 4.2 Holdout
-To create two or more partitions of the dataset, we use the method `create_holdout_partition`.
-The first argument is a mldr dataset, the second is the size of partitions and the third is the
-partition method. The options are: `random`, `iterative` and `stratified`. The `iterative` is
-a stratification by label and the `stratified` is a stratification by labelset. The return of the
+To create two or more partitions of the dataset, we use the method `create_holdout_partition`. The first argument is a mldr dataset, the second is the size of partitions and the third is the partition method. The options are: `random`, `iterative` and `stratified`. The `iterative` is a stratification by label and the `stratified` is a stratification by labelset. The return of the
 method is a list with the names defined by the second parameter.
 See some examples:
 ```r
@@ -177,9 +174,29 @@ toy <- create_holdout_partition(toyml, c(0.6, 0.4), "stratified")
 
 ### 4.3 k-Folds
 
-Finally, to run a k-fold cross validation we can use the `create_kfold_partition`. The return of this
-method is an object of type `kFoldPartition` that will be used with the method `partition_fold` to
-create the datasets:
+The simplest way to run a k-fold cross validation is by using the method `cv`:
+```{r}
+results <- cv(foodtruck, br, base.algorith="SVM", cv.folds=5, 
+              cv.sampling="stratified", cv.measures="example-based", 
+              cv.seed=123)
+
+round(results, 4)
+```
+
+To obtain detailed results of the folds, use the parameter `cv.results`, such that:
+```{r}
+results <- cv(toyml, "rakel", base.algorith="RF", cv.folds=10, cv.results=TRUE,
+              cv.sampling="random", cv.measures="example-based")
+
+#Multi-label results
+round(results$multilabel, 4)
+
+#Labels results
+round(sapply(results$labels, colMeans), 4)
+```
+
+Finally, to manually run a k-fold cross validation, you can use the `create_kfold_partition`. The return of this method is an object of type `kFoldPartition` that will be used with the method `partition_fold` to create 
+the datasets:
 
 ```r
 # Create 3-fold object
@@ -204,17 +221,13 @@ result <- lapply(1:5, function (k) {
 ```
 
 ## 5. Classification Methods
-The multi-label classification is a supervised learning task that seeks to learn and predict 
-one or more labels together. This task can be grouped in: problem transformation and
-algorithm adaptation. Next, we provide more details about the methods and their specifities. 
+The multi-label classification is a supervised learning task that seeks to learn and predict one or more labels together. This task can be grouped in: problem transformation and algorithm adaptation. Next, we provide more details about the methods and their specifities. 
 
 ### 5.1 Transformation methods and Base Algorihtms
-The transformation methods require a base algorithm (binary or multi-class) and use their
-predictions to compose the multi-label result. In the **utiml** package there are some
-default base algorithms that are accepted, but if you need another you can easily 
-developement your own^[see the section *Create a new base Learner*].
+The transformation methods require a base algorithm (binary or multi-class) and use their predictions to compose the multi-label result. In the **utiml** 
+package there are some default base algorithms that are accepted.
 
-Each base algorithm requires a specific package, you need to install manually this packages,
+Each base algorithm requires a specific package, you need to install manually it,
 because they are not installed together with **utiml**. The follow algorithm learners are supported:
 
 ```{r, echo=FALSE, results='asis'}
@@ -227,14 +240,15 @@ bl <- data.frame(
 knitr::kable(bl)
 ```
 
-To realize a classification first is necessary create a multi-label model, the available methods are:
+To realize a classification first it is necessary to create a multi-label model, the available methods are:
 ```{r, echo=FALSE, results='asis'}
+approaches <- c(
+  "br"="one-against-all", "brplus"="one-against-all; stacking", "cc"="one-against-all; chaining", "clr"="one-versus-one", "ctrl"="one-against-all; ensemble", "dbr"="one-against-all; stacking", "ebr"="one-against-all; ensemble", "ecc"="one-against-all; ensemble", "eps"="powerset", "homer"="hierarchy", "lift"="one-against-all", "lp"="powerset", "mbr"="one-against-all; stacking", "ns"="one-against-all; chaining", "ppt"="powerset", "prudent"="one-against-all; stacking", "ps"="powerset", "rakel"="powerset", "rdbr"="one-against-all; stacking", "rpc"="one-versus-one"
+)
 mts <- data.frame(
-  Method = c("br", "brplus", "cc", "ctrl", "dbr", "ebr", "ecc", "mbr", "ns", "prudent", "rdbr"),
-  Name = c("Binary Relevance (BR)", "BR+", "Classifier Chains", "ConTRolled Label correlation exploitation (CTRL)",
-           "Dependent Binary Relevance (DBR)", "Ensemble of Binary Relevance (EBR)", "Ensemble of Classifier Chains (ECC)", "Meta-Binary Relevance (MBR or 2BR)", "Nested Stacking (NS)", "Pruned and Confident Stacking Approach (Prudent)", "Recursive Dependent Binary Relevance (RDBR)"),
-  Approach = c("one-against-all", "one-against-all; stacking", "one-against-all; stacking", "one-against-all; binary-ensemble", "one-against-all; stacking", "one-against-all; ensemble", "one-against-all; ensemble; stacking",
-"one-against-all; stacking", "one-against-all; stacking", "one-against-all; binary-ensemble; stacking", "one-against-all; stacking")
+  Method = c("br", "brplus", "cc", "clr", "ctrl", "dbr", "ebr", "ecc", "eps", "homer", "lift", "lp", "mbr", "ns", "ppt", "prudent", "ps", "rakel", "rdbr", "rpc"),
+  Name = c("Binary Relevance (BR)", "BR+", "Classifier Chains", "Calibrated Label Ranking (CLR)", "ConTRolled Label correlation exploitation (CTRL)", "Dependent Binary Relevance (DBR)", "Ensemble of Binary Relevance (EBR)", "Ensemble of Classifier Chains (ECC)", "Ensemble of Pruned Set (EPS)", "Hierarchy Of Multi-label classifiER (HOMER)", "Learning with Label specIfic FeaTures (LIFT)", "Label Powerset (LP)", "Meta-Binary Relevance (MBR or 2BR)", "Nested Stacking (NS)", "Pruned Problem Transformation (PPT)", "Pruned and Confident Stacking Approach (Prudent)", "Pruned Set (PS)", "Random k-labelsets (RAkEL)", "Recursive Dependent Binary Relevance (RDBR)", "Ranking by Pairwise Comparison (RPC)"),
+  Approach = as.character(approaches)
 )
 knitr::kable(mts)
 ```
@@ -244,14 +258,13 @@ The multi-label dataset and the base algorithm, respectively. However, they may 
 parameters, examples:
 ```r
 #Classifier chain with a specific chain
-ccmodel <- cc(toyml, "J48", chain = c("y5", "y4", "y3", "y2", "y1"))
+ccmodel <- cc(toyml, "RF", chain = c("y5", "y4", "y3", "y2", "y1"))
 
 # Ensemble with 5 models using 60% of sampling and 75% of attributes
 ebrmodel <- ebr(toyml, "C5.0", m = 5, subsample=0.6, attr = 0.75)
 ```
 
-Beyond the parameters of each multi-label methods, you can define the parameters for the 
-base algorithm, like this:
+Beyond the parameters of each multi-label methods, you can define the parameters for the base algorithm, like this:
 
 ```r
 # Specific parameters for SVM
@@ -264,10 +277,7 @@ ccmodel <- cc(toyml, "KNN", c("y5", "y4", "y3", "y2", "y1"), k=5)
 ebrmodel <- ebr(toyml, "RF", 5, 0.6, 0.75, proximity=TRUE, ntree=100)
 ```
 
-After build the model, To predict new data use the `predict` method. Here, some predict methods
-require specific arguments and you can assign arguments for the base method too. For default,
-all base learner will predict the probability of prediciton, then do not use these parameters.
-Instead of, use the `probability` parameter defined by the multi-label prediction method. 
+After build the model, To predict new data use the `predict` method. Here, some predict methods require specific arguments and you can assign arguments for the base method too. For default, all base learner will predict the probability of prediciton, then do not use these parameters. Instead of, use the `probability` parameter defined by the multi-label prediction method. 
 
 ```r
 # Predict the BR model
@@ -275,9 +285,6 @@ result <- predict(brmodel, toyml)
 
 # Specific parameters for KNN
 result <- predict(ccmodel, toyml, kernel="triangular", probability = FALSE)
-
-# Specific parameters for ebr predict method
-result <- predict(ebrmodel, toyml, vote.schema = "avg", probability = TRUE)
 ```
 
 An object of type `mlresult` is the return of predict method. It always contains
@@ -285,14 +292,14 @@ the bipartitions and the probabilities values. So you can use: `as.bipartition`,
 `as.probability` and `as.ranking` for specific values.
 
 ### 5.2 Algorithm adapatation
-Any method available yet!
+Until now, only a single adaptation method is available the `mlknn`.
+```r
+model <- mlknn(toyml, k=3)
+pred <- predict(model, toyml)
+```
 
 ### 5.3 Seed and Multicores
-Almost all multi-label methods can run in parallel, but it requires the installation 
-of *parallel* package. The train and prediction methods receive a parameter
-called `cores` that specify the number of cores used to run the method. For some multi-label
-methods are not possible running in multi-core, then read the documentation of each method, 
-for more details^[Base algorithm `J48` do not work very well with multicore].
+Almost all multi-label methods can run in parallel. The train and prediction methods receive a parameter called `cores` that specify the number of cores used to run the method. For some multi-label methods are not possible running in multi-core, then read the documentation of each method, for more details.
 
 ```r
 # Running Binary Relevance method using 4 cores
@@ -308,10 +315,13 @@ brmodel <- br(toyml, "SVM", cores=4, seed=1984)
 prediction <- predict(brmodel, toyml, seed=1984, cores=4)
 ```
 
+The `cv` method also supports multicores:
+```r
+results <- cv(toyml, method="ecc", base.algorith="RF", subsample = 0.9, attr.space = 0.9, cv.folds=5, cv.cores=4)
+```
+
 ## 6. Thresholds
-The threshold methods receive a `mlresult` object and return a new `mlresult`, except for `scut`
-that returns the threshold values. These methods, change mainly the bipartitions values using
-the probabilities values.
+The threshold methods receive a `mlresult` object and return a new `mlresult`, except for `scut` that returns the threshold values. These methods, change mainly the bipartitions values using the probabilities values.
 
 ```r
 # Use a fixed threshold for all labels 
@@ -338,8 +348,7 @@ newpred <- subset_correction(prediction, toyml)
 ```
 
 ## 7. Evaluation
-To evaluate multi-label models you can use the method `multilabel_evaluate`. There are
-two ways of call this method:
+To evaluate multi-label models you can use the method `multilabel_evaluate`. There are two ways of call this method:
 ```{r}
 toy <- create_holdout_partition(toyml)
 brmodel <- br(toy$train, "SVM")
