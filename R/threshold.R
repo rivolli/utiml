@@ -49,9 +49,7 @@ fixed_threshold.default <- function(prediction, threshold = 0.5,
                "number of labels"))
   }
 
-  bipartition <- do.call(cbind, lapply(seq(ncol(prediction)), function(col) {
-    as.integer(prediction[, col] >= threshold[col])
-  }))
+  bipartition <- apply(t(prediction) >= threshold, 1, as.numeric)
   dimnames(bipartition) <- dimnames(prediction)
 
   multilabel_prediction(bipartition, prediction, probability)

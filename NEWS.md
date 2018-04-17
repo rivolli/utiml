@@ -14,6 +14,7 @@
 
 ### Bug fixes
 * Stratification sampling to support instances without labels
+* Fixed threshold with multiple values
 * Update documentation
 
 ## utiml 0.1.3
