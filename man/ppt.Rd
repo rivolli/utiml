@@ -61,7 +61,7 @@ Read, J. (2008). A pruned problem transformation method for multi-label
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
-  \code{\link{ecc}}, \code{\link{eps}},
+  \code{\link{ecc}}, \code{\link{eps}}, \code{\link{esl}},
   \code{\link{homer}}, \code{\link{lift}},
   \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
   \code{\link{prudent}}, \code{\link{ps}},

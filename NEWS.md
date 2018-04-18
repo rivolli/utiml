@@ -8,6 +8,7 @@
 * label problem evaluation measures
 * kfold bult-in method
 * The foodtruck dataset
+* ESL algorithm
 
 ### Minor changes
 * confusion matrix in matrix format 

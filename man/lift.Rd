@@ -60,7 +60,7 @@ Zhang, M.-L., & Wu, L. (2015). Lift: Multi-Label Learning with
 Other Transformation methods: \code{\link{brplus}},
   \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
   \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
-  \code{\link{ecc}}, \code{\link{eps}},
+  \code{\link{ecc}}, \code{\link{eps}}, \code{\link{esl}},
   \code{\link{homer}}, \code{\link{lp}}, \code{\link{mbr}},
   \code{\link{ns}}, \code{\link{ppt}},
   \code{\link{prudent}}, \code{\link{ps}},
