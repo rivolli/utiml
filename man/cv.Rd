@@ -29,7 +29,7 @@ of the method as a string.}
  }
  (Default: "random")}
 
-\item{cv.results}{Logical value indicading if the folds results should be reported
+\item{cv.results}{Logical value indicating if the folds results should be reported
 (Default: FALSE).}
 
 \item{cv.measures}{The measures names to be computed. Call
