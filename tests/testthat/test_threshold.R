@@ -37,6 +37,20 @@ test_that("Fixed threshold", {
   expect_equal(newdata[, "lbl3"], c('11'=1, '12'=1, '13'=0, '14'=1, '15'=0))
 })
 
+test_that("Fixed with multiples thershold", {
+  set.seed(1)
+  pred <- matrix(runif(30, 0, 1), ncol = 3)
+  colnames(pred) <- c("a","b","c")
+  rownames(pred) <- seq(1, 30, 3)
+
+  result <- fixed_threshold(pred, c(0, 0.5, 1))
+  expect_equal(dimnames(result), dimnames(pred))
+
+  expect_equal(result[,1], rep(1, 10), check.names=FALSE)
+  expect_equal(result[,2], as.numeric(pred[,2] >= 0.5), check.names=FALSE)
+  expect_equal(result[,3], rep(0, 10), check.names=FALSE)
+})
+
 test_that("Lcard threshold", {
   # result
   #    lbl1  lbl2  lbl3
