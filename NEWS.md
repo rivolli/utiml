@@ -1,5 +1,11 @@
 # Changelog
 
+## utiml 0.1.5 (development)
+
+### Minor changes
+* `cv` method also returns the prediction
+
+
 ## utiml 0.1.4
 
 ### New Features
