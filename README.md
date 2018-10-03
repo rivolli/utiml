@@ -92,3 +92,14 @@ print(round(result, 3))
 ```
 
 More examples and details are available on functions documentations and vignettes, please refer to the documentation.
+
+## How to cite?
+```
+@article{RJ-2018-041,
+  author = {Adriano Rivolli and Andre C. P. L. F. de Carvalho},
+  title = {{The utiml Package: Multi-label Classification in R}},
+  year = {2018},
+  journal = {{The R Journal}},
+  url = {https://journal.r-project.org/archive/2018/RJ-2018-041/index.html}
+}
+```
