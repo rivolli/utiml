@@ -5,7 +5,8 @@
 \title{Binary Relevance for multi-label Classification}
 \usage{
 br(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -68,3 +69,4 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{ps}}, \code{\link{rakel}},
   \code{\link{rdbr}}, \code{\link{rpc}}
 }
+\concept{Transformation methods}

@@ -20,3 +20,4 @@ Other evaluation: \code{\link{cv}},
   \code{\link{multilabel_confusion_matrix}},
   \code{\link{multilabel_evaluate}}
 }
+\concept{evaluation}

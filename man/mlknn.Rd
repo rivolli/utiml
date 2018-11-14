@@ -5,7 +5,8 @@
 \title{Multi-label KNN (ML-KNN) for multi-label Classification}
 \usage{
 mlknn(mdata, k = 10, s = 1, distance = "euclidean", ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -51,3 +52,4 @@ pred <- predict(model, toyml)
 Zhang, M.L. L., & Zhou, Z.H. H. (2007). ML-KNN: A lazy learning approach
    to multi-label learning. Pattern Recognition, 40(7), 2038-2048.
 }
+\concept{Adaptatio methods}

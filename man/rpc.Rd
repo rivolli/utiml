@@ -4,8 +4,9 @@
 \alias{rpc}
 \title{Ranking by Pairwise Comparison (RPC) for multi-label Classification}
 \usage{
-rpc(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+rpc(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  ..., cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -62,3 +63,5 @@ Other Transformation methods: \code{\link{brplus}},
 
 Other Pairwise methods: \code{\link{clr}}
 }
+\concept{Pairwise methods}
+\concept{Transformation methods}

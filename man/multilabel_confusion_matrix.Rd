@@ -69,3 +69,4 @@ Other evaluation: \code{\link{cv}},
   \code{\link{multilabel_evaluate}},
   \code{\link{multilabel_measures}}
 }
+\concept{evaluation}

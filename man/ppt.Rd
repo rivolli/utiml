@@ -4,8 +4,8 @@
 \alias{ppt}
 \title{Pruned Problem Transformation for multi-label Classification}
 \usage{
-ppt(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), p = 3,
-  info.loss = FALSE, ..., cores = getOption("utiml.cores", 1),
+ppt(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  p = 3, info.loss = FALSE, ..., cores = getOption("utiml.cores", 1),
   seed = getOption("utiml.seed", NA))
 }
 \arguments{
@@ -71,3 +71,5 @@ Other Transformation methods: \code{\link{brplus}},
 Other Powerset: \code{\link{eps}}, \code{\link{lp}},
   \code{\link{ps}}, \code{\link{rakel}}
 }
+\concept{Powerset}
+\concept{Transformation methods}

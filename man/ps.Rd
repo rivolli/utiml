@@ -4,9 +4,10 @@
 \alias{ps}
 \title{Pruned Set for multi-label Classification}
 \usage{
-ps(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), p = 3,
-  strategy = c("A", "B"), b = 2, ..., cores = getOption("utiml.cores", 1),
-  seed = getOption("utiml.seed", NA))
+ps(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  p = 3, strategy = c("A", "B"), b = 2, ...,
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -72,3 +73,5 @@ Other Transformation methods: \code{\link{brplus}},
 Other Powerset: \code{\link{eps}}, \code{\link{lp}},
   \code{\link{ppt}}, \code{\link{rakel}}
 }
+\concept{Powerset}
+\concept{Transformation methods}

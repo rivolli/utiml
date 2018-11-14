@@ -592,14 +592,10 @@ utiml_measure_binary_accuracy <- function (TP, FP, TN, FN) {
 #
 # @return AUC value between 0 and 1
 utiml_measure_binary_AUC <- function (scores, labels) {
-  Zidx <- labels == 1
-  Zj <- scores[Zidx]
-  Znj <- scores[!Zidx]
-
-  if (all(Zidx) || all(!Zidx)) {
-    1   #All are positive or negative
+  if (nlevels(as.factor(labels)) != 2) {
+    return(NA)
   } else {
-    sum(sapply(Zj, function (x) sum(x >= Znj))) / (length(Zj) * length(Znj))
+    ROCR::performance(ROCR::prediction(scores, labels), "auc")@y.values[[1]]
   }
 }
 

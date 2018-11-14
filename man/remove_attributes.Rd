@@ -34,3 +34,4 @@ Other pre process: \code{\link{fill_sparse_mldata}},
   \code{\link{remove_unlabeled_instances}},
   \code{\link{replace_nominal_attributes}}
 }
+\concept{pre process}

@@ -56,3 +56,4 @@ Other threshold: \code{\link{fixed_threshold}},
   \code{\link{rcut_threshold}},
   \code{\link{scut_threshold}}
 }
+\concept{threshold}

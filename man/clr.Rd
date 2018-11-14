@@ -4,8 +4,9 @@
 \alias{clr}
 \title{Calibrated Label Ranking (CLR) for multi-label Classification}
 \usage{
-clr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+clr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  ..., cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -67,3 +68,5 @@ Other Transformation methods: \code{\link{brplus}},
 
 Other Pairwise methods: \code{\link{rpc}}
 }
+\concept{Pairwise methods}
+\concept{Transformation methods}

@@ -67,3 +67,4 @@ Other threshold: \code{\link{lcard_threshold}},
   \code{\link{scut_threshold}},
   \code{\link{subset_correction}}
 }
+\concept{threshold}

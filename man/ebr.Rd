@@ -5,8 +5,9 @@
 \title{Ensemble of Binary Relevance for multi-label Classification}
 \usage{
 ebr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  m = 10, subsample = 0.75, attr.space = 0.5, replacement = TRUE, ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  m = 10, subsample = 0.75, attr.space = 0.5, replacement = TRUE,
+  ..., cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -94,3 +95,5 @@ Other Transformation methods: \code{\link{brplus}},
 Other Ensemble methods: \code{\link{ecc}},
   \code{\link{eps}}
 }
+\concept{Ensemble methods}
+\concept{Transformation methods}

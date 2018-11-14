@@ -6,7 +6,8 @@
 \usage{
 \method{predict}{EPSmodel}(object, newdata, threshold = 0.5,
   probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{object}{Object of class '\code{EPSmodel}'.}

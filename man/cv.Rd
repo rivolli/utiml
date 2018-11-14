@@ -4,10 +4,11 @@
 \alias{cv}
 \title{Multi-label cross-validation}
 \usage{
-cv(mdata, method, ..., cv.folds = 10, cv.sampling = c("random", "iterative",
-  "stratified"), cv.results = FALSE, cv.measures = "all",
-  cv.cores = getOption("utiml.cores", 1), cv.seed = getOption("utiml.seed",
-  NA))
+cv(mdata, method, ..., cv.folds = 10, cv.sampling = c("random",
+  "iterative", "stratified"), cv.results = FALSE,
+  cv.predictions = FALSE, cv.measures = "all",
+  cv.cores = getOption("utiml.cores", 1),
+  cv.seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset.}
@@ -29,8 +30,11 @@ of the method as a string.}
  }
  (Default: "random")}
 
-\item{cv.results}{Logical value indicating if the folds results should be reported
-(Default: FALSE).}
+\item{cv.results}{Logical value indicating if the folds results should be
+reported (Default: FALSE).}
+
+\item{cv.predictions}{Logical value indicating if the predictions should be
+reported (Default: FALSE).}
 
 \item{cv.measures}{The measures names to be computed. Call
 \code{multilabel_measures()} to see the expected measures. You can also
@@ -38,16 +42,17 @@ use \code{"bipartition"}, \code{"ranking"}, \code{"label-based"},
 \code{"example-based"}, \code{"macro-based"}, \code{"micro-based"} and
 \code{"label-problem"} to include a set of measures. (Default: "all").}
 
-\item{cv.cores}{The number of cores to parallelize the cross validation procedure.
-(Default: \code{options("utiml.cores", 1)})}
+\item{cv.cores}{The number of cores to parallelize the cross validation
+procedure. (Default: \code{options("utiml.cores", 1)})}
 
 \item{cv.seed}{An optional integer used to set the seed. (Default:
 \code{options("utiml.seed", NA)})}
 }
 \value{
-If cv.results is FALSE return a vector with the expected multi-label
- measures, otherwise, a list contained the multi-label and label measures
- for each fold.
+If cv.results and cv.prediction are FALSE, the return is a vector
+ with the expected multi-label measures, otherwise, a list contained the
+ multi-label and the other expected results (the label measures and/or the
+ prediction object) for each fold.
 }
 \description{
 Perform the cross validation procedure for multi-label learning.
@@ -56,12 +61,13 @@ Perform the cross validation procedure for multi-label learning.
 #Run 10 folds for BR method
 res1 <- cv(toyml, br, base.algorithm="RANDOM", cv.folds=10)
 
-#Run 3 folds for RAkEL method and get the fold results
+#Run 3 folds for RAkEL method and get the fold results and the prediction
 res2 <- cv(mdata=toyml, method="rakel", base.algorithm="RANDOM", k=2, m=10,
- cv.folds=3, cv.results=TRUE)
+ cv.folds=3, cv.results=TRUE, cv.predictions=TRUE)
 }
 \seealso{
 Other evaluation: \code{\link{multilabel_confusion_matrix}},
   \code{\link{multilabel_evaluate}},
   \code{\link{multilabel_measures}}
 }
+\concept{evaluation}

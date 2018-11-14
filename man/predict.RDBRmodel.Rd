@@ -7,7 +7,8 @@
 \method{predict}{RDBRmodel}(object, newdata, estimative = NULL,
   max.iterations = 5, batch.mode = FALSE,
   probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{object}{Object of class '\code{RDBRmodel}'.}

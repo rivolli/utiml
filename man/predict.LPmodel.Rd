@@ -6,7 +6,8 @@
 \usage{
 \method{predict}{LPmodel}(object, newdata,
   probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{object}{Object of class '\code{LPmodel}'.}

@@ -72,3 +72,4 @@ Other Transformation methods: \code{\link{brplus}},
   \code{\link{ps}}, \code{\link{rakel}},
   \code{\link{rdbr}}, \code{\link{rpc}}
 }
+\concept{Transformation methods}

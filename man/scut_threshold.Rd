@@ -9,11 +9,11 @@
 scut_threshold(prediction, expected, loss.function = NA,
   cores = getOption("utiml.cores", 1))
 
-\method{scut_threshold}{default}(prediction, expected, loss.function = NA,
-  cores = getOption("utiml.cores", 1))
+\method{scut_threshold}{default}(prediction, expected,
+  loss.function = NA, cores = getOption("utiml.cores", 1))
 
-\method{scut_threshold}{mlresult}(prediction, expected, loss.function = NA,
-  cores = getOption("utiml.cores", 1))
+\method{scut_threshold}{mlresult}(prediction, expected,
+  loss.function = NA, cores = getOption("utiml.cores", 1))
 }
 \arguments{
 \item{prediction}{A matrix or mlresult.}
@@ -84,3 +84,4 @@ Other threshold: \code{\link{fixed_threshold}},
   \code{\link{rcut_threshold}},
   \code{\link{subset_correction}}
 }
+\concept{threshold}

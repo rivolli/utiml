@@ -52,3 +52,4 @@ Other threshold: \code{\link{fixed_threshold}},
   \code{\link{scut_threshold}},
   \code{\link{subset_correction}}
 }
+\concept{threshold}

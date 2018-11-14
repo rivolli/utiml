@@ -68,3 +68,4 @@ Other sampling: \code{\link{create_holdout_partition}},
   \code{\link{create_random_subset}},
   \code{\link{create_subset}}
 }
+\concept{sampling}

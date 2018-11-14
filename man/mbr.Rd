@@ -6,7 +6,8 @@
 \usage{
 mbr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
   folds = 1, phi = 0, ..., predict.params = list(),
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -93,3 +94,5 @@ Other Transformation methods: \code{\link{brplus}},
 
 Other Stacking methods: \code{\link{brplus}}
 }
+\concept{Stacking methods}
+\concept{Transformation methods}

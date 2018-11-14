@@ -4,9 +4,10 @@
 \alias{predict.BRPmodel}
 \title{Predict Method for BR+ (brplus)}
 \usage{
-\method{predict}{BRPmodel}(object, newdata, strategy = c("Dyn", "Stat", "Ord",
-  "NU"), order = list(), probability = getOption("utiml.use.probs", TRUE),
-  ..., cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+\method{predict}{BRPmodel}(object, newdata, strategy = c("Dyn", "Stat",
+  "Ord", "NU"), order = list(),
+  probability = getOption("utiml.use.probs", TRUE), ...,
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
   NA))
 }
 \arguments{

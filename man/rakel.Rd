@@ -6,7 +6,8 @@
 \usage{
 rakel(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
   k = 3, m = 2 * mdata$measures$num.labels, overlapping = TRUE, ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -78,3 +79,5 @@ Other Transformation methods: \code{\link{brplus}},
 Other Powerset: \code{\link{eps}}, \code{\link{lp}},
   \code{\link{ppt}}, \code{\link{ps}}
 }
+\concept{Powerset}
+\concept{Transformation methods}

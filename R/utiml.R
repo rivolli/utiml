@@ -93,6 +93,7 @@
 #'
 #' @import mldr
 #' @import parallel
+#' @import ROCR
 #' @docType package
 #' @name utiml
 NULL

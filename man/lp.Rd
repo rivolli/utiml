@@ -5,7 +5,8 @@
 \title{Label Powerset for multi-label Classification}
 \usage{
 lp(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
+  NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -58,3 +59,5 @@ Other Transformation methods: \code{\link{brplus}},
 Other Powerset: \code{\link{eps}}, \code{\link{ppt}},
   \code{\link{ps}}, \code{\link{rakel}}
 }
+\concept{Powerset}
+\concept{Transformation methods}

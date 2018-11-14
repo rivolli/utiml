@@ -5,6 +5,8 @@
 ### Minor changes
 * `cv` method also returns the prediction
 
+### Bug fixes
+* macro-AUC for constant score predictions
 
 ## utiml 0.1.4
 

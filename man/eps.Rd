@@ -5,8 +5,9 @@
 \title{Ensemble of Pruned Set for multi-label Classification}
 \usage{
 eps(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  m = 10, subsample = 0.75, p = 3, strategy = c("A", "B"), b = 2, ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed", NA))
+  m = 10, subsample = 0.75, p = 3, strategy = c("A", "B"), b = 2,
+  ..., cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA))
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -83,3 +84,6 @@ Other Powerset: \code{\link{lp}}, \code{\link{ppt}},
 Other Ensemble methods: \code{\link{ebr}},
   \code{\link{ecc}}
 }
+\concept{Ensemble methods}
+\concept{Powerset}
+\concept{Transformation methods}
