@@ -271,9 +271,10 @@ partition_fold <- function(kfold, n, has.validation = FALSE) {
 
     folds <- kfold$fold[-n]
     if (has.validation) {
-        i <- n == length(folds)
-        v <- c(1, n)[c(i, !i)]
-        folds <- folds[-v]
+        # CHANGED: validation split probably shouldn't always be the first fold
+        # let's use the n+1th fold instead and wrap around
+        v <- n %% kfold$k + 1
+        folds <- kfold$fold[-c(n, v)]
     }
 
     mdata <- kfold$dataset
