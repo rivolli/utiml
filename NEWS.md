@@ -7,6 +7,7 @@
 
 ### Bug fixes
 * macro-AUC for constant score predictions
+* validation fold
 
 ## utiml 0.1.4
 
