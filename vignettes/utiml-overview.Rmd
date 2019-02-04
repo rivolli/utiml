@@ -109,8 +109,8 @@ The pre-processing methods were developed to facilitate some operations with the
 
 Here, an overview of the pre-processing methods:
 ```r
-# Fill sparce data
-mdata <- fill_sparce_mldata(toyml)
+# Fill sparse data
+mdata <- fill_sparse_mldata(toyml)
 
 # Remove unique attributes
 mdata <- remove_unique_attributes(toyml)
