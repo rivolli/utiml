@@ -100,6 +100,10 @@ More examples and details are available on functions documentations and vignette
   title = {{The utiml Package: Multi-label Classification in R}},
   year = {2018},
   journal = {{The R Journal}},
-  url = {https://journal.r-project.org/archive/2018/RJ-2018-041/index.html}
+  doi = {10.32614/RJ-2018-041},
+  url = {https://doi.org/10.32614/RJ-2018-041},
+  pages = {24--37},
+  volume = {10},
+  number = {2}
 }
 ```
