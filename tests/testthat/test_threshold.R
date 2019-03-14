@@ -38,6 +38,7 @@ test_that("Fixed threshold", {
 })
 
 test_that("Fixed with multiples thershold", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   pred <- matrix(runif(30, 0, 1), ncol = 3)
   colnames(pred) <- c("a","b","c")

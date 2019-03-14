@@ -3,6 +3,7 @@ train <- toyml
 test <- toyml$dataset[10:40, toyml$attributesIndexes]
 
 predictionTest <- function (model) {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   pred <- predict(model, test)
   expect_is(pred, "mlresult")
@@ -11,6 +12,7 @@ predictionTest <- function (model) {
   expect_equal(colnames(pred), rownames(toyml$labels))
   expect_equal(rownames(pred), rownames(test))
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   pred1 <- predict(model, test, prob = FALSE)
   expect_is(pred1, "mlresult")
@@ -67,6 +69,7 @@ test_that("Classifier Chain", {
   pred <- baseTest(model, "CCmodel")
   mpred <- as.matrix(pred)
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   pred1 <- predict(model, test, prob = FALSE)
   expect_is(pred1, "mlresult")
@@ -77,10 +80,12 @@ test_that("Classifier Chain", {
   model2 <- cc(train, "RANDOM", new.chain)
   expect_equal(model2$chain, new.chain)
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   pred2 <- predict(model2, test)
   expect_equal(colnames(pred2), rownames(train$labels))
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   pred3 <- predict(model2, test)
   expect_false(isTRUE(all.equal(pred3, pred1)))
@@ -178,6 +183,7 @@ test_that("Nestest Stack", {
   pred <- baseTest(model, "NSmodel")
   mpred <- as.matrix(pred)
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   pred1 <- predict(model, test, prob = FALSE)
   expect_is(pred1, "mlresult")
@@ -188,10 +194,12 @@ test_that("Nestest Stack", {
   model2 <- ns(train, "RANDOM", new.chain)
   expect_equal(model2$chain, new.chain)
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   pred2 <- predict(model2, test)
   expect_equal(colnames(pred2), rownames(train$labels))
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   pred3 <- predict(model2, test)
   expect_false(isTRUE(all.equal(pred3, pred1)))

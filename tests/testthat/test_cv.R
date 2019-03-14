@@ -24,6 +24,7 @@ test_that("Test CV seed", {
   res1 <- cv(toyml, dbr, base.algorithm="RANDOM", cv.folds=4, cv.seed = 123)
   res2 <- cv(toyml, dbr, base.algorithm="RANDOM", cv.folds=4, cv.seed = 123)
   expect_equal(res1, res2)
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   res3 <- cv(toyml, dbr, base.algorithm="RANDOM", cv.folds=4)
   expect_equal(res1, res3)

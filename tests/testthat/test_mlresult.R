@@ -1,6 +1,7 @@
 context("ML Result")
 
 test_that("multilabel_prediction", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   colrows <- list(as.character(11:20), paste("lbl", 1:10, sep=''))
   probs <- matrix(stats::runif(100), ncol = 10, dimnames = colrows)
@@ -64,6 +65,7 @@ test_that("as.ranking", {
 })
 
 test_that("as.mlresult", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1234)
   predictions <- matrix(stats::runif(100), ncol = 10)
   colnames(predictions) <- paste('label', 1:10, sep='')
@@ -88,6 +90,7 @@ test_that("as.mlresult", {
 })
 
 test_that("Filter ML Result", {
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1234)
   labels <- matrix(stats::runif(150), ncol = 10)
   colnames(labels) <- paste("label", 1:10, sep='')

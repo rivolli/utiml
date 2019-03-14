@@ -1,4 +1,5 @@
 context("Sampling tests")
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1)
 df <- data.frame(matrix(rnorm(1000), ncol = 10))
 df$Label1 <- c(sample(c(0,1), 100, replace = TRUE))
@@ -10,6 +11,7 @@ mdata <- mldr::mldr_from_dataframe(df, labelIndices = c(11, 12, 13, 14),
 empty.mdata <- mldr::mldr_from_dataframe(df[, 1:13],
                                          labelIndices = c(11, 12, 13),
                                          name = "testMLDR")
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(NULL)
 
 testFolds <- function (kfold, original, msg) {
@@ -56,11 +58,14 @@ test_that("random holdout", {
                folds$test$measures$num.instances)
   testCompletude(folds, mdata)
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   f1 <- create_holdout_partition(mdata, c(0.5, 0.5))
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   f2 <- create_holdout_partition(mdata, c(0.5, 0.5))
   expect_equal(f1, f2)
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(NULL)
 
   expect_error(create_holdout_partition(mdata, NULL))
@@ -143,15 +148,18 @@ test_that("random kfold", {
   expect_equal(rownames(fdata1$labels), rownames(fdata2$labels))
   expect_equal(fdata1$measures$num.instances, fdata2$measures$num.instances)
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   f1 <- create_kfold_partition(mdata, 4)
   testFolds(f1, mdata, "f1 Random kfolds")
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   f2 <- create_kfold_partition(mdata, 4)
   expect_equal(length(f1$fold), 4)
   expect_equal(length(f1$fold[[2]]), 25)
   expect_equal(f1, f2)
   expect_false(all(f1$fold[[1]] %in% f$fold[[1]]))
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(NULL)
 
   f3 <- create_kfold_partition(mdata, 3)
@@ -186,15 +194,18 @@ test_that("stratified kfold", {
   expect_equal(rownames(fdata1$labels), rownames(fdata2$labels))
   expect_equal(fdata1$measures$num.instances, fdata2$measures$num.instances)
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   f1 <- create_kfold_partition(mdata, 4, "stratified")
   testFolds(f1, mdata, "f1 Stratified kfold")
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   f2 <- create_kfold_partition(mdata, 4, "stratified")
   expect_equal(length(f1$fold), 4)
   expect_equal(length(f1$fold[[2]]), 25)
   expect_equal(f1, f2)
   expect_false(all(f1$fold[[1]] %in% f$fold[[1]]))
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(NULL)
 
   f3 <- create_kfold_partition(mdata, 3, "stratified")
@@ -229,15 +240,18 @@ test_that("iterative kfold", {
   expect_equal(rownames(fdata1$labels), rownames(fdata2$labels))
   expect_equal(fdata1$measures$num.instances, fdata2$measures$num.instances)
 
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   f1 <- create_kfold_partition(mdata, 4, "iterative")
   testFolds(f1, mdata, "f1 Iterative kfold")
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   f2 <- create_kfold_partition(mdata, 4, "iterative")
   expect_equal(length(f1$fold), 4)
   expect_equal(length(f1$fold[[2]]), 25)
   expect_equal(f1, f2)
   expect_false(all(f1$fold[[1]] %in% f$fold[[1]]))
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(NULL)
 
   f3 <- create_kfold_partition(mdata, 3, "iterative")

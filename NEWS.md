@@ -1,6 +1,6 @@
 # Changelog
 
-## utiml 0.1.5 (development)
+## utiml 0.1.5 (current)
 
 ### Minor changes
 * `cv` method also returns the prediction
@@ -8,6 +8,7 @@
 ### Bug fixes
 * macro-AUC for constant score predictions
 * validation fold
+* set.seed suppress warnings
 
 ## utiml 0.1.4
 

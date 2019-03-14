@@ -1,4 +1,5 @@
 context("Evaluation methods")
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1234)
 parts <- create_holdout_partition(toyml)
 result <- predict(br(parts$train, "SVM"), parts$test)
@@ -96,6 +97,7 @@ test_that("Bipartition measures", {
   expect_equal(utiml_measure_micro_f1(mlconfmat), 0)
 
   #Random
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1234)
   for (i in seq(ncol(labels))) {
     labels[, i] <- utiml_normalize(rnorm(nrow(labels)))
@@ -197,6 +199,7 @@ test_that("Ranking measures", {
   expect_equal(utiml_measure_is_error(mlconfmat, dif.rank), 1)
 
   #Random
+  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1234)
   for (i in seq(ncol(labels))) {
     labels[, i] <- utiml_normalize(rnorm(nrow(labels)))
