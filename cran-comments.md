@@ -1,6 +1,6 @@
 ## Test environments
-* local Ubuntu install, R 3.4.4
-* Ubuntu on Travis CI, R 3.4.4
+* local Debian 9 install, R 3.5.2
+* Ubuntu 14.04.5 LTS on Travis CI, R version 3.5.2
 * win-builder (devel and release)
 
 ## R CMD check results
