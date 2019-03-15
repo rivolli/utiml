@@ -26,9 +26,9 @@ The main methods available on this package are organized in the groups:
 - Sampling methods
 - Threshold methods
 
-The **utiml** package needs of the [mldr](https://cran.r-project.org/web/packages/mldr/index.html)
+The **utiml** package needs of the [mldr](https://CRAN.R-project.org/package=mldr)
 package to handle multi-label datasets. It will be installed together with the 
-**utiml**^[You may also be interested in [mldr.datasets](https://cran.r-project.org/web/packages/mldr.datasets/index.html)].
+**utiml**^[You may also be interested in [mldr.datasets](https://CRAN.R-project.org/package=mldr.datasets)].
 
 The installation process is similar to other packages available on CRAN:
 ```r
@@ -40,7 +40,7 @@ After installed, you can now load the **utiml** package (The mldr package will b
 library("utiml")
 ```
 
-The **utiml** brings two multi-label datasets. A synthetic toy dataset called `toyml` and a real world dataset called `foodtruck`. To understand how to load your own dataset, we suggest the read of [mldr](https://cran.r-project.org/web/packages/mldr/index.html) documentation. The `toyml` contains 100 instances, 10 features and 5 labels, its prupose is to be used for small tests and examples.
+The **utiml** brings two multi-label datasets. A synthetic toy dataset called `toyml` and a real world dataset called `foodtruck`. To understand how to load your own dataset, we suggest the read of [mldr](https://CRAN.R-project.org/package=mldr) documentation. The `toyml` contains 100 instances, 10 features and 5 labels, its prupose is to be used for small tests and examples.
 ```{r}
 head(toyml)
 ```
@@ -70,7 +70,7 @@ names(ds)
 ```
 
 Now, the `ds` object has two elements `ds$train` and `ds$test`, where the first will be used to create a model and the second to test the model. For example, using the *Binary Relevance* multi-label method with the base algorithm *Random Forest*^[Requires the 
-[randomForest](https://cran.r-project.org/web/packages/randomForest/) package.], we can do:
+[randomForest](https://CRAN.R-project.org/package=randomForest) package.], we can do:
 ```{r}
 brmodel <- br(ds$train, "RF", seed=123)
 prediction <- predict(brmodel, ds$test)
