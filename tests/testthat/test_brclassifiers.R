@@ -96,6 +96,10 @@ test_that("Classifier Chain", {
 })
 
 test_that("CTRL", {
+  if (!requireNamespace("FSelector", quietly = TRUE)) {
+    skip("CTRL")
+    return(FALSE)
+  }
   model <- ctrl(train, "RANDOM")
   pred1 <- baseTest(model, "CTRLmodel")
   baseTest(ctrl(train, "RANDOM", validation.threshold = 1), "CTRLmodel")

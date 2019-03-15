@@ -2,7 +2,7 @@ Package: utiml
 Type: Package
 Title: Utilities for Multi-Label Learning
 Version: 0.1.5
-Date: 2019-03-14
+Date: 2019-03-15
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
 Description: Multi-label learning strategies and others procedures to support multi-
@@ -10,7 +10,7 @@ Description: Multi-label learning strategies and others procedures to support mu
   sampling methods, transformation strategies, threshold functions, pre-processing 
   techniques and evaluation metrics. A complete overview of the matter can be seen in
   Zhang, M. and Zhou, Z. (2014) <doi:10.1109/TKDE.2013.39> and Gibaja, E. and 
-  Ventura, S. (2015) <doi:10.1145/2716262>.
+  Ventura, S. (2015) A Tutorial on Multi-label Learning.
 URL: https://github.com/rivolli/utiml
 Depends:
     R (>= 3.0.0),

@@ -54,10 +54,10 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- ctrl(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
 #' # Change default values and use 4 CORES
 #' model <- ctrl(toyml, 'C5.0', m = 10, validation.size = 0.4,
 #'               validation.threshold = 0.5, cores = 4)
@@ -201,10 +201,10 @@ ctrl <- function(mdata,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' model <- ctrl(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
 #' # Predict SVM bipartitions running in 6 cores
 #' pred <- predict(model, toyml, probability = FALSE, cores = 6)
 #'

@@ -40,10 +40,10 @@ This function predicts values based upon a model trained by
 \code{\link{ctrl}}.
 }
 \examples{
+\dontrun{
 model <- ctrl(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
 # Predict SVM bipartitions running in 6 cores
 pred <- predict(model, toyml, probability = FALSE, cores = 6)
 

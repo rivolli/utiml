@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-**Version:** 0.1.4
+**Version:** 0.1.5
 
 The utiml package is a framework to support multi-label processing, like Mulan on Weka. 
 It is simple to use and extend. This tutorial explain the main topics related with the utiml package. 

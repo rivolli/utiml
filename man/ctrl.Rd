@@ -70,10 +70,10 @@ Dependencies:
    \link[FSelector]{relief} method available in \pkg{FSelector} package.
 }
 \examples{
+\dontrun{
 model <- ctrl(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
 # Change default values and use 4 CORES
 model <- ctrl(toyml, 'C5.0', m = 10, validation.size = 0.4,
               validation.threshold = 0.5, cores = 4)
