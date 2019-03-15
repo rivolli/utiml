@@ -4,12 +4,7 @@
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs or WARNINGs.
-
-There was 1 NOTE in Travis:
-
-* Unable to find GhostScript executable to run checks on size reduction  
-It looks like some misconfiguration on Travis system.
+There were no ERRORs, WARNINGs and NOTEs.
 
 ## Downstream dependencies
 There are no downstream dependencies.
