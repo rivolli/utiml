@@ -4,11 +4,18 @@
 \alias{cv}
 \title{Multi-label cross-validation}
 \usage{
-cv(mdata, method, ..., cv.folds = 10, cv.sampling = c("random",
-  "iterative", "stratified"), cv.results = FALSE,
-  cv.predictions = FALSE, cv.measures = "all",
+cv(
+  mdata,
+  method,
+  ...,
+  cv.folds = 10,
+  cv.sampling = c("random", "iterative", "stratified"),
+  cv.results = FALSE,
+  cv.predictions = FALSE,
+  cv.measures = "all",
   cv.cores = getOption("utiml.cores", 1),
-  cv.seed = getOption("utiml.seed", NA))
+  cv.seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset.}
@@ -66,8 +73,9 @@ res2 <- cv(mdata=toyml, method="rakel", base.algorithm="RANDOM", k=2, m=10,
  cv.folds=3, cv.results=TRUE, cv.predictions=TRUE)
 }
 \seealso{
-Other evaluation: \code{\link{multilabel_confusion_matrix}},
-  \code{\link{multilabel_evaluate}},
-  \code{\link{multilabel_measures}}
+Other evaluation: 
+\code{\link{multilabel_confusion_matrix}()},
+\code{\link{multilabel_evaluate}()},
+\code{\link{multilabel_measures}()}
 }
 \concept{evaluation}

@@ -27,12 +27,13 @@ new.toy$dataset$ratt10 <- new.column
 head(replace_nominal_attributes(new.toy))
 }
 \seealso{
-Other pre process: \code{\link{fill_sparse_mldata}},
-  \code{\link{normalize_mldata}},
-  \code{\link{remove_attributes}},
-  \code{\link{remove_labels}},
-  \code{\link{remove_skewness_labels}},
-  \code{\link{remove_unique_attributes}},
-  \code{\link{remove_unlabeled_instances}}
+Other pre process: 
+\code{\link{fill_sparse_mldata}()},
+\code{\link{normalize_mldata}()},
+\code{\link{remove_attributes}()},
+\code{\link{remove_labels}()},
+\code{\link{remove_skewness_labels}()},
+\code{\link{remove_unique_attributes}()},
+\code{\link{remove_unlabeled_instances}()}
 }
 \concept{pre process}

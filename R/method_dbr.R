@@ -49,7 +49,7 @@ dbr <- function(mdata,
                 cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata,"mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -140,7 +140,7 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
                              ..., cores = getOption("utiml.cores", 1),
                              seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "DBRmodel") {
+  if (!is(object,"DBRmodel")) {
     stop("First argument must be an DBRmodel object")
   }
 
@@ -161,7 +161,7 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
                                   cores = cores, seed = seed)
   }
 
-  if ('mlresult' %in% class(estimative)) {
+  if (is(estimative, 'mlresult')) {
     estimative <- as.bipartition(estimative)
   }
 

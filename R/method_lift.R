@@ -43,7 +43,7 @@ lift <- function(mdata,
                  ratio = 0.1, ..., cores = getOption("utiml.cores", 1),
                  seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -136,7 +136,7 @@ predict.LIFTmodel <- function(object, newdata,
                             ..., cores = getOption("utiml.cores", 1),
                             seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "LIFTmodel" && class(object) != "MLDFLmodel") {
+  if (!is(object, "LIFTmodel") && !is(object, "MLDFLmodel")) {
     stop("First argument must be an LIFTmodel/MLDFLmodel object")
   }
 

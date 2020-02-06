@@ -22,12 +22,13 @@ sparse.toy$dataset$ratt10[sample(100, 30)] <- NA
 complete.toy <- fill_sparse_mldata(sparse.toy)
 }
 \seealso{
-Other pre process: \code{\link{normalize_mldata}},
-  \code{\link{remove_attributes}},
-  \code{\link{remove_labels}},
-  \code{\link{remove_skewness_labels}},
-  \code{\link{remove_unique_attributes}},
-  \code{\link{remove_unlabeled_instances}},
-  \code{\link{replace_nominal_attributes}}
+Other pre process: 
+\code{\link{normalize_mldata}()},
+\code{\link{remove_attributes}()},
+\code{\link{remove_labels}()},
+\code{\link{remove_skewness_labels}()},
+\code{\link{remove_unique_attributes}()},
+\code{\link{remove_unlabeled_instances}()},
+\code{\link{replace_nominal_attributes}()}
 }
 \concept{pre process}

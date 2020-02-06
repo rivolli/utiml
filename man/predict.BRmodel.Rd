@@ -4,10 +4,14 @@
 \alias{predict.BRmodel}
 \title{Predict Method for Binary Relevance}
 \usage{
-\method{predict}{BRmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{BRmodel}(
+  object,
+  newdata,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{BRmodel}'.}

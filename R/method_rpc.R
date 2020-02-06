@@ -40,7 +40,7 @@ rpc <- function(mdata,
                 cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -104,7 +104,7 @@ predict.RPCmodel <- function(object, newdata,
                             ..., cores = getOption("utiml.cores", 1),
                             seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "RPCmodel") {
+  if (!is(object, "RPCmodel")) {
     stop("First argument must be an RPCmodel object")
   }
 

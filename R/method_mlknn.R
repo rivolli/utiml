@@ -97,7 +97,7 @@ predict.MLKNNmodel <- function(object, newdata,
                                ..., cores = getOption("utiml.cores", 1),
                                seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "MLKNNmodel") {
+  if (!is(object, "MLKNNmodel")) {
     stop("First argument must be an MLKNNmodel object")
   }
 

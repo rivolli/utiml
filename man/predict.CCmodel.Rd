@@ -4,9 +4,14 @@
 \alias{predict.CCmodel}
 \title{Predict Method for Classifier Chains}
 \usage{
-\method{predict}{CCmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ..., cores = NULL,
-  seed = getOption("utiml.seed", NA))
+\method{predict}{CCmodel}(
+  object,
+  newdata,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = NULL,
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{CCmodel}'.}

@@ -119,7 +119,7 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
                               ..., cores = getOption("utiml.cores", 1),
                               seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "RDBRmodel") {
+  if (!is(object, "RDBRmodel")) {
     stop("First argument must be an RDDBRmodel object")
   }
   if (is.null(object$estimation) && is.null(estimative)) {
@@ -144,7 +144,7 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
                                   cores=cores, seed=seed)
   }
 
-  if ('mlresult' %in% class(estimative)) {
+  if (is(estimative, 'mlresult')) {
     estimative <- as.bipartition(estimative)
   }
 

@@ -4,10 +4,14 @@
 \alias{predict.CLRmodel}
 \title{Predict Method for CLR}
 \usage{
-\method{predict}{CLRmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{CLRmodel}(
+  object,
+  newdata,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{CLRmodel}'.}

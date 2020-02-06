@@ -4,10 +4,16 @@
 \alias{homer}
 \title{Hierarchy Of Multilabel classifiER (HOMER)}
 \usage{
-homer(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  clusters = 3, method = c("balanced", "clustering", "random"),
-  iteration = 100, ..., cores = getOption("utiml.cores", 1),
-  seed = getOption("utiml.seed", NA))
+homer(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  clusters = 3,
+  method = c("balanced", "clustering", "random"),
+  iteration = 100,
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -66,14 +72,26 @@ Tsoumakas, G., Katakis, I., & Vlahavas, I. (2008). Effective and efficient
   (pp. 30-44). Antwerp, Belgium.
 }
 \seealso{
-Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
-  \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
-  \code{\link{ecc}}, \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{lift}}, \code{\link{lp}}, \code{\link{mbr}},
-  \code{\link{ns}}, \code{\link{ppt}},
-  \code{\link{prudent}}, \code{\link{ps}},
-  \code{\link{rakel}}, \code{\link{rdbr}},
-  \code{\link{rpc}}
+Other Transformation methods: 
+\code{\link{brplus}()},
+\code{\link{br}()},
+\code{\link{cc}()},
+\code{\link{clr}()},
+\code{\link{ctrl}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{ecc}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{lift}()},
+\code{\link{lp}()},
+\code{\link{mbr}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()},
+\code{\link{rpc}()}
 }
 \concept{Transformation methods}

@@ -4,10 +4,14 @@
 \alias{predict.MLKNNmodel}
 \title{Predict Method for ML-KNN}
 \usage{
-\method{predict}{MLKNNmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{MLKNNmodel}(
+  object,
+  newdata,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{MLKNNmodel}'.}

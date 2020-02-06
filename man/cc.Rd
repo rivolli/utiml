@@ -4,9 +4,14 @@
 \alias{cc}
 \title{Classifier Chains for multi-label Classification}
 \usage{
-cc(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  chain = NA, ..., cores = getOption("utiml.cores", 1),
-  seed = getOption("utiml.seed", NA))
+cc(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  chain = NA,
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -70,14 +75,26 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
    in Databases, Lecture Notes in Computer Science, 5782, 254-269.
 }
 \seealso{
-Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{clr}}, \code{\link{ctrl}},
-  \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{homer}}, \code{\link{lift}},
-  \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{ppt}}, \code{\link{prudent}},
-  \code{\link{ps}}, \code{\link{rakel}},
-  \code{\link{rdbr}}, \code{\link{rpc}}
+Other Transformation methods: 
+\code{\link{brplus}()},
+\code{\link{br}()},
+\code{\link{clr}()},
+\code{\link{ctrl}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{ecc}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{homer}()},
+\code{\link{lift}()},
+\code{\link{lp}()},
+\code{\link{mbr}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()},
+\code{\link{rpc}()}
 }
 \concept{Transformation methods}

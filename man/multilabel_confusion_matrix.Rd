@@ -65,8 +65,9 @@ mlconfmat <- confmatp1 + confmatp2
 }
 }
 \seealso{
-Other evaluation: \code{\link{cv}},
-  \code{\link{multilabel_evaluate}},
-  \code{\link{multilabel_measures}}
+Other evaluation: 
+\code{\link{cv}()},
+\code{\link{multilabel_evaluate}()},
+\code{\link{multilabel_measures}()}
 }
 \concept{evaluation}

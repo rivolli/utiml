@@ -4,10 +4,15 @@
 \alias{predict.ECCmodel}
 \title{Predict Method for Ensemble of Classifier Chains}
 \usage{
-\method{predict}{ECCmodel}(object, newdata, vote.schema = "maj",
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{ECCmodel}(
+  object,
+  newdata,
+  vote.schema = "maj",
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{ECCmodel}'.}

@@ -22,12 +22,13 @@ based on a specific threshold value.
 remove_skewness_labels(toyml, 20)
 }
 \seealso{
-Other pre process: \code{\link{fill_sparse_mldata}},
-  \code{\link{normalize_mldata}},
-  \code{\link{remove_attributes}},
-  \code{\link{remove_labels}},
-  \code{\link{remove_unique_attributes}},
-  \code{\link{remove_unlabeled_instances}},
-  \code{\link{replace_nominal_attributes}}
+Other pre process: 
+\code{\link{fill_sparse_mldata}()},
+\code{\link{normalize_mldata}()},
+\code{\link{remove_attributes}()},
+\code{\link{remove_labels}()},
+\code{\link{remove_unique_attributes}()},
+\code{\link{remove_unlabeled_instances}()},
+\code{\link{replace_nominal_attributes}()}
 }
 \concept{pre process}

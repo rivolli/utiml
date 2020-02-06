@@ -4,8 +4,11 @@
 \alias{baseline}
 \title{Baseline reference for multilabel classification}
 \usage{
-baseline(mdata, metric = c("general", "F1", "hamming-loss",
-  "subset-accuracy", "ranking-loss"), ...)
+baseline(
+  mdata,
+  metric = c("general", "F1", "hamming-loss", "subset-accuracy", "ranking-loss"),
+  ...
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}

@@ -4,10 +4,14 @@
 \alias{predict.PruDentmodel}
 \title{Predict Method for PruDent}
 \usage{
-\method{predict}{PruDentmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{PruDentmodel}(
+  object,
+  newdata,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{PruDentmodel}'.}

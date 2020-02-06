@@ -61,7 +61,7 @@ multilabel_confusion_matrix <- function (mdata, mlresult) {
     stop("Wrong dimension between the real and expected data")
   }
 
-  if (class(mlresult) != "mlresult") {
+  if (!is(mlresult, "mlresult")) {
     mlresult <- as.mlresult(mlresult)
   }
 
@@ -213,7 +213,7 @@ multilabel_evaluate <- function(object, ...) {
 multilabel_evaluate.mldr <- function (object, mlresult, measures = c("all"),
                                       labels=FALSE, ...) {
   mdata <- object
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -226,7 +226,7 @@ multilabel_evaluate.mldr <- function (object, mlresult, measures = c("all"),
 multilabel_evaluate.mlconfmat <- function (object, measures = c("all"),
                                            labels=FALSE, ...) {
   mlconfmat <- object
-  if (class(mlconfmat) != "mlconfmat") {
+  if (!is(mlconfmat, "mlconfmat")) {
     stop("First argument must be an mlconfmat object")
   }
 

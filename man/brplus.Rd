@@ -4,9 +4,13 @@
 \alias{brplus}
 \title{BR+ or BRplus for multi-label Classification}
 \usage{
-brplus(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  ..., cores = getOption("utiml.cores", 1),
-  seed = getOption("utiml.seed", NA))
+brplus(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -60,17 +64,30 @@ Cherman, E. A., Metz, J., & Monard, M. C. (2012). Incorporating label
    classification. Expert Systems with Applications, 39(2), 1647-1655.
 }
 \seealso{
-Other Transformation methods: \code{\link{br}},
-  \code{\link{cc}}, \code{\link{clr}}, \code{\link{ctrl}},
-  \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{homer}}, \code{\link{lift}},
-  \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{ppt}}, \code{\link{prudent}},
-  \code{\link{ps}}, \code{\link{rakel}},
-  \code{\link{rdbr}}, \code{\link{rpc}}
+Other Transformation methods: 
+\code{\link{br}()},
+\code{\link{cc}()},
+\code{\link{clr}()},
+\code{\link{ctrl}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{ecc}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{homer}()},
+\code{\link{lift}()},
+\code{\link{lp}()},
+\code{\link{mbr}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()},
+\code{\link{rpc}()}
 
-Other Stacking methods: \code{\link{mbr}}
+Other Stacking methods: 
+\code{\link{mbr}()}
 }
 \concept{Stacking methods}
 \concept{Transformation methods}

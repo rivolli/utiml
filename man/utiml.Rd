@@ -3,7 +3,6 @@
 \docType{package}
 \name{utiml}
 \alias{utiml}
-\alias{utiml-package}
 \title{utiml: Utilities for Multi-Label Learning}
 \description{
 The utiml package is a framework for the application of classification

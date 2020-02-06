@@ -8,11 +8,9 @@
 \usage{
 multilabel_evaluate(object, ...)
 
-\method{multilabel_evaluate}{mldr}(object, mlresult, measures = c("all"),
-  labels = FALSE, ...)
+\method{multilabel_evaluate}{mldr}(object, mlresult, measures = c("all"), labels = FALSE, ...)
 
-\method{multilabel_evaluate}{mlconfmat}(object, measures = c("all"),
-  labels = FALSE, ...)
+\method{multilabel_evaluate}{mlconfmat}(object, measures = c("all"), labels = FALSE, ...)
 }
 \arguments{
 \item{object}{A mldr dataset or a mlconfmat confusion matrix}
@@ -79,8 +77,9 @@ Madjarov, G., Kocev, D., Gjorgjevikj, D., & Dzeroski, S. (2012). An
    ACM Comput. Surv., 47(3), 52:1-2:38.
 }
 \seealso{
-Other evaluation: \code{\link{cv}},
-  \code{\link{multilabel_confusion_matrix}},
-  \code{\link{multilabel_measures}}
+Other evaluation: 
+\code{\link{cv}()},
+\code{\link{multilabel_confusion_matrix}()},
+\code{\link{multilabel_measures}()}
 }
 \concept{evaluation}

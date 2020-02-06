@@ -64,7 +64,7 @@ ebr <- function(mdata,
                 ..., cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -159,7 +159,7 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "maj",
                              ..., cores = getOption("utiml.cores", 1),
                              seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "EBRmodel") {
+  if (!is(object, "EBRmodel")) {
     stop("First argument must be an EBRmodel object")
   }
 

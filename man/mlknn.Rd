@@ -4,9 +4,15 @@
 \alias{mlknn}
 \title{Multi-label KNN (ML-KNN) for multi-label Classification}
 \usage{
-mlknn(mdata, k = 10, s = 1, distance = "euclidean", ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+mlknn(
+  mdata,
+  k = 10,
+  s = 1,
+  distance = "euclidean",
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}

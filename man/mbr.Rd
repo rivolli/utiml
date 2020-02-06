@@ -4,10 +4,16 @@
 \alias{mbr}
 \title{Meta-BR or 2BR for multi-label Classification}
 \usage{
-mbr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  folds = 1, phi = 0, ..., predict.params = list(),
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+mbr(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  folds = 1,
+  phi = 0,
+  ...,
+  predict.params = list(),
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -82,17 +88,30 @@ Tsoumakas, G., Dimou, A., Spyromitros, E., Mezaris, V., Kompatsiaris, I., &
    Classification. In Data Mining and Knowledge Discovery (pp. 1-26).
 }
 \seealso{
-Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
-  \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
-  \code{\link{ecc}}, \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{homer}}, \code{\link{lift}},
-  \code{\link{lp}}, \code{\link{ns}}, \code{\link{ppt}},
-  \code{\link{prudent}}, \code{\link{ps}},
-  \code{\link{rakel}}, \code{\link{rdbr}},
-  \code{\link{rpc}}
+Other Transformation methods: 
+\code{\link{brplus}()},
+\code{\link{br}()},
+\code{\link{cc}()},
+\code{\link{clr}()},
+\code{\link{ctrl}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{ecc}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{homer}()},
+\code{\link{lift}()},
+\code{\link{lp}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()},
+\code{\link{rpc}()}
 
-Other Stacking methods: \code{\link{brplus}}
+Other Stacking methods: 
+\code{\link{brplus}()}
 }
 \concept{Stacking methods}
 \concept{Transformation methods}

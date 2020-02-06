@@ -4,10 +4,14 @@
 \alias{predict.HOMERmodel}
 \title{Predict Method for HOMER}
 \usage{
-\method{predict}{HOMERmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{HOMERmodel}(
+  object,
+  newdata,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{HOMERmodel}'.}

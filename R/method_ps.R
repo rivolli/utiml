@@ -45,7 +45,7 @@ ps <- function (mdata,
                 cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -164,7 +164,7 @@ predict.PSmodel <- function(object, newdata,
                              ..., cores = getOption("utiml.cores", 1),
                              seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "PSmodel") {
+  if (!is(object, "PSmodel")) {
     stop("First argument must be a PSmodel object")
   }
 

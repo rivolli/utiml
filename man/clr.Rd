@@ -4,9 +4,13 @@
 \alias{clr}
 \title{Calibrated Label Ranking (CLR) for multi-label Classification}
 \usage{
-clr(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  ..., cores = getOption("utiml.cores", 1),
-  seed = getOption("utiml.seed", NA))
+clr(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -56,17 +60,30 @@ Brinker, K., Furnkranz, J., & Hullermeier, E. (2006). A unified model for
    Machine Learning, 73(2), 133-153.
 }
 \seealso{
-Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{ctrl}},
-  \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{homer}}, \code{\link{lift}},
-  \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{ppt}}, \code{\link{prudent}},
-  \code{\link{ps}}, \code{\link{rakel}},
-  \code{\link{rdbr}}, \code{\link{rpc}}
+Other Transformation methods: 
+\code{\link{brplus}()},
+\code{\link{br}()},
+\code{\link{cc}()},
+\code{\link{ctrl}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{ecc}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{homer}()},
+\code{\link{lift}()},
+\code{\link{lp}()},
+\code{\link{mbr}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()},
+\code{\link{rpc}()}
 
-Other Pairwise methods: \code{\link{rpc}}
+Other Pairwise methods: 
+\code{\link{rpc}()}
 }
 \concept{Pairwise methods}
 \concept{Transformation methods}

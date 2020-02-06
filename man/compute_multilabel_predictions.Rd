@@ -4,8 +4,11 @@
 \alias{compute_multilabel_predictions}
 \title{Compute the multi-label ensemble predictions based on some vote schema}
 \usage{
-compute_multilabel_predictions(predictions, vote.schema = "maj",
-  probability = getOption("utiml.use.probs", TRUE))
+compute_multilabel_predictions(
+  predictions,
+  vote.schema = "maj",
+  probability = getOption("utiml.use.probs", TRUE)
+)
 }
 \arguments{
 \item{predictions}{A list of multi-label predictions (mlresult).}

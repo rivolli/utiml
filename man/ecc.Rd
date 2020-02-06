@@ -4,10 +4,17 @@
 \alias{ecc}
 \title{Ensemble of Classifier Chains for multi-label Classification}
 \usage{
-ecc(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  m = 10, subsample = 0.75, attr.space = 0.5, replacement = TRUE,
-  ..., cores = getOption("utiml.cores", 1),
-  seed = getOption("utiml.seed", NA))
+ecc(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  m = 10,
+  subsample = 0.75,
+  attr.space = 0.5,
+  replacement = TRUE,
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -86,18 +93,31 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier
    5782, 254-269.
 }
 \seealso{
-Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
-  \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
-  \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{homer}}, \code{\link{lift}},
-  \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{ppt}}, \code{\link{prudent}},
-  \code{\link{ps}}, \code{\link{rakel}},
-  \code{\link{rdbr}}, \code{\link{rpc}}
+Other Transformation methods: 
+\code{\link{brplus}()},
+\code{\link{br}()},
+\code{\link{cc}()},
+\code{\link{clr}()},
+\code{\link{ctrl}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{homer}()},
+\code{\link{lift}()},
+\code{\link{lp}()},
+\code{\link{mbr}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()},
+\code{\link{rpc}()}
 
-Other Ensemble methods: \code{\link{ebr}},
-  \code{\link{eps}}
+Other Ensemble methods: 
+\code{\link{ebr}()},
+\code{\link{eps}()}
 }
 \concept{Ensemble methods}
 \concept{Transformation methods}

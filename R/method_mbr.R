@@ -67,7 +67,7 @@ mbr <- function(mdata,
                 cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -181,7 +181,7 @@ predict.MBRmodel <- function(object, newdata,
                              ..., cores = getOption("utiml.cores", 1),
                              seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "MBRmodel") {
+  if (!is(object, "MBRmodel")) {
     stop("First argument must be an MBRmodel object")
   }
 

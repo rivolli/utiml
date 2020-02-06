@@ -94,6 +94,7 @@
 #' @import mldr
 #' @import parallel
 #' @import ROCR
+#' @importFrom methods is
 #' @docType package
 #' @name utiml
 NULL

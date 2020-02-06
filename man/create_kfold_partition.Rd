@@ -4,8 +4,11 @@
 \alias{create_kfold_partition}
 \title{Create the k-folds partition based on the specified algorithm}
 \usage{
-create_kfold_partition(mdata, k = 10, method = c("random", "iterative",
-  "stratified"))
+create_kfold_partition(
+  mdata,
+  k = 10,
+  method = c("random", "iterative", "stratified")
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset.}
@@ -64,8 +67,9 @@ Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
 \seealso{
 \link[=partition_fold]{How to create the datasets from folds}
 
-Other sampling: \code{\link{create_holdout_partition}},
-  \code{\link{create_random_subset}},
-  \code{\link{create_subset}}
+Other sampling: 
+\code{\link{create_holdout_partition}()},
+\code{\link{create_random_subset}()},
+\code{\link{create_subset}()}
 }
 \concept{sampling}

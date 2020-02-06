@@ -4,10 +4,14 @@
 \alias{predict.PPTmodel}
 \title{Predict Method for Pruned Problem Transformation}
 \usage{
-\method{predict}{PPTmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{PPTmodel}(
+  object,
+  newdata,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{PPTmodel}'.}

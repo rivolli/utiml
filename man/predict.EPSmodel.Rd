@@ -4,10 +4,15 @@
 \alias{predict.EPSmodel}
 \title{Predict Method for Ensemble of Pruned Set Transformation}
 \usage{
-\method{predict}{EPSmodel}(object, newdata, threshold = 0.5,
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{EPSmodel}(
+  object,
+  newdata,
+  threshold = 0.5,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{EPSmodel}'.}

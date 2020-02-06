@@ -4,9 +4,12 @@
 \alias{multilabel_prediction}
 \title{Create a mlresult object}
 \usage{
-multilabel_prediction(bipartitions, probabilities,
+multilabel_prediction(
+  bipartitions,
+  probabilities,
   probability = getOption("utiml.use.probs", TRUE),
-  empty.prediction = getOption("utiml.empty.prediction", FALSE))
+  empty.prediction = getOption("utiml.empty.prediction", FALSE)
+)
 }
 \arguments{
 \item{bipartitions}{The matrix of predictions (bipartition values),

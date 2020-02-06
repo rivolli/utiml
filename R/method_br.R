@@ -45,7 +45,7 @@ br <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                ..., cores = getOption("utiml.cores", 1),
                seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -115,7 +115,7 @@ predict.BRmodel <- function(object, newdata,
                             ..., cores = getOption("utiml.cores", 1),
                             seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "BRmodel") {
+  if (!is(object, "BRmodel")) {
     stop("First argument must be an BRmodel object")
   }
 

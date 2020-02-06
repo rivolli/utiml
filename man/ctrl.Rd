@@ -4,10 +4,17 @@
 \alias{ctrl}
 \title{CTRL model for multi-label Classification}
 \usage{
-ctrl(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  m = 5, validation.size = 0.3, validation.threshold = 0.3, ...,
-  predict.params = list(), cores = getOption("utiml.cores", 1),
-  seed = getOption("utiml.seed", NA))
+ctrl(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  m = 5,
+  validation.size = 0.3,
+  validation.threshold = 0.3,
+  ...,
+  predict.params = list(),
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -92,14 +99,26 @@ Li, Y., & Zhang, M. (2014). Enhancing Binary Relevance for Multi-label
    Gold Coast, Australia.
 }
 \seealso{
-Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
-  \code{\link{dbr}}, \code{\link{ebr}}, \code{\link{ecc}},
-  \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{homer}}, \code{\link{lift}},
-  \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{ppt}}, \code{\link{prudent}},
-  \code{\link{ps}}, \code{\link{rakel}},
-  \code{\link{rdbr}}, \code{\link{rpc}}
+Other Transformation methods: 
+\code{\link{brplus}()},
+\code{\link{br}()},
+\code{\link{cc}()},
+\code{\link{clr}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{ecc}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{homer}()},
+\code{\link{lift}()},
+\code{\link{lp}()},
+\code{\link{mbr}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()},
+\code{\link{rpc}()}
 }
 \concept{Transformation methods}

@@ -1,8 +1,8 @@
 Package: utiml
 Type: Package
 Title: Utilities for Multi-Label Learning
-Version: 0.1.5
-Date: 2019-03-15
+Version: 0.1.6
+Date: 2020-02-06
 Authors@R: person("Adriano", "Rivolli", email = "rivolli@utfpr.edu.br",
                   role = c("aut", "cre"))
 Description: Multi-label learning strategies and others procedures to support multi-
@@ -19,7 +19,8 @@ Depends:
     ROCR
 Imports:
     stats,
-    utils
+    utils,
+    methods
 Suggests:
     C50,
     e1071,
@@ -37,6 +38,6 @@ Suggests:
 License: GPL | file LICENSE
 LazyData: true
 BugReports: https://github.com/rivolli/utiml
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr
 Encoding: UTF-8

@@ -51,7 +51,7 @@
 baseline <- function (mdata, metric = c("general", "F1", "hamming-loss",
                       "subset-accuracy", "ranking-loss"), ...) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -123,7 +123,7 @@ baseline <- function (mdata, metric = c("general", "F1", "hamming-loss",
 predict.BASELINEmodel <- function (object, newdata,
                         probability = getOption("utiml.use.probs", TRUE), ...){
   # Validations
-  if (class(object) != "BASELINEmodel") {
+  if (!is(object, "BASELINEmodel")) {
     stop("First argument must be a BASELINEmodel object")
   }
 

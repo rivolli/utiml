@@ -4,8 +4,11 @@
 \alias{create_holdout_partition}
 \title{Create a holdout partition based on the specified algorithm}
 \usage{
-create_holdout_partition(mdata, partitions = c(train = 0.7, test = 0.3),
-  method = c("random", "iterative", "stratified"))
+create_holdout_partition(
+  mdata,
+  partitions = c(train = 0.7, test = 0.3),
+  method = c("random", "iterative", "stratified")
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset.}
@@ -76,8 +79,9 @@ Sechidis, K., Tsoumakas, G., & Vlahavas, I. (2011). On the
  ECML PKDD (pp. 145-158).
 }
 \seealso{
-Other sampling: \code{\link{create_kfold_partition}},
-  \code{\link{create_random_subset}},
-  \code{\link{create_subset}}
+Other sampling: 
+\code{\link{create_kfold_partition}()},
+\code{\link{create_random_subset}()},
+\code{\link{create_subset}()}
 }
 \concept{sampling}

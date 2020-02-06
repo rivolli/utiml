@@ -31,8 +31,9 @@ small.toy <- create_subset(toyml, seq(20), seq(7))
 random.toy <- create_subset(toyml, sample(100, 50), sample(10, 5))
 }
 \seealso{
-Other sampling: \code{\link{create_holdout_partition}},
-  \code{\link{create_kfold_partition}},
-  \code{\link{create_random_subset}}
+Other sampling: 
+\code{\link{create_holdout_partition}()},
+\code{\link{create_kfold_partition}()},
+\code{\link{create_random_subset}()}
 }
 \concept{sampling}

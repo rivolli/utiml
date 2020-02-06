@@ -20,12 +20,13 @@ new.toy <- remove_labels(toyml, c(12,14))
 remove_unlabeled_instances(new.toy)
 }
 \seealso{
-Other pre process: \code{\link{fill_sparse_mldata}},
-  \code{\link{normalize_mldata}},
-  \code{\link{remove_attributes}},
-  \code{\link{remove_labels}},
-  \code{\link{remove_skewness_labels}},
-  \code{\link{remove_unique_attributes}},
-  \code{\link{replace_nominal_attributes}}
+Other pre process: 
+\code{\link{fill_sparse_mldata}()},
+\code{\link{normalize_mldata}()},
+\code{\link{remove_attributes}()},
+\code{\link{remove_labels}()},
+\code{\link{remove_skewness_labels}()},
+\code{\link{remove_unique_attributes}()},
+\code{\link{replace_nominal_attributes}()}
 }
 \concept{pre process}

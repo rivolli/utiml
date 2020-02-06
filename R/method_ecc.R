@@ -68,7 +68,7 @@ ecc <- function(mdata,
                 ..., cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -162,7 +162,7 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
                              ..., cores = getOption("utiml.cores", 1),
                              seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "ECCmodel") {
+  if (!is(object, "ECCmodel")) {
     stop("First argument must be an ECCmodel object")
   }
 

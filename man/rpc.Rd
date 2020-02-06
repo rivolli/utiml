@@ -4,9 +4,13 @@
 \alias{rpc}
 \title{Ranking by Pairwise Comparison (RPC) for multi-label Classification}
 \usage{
-rpc(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
-  ..., cores = getOption("utiml.cores", 1),
-  seed = getOption("utiml.seed", NA))
+rpc(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -52,16 +56,30 @@ Hullermeier, E., Furnkranz, J., Cheng, W., & Brinker, K. (2008).
  172(16-17), 1897-1916.
 }
 \seealso{
-Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
-  \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
-  \code{\link{ecc}}, \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{homer}}, \code{\link{lift}},
-  \code{\link{lp}}, \code{\link{mbr}}, \code{\link{ns}},
-  \code{\link{ppt}}, \code{\link{prudent}},
-  \code{\link{ps}}, \code{\link{rakel}}, \code{\link{rdbr}}
+Other Transformation methods: 
+\code{\link{brplus}()},
+\code{\link{br}()},
+\code{\link{cc}()},
+\code{\link{clr}()},
+\code{\link{ctrl}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{ecc}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{homer}()},
+\code{\link{lift}()},
+\code{\link{lp}()},
+\code{\link{mbr}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()}
 
-Other Pairwise methods: \code{\link{clr}}
+Other Pairwise methods: 
+\code{\link{clr}()}
 }
 \concept{Pairwise methods}
 \concept{Transformation methods}

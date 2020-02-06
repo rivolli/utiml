@@ -4,10 +4,15 @@
 \alias{predict.DBRmodel}
 \title{Predict Method for DBR}
 \usage{
-\method{predict}{DBRmodel}(object, newdata, estimative = NULL,
-  probability = getOption("utiml.use.probs", TRUE), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+\method{predict}{DBRmodel}(
+  object,
+  newdata,
+  estimative = NULL,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{DBRmodel}'.}

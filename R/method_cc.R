@@ -55,7 +55,7 @@ cc <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                chain = NA, ..., cores = getOption("utiml.cores", 1),
                seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -127,7 +127,7 @@ predict.CCmodel <- function(object, newdata,
                             ..., cores = NULL,
                             seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "CCmodel") {
+  if (!is(object, "CCmodel")) {
     stop("First argument must be an CCmodel object")
   }
 

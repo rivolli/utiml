@@ -6,14 +6,26 @@
 \alias{scut_threshold.mlresult}
 \title{SCut Score-based method}
 \usage{
-scut_threshold(prediction, expected, loss.function = NA,
-  cores = getOption("utiml.cores", 1))
+scut_threshold(
+  prediction,
+  expected,
+  loss.function = NA,
+  cores = getOption("utiml.cores", 1)
+)
 
-\method{scut_threshold}{default}(prediction, expected,
-  loss.function = NA, cores = getOption("utiml.cores", 1))
+\method{scut_threshold}{default}(
+  prediction,
+  expected,
+  loss.function = NA,
+  cores = getOption("utiml.cores", 1)
+)
 
-\method{scut_threshold}{mlresult}(prediction, expected,
-  loss.function = NA, cores = getOption("utiml.cores", 1))
+\method{scut_threshold}{mlresult}(
+  prediction,
+  expected,
+  loss.function = NA,
+  cores = getOption("utiml.cores", 1)
+)
 }
 \arguments{
 \item{prediction}{A matrix or mlresult.}
@@ -77,11 +89,12 @@ Fan, R.-E., & Lin, C.-J. (2007). A study on threshold selection for
   Workshop on Learning over Multiple Contexts (LMCE) at ECML-PKDD 2014.
 }
 \seealso{
-Other threshold: \code{\link{fixed_threshold}},
-  \code{\link{lcard_threshold}},
-  \code{\link{mcut_threshold}},
-  \code{\link{pcut_threshold}},
-  \code{\link{rcut_threshold}},
-  \code{\link{subset_correction}}
+Other threshold: 
+\code{\link{fixed_threshold}()},
+\code{\link{lcard_threshold}()},
+\code{\link{mcut_threshold}()},
+\code{\link{pcut_threshold}()},
+\code{\link{rcut_threshold}()},
+\code{\link{subset_correction}()}
 }
 \concept{threshold}

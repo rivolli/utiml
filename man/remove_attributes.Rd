@@ -26,12 +26,13 @@ toyml1 <- remove_attributes(toyml, c("iatt8","iatt9", "ratt10"))
 toyml2 <- remove_attributes(toyml, 10)
 }
 \seealso{
-Other pre process: \code{\link{fill_sparse_mldata}},
-  \code{\link{normalize_mldata}},
-  \code{\link{remove_labels}},
-  \code{\link{remove_skewness_labels}},
-  \code{\link{remove_unique_attributes}},
-  \code{\link{remove_unlabeled_instances}},
-  \code{\link{replace_nominal_attributes}}
+Other pre process: 
+\code{\link{fill_sparse_mldata}()},
+\code{\link{normalize_mldata}()},
+\code{\link{remove_labels}()},
+\code{\link{remove_skewness_labels}()},
+\code{\link{remove_unique_attributes}()},
+\code{\link{remove_unlabeled_instances}()},
+\code{\link{replace_nominal_attributes}()}
 }
 \concept{pre process}

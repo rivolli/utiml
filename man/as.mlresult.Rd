@@ -8,8 +8,7 @@
 \usage{
 as.mlresult(predictions, probability = TRUE, ...)
 
-\method{as.mlresult}{default}(predictions, probability = TRUE, ...,
-  threshold = 0.5)
+\method{as.mlresult}{default}(predictions, probability = TRUE, ..., threshold = 0.5)
 
 \method{as.mlresult}{mlresult}(predictions, probability = TRUE, ...)
 }

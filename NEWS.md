@@ -1,6 +1,9 @@
 # Changelog
 
-## utiml 0.1.5 (current)
+## utiml 0.1.6 (current)
+* Fixes for CRAN incompatibilities
+
+## utiml 0.1.5
 
 ### Minor changes
 * `cv` method also returns the prediction

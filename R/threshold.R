@@ -371,7 +371,7 @@ scut_threshold.default <- function (prediction, expected, loss.function = NA,
     }
   }
 
-  if (class(expected) == "mldr") {
+  if (is(expected, "mldr")) {
     expected <- expected$dataset[expected$labels$index]
   }
 
@@ -450,7 +450,7 @@ subset_correction <- function(mlresult, train_y, probability = FALSE) {
   bip <- as.bipartition(mlresult)
   prob <- as.probability(mlresult)
 
-  if (class(train_y) == "mldr") {
+  if (is(train_y, "mldr")) {
     train_y <- train_y$dataset[train_y$labels$index]
   }
 

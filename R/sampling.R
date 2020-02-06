@@ -64,7 +64,7 @@ create_holdout_partition <- function (mdata,
                                       method = c("random", "iterative",
                                                  "stratified")) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata,"mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -140,7 +140,7 @@ create_kfold_partition <- function (mdata,
                                     k = 10,
                                     method = c("random", "iterative",
                                                "stratified")) {
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -261,7 +261,7 @@ create_subset <- function(mdata, rows, cols = NULL) {
 #' dataset <- partition_fold(folds, 3, TRUE)
 #' # dataset$train, dataset$test, #dataset$validation
 partition_fold <- function(kfold, n, has.validation = FALSE) {
-    if (class(kfold) != "kFoldPartition") {
+    if (!is(kfold,"kFoldPartition")) {
         stop("Second argument must be an 'kFoldPartition' object")
     }
 

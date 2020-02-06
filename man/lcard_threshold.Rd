@@ -8,11 +8,9 @@
 \usage{
 lcard_threshold(prediction, cardinality, probability = FALSE)
 
-\method{lcard_threshold}{default}(prediction, cardinality,
-  probability = FALSE)
+\method{lcard_threshold}{default}(prediction, cardinality, probability = FALSE)
 
-\method{lcard_threshold}{mlresult}(prediction, cardinality,
-  probability = FALSE)
+\method{lcard_threshold}{mlresult}(prediction, cardinality, probability = FALSE)
 }
 \arguments{
 \item{prediction}{A matrix or mlresult.}
@@ -48,11 +46,12 @@ Read, J., Pfahringer, B., Holmes, G., & Frank, E. (2011). Classifier chains
  for multi-label classification. Machine Learning, 85(3), 333-359.
 }
 \seealso{
-Other threshold: \code{\link{fixed_threshold}},
-  \code{\link{mcut_threshold}},
-  \code{\link{pcut_threshold}},
-  \code{\link{rcut_threshold}},
-  \code{\link{scut_threshold}},
-  \code{\link{subset_correction}}
+Other threshold: 
+\code{\link{fixed_threshold}()},
+\code{\link{mcut_threshold}()},
+\code{\link{pcut_threshold}()},
+\code{\link{rcut_threshold}()},
+\code{\link{scut_threshold}()},
+\code{\link{subset_correction}()}
 }
 \concept{threshold}

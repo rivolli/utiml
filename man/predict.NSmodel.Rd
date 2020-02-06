@@ -4,9 +4,14 @@
 \alias{predict.NSmodel}
 \title{Predict Method for Nested Stacking}
 \usage{
-\method{predict}{NSmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ..., cores = NULL,
-  seed = getOption("utiml.seed", NA))
+\method{predict}{NSmodel}(
+  object,
+  newdata,
+  probability = getOption("utiml.use.probs", TRUE),
+  ...,
+  cores = NULL,
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{object}{Object of class '\code{NSmodel}'.}

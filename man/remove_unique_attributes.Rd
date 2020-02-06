@@ -22,12 +22,13 @@ alt.toy$dataset$ratt10 <- mean(alt.toy$dataset$ratt10)
 new.toy <- remove_unique_attributes(alt.toy)
 }
 \seealso{
-Other pre process: \code{\link{fill_sparse_mldata}},
-  \code{\link{normalize_mldata}},
-  \code{\link{remove_attributes}},
-  \code{\link{remove_labels}},
-  \code{\link{remove_skewness_labels}},
-  \code{\link{remove_unlabeled_instances}},
-  \code{\link{replace_nominal_attributes}}
+Other pre process: 
+\code{\link{fill_sparse_mldata}()},
+\code{\link{normalize_mldata}()},
+\code{\link{remove_attributes}()},
+\code{\link{remove_labels}()},
+\code{\link{remove_skewness_labels}()},
+\code{\link{remove_unlabeled_instances}()},
+\code{\link{replace_nominal_attributes}()}
 }
 \concept{pre process}

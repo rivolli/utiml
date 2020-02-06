@@ -50,7 +50,7 @@ ns <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
                chain = NA, ..., predict.params = list(), cores = NULL,
                seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -138,7 +138,7 @@ predict.NSmodel <- function(object, newdata,
                             ..., cores = NULL,
                             seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "NSmodel") {
+  if (!is(object, "NSmodel")) {
     stop("First argument must be an NSmodel object")
   }
 

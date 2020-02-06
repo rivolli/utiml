@@ -53,7 +53,7 @@ prudent <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "S
                     phi = 0, ..., cores = getOption("utiml.cores", 1),
                     seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -146,7 +146,7 @@ predict.PruDentmodel <- function(object, newdata,
                                  ..., cores = getOption("utiml.cores", 1),
                                  seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "PruDentmodel") {
+  if (!is(object, "PruDentmodel")) {
     stop("First argument must be an PruDentmodel object")
   }
 

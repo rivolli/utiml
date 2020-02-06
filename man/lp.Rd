@@ -4,9 +4,13 @@
 \alias{lp}
 \title{Label Powerset for multi-label Classification}
 \usage{
-lp(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
-  cores = getOption("utiml.cores", 1), seed = getOption("utiml.seed",
-  NA))
+lp(
+  mdata,
+  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
+  ...,
+  cores = getOption("utiml.cores", 1),
+  seed = getOption("utiml.seed", NA)
+)
 }
 \arguments{
 \item{mdata}{A mldr dataset used to train the binary models.}
@@ -46,18 +50,33 @@ Boutell, M. R., Luo, J., Shen, X., & Brown, C. M. (2004). Learning
    multi-label scene classification. Pattern Recognition, 37(9), 1757-1771.
 }
 \seealso{
-Other Transformation methods: \code{\link{brplus}},
-  \code{\link{br}}, \code{\link{cc}}, \code{\link{clr}},
-  \code{\link{ctrl}}, \code{\link{dbr}}, \code{\link{ebr}},
-  \code{\link{ecc}}, \code{\link{eps}}, \code{\link{esl}},
-  \code{\link{homer}}, \code{\link{lift}},
-  \code{\link{mbr}}, \code{\link{ns}}, \code{\link{ppt}},
-  \code{\link{prudent}}, \code{\link{ps}},
-  \code{\link{rakel}}, \code{\link{rdbr}},
-  \code{\link{rpc}}
+Other Transformation methods: 
+\code{\link{brplus}()},
+\code{\link{br}()},
+\code{\link{cc}()},
+\code{\link{clr}()},
+\code{\link{ctrl}()},
+\code{\link{dbr}()},
+\code{\link{ebr}()},
+\code{\link{ecc}()},
+\code{\link{eps}()},
+\code{\link{esl}()},
+\code{\link{homer}()},
+\code{\link{lift}()},
+\code{\link{mbr}()},
+\code{\link{ns}()},
+\code{\link{ppt}()},
+\code{\link{prudent}()},
+\code{\link{ps}()},
+\code{\link{rakel}()},
+\code{\link{rdbr}()},
+\code{\link{rpc}()}
 
-Other Powerset: \code{\link{eps}}, \code{\link{ppt}},
-  \code{\link{ps}}, \code{\link{rakel}}
+Other Powerset: 
+\code{\link{eps}()},
+\code{\link{ppt}()},
+\code{\link{ps}()},
+\code{\link{rakel}()}
 }
 \concept{Powerset}
 \concept{Transformation methods}

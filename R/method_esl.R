@@ -48,7 +48,7 @@ esl <- function(mdata,
                 m=10, w=1, ..., cores = getOption("utiml.cores", 1),
                 seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(mdata) != "mldr") {
+  if (!is(mdata, "mldr")) {
     stop("First argument must be an mldr object")
   }
 
@@ -113,7 +113,7 @@ predict.ESLmodel <- function(object, newdata,
                              ..., cores = getOption("utiml.cores", 1),
                              seed = getOption("utiml.seed", NA)) {
   # Validations
-  if (class(object) != "ESLmodel") {
+  if (!is(object, "ESLmodel")) {
     stop("First argument must be an ESLmodel object")
   }
 

@@ -4,8 +4,7 @@
 \alias{predict.BASELINEmodel}
 \title{Predict Method for BASELINE}
 \usage{
-\method{predict}{BASELINEmodel}(object, newdata,
-  probability = getOption("utiml.use.probs", TRUE), ...)
+\method{predict}{BASELINEmodel}(object, newdata, probability = getOption("utiml.use.probs", TRUE), ...)
 }
 \arguments{
 \item{object}{Object of class '\code{BASELINEmodel}'.}
