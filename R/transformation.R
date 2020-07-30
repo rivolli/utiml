@@ -36,7 +36,7 @@ utiml_create_model <- function(utiml.object, ...) {
     class(model) <- "emptyModel"
   } else {
     # Call dynamic multilabel model with merged parameters
-    model <- do.call(mltrain, c(list(object = utiml.object), ...))
+    model <- do.call(mltrain, c(list(object = utiml.object), list(...)))
   }
   attr(model, "dataset") <- utiml.object$mldataset
   attr(model, "label") <- utiml.object$labelname
@@ -57,7 +57,8 @@ utiml_predict <- function (predictions, probability) {
 }
 
 utiml_predict_binary_model <- function(model, newdata, ...) {
-  result <- do.call(mlpredict, c(list(model = model, newdata = newdata), ...))
+  result <- do.call(mlpredict, c(list(model = model, newdata = newdata),
+                                 list(...)))
 
   if (any(rownames(result) != rownames(newdata))) {
     where <- paste(attr(model, "dataset"), "/", attr(model, "label"))
@@ -78,7 +79,8 @@ utiml_predict_binary_model <- function(model, newdata, ...) {
 
 utiml_predict_multiclass_model <- function (model, newdata, labels, probability,
                                             ...) {
-  result <- do.call(mlpredict, c(list(model = model, newdata = newdata), ...))
+  result <- do.call(mlpredict, c(list(model = model, newdata = newdata),
+                                 list(...)))
   classes <- do.call(rbind, lapply(
     strsplit(as.character(result$prediction),""), as.numeric)
   )
