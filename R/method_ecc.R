@@ -110,7 +110,14 @@ ecc <- function(mdata,
     ndata <- create_subset(mdata, idx[[iteration]]$rows, idx[[iteration]]$cols)
     chain <- idx[[iteration]]$chain
 
-    ccmodel <- cc(ndata, base.algorithm, chain, ..., cores = cores, seed = seed)
+    args <- list(...)
+    # if rowwise weights are passed to base algorithm, subsample weights
+    if (base.algorithm == "XGB" && "weight" %in% names(args)) {
+      args$weight <- args$weight[idx[[iteration]]$rows]
+    }
+
+    ccmodel <- do.call("cc", c(list(ndata, base.algorithm, chain), args,
+                               list(cores = cores, seed = seed)))
     ccmodel$attrs <- colnames(ndata$dataset[, ndata$attributesIndexes])
     rm(ndata)
 
