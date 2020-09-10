@@ -26,6 +26,9 @@
 #'    \item{model}{A LP model contained only the most common labelsets.}
 #'   }
 #' @references
+#'  Read, J., Pfahringer, B., & Holmes, G. (2008). Multi-label classification
+#'   using ensembles of pruned sets. In Proceedings - IEEE International
+#'   Conference on Data Mining, ICDM (pp. 995–1000).
 #'  Read, J. (2008). A pruned problem transformation method for multi-label
 #'   classification. In Proceedings of the New Zealand Computer Science
 #'   Research Student Conference (pp. 143-150).
@@ -62,6 +65,10 @@ ppt <- function (mdata,
                    call = match.call())
 
   common.labelsets <- names(which(mdata$labelsets > p))
+  if (length(common.labelsets) == 0) {
+    stop(paste("All labelsets appear less than", p,
+               "time(s) in the training data."))
+  }
   instances <- apply(mdata$dataset[, mdata$labels$index], 1, paste, collapse='')
   original.instances <- instances %in% common.labelsets
 
@@ -77,8 +84,8 @@ ppt <- function (mdata,
     #Sort by the number of labels and then for frequency
     labelsets <- labelsets[rev(order(unlist(lapply(labelsets, sum))))]
 
-    removed.instances <- which(!original.instances)
-    Si <- mdata$dataset[removed.instances, mdata$labels$index]
+    rem.inst <- which(!original.instances)
+    Si <- mdata$dataset[rem.inst, mdata$labels$index]
     has.match <- do.call(cbind, lapply(labelsets, function (ls) {
       colSums(ls == 1 & ls == t(Si)) == sum(ls)
     }))
@@ -100,7 +107,7 @@ ppt <- function (mdata,
     })
     rm(has.match)
 
-    ndata <- merge_pruned_instances(mdata, removed.instances, inst.lab,
+    ndata <- merge_pruned_instances(mdata, rem.inst, inst.lab,
                                     labelsets)
   }
 
