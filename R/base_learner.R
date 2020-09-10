@@ -433,7 +433,6 @@ mltrain.baseXGB <- function(object, ...) {
     nthread = 1,
     nrounds = 3,
     verbose = FALSE,
-    silent = 1,
     objective = ifelse(nlevels(object$data[, object$labelindex]) == 2,
                        "binary:logistic", "multi:softprob")
   )
