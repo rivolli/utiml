@@ -61,9 +61,9 @@ model <- ps(toyml, "RF", p=4, strategy="B", b=4)
 }
 }
 \references{
-Read, J. (2008). A pruned problem transformation method for multi-label
- classification. In Proceedings of the New Zealand Computer Science Research
- Student Conference (pp. 143-150).
+Read, J., Pfahringer, B., & Holmes, G. (2008). Multi-label classification
+  using ensembles of pruned sets. In Proceedings - IEEE International
+  Conference on Data Mining, ICDM (pp. 995–1000).
 }
 \seealso{
 Other Transformation methods: 

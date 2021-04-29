@@ -1,13 +1,14 @@
 # Changelog
 
-## utiml 0.1.7 (development)
+## utiml 0.1.7 (current)
 
 ### Bug fixes
 * Throws an error message for ps, ppt and eps when all labelsets are pruned
 * BugFix ps, ppt and eps when there is no labelsets to prune
 * Weights passed incorrectly to `xgboost` by base learner
+* Fixes for future CRAN incompatibilities
 
-## utiml 0.1.6 (current)
+## utiml 0.1.6
 * Fixes for CRAN incompatibilities
 
 ## utiml 0.1.5

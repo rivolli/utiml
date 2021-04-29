@@ -1,7 +1,8 @@
 ## Test environments
-* local Debian 9 install, R 3.6.2
-* Ubuntu 16.04.6 LTS on Travis CI, R version 3.6.2
+* local Debian 10 install, R 4.0.3
+* Ubuntu Linux 20.04.1 LTS on Travis CI, R version 4.0.3
 * win-builder (devel and release)
+
 
 ## R CMD check results
 There were no ERRORs, WARNINGs and NOTEs.

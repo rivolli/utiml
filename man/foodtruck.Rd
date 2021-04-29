@@ -4,7 +4,9 @@
 \name{foodtruck}
 \alias{foodtruck}
 \title{Foodtruck multi-label dataset.}
-\format{A mldr object with 407 instances, 21 features and 12 labels:}
+\format{
+A mldr object with 407 instances, 21 features and 12 labels:
+}
 \source{
 The dataset is described in:
 Rivolli A., Parker L.C., de Carvalho A.C.P.L.F. (2017) Food Truck
