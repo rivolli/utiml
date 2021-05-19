@@ -95,27 +95,27 @@ test_that("Classifier Chain", {
   expect_error(cc(train, "RANDOM", chain=c(new.chain, "extra")))
 })
 
-test_that("CTRL", {
-  if (!requireNamespace("FSelector", quietly = TRUE)) {
-    skip("CTRL")
-    return(FALSE)
-  }
-  model <- ctrl(train, "RANDOM")
-  pred1 <- baseTest(model, "CTRLmodel")
-  baseTest(ctrl(train, "RANDOM", validation.threshold = 1), "CTRLmodel")
-
-  model2 <- ctrl(train, "RANDOM", m = 2,
-                 validation.size = 0.2, validation.threshold = 0)
-  pred2 <- baseTest(model2, "CTRLmodel")
-  expect_equal(model2$rounds, 2)
-
-  expect_error(ctrl(train, "RANDOM", 0))
-  expect_error(ctrl(train, "RANDOM", validation.size=0))
-  expect_error(ctrl(train, "RANDOM", validation.size=1))
-  expect_error(ctrl(train, "RANDOM", validation.threshold=1.1))
-  expect_error(predict(model, test, "ABC"))
-  expect_error(predict(model, test, NULL))
-})
+#test_that("CTRL", {
+#  if (!requireNamespace("FSelector", quietly = TRUE)) {
+#    skip("CTRL")
+#    return(FALSE)
+#  }
+#  model <- ctrl(train, "RANDOM")
+#  pred1 <- baseTest(model, "CTRLmodel")
+#  baseTest(ctrl(train, "RANDOM", validation.threshold = 1), "CTRLmodel")
+#
+#  model2 <- ctrl(train, "RANDOM", m = 2,
+#                 validation.size = 0.2, validation.threshold = 0)
+#  pred2 <- baseTest(model2, "CTRLmodel")
+#  expect_equal(model2$rounds, 2)
+#
+#  expect_error(ctrl(train, "RANDOM", 0))
+#  expect_error(ctrl(train, "RANDOM", validation.size=0))
+#  expect_error(ctrl(train, "RANDOM", validation.size=1))
+#  expect_error(ctrl(train, "RANDOM", validation.threshold=1.1))
+#  expect_error(predict(model, test, "ABC"))
+#  expect_error(predict(model, test, NULL))
+#})
 
 test_that("EBR", {
   model1 <- ebr(train, "RANDOM")
