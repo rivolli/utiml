@@ -7,6 +7,7 @@
 * BugFix ps, ppt and eps when there is no labelsets to prune
 * Weights passed incorrectly to `xgboost` by base learner
 * Fixes for future CRAN incompatibilities
+* Improvement in RAkEL letting the user define any value for m
 
 ## utiml 0.1.6
 * Fixes for CRAN incompatibilities

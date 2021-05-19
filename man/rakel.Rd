@@ -37,7 +37,8 @@ than 1 require the \pkg{parallel} package. (Default:
 \code{options("utiml.cores", 1)})}
 
 \item{seed}{An optional integer used to set the seed. This is useful when
-the method is run in parallel. (Default: \code{options("utiml.seed", NA)})}
+the method is running in parallel. (Default:
+\code{options("utiml.seed", NA)})}
 }
 \value{
 An object of class \code{RAkELmodel} containing the set of fitted

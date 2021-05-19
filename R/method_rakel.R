@@ -22,7 +22,8 @@
 #'  than 1 require the \pkg{parallel} package. (Default:
 #'  \code{options("utiml.cores", 1)})
 #' @param seed An optional integer used to set the seed. This is useful when
-#'  the method is run in parallel. (Default: \code{options("utiml.seed", NA)})
+#'  the method is running in parallel. (Default:
+#'  \code{options("utiml.seed", NA)})
 #' @return An object of class \code{RAkELmodel} containing the set of fitted
 #'   models, including:
 #'   \describe{
@@ -61,9 +62,7 @@ rakel <- function (mdata,
     labels = rownames(mdata$labels),
     overlapping = overlapping,
     k = k,
-    m = ifelse(overlapping,
-               min(m, base::choose(mdata$measures$num.labels, k)),
-               ceiling(mdata$measures$num.labels / k)),
+    m = ifelse(overlapping, m, ceiling(mdata$measures$num.labels / k)),
     labelsets = list(),
     call = match.call()
   )
@@ -75,8 +74,9 @@ rakel <- function (mdata,
 
   if (overlapping) {
     #RAkEL overllaping
-    rkmodel$labelsets <- sample(utils::combn(rkmodel$labels, k, simplify=FALSE),
-                                rkmodel$m)
+    rkmodel$labelsets <- lapply(seq(rkmodel$m), function(i) {
+      sample(rkmodel$labels, k)
+    })
 
     #TODO validate if all labels are used
 
