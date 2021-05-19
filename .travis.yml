@@ -7,4 +7,8 @@ sudo: required
 r_packages:
  - mldr
 
+env:
+ global:
+   - _R_CHECK_FORCE_SUGGESTS_: false
+
 warnings_are_errors: true

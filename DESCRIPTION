@@ -29,10 +29,8 @@ Suggests:
     kknn,
     knitr,
     randomForest,
-    rJava(>= 0.9),
     rmarkdown,
     rpart,
-    RWeka(>= 0.4),
     testthat,
     xgboost(>= 0.6-4)
 License: GPL | file LICENSE

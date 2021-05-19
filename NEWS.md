@@ -2,6 +2,9 @@
 
 ## utiml 0.1.7 (current)
 
+### Major changes
+* Removing support to SMO and J48 base algorithms due to incompatibilites
+
 ### Bug fixes
 * Throws an error message for ps, ppt and eps when all labelsets are pruned
 * BugFix ps, ppt and eps when there is no labelsets to prune
