@@ -39,7 +39,7 @@ An object of type mlresult, based on the parameter probability.
 This function predicts values based upon a model trained by \code{mbr}.
 }
 \examples{
-\dontrun{
+\donttest{
 # Predict SVM scores
 model <- mbr(toyml)
 pred <- predict(model, toyml)

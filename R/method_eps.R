@@ -42,7 +42,7 @@
 #' model <- eps(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' ##Change default configurations
 #' model <- eps(toyml, "RF", m=15, subsample=0.4, p=4, strategy="B", b=4)
 #' }
@@ -154,6 +154,9 @@ predict.EPSmodel <- function(object, newdata, threshold = 0.5,
 #' Print EPS model
 #' @param x The ps model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.EPSmodel <- function(x, ...) {
   cat("Ensemble of Pruned Set Model\n\nCall:\n")

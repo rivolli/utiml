@@ -38,10 +38,10 @@
 #' model <- ns(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
-#' # Use a specific chain with J48 classifier
+#' \donttest{
+#' # Use a specific chain with C5.0 classifier
 #' mychain <- sample(rownames(toyml$labels))
-#' model <- ns(toyml, 'J48', mychain)
+#' model <- ns(toyml, 'C5.0', mychain)
 #'
 #' # Set a specific parameter
 #' model <- ns(toyml, 'KNN', k=5)
@@ -126,7 +126,7 @@ ns <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
 #' model <- ns(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Predict SVM bipartitions
 #' pred <- predict(model, toyml, probability = FALSE)
 #'
@@ -166,6 +166,9 @@ predict.NSmodel <- function(object, newdata,
 #' Print NS model
 #' @param x The ns model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.NSmodel <- function(x, ...) {
     cat("Nested Stacking Model\n\nCall:\n")

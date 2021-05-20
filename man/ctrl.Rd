@@ -77,16 +77,16 @@ Dependencies:
    \link[FSelector]{relief} method available in \pkg{FSelector} package.
 }
 \examples{
-\dontrun{
+\donttest{
 model <- ctrl(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-# Change default values and use 4 CORES
+# Change default values and use 2 CORES
 model <- ctrl(toyml, 'C5.0', m = 10, validation.size = 0.4,
-              validation.threshold = 0.5, cores = 4)
+              validation.threshold = 0.5, cores = 2)
 
 # Use seed
-model <- ctrl(toyml, 'RF', cores = 4, seed = 123)
+model <- ctrl(toyml, 'RF', cores = 2, seed = 123)
 
 # Set a parameters for all subproblems
 model <- ctrl(dataset$train, 'KNN', k=5)

@@ -79,7 +79,7 @@ two groups:
 model <- brplus(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
+\donttest{
 # Predict SVM bipartitions and change the method to use No Update strategy
 pred <- predict(model, toyml, strategy = 'NU', probability = FALSE)
 

@@ -343,13 +343,13 @@ score_driven_threshold <- function () {
 #' thresholds <- scut_threshold(prediction, classes)
 #' fixed_threshold(prediction, thresholds)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Penalizes only FP predictions
 #' mylossfunc <- function (real, predicted) {
 #'    mean(predicted - real * predicted)
 #' }
 #' prediction <- predict(br(toyml, "RANDOM"), toyml)
-#' scut_threshold(prediction, toyml, loss.function = mylossfunc, cores = 5)
+#' scut_threshold(prediction, toyml, loss.function = mylossfunc, cores = 2)
 #' }
 scut_threshold <- function (prediction, expected, loss.function = NA,
                             cores = getOption("utiml.cores", 1)) {

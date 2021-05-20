@@ -46,7 +46,7 @@ You can also specify which measures do you desire use.
 }}
 
 \examples{
-\dontrun{
+\donttest{
 prediction <- predict(br(toyml), toyml)
 
 # Compute all measures

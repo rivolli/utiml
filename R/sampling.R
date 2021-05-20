@@ -324,7 +324,7 @@ utiml_validate_splitmethod <- function (method) {
 #  ECML PKDD (pp. 145-158).
 #
 # @examples
-# \dontrun{
+# \donttest{
 # # Create 3 partitions for train, validation and test
 # indexes <- utiml_iterative_split(emotions, c(0.6,0.1,0.3))
 #
@@ -409,7 +409,7 @@ utiml_iterative_split <- function(mdata, r) {
 # @return A list with k disjoint indexes subsets S1, . . .Sk.
 #
 # @examples
-# \dontrun{
+# \donttest{
 # utiml_random_split(emotions, c(0.6, 0.2, 0.2))
 # }
 utiml_random_split <- function(mdata, r) {
@@ -445,7 +445,7 @@ utiml_random_split <- function(mdata, r) {
 #  ECML PKDD (pp. 145-158).
 #
 # @examples
-# \dontrun{
+# \donttest{
 # # Create 3 partitions for train, validation and test
 # indexes <- utiml_stratified_split(emotions, c(0.6,0.1,0.3))
 #
@@ -493,6 +493,9 @@ utiml_stratified_split <- function(mdata, r) {
 #'
 #' @param x The kFoldPartition object
 #' @param ... ignored
+#'
+#' @return No return value, called for print folds' detail
+#'
 #' @export
 print.kFoldPartition <- function (x, ...) {
   cat("K Fold Partition", paste("(k = ",x$k,")", sep=''), "\n\n")

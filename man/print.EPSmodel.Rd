@@ -11,6 +11,9 @@
 
 \item{...}{ignored}
 }
+\value{
+No return value, called for print model's detail
+}
 \description{
 Print EPS model
 }

@@ -51,12 +51,12 @@
 #' model <- mbr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
-#' # Use 10 folds and different phi correlation with J48 classifier
-#' model <- mbr(toyml, 'J48', 10, 0.2)
+#' \donttest{
+#' # Use 10 folds and different phi correlation with C5.0 classifier
+#' model <- mbr(toyml, 'C5.0', 10, 0.2)
 #'
-#' # Run with 4 cores
-#'  model <- mbr(toyml, "SVM", cores = 4, seed = 123)
+#' # Run with 2 cores
+#'  model <- mbr(toyml, "SVM", cores = 2, seed = 123)
 #'
 #' # Set a specific parameter
 #' model <- mbr(toyml, 'KNN', k=5)
@@ -165,7 +165,7 @@ mbr <- function(mdata,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Predict SVM scores
 #' model <- mbr(toyml)
 #' pred <- predict(model, toyml)
@@ -274,6 +274,9 @@ utiml_labels_correlation <- function(mdata) {
 #' Print MBR model
 #' @param x The mbr model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.MBRmodel <- function(x, ...) {
   cat("Classifier Meta-BR (also called 2BR)\n\nCall:\n")

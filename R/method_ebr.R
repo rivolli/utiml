@@ -48,15 +48,15 @@
 #' model <- ebr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
-#' # Use J48 with 90% of instances and only 5 rounds
-#' model <- ebr(toyml, 'J48', m = 5, subsample = 0.9)
+#' \donttest{
+#' # Use C5.0 with 90% of instances and only 5 rounds
+#' model <- ebr(toyml, 'C5.0', m = 5, subsample = 0.9)
 #'
 #' # Use 75% of attributes
 #' model <- ebr(dataset$train, attr.space = 0.75)
 #'
-#' # Running in 4 cores and define a specific seed
-#' model1 <- ebr(toyml, cores=4, seed = 312)
+#' # Running in 2 cores and define a specific seed
+#' model1 <- ebr(toyml, cores=2, seed = 312)
 #' }
 ebr <- function(mdata,
                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
@@ -143,13 +143,13 @@ ebr <- function(mdata,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Predict SVM scores
 #' model <- ebr(toyml)
 #' pred <- predict(model, toyml)
 #'
-#' # Predict SVM bipartitions running in 6 cores
-#' pred <- predict(model, toyml, prob = FALSE, cores = 6)
+#' # Predict SVM bipartitions running in 2 cores
+#' pred <- predict(model, toyml, prob = FALSE, cores = 2)
 #'
 #' # Return the classes with the highest score
 #' pred <- predict(model, toyml, vote = 'max')
@@ -189,6 +189,9 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "maj",
 #' Print EBR model
 #' @param x The ebr model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.EBRmodel <- function(x, ...) {
   cat("Ensemble of Binary Relevance Model\n\nCall:\n")

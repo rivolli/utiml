@@ -39,9 +39,9 @@
 #' model <- brplus(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
-#' # Use Random Forest as base algorithm and 4 cores
-#' model <- brplus(toyml, 'RF', cores = 4, seed = 123)
+#' \donttest{
+#' # Use Random Forest as base algorithm and 2 cores
+#' model <- brplus(toyml, 'RF', cores = 2, seed = 123)
 #' }
 brplus <- function(mdata,
                    base.algorithm = getOption("utiml.base.algorithm", "SVM"),
@@ -143,7 +143,7 @@ brplus <- function(mdata,
 #' model <- brplus(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Predict SVM bipartitions and change the method to use No Update strategy
 #' pred <- predict(model, toyml, strategy = 'NU', probability = FALSE)
 #'
@@ -224,6 +224,9 @@ predict.BRPmodel <- function(object, newdata,
 #' Print BRP model
 #' @param x The brp model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.BRPmodel <- function(x, ...) {
   cat("Classifier BRplus (also called BR+)\n\nCall:\n")

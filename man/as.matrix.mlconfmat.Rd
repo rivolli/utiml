@@ -11,6 +11,9 @@
 
 \item{...}{passed to as.matrix}
 }
+\value{
+A confusion matrix with TP, TN, FP and FN columns
+}
 \description{
 Convert a multi-label Confusion Matrix to matrix
 }

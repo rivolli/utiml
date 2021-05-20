@@ -44,13 +44,13 @@ An object of type mlresult, based on the parameter probability.
 This method predicts values based upon a model trained by \code{\link{ecc}}.
 }
 \examples{
-\dontrun{
+\donttest{
 # Predict SVM scores
 model <- ecc(toyml)
 pred <- predict(model, toyml)
 
-# Predict SVM bipartitions running in 6 cores
-pred <- predict(model, toyml, probability = FALSE, cores = 6)
+# Predict SVM bipartitions running in 2 cores
+pred <- predict(model, toyml, probability = FALSE, cores = 2)
 
 # Return the classes with the highest score
 pred <- predict(model, toyml, vote.schema = 'max')

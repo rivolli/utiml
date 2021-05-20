@@ -46,9 +46,6 @@ build a specific model for each label combination.
 \examples{
 model <- rpc(toyml, "RANDOM")
 pred <- predict(model, toyml)
-
-\dontrun{
-}
 }
 \references{
 Hullermeier, E., Furnkranz, J., Cheng, W., & Brinker, K. (2008).

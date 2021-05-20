@@ -34,7 +34,7 @@
 #' model <- lift(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Runing lift with a specific ratio
 #' model <- lift(toyml, "RF", 0.15)
 #' }
@@ -164,6 +164,9 @@ predict.LIFTmodel <- function(object, newdata,
 #' Print LIFT model
 #' @param x The lift model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.LIFTmodel <- function(x, ...) {
   cat("LIFT Model\n\nCall:\n")

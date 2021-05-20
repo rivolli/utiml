@@ -23,7 +23,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' model <- br(toyml, "KNN")
 #' predictions <- list(
 #'  predict(model, toyml[1:10], k=1),

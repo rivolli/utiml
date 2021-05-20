@@ -36,9 +36,6 @@
 #' @examples
 #' model <- clr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
-#'
-#' \dontrun{
-#' }
 clr <- function(mdata,
                 base.algorithm = getOption("utiml.base.algorithm", "SVM"), ...,
                 cores = getOption("utiml.cores", 1),
@@ -89,9 +86,6 @@ clr <- function(mdata,
 #' @examples
 #' model <- clr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
-#'
-#' \dontrun{
-#' }
 predict.CLRmodel <- function(object, newdata,
                             probability = getOption("utiml.use.probs", TRUE),
                             ..., cores = getOption("utiml.cores", 1),
@@ -129,6 +123,9 @@ predict.CLRmodel <- function(object, newdata,
 #' Print CLR model
 #' @param x The br model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.CLRmodel <- function(x, ...) {
   cat("CLR Model\n\nCall:\n")

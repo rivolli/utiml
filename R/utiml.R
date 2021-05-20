@@ -82,6 +82,20 @@
 #'  We use the \code{\link{mldr}} package, to manipulate multi-label data.
 #'  See its documentation to more information about handle multi-label dataset.
 #'
+#' @section Cite as:
+#'  \preformatted{
+#'   @article\{RJ-2018-041,
+#'      author = \{Adriano Rivolli and Andre C. P. L. F. de Carvalho\},
+#'      title = \{\{The utiml Package: Multi-label Classification in R\}\},
+#'      year = \{2018\},
+#'      journal = \{\{The R Journal\}\},
+#'      doi = \{10.32614/RJ-2018-041\},
+#'      url = \{https://doi.org/10.32614/RJ-2018-041\},
+#'      pages = \{24--37\},
+#'      volume = \{10\},
+#'      number = \{2\}
+#'  \}}
+#'
 #' @author
 #'  \itemize{
 #'    \item Adriano Rivolli <rivolli@@utfpr.edu.br>

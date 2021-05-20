@@ -30,13 +30,13 @@
 #' model <- br(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Use SVM as base algorithm
 #' model <- br(toyml, "SVM")
 #' pred <- predict(model, toyml)
 #'
-#' # Change the base algorithm and use 4 CORES
-#' model <- br(toyml[1:50], 'RF', cores = 4, seed = 123)
+#' # Change the base algorithm and use 2 CORES
+#' model <- br(toyml[1:50], 'RF', cores = 2, seed = 123)
 #'
 #' # Set a parameters for all subproblems
 #' model <- br(toyml, 'KNN', k=5)
@@ -99,13 +99,13 @@ br <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
 #' model <- br(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Predict SVM scores
 #' model <- br(toyml, "SVM")
 #' pred <- predict(model, toyml)
 #'
-#' # Predict SVM bipartitions running in 4 cores
-#' pred <- predict(model, toyml, probability = FALSE, CORES = 4)
+#' # Predict SVM bipartitions running in 2 cores
+#' pred <- predict(model, toyml, probability = FALSE, CORES = 2)
 #'
 #' # Passing a specif parameter for SVM predict algorithm
 #' pred <- predict(model, dataset$test, na.action = na.fail)
@@ -140,6 +140,9 @@ predict.BRmodel <- function(object, newdata,
 #' Print BR model
 #' @param x The br model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.BRmodel <- function(x, ...) {
   cat("Binary Relevance Model\n\nCall:\n")

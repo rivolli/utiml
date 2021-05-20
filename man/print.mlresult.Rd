@@ -11,6 +11,9 @@
 
 \item{...}{Extra parameters for print method}
 }
+\value{
+No return value, called for print a prediction result
+}
 \description{
 Print the mlresult
 }

@@ -62,7 +62,7 @@ available. This second does not support parallelize the prediction, however
 stabilizes earlier than batch mode.
 }
 \examples{
-\dontrun{
+\donttest{
 # Predict SVM scores
 model <- rdbr(toyml)
 pred <- predict(model, toyml)

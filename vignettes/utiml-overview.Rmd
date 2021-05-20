@@ -302,22 +302,22 @@ pred <- predict(model, toyml)
 Almost all multi-label methods can run in parallel. The train and prediction methods receive a parameter called `cores` that specify the number of cores used to run the method. For some multi-label methods are not possible running in multi-core, then read the documentation of each method, for more details.
 
 ```r
-# Running Binary Relevance method using 4 cores
-brmodel <- br(toyml, "SVM", cores=4)
-prediction <- predict(brmodel, toyml, cores=4)
+# Running Binary Relevance method using 2 cores
+brmodel <- br(toyml, "SVM", cores=2)
+prediction <- predict(brmodel, toyml, cores=2)
 ```
 
 If you need of reproducibility, you can set a specific seed:
 
 ```r
-# Running Binary Relevance method using 4 cores
-brmodel <- br(toyml, "SVM", cores=4, seed=1984)
-prediction <- predict(brmodel, toyml, seed=1984, cores=4)
+# Running Binary Relevance method using 2 cores
+brmodel <- br(toyml, "SVM", cores=2, seed=1984)
+prediction <- predict(brmodel, toyml, seed=1984, cores=2)
 ```
 
 The `cv` method also supports multicores:
 ```r
-results <- cv(toyml, method="ecc", base.algorith="RF", subsample = 0.9, attr.space = 0.9, cv.folds=5, cv.cores=4)
+results <- cv(toyml, method="ecc", base.algorith="RF", subsample = 0.9, attr.space = 0.9, cv.folds=5, cv.cores=2)
 ```
 
 ## 6. Thresholds
@@ -340,7 +340,7 @@ newpred <- pcut_threshold(prediction, ratio=0.65)
 newpred <- rcut_threshold(prediction, k=3)
 
 # Choose the best threshold values based on a Mean Squared Error 
-thresholds <- scut_threshold(prediction, toyml, cores = 5)
+thresholds <- scut_threshold(prediction, toyml, cores = 2)
 newpred <- fixed_threshold(prediction, thresholds)
 
 #Predict only the labelsets present in the train data

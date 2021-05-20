@@ -39,9 +39,9 @@
 #' model <- dbr(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
-#' # Use Random Forest as base algorithm and 4 cores
-#' model <- dbr(toyml, 'RF', cores = 4)
+#' \donttest{
+#' # Use Random Forest as base algorithm and 2 cores
+#' model <- dbr(toyml, 'RF', cores = 2)
 #' }
 dbr <- function(mdata,
                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
@@ -122,7 +122,7 @@ dbr <- function(mdata,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Predict SVM scores
 #' model <- dbr(toyml)
 #' pred <- predict(model, toyml)
@@ -184,6 +184,9 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
 #' Print DBR model
 #' @param x The dbr model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.DBRmodel <- function(x, ...) {
   cat("Classifier DBR\n\nCall:\n")

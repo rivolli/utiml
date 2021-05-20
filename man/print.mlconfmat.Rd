@@ -11,6 +11,9 @@
 
 \item{...}{ignored}
 }
+\value{
+No return value, called for print a confusion matrix
+}
 \description{
 Print a Multi-label Confusion Matrix
 }

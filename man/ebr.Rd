@@ -68,15 +68,15 @@ If you want to reproduce the same classification and obtain the same
 model <- ebr(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
-# Use J48 with 90\% of instances and only 5 rounds
-model <- ebr(toyml, 'J48', m = 5, subsample = 0.9)
+\donttest{
+# Use C5.0 with 90\% of instances and only 5 rounds
+model <- ebr(toyml, 'C5.0', m = 5, subsample = 0.9)
 
 # Use 75\% of attributes
 model <- ebr(dataset$train, attr.space = 0.75)
 
-# Running in 4 cores and define a specific seed
-model1 <- ebr(toyml, cores=4, seed = 312)
+# Running in 2 cores and define a specific seed
+model1 <- ebr(toyml, cores=2, seed = 312)
 }
 }
 \references{

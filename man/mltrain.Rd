@@ -68,7 +68,7 @@ mltrain.baseFOO <- function (object, ...) {
 # Using this base method with Binary Relevance
 brmodel <- br(toyml, 'FOO')
 
-\dontrun{
+\donttest{
 
 # Create a SVM method using the e1071 package
 library(e1071)

@@ -55,7 +55,7 @@ classes to predict multi-label data.
 model <- ps(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
+\donttest{
 ##Change default configurations
 model <- ps(toyml, "RF", p=4, strategy="B", b=4)
 }

@@ -42,7 +42,7 @@ the expected values and also a lot of pre-processed information related with
 these data.
 }
 \examples{
-\dontrun{
+\donttest{
 prediction <- predict(br(toyml), toyml)
 
 mlconfmat <- multilabel_confusion_matrix(toyml, prediction)

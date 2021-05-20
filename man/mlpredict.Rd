@@ -60,7 +60,7 @@ mlpredict.fooModel <- function (model, newdata, ...) {
    )
 }
 
-\dontrun{
+\donttest{
 # Create a SVM predict method using the e1071 package (the class of SVM model
 # from e1071 package is 'svm')
 library(e1071)

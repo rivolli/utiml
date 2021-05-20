@@ -42,13 +42,13 @@ This function predicts values based upon a model trained by \code{\link{br}}.
 model <- br(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
+\donttest{
 # Predict SVM scores
 model <- br(toyml, "SVM")
 pred <- predict(model, toyml)
 
-# Predict SVM bipartitions running in 4 cores
-pred <- predict(model, toyml, probability = FALSE, CORES = 4)
+# Predict SVM bipartitions running in 2 cores
+pred <- predict(model, toyml, probability = FALSE, CORES = 2)
 
 # Passing a specif parameter for SVM predict algorithm
 pred <- predict(model, dataset$test, na.action = na.fail)

@@ -54,16 +54,16 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' model <- ctrl(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' # Change default values and use 4 CORES
+#' # Change default values and use 2 CORES
 #' model <- ctrl(toyml, 'C5.0', m = 10, validation.size = 0.4,
-#'               validation.threshold = 0.5, cores = 4)
+#'               validation.threshold = 0.5, cores = 2)
 #'
 #' # Use seed
-#' model <- ctrl(toyml, 'RF', cores = 4, seed = 123)
+#' model <- ctrl(toyml, 'RF', cores = 2, seed = 123)
 #'
 #' # Set a parameters for all subproblems
 #' model <- ctrl(dataset$train, 'KNN', k=5)
@@ -201,16 +201,14 @@ ctrl <- function(mdata,
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' model <- ctrl(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' # Predict SVM bipartitions running in 6 cores
-#' pred <- predict(model, toyml, probability = FALSE, cores = 6)
+#' # Predict SVM bipartitions running in 2 cores
+#' pred <- predict(model, toyml, probability = FALSE, cores = 2)
 #'
 #' # Using the Maximum vote schema
 #' pred <- predict(model, toyml, vote.schema = 'max')
-#' }
 predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
                               probability = getOption("utiml.use.probs", TRUE),
                               ..., cores = getOption("utiml.cores", 1),
@@ -264,6 +262,9 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
 #' Print CTRL model
 #' @param x The ctrlmodel
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.CTRLmodel <- function(x, ...) {
   cat("BR with ConTRolled Label correlation Model (CTRL)\n\nCall:\n")

@@ -136,6 +136,9 @@ predict.MLKNNmodel <- function(object, newdata,
 #' Print MLKNN model
 #' @param x The mlknn model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.MLKNNmodel <- function(x, ...) {
   cat("Classifier MLKNN\n\nCall:\n")

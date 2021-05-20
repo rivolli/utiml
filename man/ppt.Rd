@@ -53,7 +53,7 @@ remove the less common classes to predict multi-label data.
 model <- ppt(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
+\donttest{
 ##Change default configurations
 model <- ppt(toyml, "RF", p=4, info.loss=TRUE)
 }

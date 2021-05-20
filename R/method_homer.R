@@ -40,7 +40,7 @@
 #' model <- homer(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' ##Change default configurations
 #' model <- homer(toyml, "RF", clusters=5, method="clustering", iteration=10)
 #' }

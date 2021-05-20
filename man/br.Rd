@@ -46,13 +46,13 @@ specific model for each label.
 model <- br(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
+\donttest{
 # Use SVM as base algorithm
 model <- br(toyml, "SVM")
 pred <- predict(model, toyml)
 
-# Change the base algorithm and use 4 CORES
-model <- br(toyml[1:50], 'RF', cores = 4, seed = 123)
+# Change the base algorithm and use 2 CORES
+model <- br(toyml[1:50], 'RF', cores = 2, seed = 123)
 
 # Set a parameters for all subproblems
 model <- br(toyml, 'KNN', k=5)

@@ -103,6 +103,9 @@ predict.LPmodel <- function(object, newdata,
 #' Print LP model
 #' @param x The lp model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.LPmodel <- function(x, ...) {
   cat("Label Powerset Model\n\nCall:\n")

@@ -42,9 +42,6 @@ This function predicts values based upon a model trained by
 \examples{
 model <- rpc(toyml, "RANDOM")
 pred <- predict(model, toyml)
-
-\dontrun{
-}
 }
 \seealso{
 \code{\link[=br]{Binary Relevance (BR)}}

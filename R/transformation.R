@@ -124,6 +124,9 @@ utiml_prepare_data <- function(dataset, classname, mldataset, mlmethod,
 #' Summary method for mltransformation
 #' @param object A transformed dataset
 #' @param ... additional arguments affecting the summary produced.
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 summary.mltransformation <- function(object, ...) {
   summary(object$data, ...)

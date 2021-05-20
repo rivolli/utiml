@@ -60,7 +60,7 @@ for constructing the labelsets are the disjoint and overlapping labelsets.
 \examples{
 model <- rakel(toyml, "RANDOM")
 pred <- predict(model, toyml)
-\dontrun{
+\donttest{
 ## SVM using k = 4 and m = 100
 model <- rakel(toyml, "SVM", k=4, m=100)
 

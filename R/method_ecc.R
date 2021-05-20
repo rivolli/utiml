@@ -52,15 +52,15 @@
 #' model <- ecc(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
-#' # Use J48 with 100% of instances and only 5 rounds
-#' model <- ecc(toyml, 'J48', m = 5, subsample = 1)
+#' \donttest{
+#' # Use C5.0 with 100% of instances and only 5 rounds
+#' model <- ecc(toyml, 'C5.0', m = 5, subsample = 1)
 #'
 #' # Use 75% of attributes
 #' model <- ecc(toyml, attr.space = 0.75)
 #'
-#' # Running in 4 cores and define a specific seed
-#' model1 <- ecc(toyml, cores=4, seed=123)
+#' # Running in 2 cores and define a specific seed
+#' model1 <- ecc(toyml, cores=2, seed=123)
 #' }
 ecc <- function(mdata,
                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
@@ -146,13 +146,13 @@ ecc <- function(mdata,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Predict SVM scores
 #' model <- ecc(toyml)
 #' pred <- predict(model, toyml)
 #'
-#' # Predict SVM bipartitions running in 6 cores
-#' pred <- predict(model, toyml, probability = FALSE, cores = 6)
+#' # Predict SVM bipartitions running in 2 cores
+#' pred <- predict(model, toyml, probability = FALSE, cores = 2)
 #'
 #' # Return the classes with the highest score
 #' pred <- predict(model, toyml, vote.schema = 'max')
@@ -189,6 +189,9 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
 #' Print ECC model
 #' @param x The ecc model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.ECCmodel <- function(x, ...) {
     cat("Ensemble of Classifier Chains Model\n\nCall:\n")

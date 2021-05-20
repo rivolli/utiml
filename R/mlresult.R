@@ -162,6 +162,9 @@ multilabel_prediction <- function(bipartitions, probabilities,
 #' Print the mlresult
 #' @param x The mlresult to print
 #' @param ... Extra parameters for print method
+#'
+#' @return No return value, called for print a prediction result
+#'
 #' @export
 print.mlresult <- function(x, ...) {
   print(as.matrix(x), ...)

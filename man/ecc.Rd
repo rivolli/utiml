@@ -72,15 +72,15 @@ If you want to reproduce the same classification and obtain the same
 model <- ecc(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
-# Use J48 with 100\% of instances and only 5 rounds
-model <- ecc(toyml, 'J48', m = 5, subsample = 1)
+\donttest{
+# Use C5.0 with 100\% of instances and only 5 rounds
+model <- ecc(toyml, 'C5.0', m = 5, subsample = 1)
 
 # Use 75\% of attributes
 model <- ecc(toyml, attr.space = 0.75)
 
-# Running in 4 cores and define a specific seed
-model1 <- ecc(toyml, cores=4, seed=123)
+# Running in 2 cores and define a specific seed
+model1 <- ecc(toyml, cores=2, seed=123)
 }
 }
 \references{

@@ -38,7 +38,7 @@
 #' model <- ppt(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' ##Change default configurations
 #' model <- ppt(toyml, "RF", p=4, info.loss=TRUE)
 #' }
@@ -155,6 +155,9 @@ predict.PPTmodel <- function(object, newdata,
 #' Print PPT model
 #' @param x The ppt model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.PPTmodel <- function(x, ...) {
   cat("Pruned Problem Transformation Model\n\nCall:\n")

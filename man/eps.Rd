@@ -65,7 +65,7 @@ subsets of the original multi-label data.
 model <- eps(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
+\donttest{
 ##Change default configurations
 model <- eps(toyml, "RF", m=15, subsample=0.4, p=4, strategy="B", b=4)
 }

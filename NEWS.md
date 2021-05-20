@@ -11,6 +11,7 @@
 * Weights passed incorrectly to `xgboost` by base learner
 * Fixes for future CRAN incompatibilities
 * Improvement in RAkEL letting the user define any value for m
+* Improving documentation of some methods
 
 ## utiml 0.1.6
 * Fixes for CRAN incompatibilities

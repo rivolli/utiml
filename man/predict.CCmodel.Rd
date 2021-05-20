@@ -43,7 +43,7 @@ The Classifier Chains prediction can not be parallelized
 model <- cc(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
+\donttest{
 # Predict SVM bipartitions
 pred <- predict(model, toyml, prob = FALSE)
 

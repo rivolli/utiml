@@ -56,7 +56,7 @@
 #' # Using this base method with Binary Relevance
 #' brmodel <- br(toyml, 'FOO')
 #'
-#' \dontrun{
+#' \donttest{
 #'
 #' # Create a SVM method using the e1071 package
 #' library(e1071)
@@ -120,7 +120,7 @@ mltrain <- function(object, ...) {
 #'    )
 #' }
 #'
-#' \dontrun{
+#' \donttest{
 #' # Create a SVM predict method using the e1071 package (the class of SVM model
 #' # from e1071 package is 'svm')
 #' library(e1071)
@@ -462,6 +462,9 @@ mlpredict.emptyModel <- function (model, newdata, ...) {
 #' Print Majority model
 #' @param x The base model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.majorityModel <- function (x, ...) {
   cat("Majority Base Model\n\n")
@@ -473,6 +476,9 @@ print.majorityModel <- function (x, ...) {
 #' Print Random model
 #' @param x The base model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.randomModel <- function (x, ...) {
   cat("Random Base Model\n\n")

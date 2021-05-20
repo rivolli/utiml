@@ -11,6 +11,9 @@
 
 \item{...}{additional arguments affecting the summary produced.}
 }
+\value{
+No return value, called for print model's detail
+}
 \description{
 Summary method for mltransformation
 }

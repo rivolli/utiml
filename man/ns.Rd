@@ -57,10 +57,10 @@ available on training data.
 model <- ns(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
-# Use a specific chain with J48 classifier
+\donttest{
+# Use a specific chain with C5.0 classifier
 mychain <- sample(rownames(toyml$labels))
-model <- ns(toyml, 'J48', mychain)
+model <- ns(toyml, 'C5.0', mychain)
 
 # Set a specific parameter
 model <- ns(toyml, 'KNN', k=5)

@@ -40,7 +40,7 @@
 #' @examples
 #' model <- rakel(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
-#' \dontrun{
+#' \donttest{
 #' ## SVM using k = 4 and m = 100
 #' model <- rakel(toyml, "SVM", k=4, m=100)
 #'
@@ -177,6 +177,9 @@ predict.RAkELmodel <- function(object, newdata,
 #' Print RAkEL model
 #' @param x The rakel model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.RAkELmodel <- function(x, ...) {
   cat("RAkEL",ifelse(x$overlapping, "Overlapping", "Disjoint"), "Model")

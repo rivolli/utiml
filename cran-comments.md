@@ -1,3 +1,9 @@
+The package was removed from CRAN due to the issue: "The errors in r-devel are 
+from recent changes which lock the base environment and its namespace, so that 
+one can no longer create new bindings there." It was caused by some tests and 
+internal procedures. Both were removed, such that the problem is fixed now. 
+For particular reasons, I could not fix the issue on time.
+
 ## Test environments
 * local Debian 10 install, R 4.0.3
 * Ubuntu Linux 20.04.1 LTS on Travis CI, R version 4.0.3

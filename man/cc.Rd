@@ -54,16 +54,16 @@ previous classifiers, forming a classifier chain.
 model <- cc(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
-# Use a specific chain with J48 classifier
+\donttest{
+# Use a specific chain with C5.0 classifier
 mychain <- sample(rownames(toyml$labels))
-model <- cc(toyml, 'J48', mychain)
+model <- cc(toyml, 'C5.0', mychain)
 
 # Set a specific parameter
 model <- cc(toyml, 'KNN', k=5)
 
 #Run with multiple-cores
-model <- cc(toyml, 'RF', cores = 5, seed = 123)
+model <- cc(toyml, 'RF', cores = 2, seed = 123)
 }
 }
 \references{

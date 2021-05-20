@@ -34,7 +34,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' prediction <- predict(br(toyml), toyml)
 #'
 #' mlconfmat <- multilabel_confusion_matrix(toyml, prediction)
@@ -185,7 +185,7 @@ merge_mlconfmat <- function (object, ...) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' prediction <- predict(br(toyml), toyml)
 #'
 #' # Compute all measures
@@ -712,18 +712,16 @@ utiml_all_measures_names <- function (){
   )
 }
 
-# Return the name of measures
-#
-# @param measures The group of measures (Default: "all").
-#
-# @return array of character contained the measures names.
-#
-# @examples
-# \dontrun{
-# utiml_measure_names()
-# utiml_measure_names("bipartition")
-# utiml_measure_names(c("micro-based", "macro-based"))
-# }
+#' Return the name of measures
+#'
+#' @param measures The group of measures (Default: "all").
+#'
+#' @return array of character contained the measures names.
+#'
+#' @examples
+#' utiml_measure_names()
+#' utiml_measure_names("bipartition")
+#' utiml_measure_names(c("micro-based", "macro-based"))
 utiml_measure_names <- function (measures =  c("all")) {
   measures.names <- utiml_all_measures_names()
 
@@ -752,6 +750,9 @@ multilabel_measures <- function () {
 #' Print a Multi-label Confusion Matrix
 #' @param x The mlconfmat
 #' @param ... ignored
+#'
+#' @return No return value, called for print a confusion matrix
+#'
 #' @export
 print.mlconfmat <- function (x, ...) {
   cat("Multi-label Confusion Matrix\n\n")
@@ -795,6 +796,9 @@ print.mlconfmat <- function (x, ...) {
 #' Convert a multi-label Confusion Matrix to matrix
 #' @param x The mlconfmat
 #' @param ... passed to as.matrix
+#'
+#' @return A confusion matrix with TP, TN, FP and FN columns
+#'
 #' @export
 as.matrix.mlconfmat <- function (x, ...) {
   as.matrix(data.frame(TP=x$TPl, TN=x$TNl, FP=x$FPl, FN=x$FNl), ...)

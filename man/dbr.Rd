@@ -54,9 +54,9 @@ indicate if the estimated models must be created).
 model <- dbr(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
-# Use Random Forest as base algorithm and 4 cores
-model <- dbr(toyml, 'RF', cores = 4)
+\donttest{
+# Use Random Forest as base algorithm and 2 cores
+model <- dbr(toyml, 'RF', cores = 2)
 }
 }
 \references{

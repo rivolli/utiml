@@ -43,7 +43,7 @@ information about this implementation see \code{\link{subset_correction}}.
 model <- ns(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
+\donttest{
 # Predict SVM bipartitions
 pred <- predict(model, toyml, probability = FALSE)
 

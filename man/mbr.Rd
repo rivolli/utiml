@@ -68,12 +68,12 @@ remove labels with low correlations on the second step.
 model <- mbr(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
-# Use 10 folds and different phi correlation with J48 classifier
-model <- mbr(toyml, 'J48', 10, 0.2)
+\donttest{
+# Use 10 folds and different phi correlation with C5.0 classifier
+model <- mbr(toyml, 'C5.0', 10, 0.2)
 
-# Run with 4 cores
- model <- mbr(toyml, "SVM", cores = 4, seed = 123)
+# Run with 2 cores
+ model <- mbr(toyml, "SVM", cores = 2, seed = 123)
 
 # Set a specific parameter
 model <- mbr(toyml, 'KNN', k=5)

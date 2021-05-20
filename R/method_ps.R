@@ -35,7 +35,7 @@
 #' model <- ps(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
-#' \dontrun{
+#' \donttest{
 #' ##Change default configurations
 #' model <- ps(toyml, "RF", p=4, strategy="B", b=4)
 #' }
@@ -183,6 +183,9 @@ predict.PSmodel <- function(object, newdata,
 #' Print PS model
 #' @param x The ps model
 #' @param ... ignored
+#'
+#' @return No return value, called for print model's detail
+#'
 #' @export
 print.PSmodel <- function(x, ...) {
   cat("Pruned Set Model\n\nCall:\n")

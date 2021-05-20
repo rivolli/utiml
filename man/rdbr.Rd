@@ -57,9 +57,9 @@ method.
 model <- rdbr(toyml, "RANDOM")
 pred <- predict(model, toyml)
 
-\dontrun{
-# Use Random Forest as base algorithm and 4 cores
-model <- rdbr(toyml, 'RF', cores = 4, seed = 123)
+\donttest{
+# Use Random Forest as base algorithm and 2 cores
+model <- rdbr(toyml, 'RF', cores = 2, seed = 123)
 }
 }
 \references{

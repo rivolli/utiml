@@ -51,7 +51,7 @@ estimate values of each label. To this use the prediction argument to inform
 a result of other multi-label algorithm.
 }
 \examples{
-\dontrun{
+\donttest{
 # Predict SVM scores
 model <- dbr(toyml)
 pred <- predict(model, toyml)

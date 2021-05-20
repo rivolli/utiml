@@ -11,6 +11,9 @@
 
 \item{...}{ignored}
 }
+\value{
+No return value, called for print folds' detail
+}
 \description{
 Print a kFoldPartition object
 }
