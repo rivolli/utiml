@@ -60,7 +60,6 @@ ns <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
     stop("Invalid chain (all labels must be on the chain)")
   }
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -96,7 +95,6 @@ ns <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
     nsmodel$models[[label]] <- model
   }
 
-  utiml_restore_seed()
   class(nsmodel) <- "NSmodel"
   nsmodel
 }
@@ -142,7 +140,6 @@ predict.NSmodel <- function(object, newdata,
     stop("First argument must be an NSmodel object")
   }
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -158,7 +155,6 @@ predict.NSmodel <- function(object, newdata,
     names(newdata)[ncol(newdata)] <- label
   }
 
-  utiml_restore_seed()
   subset_correction(utiml_predict(predictions[object$labels], probability),
                     object$labelsets, probability)
 }

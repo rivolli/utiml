@@ -9,7 +9,7 @@
 * Throws an error message for ps, ppt and eps when all labelsets are pruned
 * BugFix ps, ppt and eps when there is no labelsets to prune
 * Weights passed incorrectly to `xgboost` by base learner
-* Fixes for future CRAN incompatibilities
+* Stop modifying the the .GlobalEnv, by changing .Random.seed 
 * Improvement in RAkEL letting the user define any value for m
 * Improving documentation of some methods
 

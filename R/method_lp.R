@@ -42,7 +42,6 @@ lp <- function (mdata,
   lpmodel <- list(labels = rownames(mdata$labels),
                   call = match.call(),
                   classes = mdata$labelsets)
-  utiml_preserve_seed()
 
   lpmodel$model <- utiml_lapply(1, function (x){
     #Due the seed
@@ -53,7 +52,7 @@ lp <- function (mdata,
       ), ...
     )
   }, 1, seed)[[1]]
-  utiml_restore_seed()
+
   class(lpmodel) <- "LPmodel"
   lpmodel
 }
@@ -89,13 +88,11 @@ predict.LPmodel <- function(object, newdata,
   }
 
   newdata <- utiml_newdata(newdata)
-  utiml_preserve_seed()
   result <- utiml_lapply(1, function (x){
     #Due the seed
     utiml_predict_multiclass_model(object$model, newdata, object$labels,
                                            probability, ...)
   }, 1, seed)[[1]]
-  utiml_restore_seed()
 
   result
 }

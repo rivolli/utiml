@@ -67,7 +67,6 @@ rakel <- function (mdata,
     call = match.call()
   )
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -100,7 +99,6 @@ rakel <- function (mdata,
     lp(data, base.algorithm = base.algorithm, ...)
   }, cores, seed)
 
-  utiml_restore_seed()
   class(rkmodel) <- "RAkELmodel"
   rkmodel
 }
@@ -142,7 +140,6 @@ predict.RAkELmodel <- function(object, newdata,
   options(utiml.empty.prediction = TRUE)
 
   newdata <- utiml_newdata(newdata)
-  utiml_preserve_seed()
 
   results <- utiml_lapply(object$models, function (lpmodel){
     predict.LPmodel(lpmodel, newdata)
@@ -168,7 +165,6 @@ predict.RAkELmodel <- function(object, newdata,
   }
   rm(results)
 
-  utiml_restore_seed()
   options(utiml.empty.prediction = previous.value)
 
   prediction

@@ -83,7 +83,6 @@ mbr <- function(mdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -139,7 +138,6 @@ mbr <- function(mdata,
     )
   }, cores, seed)
 
-  utiml_restore_seed()
   class(mbrmodel) <- "MBRmodel"
   mbrmodel
 }
@@ -189,7 +187,6 @@ predict.MBRmodel <- function(object, newdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
   newdata <- utiml_newdata(newdata)
 
   # 1 Iteration - Base level -------------------------------------------------
@@ -215,7 +212,6 @@ predict.MBRmodel <- function(object, newdata,
                                cbind(newdata, extra.col), ...)
   }, cores, seed)
 
-  utiml_restore_seed()
   utiml_predict(predictions, probability)
 }
 

@@ -30,27 +30,38 @@ utiml_lapply <- function(mylist, myfnc, utiml.cores, utiml.seed = NA, ...) {
   indexes <- seq_along(mylist)
   names(indexes) <- names(mylist)
 
-  if (anyNA(utiml.seed)) {
-    thefunc <- function (i, ...) {
-      myfnc(mylist[[i]], ...)
-    }
-  } else {
-    thefunc <- function (i, ...) {
-      set.seed(utiml_ifelse(is.null(utiml.seed),
-                            NULL, as.numeric(utiml.seed) + i))
-      myfnc(mylist[[i]], ...)
-    }
+  thefunc <- function (i, ...) {
+    myfnc(mylist[[i]], ...)
+  }
+
+  if (is.null(utiml.seed)) {
+    utiml.seed = NA
   }
 
   if (utiml.cores > 1 && requireNamespace("parallel", quietly = TRUE)) {
-    parallel::mclapply(indexes,
-                       thefunc,
-                       mc.cores = min(utiml.cores, length(mylist)),
-                       ...)
+    if (!is.na(utiml.seed)) {
+      RNGkind("L'Ecuyer-CMRG")
+      set.seed(utiml.seed)
+    }
+
+    result <- parallel::mclapply(indexes,
+                           thefunc,
+                           mc.cores = min(utiml.cores, length(mylist)),
+                           mc.set.seed = TRUE,
+                           ...)
+
+    if (!is.na(utiml.seed)) {
+      RNGkind("default")
+    }
   }
   else {
-    lapply(indexes, thefunc, ...)
+    if (!is.na(utiml.seed)) {
+      set.seed(utiml.seed)
+    }
+    result <- lapply(indexes, thefunc, ...)
   }
+
+  result
 }
 
 # Internal normalize data function
@@ -101,15 +112,6 @@ utiml_newdata.mldr <- function(newdata) {
   newdata$dataset[newdata$attributesIndexes]
 }
 
-# Preserve current seed
-utiml_preserve_seed <- function () {
-  if (exists('.Random.seed', envir = .GlobalEnv, inherits = FALSE)) {
-    current.seed <- get('.Random.seed', envir = .GlobalEnv, inherits = FALSE)
-    scope <- parent.frame()
-    scope$utiml.current.seed <- current.seed
-  }
-}
-
 # Rename the list using the names values or its own content
 #
 # @param X A list
@@ -125,14 +127,6 @@ utiml_preserve_seed <- function () {
 utiml_rename <- function (X, names = NULL) {
   names(X) <- utiml_ifelse(is.null(names), X, names)
   X
-}
-
-# Restore the current seed
-utiml_restore_seed <- function () {
-  scope <- parent.frame()
-  if (!is.null(scope$utiml.current.seed)) {
-    assign('.Random.seed', scope$utiml.current.seed, envir = .GlobalEnv)
-  }
 }
 
 # Define if two sets are equals independently of the order of the elements

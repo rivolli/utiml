@@ -53,8 +53,6 @@ br <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # BR Model class
   brmodel <- list(labels = rownames(mdata$labels), call = match.call())
 
@@ -68,8 +66,6 @@ br <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
       ), ...
     )
   }, cores, seed)
-
-  utiml_restore_seed()
 
   class(brmodel) <- "BRmodel"
   brmodel
@@ -123,16 +119,12 @@ predict.BRmodel <- function(object, newdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # Create models
   newdata <- utiml_newdata(newdata)
   labels <- utiml_rename(object$labels)
   predictions <- utiml_lapply(labels, function (label) {
     utiml_predict_binary_model(object$models[[label]], newdata, ...)
   }, cores, seed)
-
-  utiml_restore_seed()
 
   utiml_predict(predictions, probability)
 }

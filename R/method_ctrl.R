@@ -99,7 +99,6 @@ ctrl <- function(mdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -171,7 +170,6 @@ ctrl <- function(mdata,
     fi
   }, cores, seed)
 
-  utiml_restore_seed()
   class(ctrlmodel) <- "CTRLmodel"
   ctrlmodel
 }
@@ -222,7 +220,6 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
   utiml_ensemble_check_voteschema(vote.schema, accept.null = FALSE)
   newdata <- utiml_newdata(newdata)
 
@@ -255,7 +252,6 @@ predict.CTRLmodel <- function(object, newdata, vote.schema = "maj",
     }
   }, cores, seed)
 
-  utiml_restore_seed()
   utiml_predict(predictions, probability)
 }
 

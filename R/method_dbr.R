@@ -57,8 +57,6 @@ dbr <- function(mdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # DBR Model class
   dbrmodel <- list(labels = rownames(mdata$labels), call = match.call())
   if (estimate.models) {
@@ -81,8 +79,6 @@ dbr <- function(mdata,
       ), ...
     )
   }, cores, seed)
-
-  utiml_restore_seed()
 
   class(dbrmodel) <- "DBRmodel"
   dbrmodel
@@ -152,8 +148,6 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   newdata <- utiml_newdata(newdata)
   if (is.null(estimative)) {
     estimative <- predict.BRmodel(object$estimation, newdata,
@@ -177,7 +171,6 @@ predict.DBRmodel <- function(object, newdata, estimative = NULL,
                                ...)
   }, cores, seed)
 
-  utiml_restore_seed()
   utiml_predict(predictions, probability)
 }
 

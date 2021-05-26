@@ -1,5 +1,5 @@
 context("Evaluation methods")
-suppressWarnings(RNGversion("3.5.0"))
+
 set.seed(1234)
 parts <- create_holdout_partition(toyml)
 result <- predict(br(parts$train, "SVM"), parts$test)
@@ -97,14 +97,15 @@ test_that("Bipartition measures", {
   expect_equal(utiml_measure_micro_f1(mlconfmat), 0)
 
   #Random
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1234)
   for (i in seq(ncol(labels))) {
     labels[, i] <- utiml_normalize(rnorm(nrow(labels)))
   }
   labels <- fixed_threshold(labels, 0.5)
+
   test.result <- multilabel_prediction(labels, labels, TRUE)
   mlconfmat <- multilabel_confusion_matrix(parts$test, test.result)
+
   measures <- list(
     Accuracy = mean(rowSums(expected & labels) / rowSums(expected | labels)),
     FMeasure = mean(2 * rowSums(expected & labels) /
@@ -128,7 +129,8 @@ test_that("Bipartition measures", {
     MacroFMeasure = (function (){
       prec <- colSums(labels == 1 & expected == 1) / colSums(labels == 1)
       rec <- colSums(labels == 1 & expected == 1) / colSums(expected == 1)
-      mean(2 * prec * rec / (prec + rec))
+      f1 <- 2 * prec * rec / (prec + rec)
+      mean(ifelse(is.na(f1), 0, f1))
     })(),
     MicroFMeasure = (function (){
       prec <- sum(colSums(labels == 1 & expected == 1)) /
@@ -199,7 +201,6 @@ test_that("Ranking measures", {
   expect_equal(utiml_measure_is_error(mlconfmat, dif.rank), 1)
 
   #Random
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1234)
   for (i in seq(ncol(labels))) {
     labels[, i] <- utiml_normalize(rnorm(nrow(labels)))

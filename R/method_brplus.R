@@ -55,8 +55,6 @@ brplus <- function(mdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # BRplus Model class
   brpmodel <- list(labels = rownames(mdata$labels), call = match.call())
   freq <- mdata$labels$freq
@@ -78,7 +76,6 @@ brplus <- function(mdata,
     utiml_create_model(dataset, ...)
   }, cores, seed)
 
-  utiml_restore_seed()
   class(brpmodel) <- "BRPmodel"
   brpmodel
 }
@@ -178,7 +175,6 @@ predict.BRPmodel <- function(object, newdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -217,7 +213,6 @@ predict.BRPmodel <- function(object, newdata,
     }
   }
 
-  utiml_restore_seed()
   utiml_predict(predictions[labels], probability)
 }
 

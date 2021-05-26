@@ -45,8 +45,6 @@ rpc <- function(mdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # RPC Model class
   rpcmodel <- list(labels = rownames(mdata$labels), call = match.call())
 
@@ -62,8 +60,6 @@ rpc <- function(mdata,
       ), ...
     )
   }, cores, seed)
-
-  utiml_restore_seed()
 
   class(rpcmodel) <- "RPCmodel"
   rpcmodel
@@ -106,15 +102,11 @@ predict.RPCmodel <- function(object, newdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # Create models
   newdata <- utiml_newdata(newdata)
   labels <- utiml_rename(object$labels)
   predictions <- utiml_lapply(object$models, utiml_predict_binary_model,
                               newdata = newdata, ..., cores, seed)
-
-  utiml_restore_seed()
 
   # Compute votes
   labels <- utils::combn(object$labels, 2, simplify=FALSE)

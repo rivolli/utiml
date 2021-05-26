@@ -1,7 +1,7 @@
 The package was removed from CRAN due to the issue: "The errors in r-devel are 
 from recent changes which lock the base environment and its namespace, so that 
 one can no longer create new bindings there." It was caused by some tests and 
-internal procedures. Both were removed, such that the problem is fixed now. 
+internal procedures that changed .Random.seed. These problems are fixed now. 
 For particular reasons, I could not fix the issue on time.
 
 ## Test environments

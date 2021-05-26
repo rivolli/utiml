@@ -99,8 +99,6 @@ predict.CLRmodel <- function(object, newdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # Predict RPC models
   predictions <- as.matrix(predict.RPCmodel(object$rpcmodel, newdata, TRUE,
                                             ..., cores=cores, seed=seed))
@@ -110,8 +108,6 @@ predict.CLRmodel <- function(object, newdata,
   calibrated <- as.matrix(predict.BRmodel(object$brmodel, newdata, FALSE, ...,
                                           cores=cores, seed=seed))
   options(utiml.empty.prediction = previous.value)
-
-  utiml_restore_seed()
 
   # Compute votes
   l0 <- (length(object$labels) - rowSums(calibrated)) / length(object$labels)

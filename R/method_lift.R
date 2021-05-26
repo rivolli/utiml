@@ -56,7 +56,6 @@ lift <- function(mdata,
   }
 
   #TODO parametrize clustering and distance method
-  utiml_preserve_seed()
 
   # LIFT Model class
   liftmodel <- list(labels = rownames(mdata$labels),
@@ -101,8 +100,6 @@ lift <- function(mdata,
   liftmodel$centroids <- lapply(liftdata, function (x) x$centroids)
   liftmodel$models <- lapply(liftdata, function (x) x$model)
 
-  utiml_restore_seed()
-
   class(liftmodel) <- "LIFTmodel"
   liftmodel
 }
@@ -144,8 +141,6 @@ predict.LIFTmodel <- function(object, newdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # Predict models
   newdata <- rep_nom_attr(utiml_newdata(newdata), TRUE)
   labels <- utiml_rename(object$labels)
@@ -155,8 +150,6 @@ predict.LIFTmodel <- function(object, newdata,
     dimnames(dataset) <- list(rownames(newdata), rownames(centroids))
     utiml_predict_binary_model(object$models[[label]], dataset, ...)
   }, cores, seed)
-
-  utiml_restore_seed()
 
   utiml_predict(predictions, probability)
 }

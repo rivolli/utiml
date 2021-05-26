@@ -91,7 +91,6 @@ ebr <- function(mdata,
   ebrmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
   ebrmodel$cardinality <- mdata$measures$cardinality
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -111,8 +110,6 @@ ebr <- function(mdata,
 
     brmodel
   })
-
-  utiml_restore_seed()
 
   class(ebrmodel) <- "EBRmodel"
   ebrmodel
@@ -168,7 +165,6 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "maj",
   }
 
   utiml_ensemble_check_voteschema(vote.schema)
-  utiml_preserve_seed()
 
   newdata <- utiml_newdata(newdata)
   allpreds <- lapply(seq(object$models), function(imodel) {
@@ -176,8 +172,6 @@ predict.EBRmodel <- function(object, newdata, vote.schema = "maj",
     predict.BRmodel(brmodel, newdata[, brmodel$attrs], ...,
                     cores = cores, seed = seed)
   })
-
-  utiml_restore_seed()
 
   prediction <- utiml_predict_ensemble(allpreds, vote.schema, probability)
   if (!is.null(vote.schema)) {

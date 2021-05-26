@@ -65,8 +65,6 @@ cc <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
     stop("Invalid chain (all labels must be on the chain)")
   }
 
-  utiml_preserve_seed()
-
   # CC Model class
   ccmodel <- list(labels = labels, chain = chain, call = match.call())
 
@@ -85,8 +83,6 @@ cc <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
         "mldCC", mdata$name, "cc", base.algorithm, chain.order = lidx
       ), ...)
   }, cores, seed)
-
-  utiml_restore_seed()
 
   class(ccmodel) <- "CCmodel"
   ccmodel
@@ -131,7 +127,6 @@ predict.CCmodel <- function(object, newdata,
     stop("First argument must be an CCmodel object")
   }
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -144,7 +139,6 @@ predict.CCmodel <- function(object, newdata,
     newdata[[label]] <- factor(predictions[[label]]$bipartition, levels=c(0, 1))
   }
 
-  utiml_restore_seed()
   utiml_predict(predictions[object$labels], probability)
 }
 

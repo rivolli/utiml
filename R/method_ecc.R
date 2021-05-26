@@ -94,7 +94,6 @@ ecc <- function(mdata,
   eccmodel$ncol <- ceiling(length(mdata$attributesIndexes) * attr.space)
   eccmodel$cardinality <- mdata$measures$cardinality
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -117,7 +116,6 @@ ecc <- function(mdata,
     ccmodel
   })
 
-  utiml_restore_seed()
   class(eccmodel) <- "ECCmodel"
   eccmodel
 }
@@ -171,14 +169,12 @@ predict.ECCmodel <- function(object, newdata, vote.schema = "maj",
   }
 
   utiml_ensemble_check_voteschema(vote.schema)
-  utiml_preserve_seed()
 
   newdata <- utiml_newdata(newdata)
   allpreds <- utiml_lapply(object$models, function(ccmodel) {
     predict.CCmodel(ccmodel, newdata[, ccmodel$attrs], ...)
   }, cores, seed)
 
-  utiml_restore_seed()
   prediction <- utiml_predict_ensemble(allpreds, vote.schema, probability)
   if (!is.null(vote.schema)) {
     prediction <- lcard_threshold(prediction, object$cardinality, probability)

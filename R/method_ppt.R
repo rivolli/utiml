@@ -56,8 +56,6 @@ ppt <- function (mdata,
     stop("The prunning value must be greater than 0")
   }
 
-  utiml_preserve_seed()
-
   # PPT Model class
   pptmodel <- list(labels = rownames(mdata$labels),
                    p = p,
@@ -113,7 +111,6 @@ ppt <- function (mdata,
 
   pptmodel$model <- lp(ndata, base.algorithm=base.algorithm, seed=seed)
 
-  utiml_restore_seed()
   class(pptmodel) <- "PPTmodel"
   pptmodel
 }

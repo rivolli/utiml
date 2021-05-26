@@ -1,7 +1,6 @@
 context("Transformation tests")
 
 test_that("binary prediction", {
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   probs <- runif(20, 0, 1)
   bipartition <- as.numeric(probs > 0.5)
@@ -19,7 +18,6 @@ test_that("binary prediction", {
 })
 
 test_that("multi-label prediction", {
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(1)
   probs1 <- runif(20, 0, 1)
   probs2 <- runif(20, 0, 1)
@@ -63,7 +61,6 @@ test_that("multi-label prediction", {
 })
 
 test_that("prepare data", {
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   mydata <- data.frame(
     class1 = runif(10, min = 0, max = 1),
@@ -98,7 +95,6 @@ test_that("prepare data", {
 })
 
 test_that("create model and predict binary model", {
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   mydata <- data.frame(
     attr = runif(10, min = 0, max = 1),
@@ -111,7 +107,6 @@ test_that("create model and predict binary model", {
   expect_equal(attr(model, "label"), "class2")
   expect_equal(attr(model, "dataset"), "mlds")
 
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   predict1 <- utiml_predict_binary_model(model, mydata[, 1, drop = FALSE])
   expect_is(predict1, "binary.prediction")
@@ -119,7 +114,7 @@ test_that("create model and predict binary model", {
   expect_named(predict1$probability, rownames(mydata))
 
   model <- utiml_create_model(dataset)
-  suppressWarnings(RNGversion("3.5.0"))
+
   set.seed(123)
   predict2 <- utiml_predict_binary_model(model, mydata[,1, drop = FALSE])
   expect_equal(predict1$probability, predict2$probability)
@@ -130,7 +125,6 @@ test_that("create model and predict binary model", {
 })
 
 test_that("create model and predict multi-class model", {
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   mydata <- data.frame(
     attr = runif(10, min = 0, max = 1),
@@ -143,7 +137,6 @@ test_that("create model and predict multi-class model", {
   expect_equal(attr(model, "label"), "classlp")
   expect_equal(attr(model, "dataset"), "mlds")
 
-  suppressWarnings(RNGversion("3.5.0"))
   set.seed(123)
   predict1 <- utiml_predict_multiclass_model(model, mydata[, 1, drop = FALSE],
                                              c("zero", "um"), TRUE)

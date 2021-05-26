@@ -65,8 +65,6 @@ prudent <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "S
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   # PruDent Model class
   pdmodel <- list(
     labels = rownames(mdata$labels),
@@ -103,7 +101,6 @@ prudent <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "S
     mmodel
   }, cores, seed)
 
-  utiml_restore_seed()
   class(pdmodel) <- "PruDentmodel"
   pdmodel
 }
@@ -154,7 +151,6 @@ predict.PruDentmodel <- function(object, newdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
   newdata <- utiml_newdata(newdata)
 
   # 1 Iteration - Base level
@@ -193,7 +189,6 @@ predict.PruDentmodel <- function(object, newdata,
     predictions[[i]]$bipartition[baseinst] <- base.preds[baseinst, i]
   }
 
-  utiml_restore_seed()
   utiml_predict(predictions, probability)
 }
 

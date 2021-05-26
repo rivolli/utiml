@@ -56,8 +56,6 @@ esl <- function(mdata,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
-
   freqs <- mdata$labels$freq
   labels <- rownames(mdata$labels)
   names(freqs) <- labels
@@ -78,7 +76,6 @@ esl <- function(mdata,
       ...
     )
   }, cores, seed)
-  utiml_restore_seed()
 
   class(eslmodel) <- "ESLmodel"
   eslmodel
@@ -118,7 +115,6 @@ predict.ESLmodel <- function(object, newdata,
   }
 
   newdata <- utiml_newdata(newdata)
-  utiml_preserve_seed()
 
   labels <- object$labels
 

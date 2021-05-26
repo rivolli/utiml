@@ -132,7 +132,6 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
     stop("Cores must be a positive value")
   }
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -193,7 +192,6 @@ predict.RDBRmodel <- function(object, newdata, estimative = NULL,
     }
   }
 
-  utiml_restore_seed()
   utiml_predict(predictions, probability)
 }
 

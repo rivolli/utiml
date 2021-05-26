@@ -68,7 +68,6 @@ homer <- function (mdata,
   hmodel <- list(clusters = clusters, method = method, call = match.call())
   hmodel$labels = rownames(mdata$labels)
 
-  utiml_preserve_seed()
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -76,7 +75,6 @@ homer <- function (mdata,
   hmodel$models <- buildLabelHierarchy(mdata, base.algorithm, method, clusters,
                                        iteration, ..., cores=cores, seed=seed)
 
-  utiml_restore_seed()
   class(hmodel) <- "HOMERmodel"
   hmodel
 }
@@ -118,7 +116,7 @@ predict.HOMERmodel <- function (object, newdata,
   options(utiml.empty.prediction = FALSE)
 
   newdata <- utiml_newdata(newdata)
-  utiml_preserve_seed()
+
   if (!anyNA(seed)) {
     set.seed(seed)
   }
@@ -126,7 +124,6 @@ predict.HOMERmodel <- function (object, newdata,
   prediction <- predictLabelHierarchy(object$model, newdata, ...,
                                       cores=cores, seed=seed)
 
-  utiml_restore_seed()
   options(utiml.empty.prediction = previous.value)
 
   as.mlresult(prediction, probability)
