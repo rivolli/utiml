@@ -16,7 +16,8 @@ Depends:
     R (>= 3.0.0),
     mldr(>= 0.4.0),
     parallel,
-    ROCR
+    ROCR,
+    FSelector
 Imports:
     stats,
     utils,
@@ -24,7 +25,6 @@ Imports:
 Suggests:
     C50,
     e1071,
-    FSelector,
     infotheo,
     kknn,
     knitr,

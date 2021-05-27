@@ -108,6 +108,7 @@
 #' @import mldr
 #' @import parallel
 #' @import ROCR
+#' @import FSelector
 #' @importFrom methods is
 #' @docType package
 #' @name utiml
