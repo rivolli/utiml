@@ -54,10 +54,10 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' model <- ctrl(toyml, "RANDOM")
 #' pred <- predict(model, toyml)
 #'
+#' \donttest{
 #' # Change default values and use 2 CORES
 #' model <- ctrl(toyml, 'C5.0', m = 10, validation.size = 0.4,
 #'               validation.threshold = 0.5, cores = 2)
@@ -66,7 +66,7 @@
 #' model <- ctrl(toyml, 'RF', cores = 2, seed = 123)
 #'
 #' # Set a parameters for all subproblems
-#' model <- ctrl(dataset$train, 'KNN', k=5)
+#' model <- ctrl(toyml, 'KNN', k=5)
 #' }
 ctrl <- function(mdata,
                  base.algorithm = getOption("utiml.base.algorithm", "SVM"),

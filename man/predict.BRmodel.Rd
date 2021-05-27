@@ -51,7 +51,7 @@ pred <- predict(model, toyml)
 pred <- predict(model, toyml, probability = FALSE, CORES = 2)
 
 # Passing a specif parameter for SVM predict algorithm
-pred <- predict(model, dataset$test, na.action = na.fail)
+pred <- predict(model, toyml, na.action = na.fail)
 }
 }
 \seealso{

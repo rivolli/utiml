@@ -53,7 +53,7 @@
 #' model <- ebr(toyml, 'C5.0', m = 5, subsample = 0.9)
 #'
 #' # Use 75% of attributes
-#' model <- ebr(dataset$train, attr.space = 0.75)
+#' model <- ebr(toyml, attr.space = 0.75)
 #'
 #' # Running in 2 cores and define a specific seed
 #' model1 <- ebr(toyml, cores=2, seed = 312)

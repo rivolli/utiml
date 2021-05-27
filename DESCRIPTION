@@ -30,12 +30,13 @@ Suggests:
     knitr,
     randomForest,
     rmarkdown,
+    markdown,
     rpart,
     testthat,
     xgboost(>= 0.6-4)
-License: GPL | file LICENSE
+License: GPL-3
 LazyData: true
 BugReports: https://github.com/rivolli/utiml
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Encoding: UTF-8

@@ -57,7 +57,7 @@ pred <- predict(model, toyml)
 
 \donttest{
 ##Change default configurations
-model <- ps(toyml, "RF", p=4, strategy="B", b=4)
+model <- ps(toyml, "RF", p=4, strategy="B", b=1)
 }
 }
 \references{

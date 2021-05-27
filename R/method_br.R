@@ -104,7 +104,7 @@ br <- function(mdata, base.algorithm = getOption("utiml.base.algorithm", "SVM"),
 #' pred <- predict(model, toyml, probability = FALSE, CORES = 2)
 #'
 #' # Passing a specif parameter for SVM predict algorithm
-#' pred <- predict(model, dataset$test, na.action = na.fail)
+#' pred <- predict(model, toyml, na.action = na.fail)
 #' }
 predict.BRmodel <- function(object, newdata,
                             probability = getOption("utiml.use.probs", TRUE),

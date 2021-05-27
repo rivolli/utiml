@@ -722,6 +722,8 @@ utiml_all_measures_names <- function (){
 #' utiml_measure_names()
 #' utiml_measure_names("bipartition")
 #' utiml_measure_names(c("micro-based", "macro-based"))
+#'
+#' @export
 utiml_measure_names <- function (measures =  c("all")) {
   measures.names <- utiml_all_measures_names()
 

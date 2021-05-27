@@ -37,7 +37,7 @@
 #'
 #' \donttest{
 #' ##Change default configurations
-#' model <- ps(toyml, "RF", p=4, strategy="B", b=4)
+#' model <- ps(toyml, "RF", p=4, strategy="B", b=1)
 #' }
 ps <- function (mdata,
                 base.algorithm = getOption("utiml.base.algorithm", "SVM"),
@@ -86,6 +86,9 @@ ps <- function (mdata,
     #Strategy B: use only subsets of size greater than b
     labelsets <- labelsets[unlist(lapply(labelsets, sum)) > b]
     b <- length(labelsets)
+    if (b == 0) {
+      stop("There is no labelsets greater than the b value")
+    }
   }
 
   if (length(rem.inst) == 0) {

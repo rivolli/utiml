@@ -44,7 +44,7 @@
 #'
 #' \donttest{
 #' ##Change default configurations
-#' model <- eps(toyml, "RF", m=15, subsample=0.4, p=4, strategy="B", b=4)
+#' model <- eps(toyml, "RF", m=15, subsample=0.4, p=4, strategy="B", b=1)
 #' }
 eps <- function (mdata,
                  base.algorithm = getOption("utiml.base.algorithm", "SVM"),
