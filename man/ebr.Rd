@@ -94,7 +94,6 @@ Other Transformation methods:
 \code{\link{br}()},
 \code{\link{cc}()},
 \code{\link{clr}()},
-\code{\link{ctrl}()},
 \code{\link{dbr}()},
 \code{\link{ecc}()},
 \code{\link{eps}()},

@@ -16,7 +16,6 @@
 #'    \code{\link[=brplus]{BR+}},
 #'    \code{\link[=cc]{Classifier Chains}},
 #'    \code{\link[=clr]{Calibrated Label Ranking (CLR)}},
-#'    \code{\link[=ctrl]{ConTRolled Label correlation exploitation (CTRL)}},
 #'    \code{\link[=dbr]{Dependent Binary Relevance (DBR)}},
 #'    \code{\link[=ebr]{Ensemble of Binary Relevance (EBR)}},
 #'    \code{\link[=ecc]{Ensemble of Classifier Chains (ECC)}},
@@ -108,7 +107,6 @@
 #' @import mldr
 #' @import parallel
 #' @import ROCR
-#' @import FSelector
 #' @importFrom methods is
 #' @docType package
 #' @name utiml

@@ -16,8 +16,7 @@ Depends:
     R (>= 3.0.0),
     mldr(>= 0.4.0),
     parallel,
-    ROCR,
-    FSelector
+    ROCR
 Imports:
     stats,
     utils,

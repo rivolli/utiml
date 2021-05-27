@@ -95,14 +95,6 @@ test_that("CC Test", {
   testSeedEffectMethod(method=cc, name=name)
 })
 
-#test_that("CTRL Test", {
-#  skip_on_cran()
-#  name <- "CTRL Method"
-#  testTrainMethod(method=ctrl, name=name, m=3)
-#  testPredictMethod(method=ctrl, name=name, m=3)
-#  testSeedEffectMethod(method=ctrl, name=name, m=3)
-#})
-
 test_that("DBR Test", {
   skip_on_cran()
   name <- "Dependent Binary Relevance"

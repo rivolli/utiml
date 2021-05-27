@@ -4,6 +4,7 @@
 
 ### Major changes
 * Removing support to SMO and J48 base algorithms due to incompatibilites
+* Removing method CTRL due to R dependencies issues
 
 ### Bug fixes
 * Throws an error message for ps, ppt and eps when all labelsets are pruned
