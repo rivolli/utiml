@@ -227,8 +227,8 @@ The multi-label classification is a supervised learning task that seeks to learn
 The transformation methods require a base algorithm (binary or multi-class) and use their predictions to compose the multi-label result. In the **utiml** 
 package there are some default base algorithms that are accepted.
 
-Each base algorithm requires a specific package, you need to install manually it,
-because they are not installed together with **utiml**. The follow algorithm learners are supported:
+Each base algorithm requires a specific package, you need to manually install it,
+because they are not installed together with **utiml**. The following algorithm learners are supported:
 
 ```{r, echo=FALSE, results='asis'}
 bl <- data.frame(
